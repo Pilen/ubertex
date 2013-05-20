@@ -1,0 +1,14 @@
+
+* Make
+** tex -> ubertex
+Remove all tex
+replace comments with instructions with instructions
+** tex -> pdf
+
+* Keys
+<C-s> isearch-forward
+<C-r> isearch-backward
+<space> blank
+<enter>display where cursor is
+<next> next
+<prior> space
