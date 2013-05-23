@@ -1,4 +1,4 @@
-(defstruct revy-screen location display) ; user@location:0.screen
+(defstruct revy-screen location display dir) ; user@location:0.screen
 
 (defface revy-shown-line-face
   '((((type x w32 mac))
@@ -29,10 +29,9 @@
 
 ;(delete-overlay revy-cur)
 
-(global-set-key (kbd "<f6>") 'revy-enter)
-
 (setq line-move-ignore-invisible nil)
-(setq revy-current-screen (make-revy-screen :location "localhost" :display ":0"))
+(setq revy-current-screen (make-revy-screen :location "localhost" :display ":0" :dir "~/2013"))
+(setq revy-brok-screen (make-revy-screen :location "revy@192.168.0.100" :display ":0" :dir "~/2013"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; INITIALIZATION
@@ -44,6 +43,11 @@
   (revy-numerize)
   (revy-insert-blank-comments)
   (save-excursion
+    ;; insert missing parrens
+    (beginning-of-buffer)
+    (while (search-forward-regexp "\\\\elisp{\\([^(][^}]+\\)}" nil t)
+       (replace-match "\\\\elisp{(\\1)}" nil nil))
+
     ;; Hide preamble and everything up until the first slide:
     (beginning-of-buffer)
     (search-forward-regexp "\\\\begin{overtex}" nil t)
@@ -109,9 +113,8 @@
 (defun revy-unhide ()
   (interactive)
   (revy-unnumerize)
-  (remove-overlays (buffer-end -1) (buffer-end 1) 'revy t))
-
-
+  (remove-overlays (buffer-end -1) (buffer-end 1) 'revy t)
+  (remove-overlays (buffer-end -1) (buffer-end 1) 'face 'revy-shown-line-face))
 
 
 
@@ -130,15 +133,12 @@
 
 (defun revy-next ()
   (interactive)
-  (let ((start (point)))
-    (goto-char (overlay-end revy-cur))
-    ;(search-forward-regexp "\\\\begin{overtex}\\|\\\\end{overtex}\\|\\\\pause\\({}\\)?")
-    (revy-mark)
-    (goto-char (overlay-end revy-cur))
-    ;; (when (string= (match-string 0) "\\end{overtex}")
-    ;;   (message "kat"))
-    ;;   (revy-mark)
-      ))
+  (goto-char (overlay-end revy-cur))
+  (revy-enter))
+
+(defun revy-blank ()
+  (interactive)
+  (revy-xpdf-goto-slide 1))
 
 (defun revy-enter ()
   (interactive)
@@ -157,7 +157,7 @@
 
     (move-overlay revy-cur start end (current-buffer))
     (revy-xpdf-goto-slide (revy-slide-number))
-    ))
+    (revy-scan start end)))
 
 ;; Doesn't work on overlay properties.
 ;; (defun revy-slide-number ()
@@ -192,31 +192,84 @@
 ;; COMMANDS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defadvice async-shell-command (around hide-async-windows activate)
-       (save-window-excursion
-          ad-do-it))
+(defun revy-scan (start end)
+  (interactive)
+
+  (save-excursion
+    (goto-char end)
+
+    (let ((p (save-excursion (progn (search-backward-regexp "\\\\end{overtex}" nil t) (match-end 0)))))
+      (when (not (= p end))
+        (search-backward-regexp  "\\\\pause\\({}\\)?" nil t)))
+
+    (search-backward-regexp "\\\\begin{overtex}\\|\\\\pause\\({}\\)?" nil t)
+
+    (save-excursion
+      (when (not (null (search-forward-regexp "\\\\shell{\\([^}]+\\)}" end t)))
+        (message (match-string 1))
+        (revy-shell (match-string 1))))
+    (save-excursion
+      (when (not (null (search-forward-regexp "\\\\elisp{\\([^}]+\\)}" end t)))
+      (revy-elisp (match-beginning 1) (match-end 1))))))
+
+
+  ;; (search-backward-regexp "\\\\pause\\({}\\)?" nil t)
+  ;; (goto-char (match-beginning 0)))
+
+  ;; (save-excursion)
+  ;;     (search-backward-regexp "\\\\begin{overtex}"))
+  ;;     )
+      ;; (save-excursion
+      ;;   (search-forward-regexp "\\\\shell{\\(.+\\)}" end t)
+      ;;   (message (match-string 1))
+      ;;   (revy-shell (match-string 1)))
+      ;; (search-forward-regexp "\\\\elisp}\\(.+\\)}" end t)
+      ;; (revy-elisp (match-string 1)))))
 
 (defun revy-shell (command &optional screen)
   (save-window-excursion
     (if (null screen)
-        (call-process-shell-command command)
-      (call-process-shell-command (concat "ssh "
+        (call-process-shell-command command nil 0)
+      (let ((com
+             (concat "ssh "
                                    (revy-screen-location screen)
                                    " -T << EOF \n"
                                    " export DISPLAY="
                                    (revy-screen-display screen)
                                    " ; "
                                    command
-                                   " \n EOF &")
-                                  nil 0
-                           ))))
+                                   " \n EOF ")))
+        ;(print com)
+        (call-process-shell-command com nil 0)))))
+
+(defun revy-elisp (start end)
+  (interactive)
+  (eval-region start end))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; XPDF
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun revy-start ()
+  (interactive)
+  (revy-hide)
+  (revy-shell "killall xpdf" revy-current-screen)
+  (revy-shell (concat "cat "(file-name-directory (buffer-file-name)) (file-name-base (buffer-file-name)) ".pdf"
+                      " | ssh " (revy-screen-location revy-current-screen)
+                      " \" mkdir " (revy-screen-dir revy-current-screen) ";"
+                      " cat >> "(revy-screen-dir revy-current-screen) "/" (file-name-base (buffer-file-name)) ".pdf\""))
+  ;;(revy-shell (concat (file-name-directory (buffer-file-name)) (file-name-base (buffer-file-name)) ".pdf") revy-current-screen
+  ;; (revy-shell (concat "scp " (file-name-directory (buffer-file-name)) (file-name-base (buffer-file-name)) ".pdf"
+  ;;                     " " (revy-screen-location revy-current-screen) ":~/2013/" (file-name-base (buffer-file-name)) ".pdf"))
+  (revy-xpdf-open (concat (revy-screen-dir revy-current-screen) "/" (file-name-base) ".pdf"))
+  (beginning-of-buffer)
+  (sleep-for 1)
+  (revy-enter)
+)
+
 (defun revy-xpdf-open (file)
-  (revy-shell (concat "xpdf -fullscreen -remote ubertex " file)
+  (interactive)
+  (revy-shell (concat "xpdf -remote ubertex -fullscreen -mattecolor black -fg black -bg black -papercolor black " file)
               revy-current-screen))
 
 (defun revy-xpdf-goto-slide (slide)
@@ -229,14 +282,17 @@
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; KEYS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;(global-set-key (kbd "<prior>") 'revy-blank)
+(global-set-key (kbd "<next>") 'revy-next)
 
+;(global-set-key (kbd "<up>") 'revy-backward)
+(global-set-key (kbd "<down>") 'revy-forward)
 
+(global-set-key (kbd "<home>") 'revy-start)
+(global-set-key (kbd "<end>") 'revy-enter)
 
-
-
-
-;; TOOLS
-(defun revy-line ()
-  (interactive)
-  (move-overlay revy-cur (line-beginning-position) (line-end-position) (current-buffer)))
+(global-set-key (kbd "<delete>") 'revy-blank)
