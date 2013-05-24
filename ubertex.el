@@ -45,7 +45,7 @@
   (save-excursion
     ;; insert missing parrens
     (beginning-of-buffer)
-    (while (search-forward-regexp "\\\\elisp{\\([^(][^}]+\\)}" nil t)
+    (while (search-forward-regexp "\\\\elisp{(\\([^(][^)}]+\\)}" nil t)
        (replace-match "\\\\elisp{(\\1)}" nil nil))
 
     ;; Hide preamble and everything up until the first slide:
@@ -209,7 +209,7 @@
         (message (match-string 1))
         (revy-shell (match-string 1))))
     (save-excursion
-      (when (not (null (search-forward-regexp "\\\\elisp{\\([^}]+\\)}" end t)))
+      (when (not (null (search-forward-regexp "\\\\elisp{(\\([^)}]+\\)}" end t)))
       (revy-elisp (match-beginning 1) (match-end 1))))))
 
 
@@ -254,13 +254,13 @@
   (interactive)
   (revy-hide)
   (revy-shell "killall xpdf" revy-current-screen)
-  (revy-shell (concat "cat "(file-name-directory (buffer-file-name)) (file-name-base (buffer-file-name)) ".pdf"
-                      " | ssh " (revy-screen-location revy-current-screen)
-                      " \" mkdir " (revy-screen-dir revy-current-screen) ";"
-                      " cat >> "(revy-screen-dir revy-current-screen) "/" (file-name-base (buffer-file-name)) ".pdf\""))
-  ;;(revy-shell (concat (file-name-directory (buffer-file-name)) (file-name-base (buffer-file-name)) ".pdf") revy-current-screen
-  ;; (revy-shell (concat "scp " (file-name-directory (buffer-file-name)) (file-name-base (buffer-file-name)) ".pdf"
-  ;;                     " " (revy-screen-location revy-current-screen) ":~/2013/" (file-name-base (buffer-file-name)) ".pdf"))
+  ;; (revy-shell (concat "cat "(file-name-directory (buffer-file-name)) (file-name-base (buffer-file-name)) ".pdf"
+  ;;                     " | ssh " (revy-screen-location revy-current-screen)
+  ;;                     " \" mkdir " (revy-screen-dir revy-current-screen) ";"
+  ;;                     " cat >> "(revy-screen-dir revy-current-screen) "/" (file-name-base (buffer-file-name)) ".pdf\""))
+  ;; (revy-shell (concat (file-name-directory (buffer-file-name)) (file-name-base (buffer-file-name)) ".pdf") revy-current-screen
+  (revy-shell (concat "scp " (file-name-directory (buffer-file-name)) (file-name-base (buffer-file-name)) ".pdf"
+                      " " (revy-screen-location revy-current-screen) ":~/2013/" (file-name-base (buffer-file-name)) ".pdf"))
   (revy-xpdf-open (concat (revy-screen-dir revy-current-screen) "/" (file-name-base) ".pdf"))
   (beginning-of-buffer)
   (sleep-for 1)
@@ -290,7 +290,7 @@
 (global-set-key (kbd "<next>") 'revy-next)
 
 ;(global-set-key (kbd "<up>") 'revy-backward)
-(global-set-key (kbd "<down>") 'revy-forward)
+;(global-set-key (kbd "<down>") 'revy-forward)
 
 (global-set-key (kbd "<home>") 'revy-start)
 (global-set-key (kbd "<end>") 'revy-enter)
