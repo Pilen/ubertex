@@ -42,6 +42,7 @@
   (revy-unhide)
   (revy-numerize)
   (revy-insert-blank-comments)
+  (setq revy-hidden '())
   (save-excursion
     ;; insert missing parrens
     (beginning-of-buffer)
@@ -62,8 +63,9 @@
       (while (search-forward-regexp "\\\\n{\\([0-9]+\\)}\\|\\\\begin{overtex}\\|\\\\end{overtex}\n\\|\\\\pause\\({}\\)?\\|^\n" nil t)
         (let ((overlay (make-overlay (match-beginning 0) (match-end 0) (current-buffer) t nil)))
           (overlay-put overlay 'revy t)
-          (overlay-put overlay 'priority 10000)
+          (overlay-put overlay 'priority 9000)
           (overlay-put overlay 'face 'revy-invisible-face)
+          ;(overlay-put overlay 'invisible t)
 
           ;; (when (string= (match-string 0) "\\\\begin{overtex})
           (cond ((string= (match-string 0) "\n")
@@ -82,6 +84,17 @@
             ;; (overlay-put overlay 'before-string "")
             ;; (overlay-put overlay 'invisible t)
             )
+          (unless (or (string= (match-string 0) "\\pause")
+                    (string= (match-string 0) "\\pause{}"))
+            (message "kat")
+            ;; (let ((icon (make-overlay (- (match-beginning 0) 1) (match-beginning 0) (current-buffer) t nil)))
+            ;;       (overlay-put icon 'revy t)
+            ;;       (overlay-put icon 'priority 9000)
+            ;;       (overlay-put icon 'after-string "$")
+            ;;       (push icon revy-hidden))
+            (overlay-put overlay 'invisible t)
+            )
+
 
           ;; (setf revy-hidden (cons overlay revy-hidden))
           (push overlay revy-hidden)
@@ -113,6 +126,7 @@
 (defun revy-unhide ()
   (interactive)
   (revy-unnumerize)
+  (remove-text-properties (buffer-end -1) (buffer-end 1) 'bold)
   (remove-overlays (buffer-end -1) (buffer-end 1) 'revy t)
   (remove-overlays (buffer-end -1) (buffer-end 1) 'face 'revy-shown-line-face))
 
@@ -155,7 +169,8 @@
       (when (char-equal (char-after start) ?\n)
         (incf start)))
 
-    (move-overlay revy-cur start end (current-buffer))
+    (move-overlay revy-cur (+ 7 start) end (current-buffer))
+    ;(move-overlay revy-cur (match-end 0) end (current-buffer))
     (revy-xpdf-goto-slide (revy-slide-number))
     (revy-scan start end)))
 
@@ -296,3 +311,69 @@
 (global-set-key (kbd "<end>") 'revy-enter)
 
 (global-set-key (kbd "<delete>") 'revy-blank)
+(global-set-key (kbd "<f11>") 'revy-hide)
+(global-set-key (kbd "<f12>") 'revy-unhide)
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π UBERSICHT
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun revy-ubersicht-next ()
+  (interactive)
+  (search-forward-regexp "^(")
+  (backward-char)
+  (let  ((start (point)))
+    (goto-match-paren)
+    (eval-region start (point) standard-output)))
+
+;; Should this behave more like revy-enter?
+(defun revy-ubersicht-enter ()
+  (interactive)
+  (let ((start (search-backward-regexp "^(")))
+    (goto-match-paren)
+    (eval-region start (point) standard-output)))
+
+
+
+(defun revy-ubersicht-ubertex (filename &optional screen)
+  (find-file-other-window filename)
+  (revy-ubertex-mode))
+
+(defun revy-ubersicht-ubersicht (filename &optional screen)
+  (find-file-other-window filename)
+  (revy-ubersicht-mode))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π MAJOR MODE DEFINITIONS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun revy-ubersicht-mode ()
+  (interactive)
+  (when (string= (file-name-extension (or (buffer-file-name) "")) ".tex")
+    (revy-ubertex-mode)))
+
+(defun revy-ubertex-mode ()
+  (when (string= (file-name-extension (or (buffer-file-name) "")) ".el")
+    (revy-ubertex-mode))
+  (interactive))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π TESTING AREA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(revy-ubersicht-ubertex "JegKanIkkeRigtigLadeVaere.tex")
+
+(file-name-absolute-p "JegKanIkkeRigtigLadeVaere.tex")
+(file-name-directory "home/JegKanIkkeRigtigLadeVaere.tex")
+
+(buffer-file-name )
+
+(find-file-other-window "JegKanIkkeRigtigLadeVaere.tex")
+(find-file-other-window "kat")
