@@ -1,6 +1,7 @@
 \documentclass[10pt,a4paper,danish]{article}
 \usepackage[danish]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage[margin=3cm]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{listings}
@@ -9,22 +10,23 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{xfrac}
-\usepackage[dot, autosize, outputdir="dotgraphs/"]{dot2texi}
+\usepackage[dot, autosize, outputdir="auto/"]{dot2texi}
 \usepackage{tikz}
-\usepackage{ulem}
 \usetikzlibrary{shapes}
+\usepackage{ulem}
+\usepackage{subcaption}
 
 \pagestyle{fancy}
 \fancyhead{}
 \fancyfoot{}
-\rhead{\today}
+\rhead{Den Store AV-bog}
 \rfoot{\thepage}
 \setlength\parskip{1em}
 \setlength\parindent{0em}
 
 %% Titel og forfatter
 \title{Den Store AV-bog}
-\author{Søren Pilgård, 190689, vpb984}
+\author{Søren Pilgård - DIKUrevyen}
 
 %% Start dokumentet
 \begin{document}
@@ -37,8 +39,257 @@
 \tableofcontents
 \newpage
 
+\section{Introduktion}
+Dette er en introduktion til DIKUrevyens AV-system.
+Systemet er udviklet af Søren Pilgård.
+
+Systemet er på skrivende tidspunkt ikke færdigt men kan sagtens bruges til
+normalt AVbrug.
+
+Hvad skal man kunne for at bruge DIKUrevyens AV-system?
+
+\begin{itemize}
+\item \LaTeX
+\item Linux
+\item Emacs
+\item Emacs Lisp
+\item Python
+\end{itemize}
+
+\textbf{\LaTeX}\\
+Bruges til at skrive selve overteksterne. Der bruges Beamer til at lave et langt
+slideshow, overtex.sty definerer en række makroer der gør det let at lave en
+lang præsentation.
+De fleste på natfak burde kunne \LaTeX, hvis ikke er den mængde der bruges til
+at lave normale overtekster ret lille og burde kunne mestres ved bare at kigge i
+nogle af de gamle filer.
+
+\textbf{Emacs}\\
+Emacs bliver brugt som kontrolcenter til det hele.
+Det er derfor væsentligt at have en hvis forståelse for hvordan Emacs virker.
+Emacs er et voldsomt konfigurerbart program til at arbejde med tekst.
+Jeg er selv stor Emacsbruger og har opbygget et helt unikt system.
+På sigt er det håbet at lave en standard konfiguration som folk der ikke er
+emacsbrugere kan udnytte. En sådan konfiguration ville kunne skjule at det
+overhovedet er emacs der kører bag det hele.
+
+\textbf{Emacs Lisp}\\
+Emacs Lisp er det primære scripting sprog der bliver brugt.
+Det bruges til at automatisere ting i Emacs, derudover kan der kaldes externe
+kommandoer og kommunikere med andre maskiner.
+Selve revysystemet bruger en stor del Emacs Lisp så hvis noget stopper med at
+virke er det godt at kende. Til almindeligt AV brug kan man dog nøjes med en
+stærkt begrænset del som denne guide nok skal introdusere.
+
+\textbf{Linux}\\
+DIKUrevyens AV-system er bygget og kører på linux styresystemet.
+Det betydder at man for at bruge systemet effektivt er nød til at have en hvis
+forståelse for at bruge en linuxmaskine igennem en terminal.
+Et håb er en gang at have en form for standard opsætning af datamater hvor alt
+nødvendigt er installeret, som AVmand skal man så blot sætte udstyrret op og
+lave indholdet.
+
+\textbf{Python}\\
+Bliver brugt til de forskellige programmer og værktøjer der udgør resten af
+AV-systemet.
+Det burde kun være nødvendigt at kunne kode python for at udvikle/vedligeholde
+systemet.
+
+
+\newpage
+\section{Tanken bag}
+Den grundliggende filosofi bag systemet er at AV skal kunne komplementere en
+revy men aldrig komme i vejen. Der skal dermed kun vises det som publikum skal
+se/høre og intet andet.
+Det virker utroligt amatøragtigt lige så snart publikum ser en cursor, en
+film der maksimeres eller rammerne på et vindue.
+
+Det simpleste AVsystem man kan lave er at have en datamat tilkoblet en
+projektor. Datamaten kan derfra køre et presentationsprogram, f.eks. powerpoint.
+
+\begin{figure}[h]
+  \centering
+  \begin{dot2tex}
+    digraph{
+      rankdir=TD;
+      node [shape=ellipse];
+      d [label="Datamat"];
+      p [shape=trapezium, label="Projektor"];
+
+      d -> p;
+    }
+  \end{dot2tex}
+  \caption{Simpel AV opsætning.}
+\end{figure}
+
+Dette er dog ret primitivt.
+Det er utroligt nemt at komme til at lave fejl så som at lige få skubbet
+cursoren hen på et andet desktop eller at filmen spiller på den forkerte skærm.
+Ting der er sket gang på gang til mange revyer, og som hurtigt får publikum til
+at råbe ``TeXniken sejler!''.
+
+Derudover har man et problem hvis man skal bruge mere end 1 projektor.
+
+\begin{figure}[h]
+  \centering
+  \begin{dot2tex}
+    digraph{
+      rankdir=TD;
+      node [shape=ellipse];
+      d [label="Datamat"];
+      p1 [shape=trapezium, label="Projektor"];
+      p2 [shape=trapezium, label="Projektor"];
+      p3 [shape=trapezium, label="Projektor"];
+
+      d -> p1;
+      d -> p2;
+      d -> p3;
+    }
+  \end{dot2tex}
+  \caption{En datamat, flere projektorer.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \begin{dot2tex}
+    digraph{
+      rankdir=TD;
+      node [shape=ellipse];
+      d1 [label="Datamat"];
+      d2 [label="Datamat"];
+      d3 [label="Datamat"];
+      p1 [shape=trapezium, label="Projektor"];
+      p2 [shape=trapezium, label="Projektor"];
+      p3 [shape=trapezium, label="Projektor"];
+
+      d1 -> p1;
+      d2 -> p2;
+      d3 -> p3;
+    }
+  \end{dot2tex}
+  \caption{Flere datamater, flere projektorer.}
+\end{figure}
+
+Man kan enten koble flere projektorer på en datamat, hvilket kræver en datamat
+der er i stand til dette, hvilket ikke særligt mange er.
+Alternativt kan man have flere datamater koblet til hver sin projektor.
+Nu skal man så bare navigere rundt mellem en helt masse maskiner eller have en
+AV-mand pr. maskine hvilket heller ikke er særligt praktisk.
+Desuden har vi stadig problemet med at man let kommer til at dumme sig på samme
+måde som i den første opsætning.
+
+Det vi i virkeligheden ønsker os er en abstraktion mellem det at styrre AV og
+det at vise AV. Hvis tingene kører adskilt og har klart definerede ansvars
+områder kommer man ikke lige så let til at lave fejl. Vi ønsker derfor at have
+en central maskine der styrer det hele, denne kommunikerer med andre maskiner
+der sørger for at vise ting via projektorer.
+
+\begin{figure}[h]
+  \centering
+  \begin{dot2tex}
+    digraph{
+      rankdir=TD;
+      node [shape=ellipse];
+      c [label="Kontrol datamat"];
+      d1 [shape=box, label="Datamat"];
+      d2 [shape=box, label="Datamat"];
+      p1 [shape=trapezium, label="Projektor"];
+      p2 [shape=trapezium, label="Projektor"];
+
+      c -> d1;
+      c -> d2;
+      d1 -> p1;
+      d2 -> p2;
+    }
+  \end{dot2tex}
+  \caption{Central styring, flere arbejdere med hver deres projektor.}
+\end{figure}
+
+Det er dette princip DIKUrevyens AVsystem benytter sig af.\\
+
+Det første system blev lavet af Troels Henriksen.  Han lavede et
+programmeringssprog \textit{Sindre} i Haskell til at lave grænseflader.  I det
+sprog lavede han et \texttt{dmenu} lignende program kaldet \textit{sinmenu} som
+han brugte som interface. Selve overteksterne bestod af en pdf som han lokalt
+oversatte til rå tekst som blev fodret ind i et script der brugte hans
+grænseflade. Dette script kommunikerede med en server koblet til en projektor
+over en sshforbindelse.  \texttt{Xpdf} kan køres som en server der kan modtage
+kommandoer fra en kommandolinje, på denne måde kunne man derfor styre
+overtekster over ssh.
+
+Desværre skalerede løsningen ikke særligt godt. Da der begyndte at komme mange
+AVeffekter kunne man ikke både køre overtekster og andet AV alene.
+
+Dette blev (i hvertfald forsøgt) rettet op på da jeg (Søren Pilgård) efterfølgende begyndte at skrive et nyt
+AVsystem til DIKUrevyen 2012.
+At skrive et AVsystem er dog ikke en nem tjans og det endte med at foregå i en
+løbende process med forbedringer til hver revy.
+
+Det nye AVsystem består af en centralt grænseflade der kan kommunikere med flere
+forskellige maskiner der kan vise AV materiale.
+
+Selve grænsefladen er udviklet som en række udvidelser til Emacs.
+Grunden til dette er at da jeg startede indså jeg at systemet skulle kunne
+følgende ting:
+\begin{itemize}
+\item Kommunikere med en server der viser indholdet.
+\item Det skulle kunne vise ting overskueligt i en grafisk grænseflade.
+\item Der skulle være mulighed for at indlejre scripts så man kan køre ting
+  automatisk på bestemte steder i forestillingen.
+\item Det ville være praktisk hvis man kunne rette fejl i texkoden mens man
+  viste pdf'en da man ellers risikere at glemme dem.
+\end{itemize}
+
+Det gik hurtigt op for mig at det ville være fjollet at udvikle noget fra bunden
+da Emacs i forvejen kunne meget af dette. Desuden er jeg Emacsmand og så hurtigt
+hvordan en integration ville være nice.
+Den grundliggende formel for at vise overtekster er at man åbner et LaTeX
+dokument der bruger beamer pakken til at lave overteksterne. Så starter man
+\texttt{ubertex}minor modet, dette sørger for at pdfen bliver lagt op på
+serveren. Herefter skjules de fleste LaTeXkommandoer og et overlay lægges der
+viser hvad der bliver vist. Man kan så trykke ``næste'' hvilket rykker overlayet ned
+og synkroniserer serveren til at vise det tilsvarende slide i pdfen.
+Man kan også trykke vilkårlige steder i tex filen og rykke direkter hertil i
+overteksterne. Desuden kan der indsættes kode der eksekveres når man når til det
+pågældende slide.
+
+% TODO: billede
+
+Derudover findes minormodet \texttt{uberscript} der lader en afvikle scripts.
+Det kunne f.eks. være en sketch med en række lydeffekter eller et kald til en video.
+Et script kunne også være aktoversigten hvorfra man ved at trykke ``næste''
+kommer ind i det næste nummer, og når dette er færdigt kommer man så tilbage og
+er klar til næste.
+
+Hvis alt går som det skal, skal man som AVmand kun trykke på en knap (næste) for
+at afvikle en revy.
+Dette må være essensen af et godt AV system, når man kun skal tage sig af
+timingen på skuespillerne/sangerne samt disses fejltagelser.
+
 \section{Sådan er man en god AV mand}
-\section{Teorien bag}
+\textit{TODO: Her kommer der til at være en række mere generele råd om hvordan
+  man laver god AV}
+
+\subsection{Om at lave gode overtekster}
+% 6 ord
+% Læser i høj grad på ordenes form.
+% Drfr kn mn stdg lse dnne stnng
+% Sætningen læses relativt hurtigt, men var den længere ville man skulle læse hele
+% teksten.
+% Man kan ca overskue
+
+% <billede af en 4 lego brik>
+% kan genkendes med det samme
+
+% <billede af en 9'er lego klods>
+% man skal tælle
+
+
+
+
+
+% husk blanke slides
+
 \section{Opsætning af tekniken}
 \subsection{Projektorer}
 Til DIKUrevyen bruges der typisk i hvertfald 2 projektorer.
@@ -333,9 +584,87 @@ m filnavn
 \end{verbatim}
 
 \subsubsection{Positionering af mplayer}
-Noget om positionering af mplayer her
+\textit{TODO: Noget om positionering af mplayer her}
 
-\section{Installation af Arch}
+\section{Konvertering fra manuskrift til overtekster}
+\section{ubertex}
+\section{ubersicht}
+\section{Hvordan virker koden}
+
+Der sørges automatisk for at det korrekte major mode køres på .tex og .el filer
+\section{FAQ}
+ubertex tager ikke højde for pauser i comments, latex gør.
+
+\section{Værktøjer}
+\subsection{Schneider}
+\textit{Tysk: Skrædder}
+
+\textbf{Dependencies:}
+\begin{itemize}
+\item Python3
+\item ffmpeg
+\end{itemize}
+
+Schneider er et værktøj til at skære film og billeder op til at kunne blive vist over flere
+projektorer.
+
+Schneider kan på skrivende stund kun dele medier op i flere snit ved siden af
+hinanden og ikke over under. Det burde dog være let at rette til.
+
+\subsection{Zeitherr}
+\textit{Tysk: Timelord}
+Er en bastardiseret udgave af en NTP tidsserver til at holde de forskellige
+maskiner synkroniseret.
+
+\subsection{Zeiden}
+
+\section{Problemer/løsninger}
+\subsection{Der er lag/forsinkelser}
+Lag er irriterende, det opleves primært som en forsinkelse fra man har trykket
+på knappen til der sker noget på projektoren. Det er et problem når man skal
+lave overtekster.
+
+Til DIKUs jubilæumsrevy var der ca. et sekunds forsinkelte fra jeg trykkede til
+at overteksterne blev vist. Jeg har ikke definitivt fundet fejlen endnu men der
+bliver arbejdet på det.
+
+Her er først nogle metoder til at lokalisere hvor omtrentligt forsinkelsen
+opstår.
+Det er mere eller mindre umuligt at lave konkrete målinger så det er noget man
+må føle sig frem til (Super naturvidenskabelig metode!).\\
+\textit{Følgende tager udgangspunkt i Xpdf, men gøres på samme måde med Zeiden}
+
+Prøv først at sætte systemet til at køre alt lokalt. Aka, kør både Emacs og Xpdf
+lokalt og der kommunikeres via ssh til \texttt{localhost}. Hvis forsinkelsen
+stadig er der, er fejlen enten i Emacs, i Xpdf, eller i den lokale
+hardware.
+
+Mine erfaringer med Xpdf er dog at det ikke er her fejlen ligger.
+Prøv nu at starte Xpdf på serveren og ssh ind på denne, giv nu manuelt Xpdf
+ordre til at skifte slide.
+
+Min erfaring er at det er meget tilfældigt hvad der præcist sker. Jeg oplevede
+at delayed forsvandt efter jeg gjorde ovenstående, også det mellem Emacs og
+Xpdf, men kun indtil Xpdf blev lukket.
+
+Det virker også til at Xpdf bliver langsommer afhængigt af længden af
+overteksterne og ikke nødvendigvis størrelsen af pdfen.
+
+Jeg ved ikke helt hvordan dette skal løses.
+Det er en af grundene til at vi vil lave vores egen fremviser (Zeiden).
+
+\section{APPENDIX A: En guide til Linux}
+% Sådan bruger du en terminal
+\textbf{cd}
+\textbf{ls}
+\textbf{cp}
+\textbf{mv}
+
+\textbf{ip}
+\textbf{ssh}
+\textbf{nano}
+
+\section{APPENDIX B: Installation af Arch Linux}
 \begin{verbatim}
 loadkeys colemak
 ip link show
@@ -558,46 +887,20 @@ Du kan evt. også tilføje følgende alias:
 alias d='export DISPLAY=:0'
 \end{verbatim}
 
-
-\section{Om at lave gode overtekster}
-% 6 ord
-% Læser i høj grad på ordenes form.
-%     Drfr kn mn stdg lse dnne stnng
-% Sætningen læses relativt hurtigt, men var den længere ville man skulle læse hele
-% teksten.
-% Man kan ca overskue
-
-% <billede af en 4 lego brik>
-% kan genkendes med det samme
-
-% <billede af en 9'er lego klods>
-% man skal tælle
-\section{Konvertering fra manuskrift til overtekster}
-\section{ubertex}
-\section{ubersicht}
-\section{Hvordan virker koden}
-
-Der sørges automatisk for at det korrekte major mode køres på .tex og .el filer
-\section{FAQ}
-ubertex tager ikke højde for pauser i comments, latex gør.
-\section{APPENDIX A: En guide til linux}
-% Sådan bruger du en terminal
-\subsection{cd}
-\subsection{ls}
-\subsection{cp}
-\subsection{mv}
-
-\subsection{ip}
-\subsection{ssh}
-\subsection{nano}
-\section{APPENDIX B: Stripped Emacs}
-\section{APPENDIX C: Emacs}
-\section{APPENDIX D: mangler}
+\section{APPENDIX C: Stripped Emacs}
+\section{APPENDIX D: Emacs}
+\section{APPENDIX E: mangler}
 revy-shell skal escape kommandoer
 Youtube
+Arduinoer
+Stripped Emacs
 
 
-\section{Andet}
+\section{PDF/billedviser}
+Kan baseres på poppler.
+python-poppler-qt4?
 
-husk blanke slides
+mupdf er et mere minimalistisk/optimeret alternativ til xpdf's poppler.
+har mudraw der kan rendere til png.
+
 \end{document}
