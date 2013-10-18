@@ -585,6 +585,8 @@
     (replace-regexp "\\\\pause\n\\\\end{overtex}" "\n\\\\end{overtex}")
     (indent-region (point-min) (point-max))))
 
+
+;; fanger ikke "text, \pause"
 (defun revy-manus-clean ()
   (interactive)
   (beginning-of-buffer)

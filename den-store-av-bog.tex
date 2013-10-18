@@ -399,7 +399,55 @@ Der bruges én der peger op på lærredet over scenen, her vises der overtekster
 almindelige av-ting til sketches samt små film.
 
 Kantinen ejer en stor Epson som bruges til introen/av på scenen
+
+DIKUs projektorer bruges til alt andet.
+DIKU har en række forskellige projektorer, hvor det kan være svært at kende
+forskel på en del af dem.
+%% TODO: udvid med mere konkrete råd om projektorer.
+
+En god tradition, som en AV-mand bør holde i hævd, er at rense projektornes filtre
+når man henter dem i begyndelsen af revyugen.
+Der er tilsyneladende ikke andre der gør det, så lad det blive en del af
+rutinen. Så overopheder de ikke lige så nemt.
+
+
+Til projektorene er der bygget en række projektorkasser af gamle colakasser.
+Disse gør det en del nemmere at indstille projektorene.\\
+\textit{I gamle dage, da jeg var ond. Da blev projektorene stablet på bøger til
+  de stod sirligt, den ærede AV-mand Troels Henriksen brugte mangt en stund på
+  at bande og svovle når disse blev rykket}\\
+Nu gør projektorkasserne det en del nemmere da man kan stripse/tape kasserne
+fast og det hele bliver langt mere stabilt.
+Desuden kan der komme langt mere luft til.\\
+\textit{I gamle dage, da jeg var ond. Da blev projektorne så varme at de
+  overophedede, så vi måtte til HCØ og hente tøris til køling. Det gav også
+  kolde drikkevare (til tider frosne).}
+
+Se afsnittene om Ubertex, Uberscript og Emacs for at finde ud af hvordan
+softwaren bruges.
+
 \subsubsection{Projektorklapper}
+En ulempe ved projektore er at deres ``sorte'' ikke er mangel på lys, men bare
+\textit{mindre} lys. Det betyder at når alt lyset i StUP1 er slukket og en
+projektor står og lyser, er der stadig ret meget lys på scenen. Det ser
+\textbf{MEGET} dumt ud og gør at man kan se hvad der sker på scenen.
+Det er primært et problem for projektoren til overteksterne og kan accepteres
+til f.eks. højtex (da loftet ikke er lige så reflekterende)
+
+Det er desværre ikke en løsning at slukke/tænde projektorne da det tager for lang
+tid/er besværligt/ skydder farver op når de tændes.
+
+Derfor bruges en `projektorklap'. Der har i mange år været brugt en halv
+papkasse på en stang. Det fungerer, men det kan godt være lidt stressene. Man
+skal huske at få klappen på når man er færdig med en sang og har travlt med at
+huske hvad der nu skal ske. Til tider sker det også at man glemmer at tage klappen
+af, man når typisk at panikke lidt når der ikke kommer noget billede frem. Det
+kan betyde at man misser de første par overtekster eller starten af en film.
+
+
+For at løse dette er det planen at der bygges nogle arduinoer der kan kobles på netværket, disse
+kontrolerer en klap foran projektoren. På denne måde kan projektoren automatisk
+begynde at skyde billedet op på lærredet
 Arduino ftw!
 
 \subsection{Netværk}
@@ -507,7 +555,37 @@ echo nameserver 8.8.8.8 > /etc/resolv.conf
 Hvis dette ikke virker kan man evt. kigge på
 \url{https://wiki.archlinux.org/index.php/Internet_Share} for en ip baseret løsning
 
+
+\subsection{Arbejdere}
+Arbejdere er de maskiner/servere der er sluttet til projektorne. Det er deres
+rolle at vise AV-indholdet det kunne være overtekster, film, lydeffekter,
+slides, billeder osv.
+
+På nuværende tidspunkt bruges \texttt{mplayer} til at vise film, \texttt{feh}
+til at vise billeder og \texttt{xpdf} til at vise pdf'er.
+Det smarte ved \texttt{xpdf} er at det kan startes som en server som kan modtage
+kommandoer via en terminal.
+
+Ideen er at man fra sin kontroldatamat kan ssh'e ind på arbejderne og afvikle
+den kommando man skal bruge. Emacs med ubertex/uberscript tilbyder basalt set et
+interface til at gøre dette nemt.
+
+Det er planen at programmet \texttt{Zeiden} udvikles.
+Dette skal erstatte \texttt{feh} og \texttt{xpdf}.
+I stedet for at skulle ssh'e ind lytter \texttt{Zeiden} til en port og udfører
+kommandoer på givne klokkeslet. Så kan man sige ``om 1/2 sekund skal du afspille
+denne video'' på 3 forskellige maskiner, hvorved videoen vises simultant via
+\texttt{mplayer}.
+
+
+Et eksempel på en arbejderdatamat er \texttt{brok} der bruges til overtekster og ting der
+skal vises på lærredet.
+Derudover findes \texttt{left}, \texttt{mid} og \texttt{right} der bruges til at vise \textit{højtex}.
+
+
 \subsection{Brok}
+\textbf{Her er en guide om at få brok til at virke:}
+
 Sæt ham til
 Projektor, tastatur, netværk og strøm.
 
