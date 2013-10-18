@@ -290,14 +290,117 @@ timingen på skuespillerne/sangerne samt disses fejltagelser.
 
 % husk blanke slides
 
+\newpage
 \section{Opsætning af tekniken}
+Til en standard opsætning ala DIKUrevyens skal du bruge:
+\begin{figure}[h!]
+  \centering
+  \begin{dot2tex}
+    digraph{
+      rankdir=TD;
+      node [shape=ellipse];
+      c [label="Kontrol datamat"];
+      h [shape=octagon, label="LAN-hub"];
+      d1 [shape=box, label="Brok"];
+      d2 [shape=box, label="Intro"];
+      p1 [shape=trapezium, label="Projektor"];
+      p2 [shape=trapezium, label="Projektor"];
+
+      c -> h;
+      h -> d1;
+      h -> d2;
+      d1 -> p1;
+      d2 -> p2;
+    }
+  \end{dot2tex}
+  \caption{Standard opsætning}
+\end{figure}
+
+Hvis det ønskes (Når det er færdigt) kan man køre med fjernstyrede projektorklapper.
+\begin{figure}[h!]
+  \centering
+  \begin{dot2tex}
+    digraph{
+      rankdir=TD;
+      node [shape=ellipse];
+      c [label="Kontrol datamat"];
+      h [shape=octagon, label="LAN-hub"];
+      a [shape=diamond, label="arduino"];
+      d1 [shape=box, label="Brok"];
+      d2 [shape=box, label="Intro"];
+      p1 [shape=trapezium, label="Projektor"];
+      p2 [shape=trapezium, label="Projektor"];
+
+      c -> h;
+      h -> d1;
+      h -> d2;
+      h -> a;
+      a -> p1;
+      d1 -> p1;
+      d2 -> p2;
+    }
+  \end{dot2tex}
+  \caption{Standard opsætning, med arduino til projektorklap}
+\end{figure}
+
+\newpage
+Systemet kan udvides, her ses f.eks. en opsætning med højtex (uden
+projektorklapper) som brugt til DIKU Jubilæumsrevy.
+\begin{figure}[h!]
+  \centering
+  \begin{dot2tex}
+    digraph{
+      rankdir=TD;
+      node [shape=ellipse];
+      c [label="Kontrol datamat"];
+      h [shape=octagon, label="LAN-hub"];
+      d1 [shape=box, label="Brok"];
+      d2 [shape=box, label="Intro"];
+      p1 [shape=trapezium, label="Projektor"];
+      p2 [shape=trapezium, label="Projektor"];
+      h0 [shape=box, label="left"];
+      h1 [shape=box, label="mid"];
+      h2 [shape=box, label="right"];
+      hp0 [shape=trapezium, label="Projektor"];
+      hp1 [shape=trapezium, label="Projektor"];
+      hp2 [shape=trapezium, label="Projektor"];
+
+      c -> h;
+      h -> d1;
+      h -> d2;
+      d1 -> p1;
+      d2 -> p2;
+
+      h -> h0;
+      h -> h1;
+      h -> h2;
+      h0 -> hp0;
+      h1 -> hp1;
+      h2 -> hp2;
+    }
+  \end{dot2tex}
+  \caption{Højtex}
+\end{figure}
+
+
+\subsection{Kontrol}
+Dette er din primære indgang til systemet. Jeg anbefaler at man bruger en
+Foldedatamat, gerne ens egen bærbare.
+En bærbar har den fordel at skærmen kan indstilles til både at sidde ned og stå
+op. Derudover har den tastatur og mus indbygget så det ikke fylder i den ellers
+rodede texnik. Og så kan man tage den med sig så man kan arbejde videre andre
+steder. F.eks. er det praktisk at kunne plugge den ud så man kan arbejde videre
+på sine overtekster til et ellers kedeligt senemøde i hyggehjørnet.
+
+
 \subsection{Projektorer}
 Til DIKUrevyen bruges der typisk i hvertfald 2 projektorer.
-Der bruges 1 der peger op på lærredet over scenen, her vises der overtekster,
+Der bruges én der peger op på lærredet over scenen, her vises der overtekster,
 almindelige av-ting til sketches samt små film.
 
 Kantinen ejer en stor Epson som bruges til introen/av på scenen
-
+\subsubsection{Projektorklapper}
+Arduino ftw!
 
 \subsection{Netværk}
 \subsubsection{Statisk IP}
