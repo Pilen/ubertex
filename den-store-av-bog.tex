@@ -15,10 +15,29 @@
 \usetikzlibrary{shapes}
 \usepackage{ulem}
 \usepackage{subcaption}
+\usepackage{mdframed}
+\usepackage{color}
+
+
+\definecolor{verbgray}{gray}{0.92}
+\mdfdefinestyle{code}{%
+  hidealllines=true,
+  backgroundcolor = verbgray}
+
+\let\oldv\verbatim
+\let\oldendv\endverbatim
+
+\def\verbatim{\mdframed[style=code]\oldv}
+\def\endverbatim{\oldendv\endmdframed}
+
+% \newcommand{\code}[1]{\mdframed[style=code]\texttt{#1}\endmdframed}
+% \newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\code}[1]{\colorbox{verbgray}{\texttt{#1}}}
 
 \pagestyle{fancy}
 \fancyhead{}
 \fancyfoot{}
+\lhead{\nouppercase\leftmark}
 \rhead{Den Store AV-bog}
 \rfoot{\thepage}
 \setlength\parskip{1em}
@@ -107,7 +126,7 @@ film der maksimeres eller rammerne på et vindue.
 Det simpleste AVsystem man kan lave er at have en datamat tilkoblet en
 projektor. Datamaten kan derfra køre et presentationsprogram, f.eks. powerpoint.
 
-\begin{figure}[h]
+\begin{figure}[h!]
   \centering
   \begin{dot2tex}
     digraph{
@@ -130,7 +149,7 @@ at råbe ``TeXniken sejler!''.
 
 Derudover har man et problem hvis man skal bruge mere end 1 projektor.
 
-\begin{figure}[h]
+\begin{figure}[h!]
   \centering
   \begin{dot2tex}
     digraph{
@@ -149,7 +168,7 @@ Derudover har man et problem hvis man skal bruge mere end 1 projektor.
   \caption{En datamat, flere projektorer.}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[h!]
   \centering
   \begin{dot2tex}
     digraph{
@@ -184,7 +203,7 @@ områder kommer man ikke lige så let til at lave fejl. Vi ønsker derfor at hav
 en central maskine der styrer det hele, denne kommunikerer med andre maskiner
 der sørger for at vise ting via projektorer.
 
-\begin{figure}[h]
+\begin{figure}[h!]
   \centering
   \begin{dot2tex}
     digraph{
@@ -502,7 +521,10 @@ Udskift \texttt{pilen} og ip'en med den relevante bruger og ip.
 Husk at du skal have en ssh nøgle først
 dannes med:
 
-\texttt{ssh-keygen}
+\begin{verbatim}
+ssh-keygen
+\end{verbatim}
+
 
 \subsubsection{ssh mount}
 I stedet for at scp'e alt muligt crap frem og tibage kan man benytte sig af et
@@ -606,7 +628,7 @@ Brok logger automatisk ind med brugeren \textbf{\textit{revy}} med løsnet \text
 Herefter starter unity der har en `kør' dialog ting.
 
 \textbf{2: Start en terminal}\\
-Skriv \texttt{terminal} og tryk enter.
+Skriv \code{terminal} og tryk enter.
 Der vil nu komme en terminal op i hjørnet.
 
 \textbf{3: Kom på netværket}\\
@@ -652,7 +674,7 @@ Det betyder at skærmen pr. default er sort når x er startet
 \textbf{8: detach fra screen}\\
 Tryk \texttt{Ctrl-a d}. Dette lader alt der kører i screen fortsætte upåvirket
 mens du kommer tilbage til det forrige miljø.
-for at reattache skriv da \texttt{screen -r}.
+for at reattache skriv da \code{screen -r}.
 
 \textbf{9: test xmonad}\\
 Test om xmonad virker. På broks tastatur trykkes \texttt{Alt-Shift-Enter}.
@@ -699,7 +721,7 @@ debian baserede styresystemer, potientielt i en suckless pakke.
 markøren ad helvede til.
 
 istedet for \texttt{swarp} kan man bruge \texttt{unclutter}
-med kommandoen \texttt{unclutter -idle 0 -root \&}\\
+med kommandoen \code{unclutter -idle 0 -root \&}
 Som i fjern cursoren efter 0 sekunders delay efter bevægelse inklusiv når
 cursoren er over rod baggrunden (altså ikke kun over vinduer).
 
@@ -734,7 +756,7 @@ xset -dpms; xset s off
 Til at slå dpms fra.
 De to systemer kan dog \uline{ikke} blandes.
 
-Man kan se om dpms er slået til ved at kalde \texttt{xset -q}
+Man kan se om dpms er slået til ved at kalde \code{xset -q}
 \subsection{Xmonad}
 Windos/super eller alt som modifier knap.
 
@@ -770,6 +792,10 @@ m filnavn
 \section{Konvertering fra manuskrift til overtekster}
 \section{ubertex}
 \section{ubersicht}
+\section{Zeigen}
+\section{Herzog}
+
+\section{furst}
 \section{Hvordan virker koden}
 
 Der sørges automatisk for at det korrekte major mode køres på .tex og .el filer
@@ -834,7 +860,8 @@ overteksterne og ikke nødvendigvis størrelsen af pdfen.
 Jeg ved ikke helt hvordan dette skal løses.
 Det er en af grundene til at vi vil lave vores egen fremviser (Zeigen).
 
-\section{APPENDIX A: En guide til Linux}
+\appendix
+\section{En guide til Linux}
 % Sådan bruger du en terminal
 \textbf{cd}
 \textbf{ls}
@@ -845,7 +872,7 @@ Det er en af grundene til at vi vil lave vores egen fremviser (Zeigen).
 \textbf{ssh}
 \textbf{nano}
 
-\section{APPENDIX B: Installation af Arch Linux}
+\section{Installation af Arch Linux}
 \begin{verbatim}
 loadkeys colemak
 ip link show
@@ -923,7 +950,7 @@ mount /dev/sda3 /mnt
 \end{verbatim}
 
 Hvis du skulle have lavet en seperat partition til home så lav en mappe
-\texttt{mkdir /mnt/home} og mount home partitionen der \texttt{mount /dev/sdaX
+\code{mkdir /mnt/home} og mount home partitionen der \code{mount /dev/sdaX
   /mnt/home}.
 
 Sørg for at være på nettet da vi nu skal hente pakker ned til styresystemet.
@@ -971,7 +998,7 @@ Hiv usbstikket ud.
 Tænd datamaten igen.
 Hvis du som mig til jubilæumsrevyen installerede systemet på en harddisk i en
 anden datamat en dens egen, kan det være at ramdisken fejler, i grub vælges da
-fallback løsningen og du kalder \texttt{mkinitcpio -p linux} for at skabe et nyt
+fallback løsningen og du kalder \code{mkinitcpio -p linux} for at skabe et nyt
 korrekt image.
 
 \begin{verbatim}
@@ -1000,7 +1027,7 @@ ip addr add 192.168.0.XXX/24 dev enpXsX;
 ip route add default via 192.168.0.YYY;
 echo nameserver 8.8.8.8 > /etc/resolv.conf;
 \end{verbatim}
-Gem, luk nano og skriv \texttt{exit}.
+Gem, luk nano og skriv \code{exit}.
 
 \begin{verbatim}
 pacman -S sudo
@@ -1023,7 +1050,7 @@ pacman -S openssh
 systemctl enable sshd.service
 systemctl start sshd
 \end{verbatim}
-Nu kan vi ssh'e ind fra vores lokale maskine \texttt{ssh revy@192.168.0.XXX}.
+Nu kan vi ssh'e ind fra vores lokale maskine \code{ssh revy@192.168.0.XXX}.
 \textit{Læs evt. afsnittet om ssh-nøgler.}
 
 Nu kan vi vælge at køre ting via ssh forbindelse.
@@ -1068,9 +1095,9 @@ Du kan evt. også tilføje følgende alias:
 alias d='export DISPLAY=:0'
 \end{verbatim}
 
-\section{APPENDIX C: Stripped Emacs}
-\section{APPENDIX D: Emacs}
-\section{APPENDIX E: mangler}
+\section{Stripped Emacs}
+\section{Emacs}
+\section{mangler}
 revy-shell skal escape kommandoer
 Youtube
 Arduinoer
