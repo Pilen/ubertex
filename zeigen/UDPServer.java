@@ -27,7 +27,7 @@ public class UDPServer implements Server {
                 throw new RuntimeException(e.getMessage(), e);
             }
             byte[] data = packet.getData();
-            String = new String(data, 0, packet.getLength(), StandardCharsets.UTF_8);
+            String message = new String(data, 0, packet.getLength(), StandardCharsets.UTF_8);
             System.out.println("Received from: " + packet.getAddress() + ":" + packet.getPort() + ":" + message);
             this.controller.message(message);
         }
