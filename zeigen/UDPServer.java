@@ -29,11 +29,6 @@ public class UDPServer implements Server {
             byte[] data = packet.getData();
             String message;
             message = new String(data, 0, packet.getLength(), StandardCharsets.UTF_8);
-            System.out.println(message.substring(message.length()-2, message.length()));
-            System.out.println(message.length());
-            if (message.endsWith("\n")) {
-                System.out.println("newline!!!");
-            }
             System.out.println("Received from: " + packet.getAddress() + ":" + packet.getPort() + ":" + message);
             this.controller.message(message);
         }
