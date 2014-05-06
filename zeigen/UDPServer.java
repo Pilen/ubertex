@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
@@ -27,12 +28,7 @@ public class UDPServer implements Server {
             }
             byte[] data = packet.getData();
             String message;
-            try {
-                message = new String(data, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                // Should never happen!
-                throw new AssertionError(e);
-            }
+            message = new String(data, StandardCharsets.UTF_8);
             System.out.println(message.substring(message.length()-2, message.length()));
             System.out.println(message.length());
             if (message.endsWith("\n")) {
