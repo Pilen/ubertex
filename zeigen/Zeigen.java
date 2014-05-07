@@ -1,4 +1,7 @@
+import java.util.ArrayList;
+
 import java.net.SocketException;
+
 
 public class Zeigen {
     public static void main(String[] args) {
@@ -6,7 +9,9 @@ public class Zeigen {
     }
 
     public Zeigen(String[] args) {
-        Controller controller = new Controller();
+        ArrayList<String> names = new ArrayList<String>();
+        names.add("brok");
+        Controller controller = new Controller(names);
         Server server;
         try {
             server = new UDPServer(controller, 9999);
