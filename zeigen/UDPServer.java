@@ -11,6 +11,11 @@ public class UDPServer implements Server {
     private DatagramSocket socket;
     private Controller controller;
 
+    /**
+     * Create a new UDPServer
+     *
+     * When SocketException is thrown, you should discard this UDPServer object
+     */
     public UDPServer(Controller controller, int port) throws SocketException {
         this.socket = new DatagramSocket(port);
         this.controller = controller;
