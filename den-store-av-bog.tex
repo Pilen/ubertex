@@ -1111,7 +1111,7 @@ host [otherhost];<time>;command;options
 \end{verbatim}
 
 \texttt{Host} er en mellemrums adskilt liste af navne på de zeigen servere/grupper der
-skal have beskeden (tage sig af den).
+skal have beskeden (tage sig af den). Husk at navne er caseinsensitive.
 
 \texttt{<time>} er klokkeslettet hvor kommandoen skal udføres.
 Beskeder i datiden udføres hurtigst muligt, så brug 0 hvis den skal udføres med
@@ -1119,12 +1119,12 @@ det samme.
 
 \texttt{command} er den kommando der ønskes udført
 \begin{verbatim}
-sync
-quit
-kill
 clearqueue
+kill
+quit
 sketch
 start
+sync
 \end{verbatim}
 
 \texttt{options} er argumenter der gives til kommandoen.
