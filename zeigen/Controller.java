@@ -51,7 +51,7 @@ public class Controller {
     }
 
     public void command(String command, String options) {
-        System.out.println(command);
+        System.out.println("DOING: " + command + ";" + options);
         // switch (command) {
         // case "clearqueue": this.clearqueue(time); break;
         // case "kill": this.kill(time); break;
