@@ -11,6 +11,8 @@ public class Controller {
         this.sketch = null;
 
         this.taskManager = new TaskManager(this);
+        Thread taskThread = new Thread(this.taskManager);
+        taskThread.start();
 
         this.names = new HashSet<String>(names.size());
         for (String name : names) {
@@ -29,6 +31,7 @@ public class Controller {
 
             if (this.forMe(targets.split(" "))) {
                 System.out.println("RECEIVED: " + message);
+                this.taskManager.addTask(time, command, options);
                 // this.command(command, time, options);
             } else {
                 System.out.println("IGNORED MESSAGE");
