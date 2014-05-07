@@ -33,6 +33,7 @@ public class TaskManager implements Runnable{
             SortedMap<String, Task> currentTasks = this.tasks.headMap("now");
             for (Map.Entry<String, Task> entry : currentTasks.entrySet()) {
                 Task task = entry.getValue();
+                this.tasks.remove(entry.getKey());
                 this.controller.command(task.command, task.options);
             }
             this.lock.unlock();
