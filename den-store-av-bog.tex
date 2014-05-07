@@ -1103,6 +1103,42 @@ Youtube
 Arduinoer
 Stripped Emacs
 
+\section{Zeigen-protokol}
+Zegien forstå følgende protokol
+
+\begin{verbatim}
+host [otherhost];<time>;command;options
+\end{verbatim}
+
+\texttt{Host} er en mellemrums adskilt liste af navne på de zeigen servere/grupper der
+skal have beskeden (tage sig af den).
+
+\texttt{<time>} er klokkeslettet hvor kommandoen skal udføres.
+Beskeder i datiden udføres hurtigst muligt, så brug 0 hvis den skal udføres med
+det samme.
+
+\texttt{command} er den kommando der ønskes udført
+\begin{verbatim}
+sync
+quit
+kill
+clearqueue
+sketch
+start
+\end{verbatim}
+
+\texttt{options} er argumenter der gives til kommandoen.
+formattet for \texttt{options} afgøres af kommandoen
+
+\subsection{sketch}
+\texttt{sketch} kommandoen regner med at option består af følgende
+\begin{verbatim}
+sketchname;message
+\end{verbatim}
+
+Hvis \texttt{sketchname} tilsvarer navnet på den nuværende afviklende sketch,
+sendes \texttt{message} til sketchen på det før angivne tidspunkt.
+Beskeden modtages i sketchens \textit{receive} metode.
 
 \section{PDF/billedviser}
 Kan baseres på poppler.
