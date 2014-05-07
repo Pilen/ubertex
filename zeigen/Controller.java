@@ -6,8 +6,11 @@ public class Controller {
     private final HashSet<String> names;
     private ZSketch sketch;
 
+    private final TaskManager taskManager;
     public Controller(ArrayList<String> names) {
         this.sketch = null;
+
+        this.taskManager = new TaskManager(this);
 
         this.names = new HashSet<String>(names.size());
         for (String name : names) {
@@ -26,6 +29,7 @@ public class Controller {
 
             if (this.forMe(targets.split(" "))) {
                 System.out.println("RECEIVED: " + message);
+                // this.command(command, time, options);
             } else {
                 System.out.println("IGNORED MESSAGE");
             }
@@ -41,5 +45,17 @@ public class Controller {
             }
         }
         return false;
+    }
+
+    public void command(String command, String options) {
+        // switch (command) {
+        // case "clearqueue": this.clearqueue(time); break;
+        // case "kill": this.kill(time); break;
+        // case "quit": this.quit(time); break;
+        // case "sketch": this.sketch(time, options); break;
+        // case "start": this.sketch(time, options); break;
+        // case "sync": this.sync(time); break;
+
+        // }
     }
 }
