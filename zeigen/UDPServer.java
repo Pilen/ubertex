@@ -33,7 +33,7 @@ public class UDPServer implements Server {
             }
             byte[] data = packet.getData();
             String message = new String(data, 0, packet.getLength(), StandardCharsets.UTF_8);
-            System.out.println("Received from: " + packet.getAddress() + ":" + packet.getPort() + ":" + message);
+            // System.out.println("Received from: " + packet.getAddress() + ":" + packet.getPort() + ":" + message);
             this.controller.message(message);
         }
     }
