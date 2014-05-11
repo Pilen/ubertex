@@ -116,7 +116,7 @@ public class Controller {
 
         if (this.sketch != null) {
             this.sketch.zStart(sketchName);
-            this.sketchName = sketch
+            this.sketchName = sketch;
         } else {
             System.out.println("COULD NOT LOAD CLASS: " + sketchName);
         }
