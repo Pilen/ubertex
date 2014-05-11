@@ -108,16 +108,17 @@ public class Controller {
         // this.sketch = new TestSketch();
         // this.sketch = new sketches.TestSketch();
 
-        try {
+        // try {
             System.out.println("LOADING");
-            this.sketch = (ZSketch) Class.forName("sketches.TestSketch").newInstance();
+            // this.sketch = (ZSketch) Class.forName("TestSketch").newInstance();
+            this.sketch = SketchLoader.load("TestSketch");
             System.out.println("DONE LOADING");
 
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            System.out.println("ERROR");
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        // } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            // System.out.println("ERROR");
+            // System.out.println(e.getMessage());
+            // e.printStackTrace();
+        // }
         this.sketch.zStart(options);
 
         this.lock.unlock();
