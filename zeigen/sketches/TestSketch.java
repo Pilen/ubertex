@@ -14,8 +14,8 @@ public class TestSketch extends ZSketch {
     }
 
     public void zDraw() {
-        // ellipse(200 + (t % 4)*10,200,100,100);
-        rect(200 + (t % 4)*10,200,100,100);
+        ellipse(200 + (t % 4)*10,200,100,100);
+        // rect(200 + (t % 4)*10,200,100,100);
         this.t++;
     }
 }
