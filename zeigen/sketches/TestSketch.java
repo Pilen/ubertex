@@ -1,4 +1,8 @@
 
+package sketches;
+
+import zeigen.ZSketch;
+
 public class TestSketch extends ZSketch {
     private int t;
 
