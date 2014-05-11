@@ -66,9 +66,9 @@ public class Controller {
         System.out.println("DOING: " + command + ";" + options);
         switch (command) {
         // case "clearqueue": this.clearqueue(); break;
-        case "kill": this.kill(); break;
+        case "kill": this.kill(options); break;
         // case "quit": this.quit(); break;
-        case "restart": this.kill(); this.start(options); break;
+        case "restart": this.kill(options); this.start(options); break;
         case "sketch": this.sketch(options); break;
         case "start": this.start(options); break;
         // case "sync": this.sync(); break;
@@ -81,7 +81,7 @@ public class Controller {
      */
 
     private void kill(String sketch) {
-        if (this.sketchName.equals(sketch)) {
+        if (sketch.isEmpty() || this.sketchName.toLowerCase().equals(sketch.toLowerCase())) {
             this.kill();
         } else {
             System.out.println("CAN'T KILL: " + sketch);
@@ -93,6 +93,7 @@ public class Controller {
         if (this.sketch != null) {
             this.sketch.exit();
             this.sketch = null;
+            System.out.println("TERMINATING: " + this.sketchName);
             this.sketchName = "";
         } else {
             System.out.println("NO SKETCH TO KILL");
