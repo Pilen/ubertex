@@ -10,6 +10,7 @@ public class Controller {
 
     private final HashSet<String> names;
     private ZSketch sketch;
+    private String sketchName;
 
     private final TaskManager taskManager;
     public Controller(ArrayList<String> names) {
@@ -17,6 +18,7 @@ public class Controller {
         this.lock.lock();
 
         this.sketch = null;
+        this.sketchName = "";
 
         this.taskManager = new TaskManager(this);
         Thread taskThread = new Thread(this.taskManager);
@@ -106,6 +108,7 @@ public class Controller {
 
         if (this.sketch != null) {
             this.sketch.zStart(sketchName);
+            this.sketchName = sketch
         } else {
             System.out.println("COULD NOT LOAD CLASS: " + sketchName);
         }
