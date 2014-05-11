@@ -35,11 +35,11 @@ public class Controller {
     public void message(String message) {
 
         String[] headers = message.split(";", 4);
-        if (headers.length == 4) {
+        if (headers.length == 4 || headers.length == 3) {
             String targets = headers[0];
             String time = headers[1];
             String command = headers[2];
-            String options = headers[3];
+            String options = headers.length == 4 ? headers[3] : "";
 
             if (this.forMe(targets.split(" "))) {
                 System.out.println("RECEIVED: " + message);
