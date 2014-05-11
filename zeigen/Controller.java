@@ -101,7 +101,12 @@ public class Controller {
             this.kill();
         }
 
-        this.sketch = new TestSketch();
+        // this.sketch = new TestSketch();
+        try {
+            this.sketch = (ZSketch) Class.forName("TestSketch").newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+
+        }
         this.sketch.zStart(options);
 
         this.lock.unlock();
