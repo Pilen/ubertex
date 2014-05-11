@@ -96,8 +96,14 @@ public class Controller {
 
     private void start(String options) {
         this.lock.lock();
+
+        if (this.sketch != null) {
+            this.kill();
+        }
+
         this.sketch = new TestSketch();
         this.sketch.zStart(options);
+
         this.lock.unlock();
     }
 }
