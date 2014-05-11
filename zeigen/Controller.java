@@ -80,6 +80,13 @@ public class Controller {
      * COMMANDS:
      */
 
+    private void kill(String sketch) {
+        if (this.sketchName.equals(sketch)) {
+            this.kill();
+        } else {
+            System.out.println("CAN'T KILL: " + message);
+        }
+    }
     private void kill() {
         this.lock.lock();
 
