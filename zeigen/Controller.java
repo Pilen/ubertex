@@ -84,7 +84,7 @@ public class Controller {
         if (this.sketchName.equals(sketch)) {
             this.kill();
         } else {
-            System.out.println("CAN'T KILL: " + message);
+            System.out.println("CAN'T KILL: " + sketch);
         }
     }
     private void kill() {
@@ -116,7 +116,7 @@ public class Controller {
 
         if (this.sketch != null) {
             this.sketch.zStart(sketchName);
-            this.sketchName = sketch;
+            this.sketchName = sketchName;
         } else {
             System.out.println("COULD NOT LOAD CLASS: " + sketchName);
         }
