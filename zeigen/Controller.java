@@ -86,6 +86,7 @@ public class Controller {
         if (this.sketch != null) {
             this.sketch.exit();
             this.sketch = null;
+            this.sketchName = "";
         } else {
             System.out.println("NO SKETCH TO KILL");
         }
