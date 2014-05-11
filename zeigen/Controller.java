@@ -106,10 +106,8 @@ public class Controller {
         // this.sketch = new sketches.TestSketch();
 
         // try {
-            System.out.println("LOADING");
             // this.sketch = (ZSketch) Class.forName("TestSketch").newInstance();
             this.sketch = SketchLoader.load("TestSketch");
-            System.out.println("DONE LOADING");
 
         // } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             // System.out.println("ERROR");

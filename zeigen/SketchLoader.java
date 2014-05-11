@@ -15,13 +15,11 @@ public class SketchLoader extends ClassLoader {
     public Class loadClass(String classname) throws ClassNotFoundException {
         String filename = "/home/pilen/code/ubertex/zeigen/sketches/" + classname + ".class";
         File file = new File(filename);
-        System.out.println("LOADER: " + filename);
+
         if (! file.isFile()) {
-            System.out.println("GOING SUPER!");
             return super.loadClass(classname);
         }
 
-        System.out.println("LOAD SKETCH");
         try {
             InputStream input = new FileInputStream(filename);
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -32,11 +30,11 @@ public class SketchLoader extends ClassLoader {
                 data = input.read();
             }
             input.close();
-            System.out.println("DONE READING");
+
             byte[] classData = buffer.toByteArray();
             return defineClass(classname, classData, 0, classData.length);
         } catch (IOException e) {
-            System.out.println("COULD NOT LOAD CLASS: " + classname);
+            // System.out.println("COULD NOT LOAD CLASS: " + classname);
         }
         return null;
     }
@@ -51,7 +49,7 @@ public class SketchLoader extends ClassLoader {
             ZSketch sketch = (ZSketch) sketchClass.newInstance();
             return sketch;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            System.out.println("COULD NOT LOAD CLASS: " + sketchname);
+            // System.out.println("COULD NOT LOAD CLASS: " + sketchname);
         }
 
         return null;
