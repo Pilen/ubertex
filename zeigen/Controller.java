@@ -79,8 +79,14 @@ public class Controller {
 
     private void kill() {
         this.lock.lock();
-        this.sketch.exit();
-        this.sketch = null;
+
+        if (this.sketch != null) {
+            this.sketch.exit();
+            this.sketch = null;
+        } else {
+            System.out.println("NO SKETCH TO KILL");
+        }
+
         this.lock.unlock();
     }
 
