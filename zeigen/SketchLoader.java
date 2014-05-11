@@ -1,6 +1,4 @@
 
-package zeigen;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.FileInputStream;
@@ -15,7 +13,6 @@ public class SketchLoader extends ClassLoader {
     }
 
     public Class loadClass(String classname) throws ClassNotFoundException {
-
         String filename = "/home/pilen/code/ubertex/zeigen/sketches/" + classname + ".class";
         File file = new File(filename);
         System.out.println("LOADER: " + filename);

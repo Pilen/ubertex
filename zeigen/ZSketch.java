@@ -1,7 +1,4 @@
 
-package zeigen;
-
-
 import processing.core.PApplet;
 
 public abstract class ZSketch extends PApplet {

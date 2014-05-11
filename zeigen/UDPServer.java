@@ -1,7 +1,4 @@
 
-package zeigen;
-
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
