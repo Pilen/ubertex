@@ -22,9 +22,6 @@ public abstract class ZSketch extends PApplet {
     }
 
     protected final void exitActual() {
-        System.out.println("DØ");
-        System.out.println(Thread.activeCount());
-        System.out.println(Thread.currentThread().toString());
         this.destroy();
         this.frame.setVisible(false);
         // Thread.currentThread().interrupt();
