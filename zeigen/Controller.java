@@ -95,26 +95,20 @@ public class Controller {
 
     }
 
-    private void start(String options) {
+    private void start(String sketchName) {
         this.lock.lock();
 
         if (this.sketch != null) {
             this.kill();
         }
 
-        // this.sketch = new TestSketch();
-        // this.sketch = new sketches.TestSketch();
+        this.sketch = SketchLoader.load(sketchName);
 
-        // try {
-            // this.sketch = (ZSketch) Class.forName("TestSketch").newInstance();
-            this.sketch = SketchLoader.load("TestSketch");
-
-        // } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            // System.out.println("ERROR");
-            // System.out.println(e.getMessage());
-            // e.printStackTrace();
-        // }
-        this.sketch.zStart(options);
+        if (this.sketch != null) {
+            this.sketch.zStart(sketchName);
+        } else {
+            System.out.println("COULD NOT LOAD CLASS: " + sketchName);
+        }
 
         this.lock.unlock();
     }
