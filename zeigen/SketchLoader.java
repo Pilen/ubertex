@@ -15,8 +15,6 @@ public class SketchLoader extends ClassLoader {
     }
 
     public Class loadClass(String classname) throws ClassNotFoundException {
-        String[] classParts = classname.split(".");
-        if (classParts.length == 2 && classParts[0].equals("sketches") {
 
         String filename = "/home/pilen/code/ubertex/zeigen/sketches/" + classname + ".class";
         File file = new File(filename);
