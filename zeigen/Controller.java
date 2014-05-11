@@ -1,13 +1,20 @@
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import java.util.concurrent.locks.ReentrantLock;
+
+
 public class Controller {
+    private ReentrantLock lock;
 
     private final HashSet<String> names;
     private ZSketch sketch;
 
     private final TaskManager taskManager;
     public Controller(ArrayList<String> names) {
+        this.lock = new ReentrantLock(true);
+        this.lock.lock();
+
         this.sketch = null;
 
         this.taskManager = new TaskManager(this);
@@ -18,6 +25,8 @@ public class Controller {
         for (String name : names) {
             this.names.add(name.toLowerCase());
         }
+
+        this.lock.unlock();
     }
 
     public void message(String message) {
@@ -52,14 +61,37 @@ public class Controller {
 
     public void command(String command, String options) {
         System.out.println("DOING: " + command + ";" + options);
-        // switch (command) {
-        // case "clearqueue": this.clearqueue(time); break;
-        // case "kill": this.kill(time); break;
-        // case "quit": this.quit(time); break;
-        // case "sketch": this.sketch(time, options); break;
-        // case "start": this.sketch(time, options); break;
-        // case "sync": this.sync(time); break;
+        switch (command) {
+        // case "clearqueue": this.clearqueue(); break;
+        case "kill": this.kill(); break;
+        // case "quit": this.quit(); break;
+        case "restart": this.kill(); this.start(options); break;
+        case "sketch": this.sketch(options); break;
+        case "start": this.start(options); break;
+        // case "sync": this.sync(); break;
+        default: System.out.println("UNSUPPORTED COMMAND: " + command);
+        }
+    }
 
-        // }
+    /*
+     * COMMANDS:
+     */
+
+    private void kill() {
+        this.lock.lock();
+        this.sketch.exit();
+        this.sketch = null;
+        this.lock.unlock();
+    }
+
+    private void sketch(String options) {
+
+    }
+
+    private void start(String options) {
+        this.lock.lock();
+        this.sketch = new TestSketch();
+        this.sketch.zStart(options);
+        this.lock.unlock();
     }
 }
