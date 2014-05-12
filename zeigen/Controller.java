@@ -13,6 +13,7 @@ public class Controller {
     private String sketchName;
 
     private final TaskManager taskManager;
+
     public Controller(ArrayList<String> names) {
         this.lock = new ReentrantLock(true);
         this.lock.lock();
@@ -67,7 +68,7 @@ public class Controller {
         switch (command) {
         // case "clearqueue": this.clearqueue(); break;
         case "kill": this.kill(options); break;
-        // case "quit": this.quit(); break;
+        case "quit": this.quit(); break;
         case "restart": this.kill(options); this.start(options); break;
         case "sketch": this.sketch(options); break;
         case "start": this.start(options); break;
@@ -87,6 +88,7 @@ public class Controller {
             System.out.println("CAN'T KILL: " + sketch);
         }
     }
+
     private void kill() {
         this.lock.lock();
 
@@ -123,5 +125,9 @@ public class Controller {
         }
 
         this.lock.unlock();
+    }
+
+    private void quit() {
+        System.exit(0);
     }
 }
