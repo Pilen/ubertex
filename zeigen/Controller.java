@@ -66,7 +66,7 @@ public class Controller {
     public void command(String command, String options) {
         System.out.println("DOING: " + command + ";" + options);
         switch (command) {
-        // case "clearqueue": this.clearqueue(); break;
+        case "clearqueue": this.clearqueue(); break;
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
         case "quit": this.quit(); break;
@@ -82,6 +82,11 @@ public class Controller {
      * COMMANDS:
      */
 
+
+    private void clearqueue() {
+        int cleared = this.taskManager.clear();
+        System.out.println(cleared);
+    }
     private void kill(String sketch) {
         if (sketch.isEmpty() || this.sketchName.toLowerCase().equals(sketch.toLowerCase())) {
             this.kill();

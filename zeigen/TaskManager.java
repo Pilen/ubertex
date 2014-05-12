@@ -3,17 +3,20 @@ import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.SortedMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.LinkedHashSet;
+
 
 public class TaskManager implements Runnable{
     private final Controller controller;
-    private TreeMap<String, Task> tasks;
+    private TreeMap<String, Set<Task>> tasks;
     private ReentrantLock lock;
 
     public TaskManager(Controller controller) {
         this.controller = controller;
         this.lock = new ReentrantLock(true);
         this.lock.lock();
-        this.tasks = new TreeMap<String, Task>();
+        this.tasks = new TreeMap<String, Set<Task>>();
         this.lock.unlock();
     }
 
@@ -24,18 +27,45 @@ public class TaskManager implements Runnable{
     public void addTask(String time, String command, String options) {
         Task task = new Task(command, options);
         this.lock.lock();
-        this.tasks.put(time, task);
+        Set<Task> tasksAt = this.tasks.get(time);
+        if (tasksAt == null) {
+            tasksAt = new LinkedHashSet<Task>();
+            this.tasks.put(time, tasksAt);
+        }
+        tasksAt.add(task);
         this.lock.unlock();
+    }
+
+    public int clear() {
+        this.lock.lock();
+        int size = this.size();
+        this.tasks.clear();
+        this.lock.unlock();
+        return size;
+    }
+
+    public int size() {
+        int size = 0;
+        this.lock.lock();
+        for (Set<Task> tasksAt : this.tasks.values()) {
+            for (Task task : tasksAt) {
+                size++;
+            }
+        }
+        this.lock.unlock();
+        return size;
     }
 
     public void run() {
         while (true) {
             this.lock.lock();
-            SortedMap<String, Task> currentTasks = this.tasks.headMap("now");
-            for (Map.Entry<String, Task> entry : currentTasks.entrySet()) {
-                Task task = entry.getValue();
+            SortedMap<String, Set<Task>> currentTasks = this.tasks.headMap("now");
+            for (Map.Entry<String, Set<Task>> entry : currentTasks.entrySet()) {
+                Set<Task> tasksAt = entry.getValue();
                 this.tasks.remove(entry.getKey());
-                this.controller.command(task.command, task.options);
+                for (Task task : tasksAt) {
+                    this.controller.command(task.command, task.options);
+                }
             }
             this.lock.unlock();
         }
@@ -51,6 +81,17 @@ public class TaskManager implements Runnable{
         public Task(String command, String options) {
             this.command = command;
             this.options = options;
+        }
+        public boolean equals(Object other) {
+            if (other instanceof Task) {
+                Task otherTask = (Task) other;
+                return this.command.equals(otherTask.command) && this.options.equals(otherTask.options);
+            }
+            return false;
+        }
+
+        public int hashCode() {
+            return (this.command + this.options).hashCode();
         }
     }
 }
