@@ -67,6 +67,7 @@ public class Controller {
         System.out.println("DOING: " + command + ";" + options);
         switch (command) {
         // case "clearqueue": this.clearqueue(); break;
+        case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
         case "quit": this.quit(); break;
         case "restart": this.kill(options); this.start(options); break;
