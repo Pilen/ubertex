@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class Controller {
+public class Controller implements TaskPerformer {
     private ReentrantLock lock;
 
     private final HashSet<String> names;
@@ -63,7 +63,7 @@ public class Controller {
         return false;
     }
 
-    public void command(String command, String options) {
+    public void doTask(String command, String options) {
         System.out.println("DOING: " + command + ";" + options);
         switch (command) {
         case "abort" : this.abort(); break;
@@ -95,6 +95,7 @@ public class Controller {
         System.out.println(cleared);
         this.lock.unlock();
     }
+
     private void kill(String sketch) {
         this.lock.lock();
         if (sketch.isEmpty() || this.sketchName.toLowerCase().equals(sketch.toLowerCase())) {
