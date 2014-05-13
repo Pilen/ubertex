@@ -66,6 +66,7 @@ public class Controller {
     public void command(String command, String options) {
         System.out.println("DOING: " + command + ";" + options);
         switch (command) {
+        case "abort" : this.abort();
         case "clearqueue": this.clearqueue(); break;
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
@@ -82,6 +83,12 @@ public class Controller {
      * COMMANDS:
      */
 
+    private void abort() {
+        this.lock.lock();
+        this.clearqueue();
+        this.kill();
+        this.lock.unlock();
+    }
 
     private void clearqueue() {
         this.lock.lock();
