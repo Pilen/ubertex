@@ -45,6 +45,7 @@ public class Controller implements TaskPerformer {
             if (this.forMe(targets.split(" "))) {
                 System.out.println("RECEIVED: " + message);
                 this.taskManager.addTask(time, command, options);
+                this.sketch(time, options);
                 // this.command(command, time, options);
             } else {
                 System.out.println("IGNORED MESSAGE");
@@ -71,7 +72,7 @@ public class Controller implements TaskPerformer {
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
         case "quit": this.quit(); break;
-        case "sketch": this.sketch(options); break;
+        // case "sketch": all ready handled
         case "start": this.start(options); break;
         // case "sync": this.sync(); break;
         default: System.out.println("UNSUPPORTED COMMAND: " + command); break;
@@ -121,7 +122,23 @@ public class Controller implements TaskPerformer {
         this.lock.unlock();
     }
 
-    private void sketch(String options) {
+    private void sketch(String time, String message) {
+        String[] parts = message.split(";", 2);
+
+        if (parts.length == 2) {
+            String sketch = parts[0].trim();
+            String options = parts[1];
+
+            this.lock.lock();
+            if (sketch.equals("") || sketch.equals(this.sketchName)) {
+                this.sketch.addTask(time, message);
+            } else {
+                System.out.println("RECEIVED MESSAGE FOR WRONG SKETCH: " + sketch);
+            }
+            this.lock.unlock();
+        } else {
+            System.out.println("OPTIONS FOR SKETCH COMMAND MUST CONSIST OF TARGET AND MESSAGE");
+        }
 
     }
 

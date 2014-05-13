@@ -1,7 +1,9 @@
 
 import processing.core.PApplet;
 
-public abstract class ZSketch extends PApplet {
+public abstract class ZSketch extends PApplet implements TaskPerformer {
+    private TaskManager taskManager;
+
     private String args;
 
     public ZSketch() {
@@ -10,6 +12,7 @@ public abstract class ZSketch extends PApplet {
 
     public final void zStart(String args) {
         this.args = args;
+        this.taskManager = new TaskManager(this);
         this.runSketch();
     }
 
@@ -26,6 +29,16 @@ public abstract class ZSketch extends PApplet {
         this.frame.setVisible(false);
         // Thread.currentThread().interrupt();
     }
+
+
+    public final void addTask(String time, String message) {
+        this.taskManager.addTask(time, "", message);
+    }
+
+    public final void doTask(String ignored, String message) {
+        this.zRecieve(message);
+    }
+
 
     /*
      * USER METHODS:
