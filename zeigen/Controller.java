@@ -130,7 +130,7 @@ public class Controller implements TaskPerformer {
             String options = parts[1];
 
             this.lock.lock();
-            if (sketch.equals("") || sketch.equals(this.sketchName)) {
+            if (sketch.isEmpty() || sketch.equals(this.sketchName)) {
                 this.sketch.addTask(time, message);
             } else {
                 System.out.println("RECEIVED MESSAGE FOR WRONG SKETCH: " + sketch);
