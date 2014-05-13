@@ -21,6 +21,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
     }
 
     public final void draw() {
+        this.taskManager.process();
         this.zDraw();
     }
 
