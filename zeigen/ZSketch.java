@@ -32,10 +32,10 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
 
 
     public final void addTask(String time, String message) {
-        this.taskManager.addTask(time, "", message);
+        this.taskManager.addTask(time, message);
     }
 
-    public final void doTask(String ignored, String message) {
+    public final void doTask(String message, String ignored) {
         this.zRecieve(message);
     }
 
