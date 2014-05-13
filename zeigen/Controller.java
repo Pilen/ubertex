@@ -84,15 +84,19 @@ public class Controller {
 
 
     private void clearqueue() {
+        this.lock.lock();
         int cleared = this.taskManager.clear();
         System.out.println(cleared);
+        this.lock.unlock();
     }
     private void kill(String sketch) {
+        this.lock.lock();
         if (sketch.isEmpty() || this.sketchName.toLowerCase().equals(sketch.toLowerCase())) {
             this.kill();
         } else {
             System.out.println("CAN'T KILL: " + sketch);
         }
+        this.lock.unlock();
     }
 
     private void kill() {
