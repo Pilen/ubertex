@@ -71,7 +71,6 @@ public class Controller {
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
         case "quit": this.quit(); break;
-        case "restart": this.kill(options); this.start(options); break;
         case "sketch": this.sketch(options); break;
         case "start": this.start(options); break;
         // case "sync": this.sync(); break;
