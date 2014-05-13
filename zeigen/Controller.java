@@ -66,7 +66,7 @@ public class Controller {
     public void command(String command, String options) {
         System.out.println("DOING: " + command + ";" + options);
         switch (command) {
-        case "abort" : this.abort();
+        case "abort" : this.abort(); break;
         case "clearqueue": this.clearqueue(); break;
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
@@ -74,7 +74,7 @@ public class Controller {
         case "sketch": this.sketch(options); break;
         case "start": this.start(options); break;
         // case "sync": this.sync(); break;
-        default: System.out.println("UNSUPPORTED COMMAND: " + command);
+        default: System.out.println("UNSUPPORTED COMMAND: " + command); break;
         }
     }
 
