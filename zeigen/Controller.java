@@ -15,7 +15,7 @@ public class Controller implements TaskPerformer {
     private String sketchName;
 
     private int zWidth;
-    private int zHeigth;
+    private int zHeight;
     private int zNoiseSeed;
     private int zRandomSeed;
 
@@ -57,8 +57,11 @@ public class Controller implements TaskPerformer {
 
             if (this.forMe(targets.split(" "))) {
                 System.out.println("RECEIVED: " + message);
-                this.taskManager.addTask(time, command, options);
-                this.sketch(time, options);
+                if (command.equals("sketch")) {
+                    this.sketch(time, options);
+                } else {
+                    this.taskManager.addTask(time, command, options);
+                }
                 // this.command(command, time, options);
             } else {
                 System.out.println("IGNORED MESSAGE");
@@ -148,12 +151,13 @@ public class Controller implements TaskPerformer {
         if (parts.length == 2) {
             try {
                 // Ensures both seeds are integers
-                int zRandomSeed = Integer.parseInt(parts[0]);
-                int zNoiseSeed = Integer.parseInt(parts[1]);
+                int zRandomSeed = Integer.parseInt(parts[0].trim());
+                int zNoiseSeed = Integer.parseInt(parts[1].trim());
 
+                this.lock.lock();
                 this.zRandomSeed = zRandomSeed;
                 this.zNoiseSeed = zNoiseSeed;
-
+                this.lock.unlock();
             } catch (NumberFormatException e) {
                 System.out.println("SEEDS MUST BE NUMBERS");
             }
@@ -206,14 +210,15 @@ public class Controller implements TaskPerformer {
     }
 
     private void window(String options) {
-        String[] parts = message.split(";", 2);
+        String[] parts = options.split(";", 2);
 
         if (parts.length == 2) {
-            String height= parts[0].trim();
-            String width = parts[1].trim();
+            int width = Integer.parseInt(parts[0]);
+            int height = Integer.parseInt(parts[1]);
 
             this.lock.lock();
-            this.
+            this.zWidth = width;
+            this.zHeight = height;
             this.lock.unlock();
         } else {
             System.out.println("OPTIONS FOR SKETCH COMMAND MUST CONSIST OF TARGET AND MESSAGE");
