@@ -8,18 +8,22 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Controller implements TaskPerformer {
     private ReentrantLock lock;
 
+    private final TaskManager taskManager;
+
     private final HashSet<String> names;
     private ZSketch sketch;
     private String sketchName;
 
-    private final TaskManager taskManager;
+    private int zNoiseSeed;
+    private int zRandomSeed;
 
     public Controller(ArrayList<String> names) {
+        this(names, 0, 0);
+    }
+
+    public Controller(ArrayList<String> names, int zRandomSeed, int zNoiseSeed) {
         this.lock = new ReentrantLock(true);
         this.lock.lock();
-
-        this.sketch = null;
-        this.sketchName = "";
 
         this.taskManager = new TaskManager(this);
         Thread taskThread = new Thread(this.taskManager);
@@ -29,6 +33,13 @@ public class Controller implements TaskPerformer {
         for (String name : names) {
             this.names.add(name.toLowerCase());
         }
+
+        this.sketch = null;
+        this.sketchName = "";
+
+
+        this.zRandomSeed = zRandomSeed;
+        this.zNoiseSeed = zNoiseSeed;
 
         this.lock.unlock();
     }
@@ -72,6 +83,7 @@ public class Controller implements TaskPerformer {
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
         case "quit": this.quit(); break;
+        case "seed": this.seed(options); break;
         // case "sketch": all ready handled
         case "start": this.start(options); break;
         // case "sync": this.sync(); break;
@@ -122,6 +134,27 @@ public class Controller implements TaskPerformer {
         this.lock.unlock();
     }
 
+    private void seed(String options) {
+        String[] parts = options.split(";", 2);
+
+        if (parts.length == 2) {
+            try {
+                // Ensures both seeds are integers
+                int zRandomSeed = Integer.parseInt(parts[0]);
+                int zNoiseSeed = Integer.parseInt(parts[1]);
+
+                this.zRandomSeed = zRandomSeed;
+                this.zNoiseSeed = zNoiseSeed;
+
+            } catch (NumberFormatException e) {
+                System.out.println("SEEDS MUST BE NUMBERS");
+            }
+
+        } else {
+            System.out.println("SEED NEEDS BOTH A RANDOMSEED AND A NOISESEED");
+        }
+    }
+
     private void sketch(String time, String message) {
         String[] parts = message.split(";", 2);
 
@@ -152,7 +185,7 @@ public class Controller implements TaskPerformer {
         this.sketch = SketchLoader.load(sketchName);
 
         if (this.sketch != null) {
-            this.sketch.zStart(sketchName);
+            this.sketch.zStart(sketchName, zRandomSeed, zNoiseSeed);
             this.sketchName = sketchName;
         } else {
             System.out.println("COULD NOT LOAD CLASS: " + sketchName);
