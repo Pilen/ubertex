@@ -213,15 +213,19 @@ public class Controller implements TaskPerformer {
         String[] parts = options.split(";", 2);
 
         if (parts.length == 2) {
-            int width = Integer.parseInt(parts[0]);
-            int height = Integer.parseInt(parts[1]);
+            try {
+                int width = Integer.parseInt(parts[0]);
+                int height = Integer.parseInt(parts[1]);
 
-            this.lock.lock();
-            this.zWidth = width;
-            this.zHeight = height;
-            this.lock.unlock();
+                this.lock.lock();
+                this.zWidth = width;
+                this.zHeight = height;
+                this.lock.unlock();
+            } catch (NumberFormatException e) {
+                System.out.println("SIZES MUST BE INTEGERS");
+            }
         } else {
-            System.out.println("OPTIONS FOR SKETCH COMMAND MUST CONSIST OF TARGET AND MESSAGE");
+            System.out.println("OPTIONS FOR WINDOW COMMAND MUST CONSIST OF TWO INTEGERS");
         }
     }
 }
