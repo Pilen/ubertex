@@ -13,6 +13,11 @@ public class Zeigen {
         ArrayList<String> names = new ArrayList<String>();
         names.add("brok");
         Controller controller = new Controller(names);
+
+        for (String arg : args) {
+            controller.message(arg);
+        }
+
         Server server;
         try {
             server = new UDPServer(controller, 9999);
