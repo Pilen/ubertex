@@ -14,6 +14,8 @@ public class Controller implements TaskPerformer {
     private ZSketch sketch;
     private String sketchName;
 
+    private int zWidth;
+    private int zHeigth;
     private int zNoiseSeed;
     private int zRandomSeed;
 
@@ -82,11 +84,13 @@ public class Controller implements TaskPerformer {
         case "clearqueue": this.clearqueue(); break;
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
+        case "offset" : this.offset(options); break;
         case "quit": this.quit(); break;
         case "seed": this.seed(options); break;
         // case "sketch": all ready handled
         case "start": this.start(options); break;
         // case "sync": this.sync(); break;
+        case "window" : this.window(options); break;
         default: System.out.println("UNSUPPORTED COMMAND: " + command); break;
         }
     }
@@ -134,6 +138,10 @@ public class Controller implements TaskPerformer {
         this.lock.unlock();
     }
 
+    private void offset(String options) {
+
+    }
+
     private void seed(String options) {
         String[] parts = options.split(";", 2);
 
@@ -172,7 +180,6 @@ public class Controller implements TaskPerformer {
         } else {
             System.out.println("OPTIONS FOR SKETCH COMMAND MUST CONSIST OF TARGET AND MESSAGE");
         }
-
     }
 
     private void start(String sketchName) {
@@ -185,7 +192,7 @@ public class Controller implements TaskPerformer {
         this.sketch = SketchLoader.load(sketchName);
 
         if (this.sketch != null) {
-            this.sketch.zStart(sketchName, zRandomSeed, zNoiseSeed);
+            this.sketch.zStart(sketchName, this.zWidth, this.zHeight, this.zRandomSeed, this.zNoiseSeed);
             this.sketchName = sketchName;
         } else {
             System.out.println("COULD NOT LOAD CLASS: " + sketchName);
@@ -196,5 +203,20 @@ public class Controller implements TaskPerformer {
 
     private void quit() {
         System.exit(0);
+    }
+
+    private void window(String options) {
+        String[] parts = message.split(";", 2);
+
+        if (parts.length == 2) {
+            String height= parts[0].trim();
+            String width = parts[1].trim();
+
+            this.lock.lock();
+            this.
+            this.lock.unlock();
+        } else {
+            System.out.println("OPTIONS FOR SKETCH COMMAND MUST CONSIST OF TARGET AND MESSAGE");
+        }
     }
 }

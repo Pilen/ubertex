@@ -5,6 +5,8 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
     private TaskManager taskManager;
 
     private String args;
+    private int zWidth;
+    private int zHeight;
     private int zRandomSeed;
     private int zNoiseSeed;
 
@@ -12,8 +14,10 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         super();
     }
 
-    public final void zStart(String args, int zRandomSeed, int zNoiseSeed) {
+    public final void zStart(String args, int zWidth, int zHeight, int zRandomSeed, int zNoiseSeed) {
         this.args = args;
+        this.zWidth = zWidth;
+        this.zHeight = zHeight;
         this.zRandomSeed = zRandomSeed;
         this.zNoiseSeed = zNoiseSeed;
         this.taskManager = new TaskManager(this);
