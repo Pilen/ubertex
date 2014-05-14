@@ -16,6 +16,8 @@ public class Controller implements TaskPerformer {
 
     private int zWidth;
     private int zHeight;
+    private int zOffsetX;
+    private int zOffsetY;
     private int zNoiseSeed;
     private int zRandomSeed;
 
@@ -39,7 +41,10 @@ public class Controller implements TaskPerformer {
         this.sketch = null;
         this.sketchName = "";
 
-
+        this.zWidth = 100;
+        this.zHeight = 100;
+        this.zOffsetX = 0;
+        this.zOffsetY = 0;
         this.zRandomSeed = zRandomSeed;
         this.zNoiseSeed = zNoiseSeed;
 
@@ -142,6 +147,25 @@ public class Controller implements TaskPerformer {
     }
 
     private void offset(String options) {
+        String[] parts = options.split(";", 2);
+
+        if (parts.length == 2) {
+            try {
+                // Ensures both seeds are integers
+                int zOffsetX = Integer.parseInt(parts[0].trim());
+                int zOffsetY = Integer.parseInt(parts[1].trim());
+
+                this.lock.lock();
+                this.zOffsetX = zOffsetX;
+                this.zOffsetY = zOffsetY;
+                this.lock.unlock();
+            } catch (NumberFormatException e) {
+                System.out.println("OFFSETS MUST BE INTEGERS");
+            }
+
+        } else {
+            System.out.println("OFFSET NEEDS BOTH AN X-OFFSET AND AN Y-OFFSET");
+        }
 
     }
 
@@ -159,7 +183,7 @@ public class Controller implements TaskPerformer {
                 this.zNoiseSeed = zNoiseSeed;
                 this.lock.unlock();
             } catch (NumberFormatException e) {
-                System.out.println("SEEDS MUST BE NUMBERS");
+                System.out.println("SEEDS MUST BE INTEGERS");
             }
 
         } else {
@@ -186,7 +210,34 @@ public class Controller implements TaskPerformer {
         }
     }
 
-    private void start(String sketchName) {
+    private void start(String message) {
+        String[] parts = message.split(";", 4);
+
+        String sketchName = "";
+        int zOffsetX = this.zOffsetX;
+        int zOffsetY = this.zOffsetY;
+        String arguments = "";
+
+        switch (parts.length) {
+        case 2: System.out.println("EITHER BOTH OFFSETS ARE NEEDED OR NONE"); break;
+        case 4: arguments = parts[3];
+        case 3:
+            try {
+                // Ensures both seeds are integers
+                int tempX = Integer.parseInt(parts[1].trim());
+                int tempY = Integer.parseInt(parts[2].trim());
+
+                zOffsetX = tempX;
+                zOffsetY = tempY;
+            } catch (NumberFormatException e) {
+                System.out.println("OFFSETS MUST BE INTEGERS");
+            }
+        case 1: sketchName = parts[0];
+        default: System.out.println("WRONG NUMBER OF ARGUMENTS TO START");
+        }
+
+
+
         this.lock.lock();
 
         if (this.sketch != null) {
@@ -196,7 +247,10 @@ public class Controller implements TaskPerformer {
         this.sketch = SketchLoader.load(sketchName);
 
         if (this.sketch != null) {
-            this.sketch.zStart(sketchName, this.zWidth, this.zHeight, this.zRandomSeed, this.zNoiseSeed);
+            this.sketch.zStart(arguments,
+                               this.zWidth, this.zHeight,
+                               zOffsetX, zOffsetY,
+                               this.zRandomSeed, this.zNoiseSeed);
             this.sketchName = sketchName;
         } else {
             System.out.println("COULD NOT LOAD CLASS: " + sketchName);
@@ -214,12 +268,13 @@ public class Controller implements TaskPerformer {
 
         if (parts.length == 2) {
             try {
-                int width = Integer.parseInt(parts[0].trim());
-                int height = Integer.parseInt(parts[1].trim());
+                // Ensures both seeds are integers
+                int zWidth = Integer.parseInt(parts[0].trim());
+                int zHeight = Integer.parseInt(parts[1].trim());
 
                 this.lock.lock();
-                this.zWidth = width;
-                this.zHeight = height;
+                this.zWidth = zWidth;
+                this.zHeight = zHeight;
                 this.lock.unlock();
             } catch (NumberFormatException e) {
                 System.out.println("SIZES MUST BE INTEGERS");
