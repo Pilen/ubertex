@@ -214,8 +214,8 @@ public class Controller implements TaskPerformer {
 
         if (parts.length == 2) {
             try {
-                int width = Integer.parseInt(parts[0]);
-                int height = Integer.parseInt(parts[1]);
+                int width = Integer.parseInt(parts[0].trim());
+                int height = Integer.parseInt(parts[1].trim());
 
                 this.lock.lock();
                 this.zWidth = width;
