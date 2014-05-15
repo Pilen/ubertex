@@ -104,7 +104,7 @@ public class Controller implements TaskPerformer {
     }
 
     public boolean hasName() {
-        return ! this.names.isEmpty();
+        return !this.names.isEmpty();
     }
 
     /*
