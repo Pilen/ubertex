@@ -18,6 +18,11 @@ public class Zeigen {
             controller.message(arg);
         }
 
+        if (! controller.hasName()) {
+            System.out.println("ZEIGEN NEEDS A NAME");
+            System.exit(1);
+        }
+
         Server server;
         try {
             server = new UDPServer(controller, 9999);

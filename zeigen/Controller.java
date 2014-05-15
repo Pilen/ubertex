@@ -103,6 +103,10 @@ public class Controller implements TaskPerformer {
         }
     }
 
+    public boolean hasName() {
+        return ! this.names.isEmpty();
+    }
+
     /*
      * COMMANDS:
      */
