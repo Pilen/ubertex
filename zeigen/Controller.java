@@ -1,6 +1,7 @@
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Collection;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -25,7 +26,7 @@ public class Controller implements TaskPerformer {
         this(names, 0, 0);
     }
 
-    public Controller(ArrayList<String> names, int zRandomSeed, int zNoiseSeed) {
+    public Controller(Collection<String> names, int zRandomSeed, int zNoiseSeed) {
         this.lock = new ReentrantLock(true);
         this.lock.lock();
 
