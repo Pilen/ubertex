@@ -223,7 +223,8 @@ public class Controller implements TaskPerformer {
         String arguments = "";
 
         switch (parts.length) {
-        case 2: System.out.println("EITHER BOTH OFFSETS ARE NEEDED OR NONE"); break;
+        default: System.out.println("WRONG NUMBER OF ARGUMENTS TO START"); return;
+        case 2: System.out.println("EITHER BOTH OFFSETS ARE NEEDED OR NONE"); return;
         case 4: arguments = parts[3];
         case 3:
             try {
@@ -237,7 +238,6 @@ public class Controller implements TaskPerformer {
                 System.out.println("OFFSETS MUST BE INTEGERS");
             }
         case 1: sketchName = parts[0];
-        default: System.out.println("WRONG NUMBER OF ARGUMENTS TO START");
         }
 
 
