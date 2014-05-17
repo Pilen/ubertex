@@ -157,8 +157,8 @@ public class Controller implements TaskPerformer {
         if (parts.length == 2) {
             try {
                 // Ensures both seeds are integers
-                int zOffsetX = Integer.parseInt(parts[0].trim());
-                int zOffsetY = Integer.parseInt(parts[1].trim());
+                int zOffsetX = Tools.parseInt(parts[0]);
+                int zOffsetY = Tools.parseInt(parts[1]);
 
                 this.lock.lock();
                 this.zOffsetX = zOffsetX;
@@ -180,8 +180,8 @@ public class Controller implements TaskPerformer {
         if (parts.length == 2) {
             try {
                 // Ensures both seeds are integers
-                int zRandomSeed = Integer.parseInt(parts[0].trim());
-                int zNoiseSeed = Integer.parseInt(parts[1].trim());
+                int zRandomSeed = Tools.parseInt(parts[0]);
+                int zNoiseSeed = Tools.parseInt(parts[1]);
 
                 this.lock.lock();
                 this.zRandomSeed = zRandomSeed;
@@ -230,8 +230,8 @@ public class Controller implements TaskPerformer {
         case 3:
             try {
                 // Ensures both seeds are integers
-                int tempX = Integer.parseInt(parts[1].trim());
-                int tempY = Integer.parseInt(parts[2].trim());
+                int tempX = Tools.parseInt(parts[1]);
+                int tempY = Tools.parseInt[parts[2]);
 
                 zOffsetX = tempX;
                 zOffsetY = tempY;
@@ -274,8 +274,8 @@ public class Controller implements TaskPerformer {
         if (parts.length == 2) {
             try {
                 // Ensures both seeds are integers
-                int zWidth = Integer.parseInt(parts[0].trim());
-                int zHeight = Integer.parseInt(parts[1].trim());
+                int zWidth = Tools.parseInt(parts[0]);
+                int zHeight = Tools.parseInt(parts[1]);
 
                 this.lock.lock();
                 this.zWidth = zWidth;
