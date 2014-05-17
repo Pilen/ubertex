@@ -231,7 +231,7 @@ public class Controller implements TaskPerformer {
             try {
                 // Ensures both seeds are integers
                 int tempX = Tools.parseInt(parts[1]);
-                int tempY = Tools.parseInt[parts[2]);
+                int tempY = Tools.parseInt(parts[2]);
 
                 zOffsetX = tempX;
                 zOffsetY = tempY;
