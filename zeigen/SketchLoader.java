@@ -8,20 +8,26 @@ import java.io.IOException;
 
 public class SketchLoader extends ClassLoader {
 
+    private static File path;
+
+    public static void setPath(File baseDir) {
+        path = new File(baseDir, "sketches");
+        path.mkdir();
+    }
+
     public SketchLoader(ClassLoader parent) {
         super(parent);
     }
 
     public Class loadClass(String classname) throws ClassNotFoundException {
-        String filename = "/home/pilen/code/ubertex/zeigen/sketches/" + classname + ".class";
-        File file = new File(filename);
+        File file = new File(path, classname + ".class");
 
         if (! file.isFile()) {
             return super.loadClass(classname);
         }
 
         try {
-            InputStream input = new FileInputStream(filename);
+            InputStream input = new FileInputStream(file);
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
             int data = input.read();
