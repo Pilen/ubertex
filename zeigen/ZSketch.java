@@ -26,7 +26,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         this.zRandomSeed = zRandomSeed;
         this.zNoiseSeed = zNoiseSeed;
         this.taskManager = new TaskManager(this);
-        this.runSketch(new String[] {"--location=0,0", "--hide-stop"});
+        this.runSketch(new String[] {"--hide-stop"});
     }
 
     public final void setup() {
