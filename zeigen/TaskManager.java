@@ -9,22 +9,22 @@ import java.util.LinkedHashSet;
 
 public class TaskManager implements Runnable{
     private final TaskPerformer performer;
-    private TreeMap<String, Set<Task>> tasks;
+    private TreeMap<Long, Set<Task>> tasks;
     private ReentrantLock lock;
 
     public TaskManager(TaskPerformer performer) {
         this.performer = performer;
         this.lock = new ReentrantLock(true);
         this.lock.lock();
-        this.tasks = new TreeMap<String, Set<Task>>();
+        this.tasks = new TreeMap<Long, Set<Task>>();
         this.lock.unlock();
     }
 
-    public void addTask(String time, String command) {
+    public void addTask(long time, String command) {
         this.addTask(time, command, "");
     }
 
-    public void addTask(String time, String command, String options) {
+    public void addTask(long time, String command, String options) {
         Task task = new Task(command, options);
         this.lock.lock();
         Set<Task> tasksAt = this.tasks.get(time);
@@ -58,8 +58,8 @@ public class TaskManager implements Runnable{
 
     public void process() {
         this.lock.lock();
-        SortedMap<String, Set<Task>> currentTasks = this.tasks.headMap("now");
-        for (Map.Entry<String, Set<Task>> entry : currentTasks.entrySet()) {
+        SortedMap<Long, Set<Task>> currentTasks = this.tasks.headMap(Time.now());
+        for (Map.Entry<Long, Set<Task>> entry : currentTasks.entrySet()) {
             Set<Task> tasksAt = entry.getValue();
             this.tasks.remove(entry.getKey());
             for (Task task : tasksAt) {

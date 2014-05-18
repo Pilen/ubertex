@@ -45,7 +45,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
     }
 
 
-    public final void addTask(String time, String message) {
+    public final void addTask(long time, String message) {
         this.taskManager.addTask(time, message);
     }
 

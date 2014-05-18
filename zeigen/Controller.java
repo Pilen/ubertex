@@ -57,7 +57,7 @@ public class Controller implements TaskPerformer {
         String[] headers = message.split(";", 4);
         if (headers.length == 4 || headers.length == 3) {
             String targets = headers[0];
-            String time = headers[1];
+            long time = Tools.parseTime(headers[1]);
             String command = headers[2].trim();
             String options = headers.length == 4 ? headers[3] : "";
 
@@ -195,7 +195,7 @@ public class Controller implements TaskPerformer {
         }
     }
 
-    private void sketch(String time, String message) {
+    private void sketch(long time, String message) {
         String[] parts = message.split(";", 2);
 
         if (parts.length == 2) {
