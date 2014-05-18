@@ -7,4 +7,12 @@ public class Tools {
         }
         return Integer.parseInt(trimmed);
     }
+
+    public static long parseTime(String number) {
+        String trimmed = number.trim();
+        if (trimmed.isEmpty() || trimmed.equals("now")) {
+            return 0;
+        }
+        return Long.parseLong(trimmed);
+    }
 }
