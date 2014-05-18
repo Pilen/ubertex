@@ -2,12 +2,12 @@
 
 set -e
 
-CLASSPATH="/usr/share/processing/core/library/core.jar:.:..:./sketches"
+CLASSPATH="/usr/share/processing/core/library/core.jar:.:.."
 
 echo "Compiling"
 javac -cp $CLASSPATH *.java
 echo "Compiling sketches"
-javac -cp $CLASSPATH sketches/*.java
+javac -cp "$CLASSPATH:./sketches/" sketches/*.java
 
 echo "Running"
-java -cp $CLASSPATH Zeigen "$@"
+/usr/share/processing/java/bin/java -cp $CLASSPATH Zeigen "$@"

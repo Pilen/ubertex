@@ -22,6 +22,7 @@ public class SketchLoader extends ClassLoader {
     public Class loadClass(String classname) throws ClassNotFoundException {
         File file = new File(path, classname + ".class");
 
+        // System.out.println(file); //nice for debugging
         if (! file.isFile()) {
             return super.loadClass(classname);
         }
