@@ -58,17 +58,16 @@ public class Controller implements TaskPerformer {
         if (headers.length == 4 || headers.length == 3) {
             String targets = headers[0];
             String time = headers[1];
-            String command = headers[2];
+            String command = headers[2].trim();
             String options = headers.length == 4 ? headers[3] : "";
 
             if (this.forMe(targets.split(" "))) {
                 System.out.println("RECEIVED: " + message);
-                if (command.equals("sketch")) {
-                    this.sketch(time, options);
-                } else {
-                    this.taskManager.addTask(time, command, options);
+                switch (command) {
+                case "sketch": this.sketch(time, options); break;
+                case "sync": this.sync(options); break;
+                default: this.taskManager.addTask(time, command, options); break;
                 }
-                // this.command(command, time, options);
             } else {
                 System.out.println("IGNORED MESSAGE");
             }
@@ -262,6 +261,26 @@ public class Controller implements TaskPerformer {
         }
 
         this.lock.unlock();
+    }
+
+    private void sync(String options) {
+        String[] parts = options.split(";", 2);
+
+        if (parts.length == 2) {
+            if (parts[0].equals("time") || parts[0].equals("servertime")) {
+                try {
+                    long serverTime = Tools.parseTime(parts[1]);
+
+                    Time.setClock(serverTime);
+                } catch (NumberFormatException e) {
+                    System.out.println("SERVERTIME MUST BE A LONG");
+                }
+            } else {
+                System.out.println("MALFORMED ARGUMENTS FOR SYNC");
+            }
+        } else {
+            System.out.println("MISSING ARGUMENTS FOR SYNC");
+        }
     }
 
     private void quit() {
