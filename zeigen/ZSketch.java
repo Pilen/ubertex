@@ -67,6 +67,10 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         this.zRecieve(message);
     }
 
+    public final int clearTasks() {
+        return this.taskManager.clear();
+    }
+
 
     /*
      * USER METHODS:

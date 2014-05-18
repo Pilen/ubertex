@@ -121,7 +121,8 @@ public class Controller implements TaskPerformer {
     private void clearqueue() {
         this.lock.lock();
         int cleared = this.taskManager.clear();
-        System.out.println(cleared);
+        int sketchCleared = this.sketch.clearTasks();
+        System.out.println("CONTROLLER CLEARED: " + cleared + "    SKETCH CLEARED: " + sketchCleared);
         this.lock.unlock();
     }
 
