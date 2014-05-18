@@ -26,7 +26,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         this.zRandomSeed = zRandomSeed;
         this.zNoiseSeed = zNoiseSeed;
         this.taskManager = new TaskManager(this);
-        this.runSketch();
+        this.runSketch(new String[] {"--location=0,0", "--hide-stop"});
     }
 
     public final void setup() {
@@ -34,6 +34,10 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
             randomSeed(this.zRandomSeed);
             noiseSeed(this.zNoiseSeed);
             size(this.zWidth, this.zHeight);
+            background(0,0,0);
+            frame.setBackground(new java.awt.Color(0, 0, 0));
+            //The above does not currently work so we use a workaround, see https://github.com/processing/processing/issues/2071
+            ((javax.swing.JFrame) frame).getContentPane().setBackground(new java.awt.Color(0,0,0));
             this.zSetup(this.args);
         } catch (Exception e) {
             System.out.println("======== ERROR ========\n" + "CURRENT SKETCH THREW AN EXCEPTION\n" + e.toString());
@@ -81,6 +85,9 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         return this.taskManager.clear();
     }
 
+    public boolean sketchFullScreen() {
+        return false;
+    }
 
     /*
      * USER METHODS:
