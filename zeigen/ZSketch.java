@@ -1,10 +1,12 @@
 
+import java.io.File;
 import processing.core.PApplet;
 
 public abstract class ZSketch extends PApplet implements TaskPerformer {
     private TaskManager taskManager;
 
     private String args;
+    private File baseDir;
     private int zWidth;
     private int zHeight;
     private int zOffsetX;
@@ -16,8 +18,9 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         super();
     }
 
-    public final void zStart(String args, int zWidth, int zHeight, int zOffsetX, int zOffsetY, int zRandomSeed, int zNoiseSeed) {
+    public final void zStart(String args, File baseDir, int zWidth, int zHeight, int zOffsetX, int zOffsetY, int zRandomSeed, int zNoiseSeed) {
         this.args = args;
+        this.baseDir = baseDir;
         this.zWidth = zWidth;
         this.zHeight = zHeight;
         this.zRandomSeed = zRandomSeed;
@@ -58,6 +61,13 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         // Thread.currentThread().interrupt();
     }
 
+    public File dataFile(String where) {
+        File why = new File(where);
+        if (why.isAbsolute()) {
+            return why;
+        }
+        return new File(this.baseDir, where);
+    }
 
     public final void addTask(long time, String message) {
         this.taskManager.addTask(time, message);

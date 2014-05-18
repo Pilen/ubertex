@@ -35,7 +35,7 @@ public class Zeigen {
 
 
 
-        Controller controller = new Controller(names);
+        Controller controller = new Controller(names, path);
 
         for (int i = 3; i < args.length; i++) {
             controller.message(args[i]);

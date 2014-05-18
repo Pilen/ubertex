@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Collection;
 
+import java.io.File;
+
 import java.util.concurrent.locks.ReentrantLock;
 
 
@@ -12,6 +14,7 @@ public class Controller implements TaskPerformer {
     private final TaskManager taskManager;
 
     private final HashSet<String> names;
+    private final File baseDir;
     private ZSketch sketch;
     private String sketchName;
 
@@ -22,11 +25,7 @@ public class Controller implements TaskPerformer {
     private int zNoiseSeed;
     private int zRandomSeed;
 
-    public Controller(ArrayList<String> names) {
-        this(names, 0, 0);
-    }
-
-    public Controller(Collection<String> names, int zRandomSeed, int zNoiseSeed) {
+    public Controller(Collection<String> names, File baseDir) {
         this.lock = new ReentrantLock(true);
         this.lock.lock();
 
@@ -38,6 +37,8 @@ public class Controller implements TaskPerformer {
         for (String name : names) {
             this.names.add(name.toLowerCase());
         }
+
+        this.baseDir = baseDir;
 
         this.sketch = null;
         this.sketchName = "";
@@ -252,7 +253,7 @@ public class Controller implements TaskPerformer {
         this.sketch = SketchLoader.load(sketchName);
 
         if (this.sketch != null) {
-            this.sketch.zStart(arguments,
+            this.sketch.zStart(arguments, this.baseDir,
                                this.zWidth, this.zHeight,
                                zOffsetX, zOffsetY,
                                this.zRandomSeed, this.zNoiseSeed);
