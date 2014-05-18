@@ -27,15 +27,29 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
     }
 
     public final void setup() {
-        randomSeed(this.zRandomSeed);
-        noiseSeed(this.zNoiseSeed);
-        size(this.zWidth, this.zHeight);
-        this.zSetup(this.args);
+        try {
+            randomSeed(this.zRandomSeed);
+            noiseSeed(this.zNoiseSeed);
+            size(this.zWidth, this.zHeight);
+            this.zSetup(this.args);
+        } catch (Exception e) {
+            System.out.println("======== ERROR ========\n" + "CURRENT SKETCH THREW AN EXCEPTION\n" + e.toString());
+            e.printStackTrace();
+            System.out.println("=======================");
+            this.exit();
+        }
     }
 
     public final void draw() {
-        this.taskManager.process();
-        this.zDraw();
+        try {
+            this.taskManager.process();
+            this.zDraw();
+        } catch (Exception e) {
+            System.out.println("======== ERROR ========\n" + "CURRENT SKETCH THREW AN EXCEPTION\n" + e.toString());
+            e.printStackTrace();
+            System.out.println("=======================");
+            this.exit();
+        }
     }
 
     protected final void exitActual() {
