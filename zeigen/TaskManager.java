@@ -1,21 +1,25 @@
 
 import java.util.TreeMap;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.SortedMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.LinkedHashSet;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Condition;
 
 
 public class TaskManager implements Runnable{
     private final TaskPerformer performer;
     private TreeMap<Long, Set<Task>> tasks;
     private ReentrantLock lock;
+    private Condition condition;
 
     public TaskManager(TaskPerformer performer) {
         this.performer = performer;
         this.lock = new ReentrantLock(true);
         this.lock.lock();
+        this.condition = this.lock.newCondition();
+
         this.tasks = new TreeMap<Long, Set<Task>>();
         this.lock.unlock();
     }
@@ -72,6 +76,14 @@ public class TaskManager implements Runnable{
     public void run() {
         while (true) {
             process();
+            this.lock.lock();
+            if (this.tasks.size() > 0 && this.tasks.firstKey() <= Time.now()) {
+                this.lock.unlock();
+                continue;
+            } else {
+                Thread.yield();
+            }
+            this.lock.unlock();
         }
     }
 
