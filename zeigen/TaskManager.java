@@ -37,6 +37,7 @@ public class TaskManager implements Runnable{
             this.tasks.put(time, tasksAt);
         }
         tasksAt.add(task);
+        this.condition.signalAll();
         this.lock.unlock();
     }
 
@@ -76,12 +77,22 @@ public class TaskManager implements Runnable{
     public void run() {
         while (true) {
             process();
+
             this.lock.lock();
-            if (this.tasks.size() > 0 && this.tasks.firstKey() <= Time.now()) {
-                this.lock.unlock();
-                continue;
-            } else {
-                Thread.yield();
+
+            try {
+                if (this.tasks.size() == 0) {
+                    this.condition.await();
+                } else {
+
+                    long epsilon = 1;
+                    Long next = this.tasks.firstKey() - Time.now();
+                    if (next > epsilon) {
+                        this.condition.await(next, Time.timeUnit);
+                    }
+                }
+            } catch (InterruptedException e) {
+                System.out.println("TASKMANAGER WAS INTERRUPTED");
             }
             this.lock.unlock();
         }
