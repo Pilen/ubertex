@@ -43,8 +43,8 @@ public class Controller implements TaskPerformer {
         this.sketch = null;
         this.sketchName = "";
 
-        this.zWidth = 100;
-        this.zHeight = 100;
+        this.zWidth = -1; //displayWidth
+        this.zHeight = -1; //displayHeigth
         this.zOffsetX = 0;
         this.zOffsetY = 0;
         this.zRandomSeed = zRandomSeed;
