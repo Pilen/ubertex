@@ -33,6 +33,11 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         try {
             randomSeed(this.zRandomSeed);
             noiseSeed(this.zNoiseSeed);
+            if (this.zWidth < 0) {
+                this.zWidth = displayWidth;
+            } if (this.zHeight < 0) {
+                this.zHeight = displayHeight;
+            }
             size(this.zWidth, this.zHeight);
             background(0,0,0);
             frame.setBackground(new java.awt.Color(0, 0, 0));
