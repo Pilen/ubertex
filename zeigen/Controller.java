@@ -206,7 +206,7 @@ public class Controller implements TaskPerformer {
 
             this.lock.lock();
             if (sketch.isEmpty() || sketch.equals(this.sketchName)) {
-                this.sketch.addTask(time, message);
+                this.sketch.addTask(time, options);
             } else {
                 System.out.println("RECEIVED MESSAGE FOR WRONG SKETCH: " + sketch);
             }
