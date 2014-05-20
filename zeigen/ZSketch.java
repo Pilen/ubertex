@@ -15,6 +15,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
     private int zNoiseSeed;
 
     public int zBackgroundColor;
+    public boolean zBlank = false;
 
     public ZSketch() {
         super();
@@ -132,6 +133,9 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         try {
             this.taskManager.process();
             this.zDraw();
+            if (this.zBlank) {
+                background(zBackgroundColor);
+            }
         } catch (Exception e) {
             System.out.println("======== ERROR ========\n" + "CURRENT SKETCH THREW AN EXCEPTION\n" + e.toString());
             e.printStackTrace();
@@ -159,6 +163,21 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
     }
 
     public final void doTask(String message, String ignored) {
+        String[] parts = message.split(";", 2);
+
+
+        switch (parts[0].trim().toLowerCase()) {
+        case "blanked": case "hidden": case "paused":
+            message = parts[1];
+            break;
+        case "unblank": case "unhide": case "unpause": case "continue":
+            message = parts[1];
+        case "":
+        case "default":
+        default:
+            this.zBlank = false;
+            break;
+        }
         this.zReceive(message);
     }
 

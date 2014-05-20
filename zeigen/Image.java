@@ -91,7 +91,10 @@ public class Image extends ZSketch {
             switch(parts[0]) {
             case "clearcache":
             case "clear": clearCache(); break;
-            default: setImage(parts[0]);
+            case "unblank": case "unhide": case "unpause": case "continue":
+            case "nop":
+                break;
+            default: setImage(parts[0]); break;
             }
         }
     }

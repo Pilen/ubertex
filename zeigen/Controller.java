@@ -90,10 +90,13 @@ public class Controller implements TaskPerformer {
 
     public void doTask(String command, String options) {
         System.out.println("DOING: " + command + ";" + options);
+        command = command.replaceAll("-","").toLowerCase();
         switch (command) {
-        case "abort" : this.abort(); break;
-        case "backgroundcolor":
-        case "background": this.backgroundColor(options); break;
+        case "abort": this.abort(); break;
+        case "background": case "backgroundcolor":
+            this.backgroundColor(options); break;
+        case "blank": case "pause": case "hide":
+            this.blank(true); break;
         case "clearqueue": this.clearqueue(); break;
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
@@ -102,7 +105,11 @@ public class Controller implements TaskPerformer {
         case "seed": this.seed(options); break;
         // case "sketch": all ready handled
         case "start": this.start(options); break;
+        case "startblank": case "startblanked": case "starthidden": case "startpaused":
+            this.startPaused(options); break;
         // case "sync": this.sync(); break;
+        case "unblank": case "unhide": case "unpause": case "continue":
+            this.blank(false); break;
         case "window" : this.window(options); break;
         default: System.out.println("UNSUPPORTED COMMAND: " + command); break;
         }
@@ -126,6 +133,14 @@ public class Controller implements TaskPerformer {
     private void backgroundColor(String options) {
         this.lock.lock();
         this.zBackgroundColor = options;
+        this.lock.unlock();
+    }
+
+    private void blank(boolean blanked) {
+        this.lock.lock();
+        if (this.sketch != null) {
+            this.sketch.zBlank = blanked;
+        }
         this.lock.unlock();
     }
 
@@ -230,6 +245,14 @@ public class Controller implements TaskPerformer {
     }
 
     private void start(String message) {
+        this.start(message, false);
+    }
+
+    private void startPaused(String message) {
+        this.start(message, true);
+    }
+
+    private void start(String message, boolean blanked) {
         String[] parts = message.split(";", 4);
 
         String sketchName = "";
@@ -266,6 +289,7 @@ public class Controller implements TaskPerformer {
         this.sketch = SketchLoader.load(sketchName);
 
         if (this.sketch != null) {
+            this.sketch.zBlank = blanked;
             this.sketch.zStart(arguments, this.baseDir,
                                this.zWidth, this.zHeight,
                                zOffsetX, zOffsetY,
