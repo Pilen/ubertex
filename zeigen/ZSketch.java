@@ -83,7 +83,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
     }
 
     public final void doTask(String message, String ignored) {
-        this.zRecieve(message);
+        this.zReceive(message);
     }
 
     public final int clearTasks() {
@@ -102,7 +102,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
 
     }
 
-    public void zRecieve(String args) {
+    public void zReceive(String message) {
 
     }
 
