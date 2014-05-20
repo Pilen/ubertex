@@ -14,11 +14,17 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
     private int zRandomSeed;
     private int zNoiseSeed;
 
+    public int zBackgroundColor;
+
     public ZSketch() {
         super();
     }
 
-    public final void zStart(String args, File baseDir, int zWidth, int zHeight, int zOffsetX, int zOffsetY, int zRandomSeed, int zNoiseSeed) {
+    public final void zStart(String args, File baseDir,
+                             int zWidth, int zHeight,
+                             int zOffsetX, int zOffsetY,
+                             int zRandomSeed, int zNoiseSeed,
+                             String backgroundColor) {
         this.args = args;
         this.baseDir = baseDir;
         this.zWidth = zWidth;
@@ -26,6 +32,76 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         this.zRandomSeed = zRandomSeed;
         this.zNoiseSeed = zNoiseSeed;
         this.taskManager = new TaskManager(this);
+
+
+        try { // Calculate background color:
+            String[] colors = backgroundColor.split("[;,\\s]");
+
+            if (backgroundColor.contains(".")) {
+                float gray, alpha, r, g, b;
+                switch (colors.length) {
+                default: System.out.println("WRONG NUMBER OF ARGUMENTS FOR BACKGROUND-COLOR"); break;
+                case 0:
+                    this.zBackgroundColor = color(0);
+                    break;
+                case 1:
+                    gray = Tools.parseFloat(colors[0]);
+                    this.zBackgroundColor = color(gray);
+                    break;
+                case 2:
+                    gray = Tools.parseFloat(colors[0]);
+                    alpha = Tools.parseFloat(colors[3]);
+                    this.zBackgroundColor = color(gray, alpha);
+                    break;
+                case 3:
+                    r = Tools.parseFloat(colors[0]);
+                    g = Tools.parseFloat(colors[1]);
+                    b = Tools.parseFloat(colors[2]);
+                    this.zBackgroundColor = color(r, g, b);
+                    break;
+                case 4:
+                    r = Tools.parseFloat(colors[0]);
+                    g = Tools.parseFloat(colors[1]);
+                    b = Tools.parseFloat(colors[2]);
+                    alpha = Tools.parseFloat(colors[3]);
+                    this.zBackgroundColor = color(r, g, b, alpha);
+                    break;
+                }
+            } else {
+                int gray, alpha, r, g, b;
+                switch (colors.length) {
+                default: System.out.println("WRONG NUMBER OF ARGUMENTS FOR BACKGROUND-COLOR"); break;
+                case 0:
+                    this.zBackgroundColor = color(0);
+                    break;
+                case 1:
+                    gray = Tools.parseInt(colors[0]);
+                    this.zBackgroundColor = color(gray);
+                    break;
+                case 2:
+                    gray = Tools.parseInt(colors[0]);
+                    alpha = Tools.parseInt(colors[3]);
+                    this.zBackgroundColor = color(gray, alpha);
+                    break;
+                case 3:
+                    r = Tools.parseInt(colors[0]);
+                    g = Tools.parseInt(colors[1]);
+                    b = Tools.parseInt(colors[2]);
+                    this.zBackgroundColor = color(r, g, b);
+                    break;
+                case 4:
+                    r = Tools.parseInt(colors[0]);
+                    g = Tools.parseInt(colors[1]);
+                    b = Tools.parseInt(colors[2]);
+                    alpha = Tools.parseInt(colors[3]);
+                    this.zBackgroundColor = color(r, g, b, alpha);
+                    break;
+                }
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("AN ARGUMENT FOR BACKGROUND-COLOR WAS NOT A LEGAL NUMBER: " + backgroundColor);
+        }
+
         this.runSketch(new String[] {"--hide-stop"});
     }
 
@@ -39,7 +115,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
                 this.zHeight = displayHeight;
             }
             size(this.zWidth, this.zHeight);
-            background(0,0,0);
+            background(zBackgroundColor);
             frame.setBackground(new java.awt.Color(0, 0, 0));
             //The above does not currently work so we use a workaround, see https://github.com/processing/processing/issues/2071
             ((javax.swing.JFrame) frame).getContentPane().setBackground(new java.awt.Color(0,0,0));

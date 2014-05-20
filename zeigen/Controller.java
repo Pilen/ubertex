@@ -24,6 +24,7 @@ public class Controller implements TaskPerformer {
     private int zOffsetY;
     private int zNoiseSeed;
     private int zRandomSeed;
+    private String zBackgroundColor;
 
     public Controller(Collection<String> names, File baseDir) {
         this.lock = new ReentrantLock(true);
@@ -49,6 +50,7 @@ public class Controller implements TaskPerformer {
         this.zOffsetY = 0;
         this.zRandomSeed = zRandomSeed;
         this.zNoiseSeed = zNoiseSeed;
+        this.zBackgroundColor = "";
 
         this.lock.unlock();
     }
@@ -90,6 +92,8 @@ public class Controller implements TaskPerformer {
         System.out.println("DOING: " + command + ";" + options);
         switch (command) {
         case "abort" : this.abort(); break;
+        case "backgroundcolor":
+        case "background": this.backgroundColor(options); break;
         case "clearqueue": this.clearqueue(); break;
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
@@ -116,6 +120,12 @@ public class Controller implements TaskPerformer {
         this.lock.lock();
         this.clearqueue();
         this.kill();
+        this.lock.unlock();
+    }
+
+    private void backgroundColor(String options) {
+        this.lock.lock();
+        this.zBackgroundColor = options;
         this.lock.unlock();
     }
 
@@ -256,7 +266,8 @@ public class Controller implements TaskPerformer {
             this.sketch.zStart(arguments, this.baseDir,
                                this.zWidth, this.zHeight,
                                zOffsetX, zOffsetY,
-                               this.zRandomSeed, this.zNoiseSeed);
+                               this.zRandomSeed, this.zNoiseSeed,
+                               this.zBackgroundColor);
             this.sketchName = sketchName;
         } else {
             System.out.println("COULD NOT LOAD CLASS: " + sketchName);
