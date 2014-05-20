@@ -25,7 +25,7 @@ public class Image extends ZSketch {
         background(zBackgroundColor);
 
         if (currentImage != null) {
-            int x, y, w, h;
+            float x, y, w, h;
 
             switch(mode) {
             default: println("Unknown mode: " + mode);
@@ -43,15 +43,19 @@ public class Image extends ZSketch {
                 image(currentImage, x, y, w, h);
                 break;
             case "sized":
-                int scale;
                 w = currentImage.width;
                 h = currentImage.height;
 
-                // FIX ME: This is only true for images with same h/w ratios as window (and smaller?)
-                scale = max(width, height) / max(w, h);
+                float widthRatio = width/w;
+                float heightRatio = height/h;
 
-                w = w * scale;
-                h = h * scale;
+                if (widthRatio <= heightRatio) {
+                    h = width * (h/w);
+                    w = width;
+                } else {
+                    w = height * (w/h);
+                    h = height;
+                }
 
                 x = (width - w)/2;
                 y = (height - h)/2;
