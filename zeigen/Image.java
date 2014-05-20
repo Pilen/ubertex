@@ -18,7 +18,13 @@ public class Image extends ZSketch {
     private String mode = "";
 
     public void zSetup(String args) {
-        mode = args.trim();
+        String[] parts = args.split(";",2);
+        if (parts.length == 2) {
+            mode = parts[0].trim();
+            setImage(parts[1]);
+        } else {
+            mode = args.trim();
+        }
     }
 
     public void zDraw() {
