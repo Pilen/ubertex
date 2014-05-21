@@ -158,6 +158,10 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         return new File(this.baseDir, File.separator + "data" + File.separator + where);
     }
 
+    public void background() {
+        this.background(zBackgroundColor);
+    }
+
     public final void addTask(long time, String message) {
         this.taskManager.addTask(time, message);
     }
