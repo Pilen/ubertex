@@ -155,7 +155,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         if (why.isAbsolute()) {
             return why;
         }
-        return new File(this.baseDir, where);
+        return new File(this.baseDir, File.separator + "data" + File.separator + where);
     }
 
     public final void addTask(long time, String message) {
