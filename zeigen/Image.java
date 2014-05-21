@@ -31,71 +31,29 @@ public class Image extends ZSketch {
         background(zBackgroundColor);
 
         if (currentImage != null) {
-            float x, y, w, h;
-
-            switch(mode) {
-            default: println("Unknown mode: " + mode);
-            case "":
-            case "stretched":
-            case "full":
-                image(currentImage, 0, 0, width, height);
-                break;
-            case "plain":
-                w = currentImage.width;
-                h = currentImage.height;
-
-                x = (width - w)/2;
-                y = (height - h)/2;
-                image(currentImage, x, y, w, h);
-                break;
-            case "sized":
-                w = currentImage.width;
-                h = currentImage.height;
-
-                float widthRatio = width/w;
-                float heightRatio = height/h;
-
-                if (widthRatio <= heightRatio) {
-                    h = width * (h/w);
-                    w = width;
-                } else {
-                    w = height * (w/h);
-                    h = height;
-                }
-
-                x = (width - w)/2;
-                y = (height - h)/2;
-
-                image(currentImage, x, y, w, h);
-                break;
-            }
+            renderImage(currentImage, mode);
         }
     }
 
     public void zReceive(String message) {
         String[] parts = message.split(";", 2);
-        if (parts.length == 2) {
-            switch(parts[0]) {
-            case "show":
-            case "view":
-            case "render":
-            case "display":
-            case "open":
-            case "image": setImage(parts[1]); break;
-            case "mode": mode = parts[1].trim(); break;
-            case "preload":
-            case "load": preload(parts[1]); break;
-            default: println("Unknown message"); break;
-            }
-        } else if (parts.length == 1) {
-            switch(parts[0]) {
-            case "clearcache":
-            case "clear": clearCache(); break;
-            case "unblank": case "unhide": case "unpause": case "continue":
-            case "nop":
-                break;
-            default: setImage(parts[0]); break;
-            }
+        switch (parts[0].trim().toLowerCase()) {
+        case "show":
+        case "view":
+        case "render":
+        case "display":
+        case "open":
+        case "image": setImage(parts[1]); break;
+        case "mode": mode = parts[1].trim(); break;
+        case "preload":
+        case "load": preload(parts[1]); break;
+        case "clearcache":
+        case "clear": clearCache(); break;
+        case "unblank": case "unhide": case "unpause": case "continue":
+        case "nop": break;
+        default:
+            setImage(message);
+            break;
         }
     }
 
