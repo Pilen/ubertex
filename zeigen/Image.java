@@ -6,7 +6,7 @@ import java.util.concurrent.locks.Condition;
 
 import processing.core.PImage;
 
-public class Image extends ZSketch {
+public class Image extends ImageRenderer {
 
     private final ReentrantLock lock = new ReentrantLock(true);
     private Condition condition = lock.newCondition();
