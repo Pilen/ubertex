@@ -33,7 +33,11 @@ public class UDPServer implements Server {
                 throw new RuntimeException(e.getMessage(), e);
             }
             byte[] data = packet.getData();
-            String message = new String(data, 0, packet.getLength(), StandardCharsets.UTF_8);
+            // Decode buffer of UTF-8 bytes into UTF-8 String
+            String message = new String(data, 0, packet.getLength());
+            // Reencode String (This makes it work quite magically)
+            message = new String(message.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+            System.out.println(message);
             this.controller.message(message);
         }
     }
