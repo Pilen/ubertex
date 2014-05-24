@@ -226,6 +226,11 @@ public class Controller implements TaskPerformer {
     }
 
     private void sketch(long time, String message) {
+        if (sketch == null) {
+            System.out.println("NO ACTIVE SKETCH, CANT DELIVER MESSAGE");
+            return;
+        }
+
         String[] parts = message.split(";", 2);
 
         if (parts.length == 2) {
