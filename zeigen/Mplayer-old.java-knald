@@ -1,0 +1,85 @@
+
+import java.io.IOException;
+import java.io.InputStream;
+
+public class Mplayer implements Runnable{
+
+    // public void zSetup() {
+    //     background();
+    //     String filename = "/home/pilen/youtube/Penguins VS the Rope-A85WpaTHNlw.mp4";
+    //     String command = "mplayer -fs " + "\"" + filename + "\" &> /dev/null";
+    //     println(command);
+    //     try {
+    //         Process mplayer = Runtime.getRuntime().exec(command);
+    //         mplayer.waitFor();
+    //     } catch (IOException e) {
+    //         println("Mplayer error");
+    //     }
+    // }
+
+    // public void zDraw() {
+    //     background();
+    //     rect (45,67,32,12);
+    // }
+
+    Process mplayer = null;
+
+    public Mplayer(String args) {
+        String filename = "/home/pilen/youtube/Penguins VS the Rope-A85WpaTHNlw.mp4";
+        String command = "mplayer -slave " + "\"" + filename + "\"";
+        System.out.println(command);
+
+        try {
+            this.mplayer = Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+        }
+
+    }
+
+    public void run() {
+        if (mplayer != null) {
+            InputStream out = mplayer.getInputStream();
+            InputStream err = mplayer.getErrorStream();
+
+            try {
+                out.close();
+                err.close();
+            } catch (IOException e) {
+            }
+
+
+            // while (isRunning()) {
+            //     System.out.print(".");
+            //     byte[] bs = new byte[256];
+
+            //     try {
+            //         while (out.available() > 0) {
+            //             out.read();
+            //         }
+            //         while (err.available() > 0) {
+            //             err.read();
+            //         }
+            //     } catch (IOException e) {
+            //     }
+
+            //     try {
+            //         Thread.sleep(10);
+            //     } catch (InterruptedException e) {
+            //     }
+            // }
+
+            System.out.println("Done");
+        }
+    }
+
+    private boolean isRunning() {
+        try {
+            System.out.println(mplayer.exitValue());
+            return false;
+        } catch (IllegalThreadStateException e) {
+            return true;
+        }
+    }
+
+
+}
