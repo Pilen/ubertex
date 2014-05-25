@@ -23,12 +23,6 @@ public class Text extends ZSketch {
         case "message":
         case "string":
             string = parts[1];
-            println(string);
-            if (string.equals("Gå væk")) {
-                println("equals");
-            } else {
-                println("dåes not æqual");
-            }
             break;
         case "size":
             try {
