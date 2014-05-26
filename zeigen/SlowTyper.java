@@ -1,5 +1,5 @@
 
-public class SlowTyper extends ZSketch {
+public class SlowTyper extends ZModule {
 
     private int size = 40;
     private String string = "";

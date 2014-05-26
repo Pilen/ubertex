@@ -1,7 +1,7 @@
 
 import processing.core.PImage;
 
-public abstract class ImageRenderer extends ZSketch {
+public abstract class ImageRenderer extends ZModule {
 
 
     public void renderImage(PImage image, String mode) {

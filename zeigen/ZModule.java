@@ -2,7 +2,7 @@
 import java.io.File;
 import processing.core.PApplet;
 
-public abstract class ZSketch extends PApplet implements TaskPerformer {
+public abstract class ZModule extends PApplet implements TaskPerformer {
     private TaskManager taskManager;
 
     private String args;
@@ -17,7 +17,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
     public int zBackgroundColor;
     public boolean zBlank = false;
 
-    public ZSketch() {
+    public ZModule() {
         super();
     }
 
@@ -103,7 +103,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
             System.out.println("AN ARGUMENT FOR BACKGROUND-COLOR WAS NOT A LEGAL NUMBER: " + backgroundColor);
         }
 
-        this.runSketch(new String[] {"--hide-stop"});
+        this.runModule(new String[] {"--hide-stop"});
     }
 
     public final void setup() {
@@ -122,7 +122,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
             ((javax.swing.JFrame) frame).getContentPane().setBackground(new java.awt.Color(0,0,0));
             this.zSetup(this.args);
         } catch (Exception e) {
-            System.out.println("======== ERROR ========\n" + "CURRENT SKETCH THREW AN EXCEPTION\n" + e.toString());
+            System.out.println("======== ERROR ========\n" + "CURRENT MODULE THREW AN EXCEPTION\n" + e.toString());
             e.printStackTrace();
             System.out.println("=======================");
             this.exit();
@@ -137,7 +137,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
                 background(zBackgroundColor);
             }
         } catch (Exception e) {
-            System.out.println("======== ERROR ========\n" + "CURRENT SKETCH THREW AN EXCEPTION\n" + e.toString());
+            System.out.println("======== ERROR ========\n" + "CURRENT MODULE THREW AN EXCEPTION\n" + e.toString());
             e.printStackTrace();
             System.out.println("=======================");
             this.exit();
@@ -189,7 +189,7 @@ public abstract class ZSketch extends PApplet implements TaskPerformer {
         return this.taskManager.clear();
     }
 
-    public boolean sketchFullScreen() {
+    public boolean moduleFullScreen() {
         return false;
     }
 

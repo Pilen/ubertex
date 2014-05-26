@@ -15,8 +15,8 @@ public class Controller implements TaskPerformer {
 
     private final HashSet<String> names;
     private final File baseDir;
-    private ZSketch sketch;
-    private String sketchName;
+    private ZModule module;
+    private String moduleName;
 
     private FileManager fileManager;
 
@@ -43,8 +43,8 @@ public class Controller implements TaskPerformer {
 
         this.baseDir = baseDir;
 
-        this.sketch = null;
-        this.sketchName = "";
+        this.module = null;
+        this.moduleName = "";
 
         this.fileManager = new FileManager("pilen@192.168.0.10:av/2014/", baseDir);
 
@@ -71,7 +71,7 @@ public class Controller implements TaskPerformer {
             if (this.forMe(targets.split(" "))) {
                 System.out.println("RECEIVED: " + message);
                 switch (command) {
-                case "sketch": this.sketch(time, options); break;
+                case "module": this.module(time, options); break;
                 case "sync": this.sync(options); break;
                 default: this.taskManager.addTask(time, command, options); break;
                 }
@@ -111,7 +111,7 @@ public class Controller implements TaskPerformer {
         case "offset" : this.offset(options); break;
         case "quit": this.quit(); break;
         case "seed": this.seed(options); break;
-        // case "sketch": all ready handled
+        // case "module": all ready handled
         case "start": this.start(options); break;
         case "startblank": case "startblanked": case "starthidden": case "startpaused":
             this.startPaused(options); break;
@@ -146,8 +146,8 @@ public class Controller implements TaskPerformer {
 
     private void blank(boolean blanked) {
         this.lock.lock();
-        if (this.sketch != null) {
-            this.sketch.zBlank = blanked;
+        if (this.module != null) {
+            this.module.zBlank = blanked;
         }
         this.lock.unlock();
     }
@@ -155,11 +155,11 @@ public class Controller implements TaskPerformer {
     private void clearqueue() {
         this.lock.lock();
         int cleared = this.taskManager.clear();
-        int sketchCleared = 0;
-        if (this.sketch != null) {
-            sketchCleared = this.sketch.clearTasks();
+        int moduleCleared = 0;
+        if (this.module != null) {
+            moduleCleared = this.module.clearTasks();
         }
-        System.out.println("CONTROLLER CLEARED: " + cleared + "    SKETCH CLEARED: " + sketchCleared);
+        System.out.println("CONTROLLER CLEARED: " + cleared + "    MODULE CLEARED: " + moduleCleared);
         this.lock.unlock();
     }
 
@@ -169,12 +169,12 @@ public class Controller implements TaskPerformer {
         this.lock.unlock();
     }
 
-    private void kill(String sketch) {
+    private void kill(String module) {
         this.lock.lock();
-        if (sketch.isEmpty() || this.sketchName.toLowerCase().equals(sketch.toLowerCase())) {
+        if (module.isEmpty() || this.moduleName.toLowerCase().equals(module.toLowerCase())) {
             this.kill();
         } else {
-            System.out.println("CAN'T KILL: " + sketch);
+            System.out.println("CAN'T KILL: " + module);
         }
         this.lock.unlock();
     }
@@ -182,13 +182,13 @@ public class Controller implements TaskPerformer {
     private void kill() {
         this.lock.lock();
 
-        if (this.sketch != null) {
-            this.sketch.exit();
-            this.sketch = null;
-            System.out.println("TERMINATING: " + this.sketchName);
-            this.sketchName = "";
+        if (this.module != null) {
+            this.module.exit();
+            this.module = null;
+            System.out.println("TERMINATING: " + this.moduleName);
+            this.moduleName = "";
         } else {
-            System.out.println("NO SKETCH TO KILL");
+            System.out.println("NO MODULE TO KILL");
         }
 
         this.lock.unlock();
@@ -239,27 +239,27 @@ public class Controller implements TaskPerformer {
         }
     }
 
-    private void sketch(long time, String message) {
-        if (sketch == null) {
-            System.out.println("NO ACTIVE SKETCH, CANT DELIVER MESSAGE");
+    private void module(long time, String message) {
+        if (module == null) {
+            System.out.println("NO ACTIVE MODULE, CANT DELIVER MESSAGE");
             return;
         }
 
         String[] parts = message.split(";", 2);
 
         if (parts.length == 2) {
-            String sketch = parts[0].trim();
+            String module = parts[0].trim();
             String options = parts[1];
 
             this.lock.lock();
-            if (sketch.isEmpty() || sketch.equals(this.sketchName)) {
-                this.sketch.addTask(time, options);
+            if (module.isEmpty() || module.equals(this.moduleName)) {
+                this.module.addTask(time, options);
             } else {
-                System.out.println("RECEIVED MESSAGE FOR WRONG SKETCH: " + sketch);
+                System.out.println("RECEIVED MESSAGE FOR WRONG MODULE: " + module);
             }
             this.lock.unlock();
         } else {
-            System.out.println("OPTIONS FOR SKETCH COMMAND MUST CONSIST OF TARGET AND MESSAGE");
+            System.out.println("OPTIONS FOR MODULE COMMAND MUST CONSIST OF TARGET AND MESSAGE");
         }
     }
 
@@ -274,7 +274,7 @@ public class Controller implements TaskPerformer {
     private void start(String message, boolean blanked) {
         String[] parts = message.split(";", 4);
 
-        String sketchName = "";
+        String moduleName = "";
         int zOffsetX = this.zOffsetX;
         int zOffsetY = this.zOffsetY;
         String arguments = "";
@@ -294,29 +294,29 @@ public class Controller implements TaskPerformer {
             } catch (NumberFormatException e) {
                 System.out.println("OFFSETS MUST BE INTEGERS");
             }
-        case 1: sketchName = parts[0];
+        case 1: moduleName = parts[0];
         }
 
 
 
         this.lock.lock();
 
-        if (this.sketch != null) {
+        if (this.module != null) {
             this.kill();
         }
 
-        this.sketch = SketchLoader.load(sketchName);
+        this.module = ModuleLoader.load(moduleName);
 
-        if (this.sketch != null) {
-            this.sketch.zBlank = blanked;
-            this.sketch.zStart(arguments, this.baseDir,
+        if (this.module != null) {
+            this.module.zBlank = blanked;
+            this.module.zStart(arguments, this.baseDir,
                                this.zWidth, this.zHeight,
                                zOffsetX, zOffsetY,
                                this.zRandomSeed, this.zNoiseSeed,
                                this.zBackgroundColor);
-            this.sketchName = sketchName;
+            this.moduleName = moduleName;
         } else {
-            System.out.println("COULD NOT LOAD CLASS: " + sketchName);
+            System.out.println("COULD NOT LOAD CLASS: " + moduleName);
         }
 
         this.lock.unlock();

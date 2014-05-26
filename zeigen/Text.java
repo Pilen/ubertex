@@ -1,5 +1,5 @@
 
-public class Text extends ZSketch {
+public class Text extends ZModule {
 
     private int size = 40;
     private String string = "";

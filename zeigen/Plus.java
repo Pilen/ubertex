@@ -1,5 +1,5 @@
 
-public class Plus extends ZSketch {
+public class Plus extends ZModule {
     // Lots and lots of plusses on the screen!
     private int size = 20;
     private int NUM_PLUS = 500;

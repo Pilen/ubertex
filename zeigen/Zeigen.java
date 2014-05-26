@@ -33,7 +33,7 @@ public class Zeigen {
         }
 
         File path = new File(args[2]);
-        SketchLoader.setPath(path);
+        ModuleLoader.setPath(path);
 
 
 
