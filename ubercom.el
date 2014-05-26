@@ -18,7 +18,22 @@
                              list ";")))
     (message message)
     ;;do something with the above
-    ))
+
+    ;; When leiter is not running start it
+    (when (or (not (processp revy-leiter))
+              (not (process-live-p revy-leiter)))
+      (revy-start-leiter))
+    (process-send-string revy-leiter message)))
+
+(defun revy-start-leiter ()
+  "Start leiter.
+If leiter is allready running, kill it first, and restart it."
+  (delete-process revy-leiter)
+  (let ((process-connection-type nil)) ;; Use pipes
+    (setq revy-leiter
+          (start-process "leiter" "*leiter*"
+                         (concat (file-name-as-directory revy-ubertex-dir)
+                                 "tools/leiter.py")))))
 
 
 
