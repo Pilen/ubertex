@@ -35,7 +35,7 @@ def run():
 
         message = ";".join([recipient, time, rest])
         print("Sending: " + message)
-        zusteller.udp("192.168.0.255", "9999", message, 512)
+        zusteller.udp("192.168.0.255", "9999", message)
 
 
 
