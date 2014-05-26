@@ -35,6 +35,8 @@ public class UDPServer implements Server {
             byte[] data = packet.getData();
             // Decode buffer of UTF-8 bytes into UTF-8 String
             String message = new String(data, 0, packet.getLength(), StandardCharsets.UTF_8);
+
+            System.out.println(message);
             this.controller.message(message);
         }
     }
