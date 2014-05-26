@@ -9,7 +9,7 @@
 ;π Settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar revy-hidden '())
+;; (defvar revy-hidden '())
 ;(make-variable-buffer-local 'revy-hidden)
 
 ;(delete-overlay revy-cursor)
@@ -113,14 +113,14 @@ Does not affect the cursor."
 (defun revy-ubertex-hide ()
   "Hides command tags in the buffer.
 To make it easier to visually keep an overview.
-Also does all the preperations for the buffer "
+Also does all the preparations for the buffer "
   (interactive)
   (revy-unhide)
   (revy-numerize)
   (revy-insert-blank-comments)
-  (setq revy-hidden '())
+  ;; (setq revy-hidden '())
   (save-excursion
-    ;; insert missing parrens
+    ;; insert missing parens around elisp expressions
     (beginning-of-buffer)
     (while (search-forward-regexp "\\\\elisp{(\\([^(][^)}]+\\)}" nil t)
        (replace-match "\\\\elisp{(\\1)}" nil nil))
@@ -131,16 +131,21 @@ Also does all the preperations for the buffer "
     (let ((overlay (make-overlay 0 (match-beginning 0) (current-buffer) t nil)))
       ;; (overlay-put overlay 'invisible t)
       (overlay-put overlay 'revy t)
-      (overlay-put overlay 'face 'revy-invisible-face)
-      (push overlay revy-hidden))
+      (overlay-put overlay 'face 'revy-hidden-face)
+      ;; (push overlay revy-hidden)
+      )
 
+
+    ;; Put overlays on tex to hide
     (beginning-of-buffer)
-    (let ((n 1))
+    (let ((n 0))
+      ;; Search over everything that needs overlays
       (while (search-forward-regexp "\\\\n{\\([0-9]+\\)}\\|\\\\begin{overtex}\\|\\\\end{overtex}\n\\|\\\\pause\\({}\\)?\\|^\n" nil t)
+        ;; Create overlay
         (let ((overlay (make-overlay (match-beginning 0) (match-end 0) (current-buffer) t nil)))
           (overlay-put overlay 'revy t)
           (overlay-put overlay 'priority 9000)
-          (overlay-put overlay 'face 'revy-invisible-face)
+          (overlay-put overlay 'face 'revy-hidden-face)
           ;(overlay-put overlay 'invisible t)
 
           ;; (when (string= (match-string 0) "\\\\begin{overtex})
@@ -172,8 +177,7 @@ Also does all the preperations for the buffer "
             )
 
 
-          ;; (setf revy-hidden (cons overlay revy-hidden))
-          (push overlay revy-hidden)
+          ;; (push overlay revy-hidden)
          ;(put-text-property (match-beginning 0) (match-end 0) 'invisible t)
           )))))
 
@@ -298,24 +302,11 @@ This makes it easier to visually spot empty slides."
 
 ;;Works on revy-numerize
 (defun revy-ubertex-slide-number ()
+  "Finds the slide number for the slide where point resides or the previous."
   (interactive)
   (save-excursion
     (search-backward-regexp "\\\\n{\\([0-9]+\\)}" nil t)
     (message (match-string 1))))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π Xpdf
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-(defun revy-ubertex-xpdf-goto-slide (slide)
-  (let ((slide (if (numberp slide) (int-to-string slide) slide)))
-    (revy-shell (concat "xpdf -remote ubertex -exec \\\"gotoPage("
-                        slide
-                        ")\\\"")
-                revy-default-worker)))
-
 
 
 

@@ -30,7 +30,7 @@
      (:foreground "black" :background "4D3B3B")))
   "")
 
-(defface revy-invisible-face
+(defface revy-hidden-face
   '((((type x w32 mac))
      (:font "DejaVu Sans Mono")
      (:height 90)
@@ -38,11 +38,11 @@
   "")
 
 ;; TODO: Clean up the below
-(set-face-attribute 'revy-invisible-face nil :height 50)
-(set-face-attribute 'revy-invisible-face nil :font "DejaVu Sans Mono")
+(set-face-attribute 'revy-hidden-face nil :height 50)
+(set-face-attribute 'revy-hidden-face nil :font "DejaVu Sans Mono")
 
-(set-face-background 'revy-invisible-face "gray30")
-(set-face-foreground 'revy-invisible-face "gray50")
+(set-face-background 'revy-hidden-face "gray30")
+(set-face-foreground 'revy-hidden-face "gray50")
 (set-face-background 'revy-cursor-face "firebrick4")
 
 (setq revy-cursor (make-overlay 0 10 (current-buffer) t t))
