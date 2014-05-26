@@ -15,15 +15,17 @@
 
          (list (cons (revy-worker-name worker) (cons time args)))
          (message (mapconcat (lambda (x) (if (integerp x) (int-to-string x) x))
-                             list ";")))
-    (message message)
+                             list ";"))
+         (quoted (concat (replace-regexp-in-string "\n" "\\\\n" message) "\n")))
+
+    (message quoted)
     ;;do something with the above
 
     ;; When leiter is not running start it
     (when (or (not (processp revy-leiter))
               (not (process-live-p revy-leiter)))
       (revy-start-leiter))
-    (process-send-string revy-leiter message)))
+    (process-send-string revy-leiter quoted)))
 
 (defun revy-start-leiter ()
   "Start leiter.
