@@ -28,7 +28,7 @@ public class FileManager {
         try {
             Process rsync = Runtime.getRuntime().exec(command);
             int returnValue = rsync.waitFor();
-            System.out.println(returnValue);
+            System.out.println("RSYNC FINISHED WITH VALUE: " + returnValue);
         } catch (IOException e) {
             System.out.println("COULD NOT START RSYNC");
         } catch (InterruptedException e) {

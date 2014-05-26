@@ -46,7 +46,7 @@ public class Controller implements TaskPerformer {
         this.sketch = null;
         this.sketchName = "";
 
-        this.fileManager = new FileManager("pilen@192.168.0.10:av/2014", baseDir);
+        this.fileManager = new FileManager("pilen@192.168.0.10:av/2014/", baseDir);
 
         this.zWidth = -1; //displayWidth
         this.zHeight = -1; //displayHeigth
@@ -102,6 +102,10 @@ public class Controller implements TaskPerformer {
         case "blank": case "pause": case "hide":
             this.blank(true); break;
         case "clearqueue": this.clearqueue(); break;
+        case "download":
+        case "rsync":
+        case "syncfiles":
+            this.download(); break;
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
         case "offset" : this.offset(options); break;
