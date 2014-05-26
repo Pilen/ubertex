@@ -1,23 +1,24 @@
 
-(defun revy-send-message (&rest message)
+(defun revy-send-message (&rest args)
   "Send a message"
-  (let* ((worker (if (revy-worker-p (car message))
-                     (pop message)
+  (let* ((worker (if (revy-worker-p (car args))
+                     (pop args)
                    revy-currrent-worker))
-         (time (cond ((integerp (car message))
-                      (int-to-string (pop message)))
-                     ((string-equal "" (car message))
-                      (pop message))
-                     ((string-equal "now" (car message))
-                      (pop message))
+         (time (cond ((integerp (car args))
+                      (int-to-string (pop args)))
+                     ((string-equal "" (car args))
+                      (pop args))
+                     ((string-equal "now" (car args))
+                      (pop args))
                      (t
                       "now")))
 
-         (list (cons (revy-worker-name worker) (cons time message))))
-    (mapconcat (lambda (x) (if (integerp x) (int-to-string x) x))
-               list ";")
+         (list (cons (revy-worker-name worker) (cons time args)))
+         (message (mapconcat (lambda (x) (if (integerp x) (int-to-string x) x))
+                             list ";")))
+    (message message)
     ;;do something with the above
-))
+    ))
 
 
 
@@ -55,12 +56,13 @@ the command will be executed on this machine."
 ;; Might be unnecessary if using sshmount
 (defun revy-scp-file (filename subdir)
   "Copy a file to a worker using scp"
+  (when revy-scp-mode
     (revy-shell
      (concat "scp "
              filename
              " " (revy-worker-location revy-currrent-worker)
              ":" (revy-worker-dir revy-currrent-worker)
-             subdir (file-name-nondirectory filename))))
+             subdir (file-name-nondirectory filename)))))
 
 (defun revy-elisp (start &optional end)
   "Evaluates elisp code.

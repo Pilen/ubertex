@@ -1,3 +1,9 @@
+;thisisred
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π Settings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defvar revy-scp-mode nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Workers
@@ -12,7 +18,7 @@
 (defvar revy-default-worker revy-worker-brok)
 (make-variable-buffer-local 'revy-default-worker)
 (defvar revy-currrent-worker revy-default-worker)
-(make-variable-buffer-local revy-currrent-worker)
+(make-variable-buffer-local 'revy-currrent-worker)
 
 
 
@@ -81,6 +87,6 @@ can be temporarily pushed on the `revy-stack' while another is executed")
 ;π Includes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'ubercom)
-(require 'ubertex)
-(require 'ubersicht)
+;; (require 'ubercom)
+;; (require 'ubertex)
+;; (require 'ubersicht)

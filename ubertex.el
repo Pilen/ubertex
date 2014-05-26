@@ -14,7 +14,7 @@
 
 ;(delete-overlay revy-cursor)
 
-(setq line-move-ignore-invisible nil)
+;;;;; (setq line-move-ignore-invisible nil) Set this?
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -33,23 +33,23 @@ The standard entry for opening an overtex file and playing it's sketch."
             (define-key revy-ubertex-mode-map (kbd "<f11>") 'revy-ubertex-hide)
             (define-key revy-ubertex-mode-map (kbd "<f12>") 'revy-ubertex-unhide)
             revy-ubertex-mode-map)
-  (when (not revy-ubertex-mode)
-    (revy-ubertex-unhide))
-  (when (not (null revy-local-cursor))
-    (delete-overlay revy-local-cursor)
-    (setq revy-local-cursor nil))
-  (when revy-ubertex-mode
-    (setq revy-local-cursor (make-overlay 0 0 (current-buffer) t t))
-    (overlay-put revy-local-cursor 'face 'revy-local-cursor-face)
-    (overlay-put revy-local-cursor 'priority 4999)
-    (overlay-put revy-local-cursor 'revy t)
-    (goto-char (point-min)))
+  (if (not revy-ubertex-mode)
+      (revy-ubertex-unhide))
   (revy-ubertex-start))
 
 (defun revy-ubertex-start ()
   "Start a sketch for the current ubertex buffer from the beginning.
 This does not set the `revy-ubertex-mode' and is primarily used while working on the overtex file."
   (interactive)
+
+  (when (not (null revy-local-cursor))
+    (delete-overlay revy-local-cursor)
+    (setq revy-local-cursor nil))
+  (setq revy-local-cursor (make-overlay 0 0 (current-buffer) t t))
+  (overlay-put revy-local-cursor 'face 'revy-local-cursor-face)
+  (overlay-put revy-local-cursor 'priority 4999)
+  (overlay-put revy-local-cursor 'revy t)
+
   (beginning-of-buffer)
   (revy-ubertex-restart))
 
@@ -59,7 +59,7 @@ This does not set the `revy-ubertex-mode' and is primarily used while working on
   (interactive)
   (revy-ubertex-hide)
   (let ((filename (concat (file-name-sans-extension (buffer-file-name)) ".pdf")))
-    (revy-scp-pdf filename "pdfs")
+    (revy-scp-file filename "pdfs")
     (revy-pdf-open (concat (file-name-as-directory "pdfs")
                            (file-name-nondirectory filename))))
   ;; (sleep-for 1) ;; probably not needed anymore
@@ -173,7 +173,7 @@ Also does all the preparations for the buffer "
             ;;       (overlay-put icon 'priority 9000)
             ;;       (overlay-put icon 'after-string "$")
             ;;       (push icon revy-ubertex-hidden))
-            (overlay-put overlay 'invisible t)
+;            (overlay-put overlay 'invisible t)
             )
 
 
@@ -203,7 +203,7 @@ Also does all the preparations for the buffer "
   "Unhides hidden text.
 This restores the buffer to the default tex look."
   (interactive)
-  (revy-unnumerize)
+  (revy-ubertex-unnumerize)
   (remove-text-properties (buffer-end -1) (buffer-end 1) 'bold)
   (remove-overlays (buffer-end -1) (buffer-end 1) 'revy t)
   (remove-overlays (buffer-end -1) (buffer-end 1) 'face 'revy-cursor-face))
@@ -250,7 +250,7 @@ This makes it easier to visually spot empty slides."
 
 (defun revy-ubertex-scan (start end)
   (interactive)
-  (print end)
+  ;; (print end)
   (save-excursion ;should end before evaluating code (so we can jump around)
     (goto-char end)
     (search-backward-regexp "\\\\begin{overtex}\\|\\\\pause[{}]?" nil t) ;; skriv regexes sådan
