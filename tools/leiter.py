@@ -5,9 +5,17 @@ import zusteller
 
 MINIMUM = 100
 
+def now():
+    now = datetime.datetime.now()
+    return (now.day * 24 * 60 * 60 + now.second) * 1000 + now.microsecond // 1000
+
 def run():
     """Will not work correctly when the revy overlaps two months.
     Aka when the revy starts on the last day of the month and stops on the first of the following."""
+
+    sync = "all;now;sync;servertime;" + str(now())
+    zusteller.udp("192.168.0.255", "9999", sync, 512)
+
     while True:
         message = input();
         parts = message.split(";", 2) # Two splits, 3 parts
@@ -20,9 +28,7 @@ def run():
             try:
                 time = int(43)
 
-                now = datetime.datetime.now()
-                millis = (now.day * 24 * 60 * 60 + now.second) * 1000 + now.microsecond // 1000
-                millis += MINIMUM + time
+                millis = now() + MINIMUM + time
                 time = str(millis)
             except ValueError:
                 pass
