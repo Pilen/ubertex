@@ -53,15 +53,15 @@ public class PDF extends ImageRenderer {
             current = 0;
             load(parts[1]);
             break;
-        case "reload":
-            load(parts[1]);
-            break;
-        case "goto":
-            goTo(parts[1]);
-            break;
         case "openat":
             goTo(parts[1]);
             load(parts[2]);
+            break;
+        case "reload":
+            reload();
+            break;
+        case "goto":
+            goTo(parts[1]);
             break;
         case "next": case "forward":
             goTo(current + 1);
@@ -95,6 +95,11 @@ public class PDF extends ImageRenderer {
         }
     }
 
+    private void reload() {
+        if (pdfFile != null) {
+            load(pdfFile.getAbsolutePath());
+        }
+    }
     private void load(String filename) {
         long start = Time.now();
         File pdf = dataFile(filename);
