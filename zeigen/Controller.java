@@ -18,6 +18,8 @@ public class Controller implements TaskPerformer {
     private ZSketch sketch;
     private String sketchName;
 
+    private FileManager fileManager;
+
     private int zWidth;
     private int zHeight;
     private int zOffsetX;
@@ -43,6 +45,8 @@ public class Controller implements TaskPerformer {
 
         this.sketch = null;
         this.sketchName = "";
+
+        this.fileManager = new FileManager("pilen@192.168.0.10:av/2014", baseDir);
 
         this.zWidth = -1; //displayWidth
         this.zHeight = -1; //displayHeigth
@@ -152,6 +156,12 @@ public class Controller implements TaskPerformer {
             sketchCleared = this.sketch.clearTasks();
         }
         System.out.println("CONTROLLER CLEARED: " + cleared + "    SKETCH CLEARED: " + sketchCleared);
+        this.lock.unlock();
+    }
+
+    private void download() {
+        this.lock.lock();
+        this.fileManager.syncFiles();
         this.lock.unlock();
     }
 
