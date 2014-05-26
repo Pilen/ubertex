@@ -103,7 +103,7 @@ public abstract class ZModule extends PApplet implements TaskPerformer {
             System.out.println("AN ARGUMENT FOR BACKGROUND-COLOR WAS NOT A LEGAL NUMBER: " + backgroundColor);
         }
 
-        this.runModule(new String[] {"--hide-stop"});
+        this.runSketch(new String[] {"--hide-stop"});
     }
 
     public final void setup() {
