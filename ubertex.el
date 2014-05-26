@@ -9,8 +9,8 @@
 ;π Settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (defvar revy-hidden '())
-;(make-variable-buffer-local 'revy-hidden)
+;; (defvar revy-ubertex-hidden '())
+;(make-variable-buffer-local 'revy-ubertex-hidden)
 
 ;(delete-overlay revy-cursor)
 
@@ -26,15 +26,15 @@
 The standard entry for opening an overtex file and playing it's sketch."
   :lighter "ubertex"
   :keymap (let ((revy-ubertex-mode-map (make-sparse-keymap)))
-            (define-key revy-ubertex-mode-map (kbd "<next>") 'revy-next)
+            (define-key revy-ubertex-mode-map (kbd "<next>") 'revy-ubertex-next)
             (define-key revy-ubertex-mode-map (kbd "<home>") 'revy-ubertex-start)
-            (define-key revy-ubertex-mode-map (kbd "<end>") 'revy-enter)
+            (define-key revy-ubertex-mode-map (kbd "<end>") 'revy-ubertex-enter)
             (define-key revy-ubertex-mode-map (kbd "<delete>") 'revy-blank)
-            (define-key revy-ubertex-mode-map (kbd "<f11>") 'revy-hide)
-            (define-key revy-ubertex-mode-map (kbd "<f12>") 'revy-unhide)
+            (define-key revy-ubertex-mode-map (kbd "<f11>") 'revy-ubertex-hide)
+            (define-key revy-ubertex-mode-map (kbd "<f12>") 'revy-ubertex-unhide)
             revy-ubertex-mode-map)
   (when (not revy-ubertex-mode)
-    (revy-unhide))
+    (revy-ubertex-unhide))
   (when (not (null revy-local-cursor))
     (delete-overlay revy-local-cursor)
     (setq revy-local-cursor nil))
@@ -57,13 +57,13 @@ This does not set the `revy-ubertex-mode' and is primarily used while working on
   "(Re)start a sketch for the current ubertex buffer from the current point
 This does not set the `revy-ubertex-mode' and is primarily used while working on the overtex file."
   (interactive)
-  (revy-hide)
+  (revy-ubertex-hide)
   (let ((filename (concat (file-name-sans-extension (buffer-file-name)) ".pdf")))
     (revy-scp-pdf filename "pdfs")
     (revy-pdf-open (concat (file-name-as-directory "pdfs")
                            (file-name-nondirectory filename))))
   ;; (sleep-for 1) ;; probably not needed anymore
-  (revy-enter))
+  (revy-ubertex-enter))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -80,7 +80,7 @@ Does not affect the cursor."
   "Moves point and cursor to the next slide after the currently shown."
   (interactive)
   (goto-char (overlay-end revy-local-cursor))
-  (revy-enter))
+  (revy-ubertex-enter))
 
 (defun revy-ubertex-enter ()
   "Moves cursor to the slide where the point is located."
@@ -102,8 +102,8 @@ Does not affect the cursor."
     (move-overlay revy-cursor (+ 7 start) end (current-buffer))
     ;(move-overlay revy-local-cursor (match-end 0) end (current-buffer))
     ;(move-overlay revy-cursor (match-end 0) end (current-buffer))
-    (revy-pdf-goto-slide (revy-slide-number))
-    (revy-scan start end)))
+    (revy-pdf-goto-slide (revy-ubertex-slide-number))
+    (revy-ubertex-scan start end)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -115,10 +115,10 @@ Does not affect the cursor."
 To make it easier to visually keep an overview.
 Also does all the preparations for the buffer "
   (interactive)
-  (revy-unhide)
-  (revy-numerize)
-  (revy-insert-blank-comments)
-  ;; (setq revy-hidden '())
+  (revy-ubertex-unhide)
+  (revy-ubertex-numerize)
+  (revy-ubertex-insert-blank-comments)
+  ;; (setq revy-ubertex-hidden '())
   (save-excursion
     ;; insert missing parens around elisp expressions
     (beginning-of-buffer)
@@ -132,7 +132,7 @@ Also does all the preparations for the buffer "
       ;; (overlay-put overlay 'invisible t)
       (overlay-put overlay 'revy t)
       (overlay-put overlay 'face 'revy-hidden-face)
-      ;; (push overlay revy-hidden)
+      ;; (push overlay revy-ubertex-hidden)
       )
 
 
@@ -172,12 +172,12 @@ Also does all the preparations for the buffer "
             ;;       (overlay-put icon 'revy t)
             ;;       (overlay-put icon 'priority 9000)
             ;;       (overlay-put icon 'after-string "$")
-            ;;       (push icon revy-hidden))
+            ;;       (push icon revy-ubertex-hidden))
             (overlay-put overlay 'invisible t)
             )
 
 
-          ;; (push overlay revy-hidden)
+          ;; (push overlay revy-ubertex-hidden)
          ;(put-text-property (match-beginning 0) (match-end 0) 'invisible t)
           )))))
 
@@ -300,7 +300,7 @@ This makes it easier to visually spot empty slides."
 ;; ;    (message (int-to-string (overlay-get (car (overlays-at (point))) 'revy-slide-number)))))
 
 
-;;Works on revy-numerize
+;;Works on revy-ubertex-numerize
 (defun revy-ubertex-slide-number ()
   "Finds the slide number for the slide where point resides or the previous."
   (interactive)
