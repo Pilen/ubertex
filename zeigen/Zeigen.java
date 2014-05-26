@@ -21,6 +21,8 @@ public class Zeigen {
 
         String[] nameArray = args[0].split("[;\\s]");
         ArrayList<String> names = new ArrayList<String>(Arrays.asList(nameArray));
+        names.add("all");
+        names.add("");
 
         int port = -1;
         try {

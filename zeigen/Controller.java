@@ -331,6 +331,7 @@ public class Controller implements TaskPerformer {
                     long serverTime = Tools.parseTime(parts[1]);
 
                     Time.setClock(serverTime);
+                    System.out.println("SYNCED");
                 } catch (NumberFormatException e) {
                     System.out.println("SERVERTIME MUST BE A LONG");
                 }
