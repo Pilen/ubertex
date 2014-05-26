@@ -11,7 +11,7 @@ public class ModuleLoader extends ClassLoader {
     private static File path;
 
     public static void setPath(File baseDir) {
-        path = new File(baseDir, "modulees");
+        path = new File(baseDir, "modules");
         path.mkdir();
     }
 
