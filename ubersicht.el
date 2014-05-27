@@ -64,6 +64,7 @@
   (when screen
     (setq revy-default-screen screen))
   (if (string= (downcase (file-name-extension filename)) "tex")
+      (revy-manus-mode t)
       (revy-ubertex-mode t)
     (revy-ubersicht-mode t)))
 
@@ -71,8 +72,9 @@
 
 (defun revy-quit ()
   (interactive)
-  (when revy-ubertex-mode
-    (revy-unhide))
+  (revy-unhide)
+  ;; (when revy-ubertex-mode
+  ;;   (revy-unhide))
   (when revy-ubersicht-mode)
   (pop-to-buffer (pop revy-stack)))
 
