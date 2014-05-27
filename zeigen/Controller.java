@@ -102,6 +102,8 @@ public class Controller implements TaskPerformer {
         case "blank": case "pause": case "hide":
             this.blank(true); break;
         case "clearqueue": this.clearqueue(); break;
+        case "cleansync":
+            this.cleanSync(); break;
         case "download":
         case "rsync":
         case "syncfiles":
@@ -163,6 +165,12 @@ public class Controller implements TaskPerformer {
             moduleCleared = this.module.clearTasks();
         }
         System.out.println("CONTROLLER CLEARED: " + cleared + "    MODULE CLEARED: " + moduleCleared);
+        this.lock.unlock();
+    }
+
+    private void cleanSync() {
+        this.lock.lock();
+        this.fileManager.cleanSync();
         this.lock.unlock();
     }
 

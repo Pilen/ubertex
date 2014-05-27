@@ -26,6 +26,24 @@ public class FileManager {
                             "-e ssh",    // Use ssh?
                             this.source,
                             this.destination.getAbsolutePath()};
+        sync(command);
+
+    }
+
+    public void cleanSync() {
+        String[] command = {"/usr/bin/rsync",
+                            "-r",        // Recursive
+                            "-u",        // Only download updated files
+                            "--delete",  // Delete files no longer present
+                            "--partial", // Keep partial files
+                            "-P",
+                            "-e ssh",    // Use ssh?
+                            this.source,
+                            this.destination.getAbsolutePath()};
+        sync(command);
+    }
+
+    private void sync(String[] command) {
         try {
             Process rsync = Runtime.getRuntime().exec(command);
             int returnValue = rsync.waitFor();
