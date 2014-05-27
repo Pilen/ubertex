@@ -59,13 +59,6 @@
   (indent-region (point-min) (point-max))
 )
 
-(defun revy-manus-finish ()
-  (interactive)
-  (save-excursion
-    (beginning-of-buffer)
-    (replace-regexp "\\\\pause\n\\\\end{overtex}" "\n\\\\end{overtex}")
-    (indent-region (point-min) (point-max))))
-
 
 ;; fanger ikke "text, \pause"
 (defun revy-manus-clean ()
@@ -88,7 +81,9 @@
         (backward-delete-char 1)
         (move-beginning-of-line nil))))
   (message "done")
-  (revy-manus-finish))
+  (beginning-of-buffer)
+  (replace-regexp "\\\\pause\n\\\\end{overtex}" "\n\\\\end{overtex}")
+  (indent-region (point-min) (point-max)))
 
 
 (defun revy-manus-slide ()
