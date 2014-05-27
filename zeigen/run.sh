@@ -9,13 +9,13 @@ if [ ! -d "$PROCESSING" ]; then
     PROCESSING="$DIR/processing-2.2.1"
 fi
 
-CLASSPATH="$PROCESSING/core/library/core.jar:$DIR:$DIR/..:./video.jar:$PROCESSING/modes/java/libraries/video/library/gstreamer-java.jar:$PROCESSING/modes/java/libraries/video/library/jna.jar"
+CLASSPATH="$PROCESSING/core/library/core.jar:$DIR:$DIR/..:$DIR/default-modules/:./video.jar:$PROCESSING/modes/java/libraries/video/library/gstreamer-java.jar:$PROCESSING/modes/java/libraries/video/library/jna.jar"
 # ./video.jar:./gstreamer-java.jar:./jna.jar"
 
 echo "Compiling"
 javac -cp $CLASSPATH *.java
 echo "Compiling sketches"
-javac -cp "$CLASSPATH:$DIR/default-modules/" default-modules/*.java
+javac -cp "$CLASSPATH" default-modules/*.java
 
 echo "Running"
 $PROCESSING/java/bin/java -cp $CLASSPATH Zeigen "$@"
