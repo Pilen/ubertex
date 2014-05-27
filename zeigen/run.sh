@@ -15,7 +15,7 @@ CLASSPATH="$PROCESSING/core/library/core.jar:$DIR:$DIR/..:./video.jar:$PROCESSIN
 echo "Compiling"
 javac -cp $CLASSPATH *.java
 echo "Compiling sketches"
-javac -cp "$CLASSPATH:./modules/" modules/*.java
+javac -cp "$CLASSPATH:$DIR/default-modules/" default-modules/*.java
 
 echo "Running"
 $PROCESSING/java/bin/java -cp $CLASSPATH Zeigen "$@"
