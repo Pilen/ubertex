@@ -165,7 +165,8 @@ public class PDF extends ImageRenderer {
             if (i < 3 || max(0, i - current) < 3) {
                 image = loadImage(file.getAbsolutePath());
             } else {
-                image = requestImage(file.getAbsolutePath());
+                // image = requestImage(file.getAbsolutePath());
+                image = loadImage(file.getAbsolutePath());
             }
             images.add(image);
         }
