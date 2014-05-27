@@ -194,6 +194,7 @@ public class Controller implements TaskPerformer {
         this.lock.lock();
 
         if (this.module != null) {
+            this.module.dispose()
             this.module.exit();
             this.module = null;
             System.out.println("TERMINATING: " + this.moduleName);
