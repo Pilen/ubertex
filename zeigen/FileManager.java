@@ -19,7 +19,8 @@ public class FileManager {
         String[] command = {"/usr/bin/rsync",
                             "-r",        // Recursive
                             "-u",        // Only download updated files
-                            "--delete",  // Delete files no longer present
+                            // We want to keep our temporary files, like pdfimages.
+                            // "--delete",  // Delete files no longer present
                             "--partial", // Keep partial files
                             "-P",
                             "-e ssh",    // Use ssh?
