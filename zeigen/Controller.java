@@ -109,6 +109,9 @@ public class Controller implements TaskPerformer {
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
         case "offset" : this.offset(options); break;
+        case "ping":
+        case "hello":
+            System.out.println("pong"); break;
         case "quit": this.quit(); break;
         case "seed": this.seed(options); break;
         // case "module": all ready handled
