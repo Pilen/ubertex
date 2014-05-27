@@ -60,7 +60,7 @@
 )
 
 
-;; fanger ikke "text, \pause"
+;; Does not catch the space in "text \pause"
 (defun revy-manus-clean ()
   (interactive)
   (beginning-of-buffer)
@@ -75,7 +75,7 @@
     ;;   (setq i (read-key-sequence "n=next"))
     ;;   (when (string= i " ")
     ;;     (replace-match "\\pause"))))))
-    (while (search-forward-regexp "\\([.,-]\\)\\(\\\\pause\\)?[[:space:]]*$" nil t)
+    (while (search-forward-regexp "\\([.,-]\\)[ ]*\\(\\\\pause\\)?[[:space:]]*$" nil t)
       (goto-char (match-end 1))
       (when (string= " " (read-key-sequence "' '=replace"))
         (backward-delete-char 1)
@@ -83,7 +83,8 @@
   (message "done")
   (beginning-of-buffer)
   (replace-regexp "\\\\pause\n\\\\end{overtex}" "\n\\\\end{overtex}")
-  (indent-region (point-min) (point-max)))
+  (indent-region (point-min) (point-max))
+  (end-of-buffer))
 
 
 (defun revy-manus-slide ()
