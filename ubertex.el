@@ -31,17 +31,29 @@ The standard entry for opening an overtex file and playing it's sketch."
             (define-key revy-ubertex-mode-map (kbd "<end>") 'revy-ubertex-enter)
             (define-key revy-ubertex-mode-map (kbd "<delete>") 'revy-blank)
             (define-key revy-ubertex-mode-map (kbd "<f11>") 'revy-ubertex-hide)
-            (define-key revy-ubertex-mode-map (kbd "<f12>") 'revy-ubertex-unhide)
+            (define-key revy-ubertex-mode-map (kbd "<f12>") 'revy-unhide)
             revy-ubertex-mode-map)
   (if (not revy-ubertex-mode)
-      (revy-ubertex-unhide))
+      (revy-unhide))
   (revy-ubertex-start))
 
 (defun revy-ubertex-start ()
   "Start a sketch for the current ubertex buffer from the beginning.
 This does not set the `revy-ubertex-mode' and is primarily used while working on the overtex file."
   (interactive)
+  (beginning-of-buffer)
+  (revy-ubertex-restart))
 
+(defun revy-ubertex-restart ()
+  "(Re)start a sketch for the current ubertex buffer from the current point
+This does not set the `revy-ubertex-mode' and is primarily used while working on the overtex file."
+  (interactive)
+
+  ;; Make sure revy-ubertex-mode is on.
+  (when (not revy-ubertex-mode)
+    (revy-ubertex-mode))
+
+  ;; Delete old overlays and recreate them.
   (when (not (null revy-local-cursor))
     (delete-overlay revy-local-cursor)
     (setq revy-local-cursor nil))
@@ -50,18 +62,18 @@ This does not set the `revy-ubertex-mode' and is primarily used while working on
   (overlay-put revy-local-cursor 'priority 4999)
   (overlay-put revy-local-cursor 'revy t)
 
-  (beginning-of-buffer)
-  (revy-ubertex-restart))
-
-(defun revy-ubertex-restart ()
-  "(Re)start a sketch for the current ubertex buffer from the current point
-This does not set the `revy-ubertex-mode' and is primarily used while working on the overtex file."
-  (interactive)
+  ;; Prepare buffer.
   (revy-ubertex-hide)
+
+  ;; Transfer pdf
+  (revy-sync-files)
   (let ((filename (concat (file-name-sans-extension (buffer-file-name)) ".pdf")))
-    (revy-scp-file filename "pdfs")
-    (revy-pdf-open (concat (file-name-as-directory "pdfs")
-                           (file-name-nondirectory filename))))
+    (when revy-scp-mode
+      (revy-scp-file filename "pdfs")))
+
+  ;; Open
+  (revy-pdf-open (revy-data-path (buffer-file-name) ".pdf"))
+
   ;; (sleep-for 1) ;; probably not needed anymore
   (revy-ubertex-enter))
 
@@ -115,7 +127,7 @@ Does not affect the cursor."
 To make it easier to visually keep an overview.
 Also does all the preparations for the buffer "
   (interactive)
-  (revy-ubertex-unhide)
+  (revy-unhide)
   (revy-ubertex-numerize)
   (revy-ubertex-insert-blank-comments)
   ;; (setq revy-ubertex-hidden '())
@@ -199,7 +211,7 @@ Also does all the preparations for the buffer "
     (replace-regexp "\\\\n{[0-9]+}" "")))
 
 
-(defun revy-ubertex-unhide ()
+(defun revy-unhide ()
   "Unhides hidden text.
 This restores the buffer to the default tex look."
   (interactive)
