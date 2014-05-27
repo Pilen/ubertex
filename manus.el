@@ -4,6 +4,17 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-minor-mode revy-manus-mode
+  "Minor mode for converting tex files to and editing manuscripts."
+  :lighter "manus"
+  :keymap (let ((revy-manus-mode-map (make-sparse-keymap)))
+            (define-key revy-manus-mode-map (kbd "<f6>") 'revy-manus-slide)
+            (define-key revy-manus-mode-map (kbd "H-<f6>") 'revy-manus-pause)
+            revy-manus-mode-map)
+  )
+
+
+
 (setq revy-overtex-preamble "\\documentclass[14pt]{beamer}
 \\usepackage[danish]{babel}
 \\usepackage[utf8]{inputenc}
@@ -26,6 +37,9 @@
     (insert "%% ")
     (search-forward "}")
     (backward-delete-char 1)
+    (when (= 91 (char-after (point)))
+      (insert " ")
+      (search-forward "]"))
     (when (< (point) (line-end-position))
       (insert "\n"))
     )
