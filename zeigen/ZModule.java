@@ -155,7 +155,7 @@ public abstract class ZModule extends PApplet implements TaskPerformer {
         if (why.isAbsolute()) {
             return why;
         }
-        return new File(this.baseDir, File.separator + "data" + File.separator + where);
+        return new File(this.baseDir, where);
     }
 
     public void background() {
