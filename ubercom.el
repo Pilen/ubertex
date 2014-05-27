@@ -3,7 +3,7 @@
   "Send a message"
   (let* ((worker (if (revy-worker-p (car args))
                      (pop args)
-                   revy-currrent-worker))
+                   revy-current-worker))
          (time (cond ((integerp (car args))
                       (int-to-string (pop args)))
                      ((string-equal "" (car args))
@@ -77,8 +77,8 @@ the command will be executed on this machine."
     (revy-shell
      (concat "scp "
              filename
-             " " (revy-worker-location revy-currrent-worker)
-             ":" (revy-worker-dir revy-currrent-worker)
+             " " (revy-worker-location revy-current-worker)
+             ":" (revy-worker-dir revy-current-worker)
              subdir (file-name-nondirectory filename)))))
 
 (defun revy-elisp (start &optional end)
@@ -95,11 +95,17 @@ But it will also accept a string with end being ignored in that case."
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; All commands are based on the current worker `revy-currrent-worker'
+;; All commands are based on the current worker `revy-current-worker'
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π General
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun revy-sync-files (&optional worker)
+  "Sync local files to worker(s).
+If a worker is supplied this worker is synced, else every worker is synced."
+  (revy-send-message "syncfiles"))
+
 
 (defun revy-blank ())
 (defun revy-blank-all ())
@@ -123,12 +129,12 @@ But it will also accept a string with end being ignored in that case."
 
 (defun revy-pdf-reload ()
   "Reload current pdf"
-  (revy-send-message "sketch" "PDF" "reload"))
+  (revy-send-message "module" "PDF" "reload"))
 
 (defun revy-pdf-goto-slide (slide)
   "Goto pdf slide."
-  (revy-send-message "sketch" "PDF" "goto" slide))
+  (revy-send-message "module" "PDF" "goto" slide))
 
 (defun revy-pdf-next ()
   "Goto next slide"
-  (revy-send-message "sketch" "next"))
+  (revy-send-message "module" "next"))
