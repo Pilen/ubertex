@@ -4,6 +4,8 @@
 ;π Settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar revy-scp-mode nil)
+(defvar revy-dir "/home/pilen/av/2014/")
+
 (defvar revy-ubertex-dir "/home/pilen/code/ubertex/")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -82,6 +84,31 @@ This might not be the current cursor being displayed as buffers
 can be temporarily pushed on the `revy-stack' while another is executed")
 (make-variable-buffer-local 'revy-local-cursor)
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π Helper
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun revy-string-starts-with (string regex)
+  "Returns true if the string starts with the prefix specified in regex."
+  (and (string-match (concat "^" regex) string)
+       t))
+
+(defun revy-data-path (file &optional alternative-extension)
+  "Returns the path for the file as a relative path in the revy-dir."
+  (when (null alternative-extension)
+    (setq alternative-extension ""))
+  ;; Replace file extension.
+  (setq file (concat (file-name-sans-extension file)
+                     (if (revy-string-starts-with alternative-extension "\\.") "" ".")
+                     alternative-extension))
+
+  (if (file-name-absolute-p file)
+      (if (revy-string-starts-with file (file-name-as-directory revy-dir))
+            (substring file (match-end 0))
+          (error "File is located outside the revy-dir!"))
+    ;; A relative path should simply stay relative.
+    file))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
