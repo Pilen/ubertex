@@ -294,7 +294,9 @@ public class Controller implements TaskPerformer {
             this.reset();
             this.moduleName = moduleName;
             this.module.initModule(this.sketch);
-            this.module.setup();
+            this.module.width = width;
+            this.module.height = height;
+            this.module.setup(arguments);
         } else {
             System.out.println("COULD NOT LOAD CLASS: " + moduleName);
         }
