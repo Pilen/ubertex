@@ -13,7 +13,7 @@ public class PDF extends ImageRenderer {
     private int current;
     private String mode = "";
 
-    public void zSetup(String args) {
+    public void setup(String args) {
         String[] parts = args.split(";",2);
         if (parts.length == 2) {
             mode = parts[0].trim();
@@ -24,7 +24,7 @@ public class PDF extends ImageRenderer {
         }
     }
 
-    public void zDraw() {
+    public void draw() {
         background();
 
         if (images != null && current < images.size()) {
@@ -39,7 +39,7 @@ public class PDF extends ImageRenderer {
         }
     }
 
-    public void zReceive(String message) {
+    public void receive(String message) {
         String[] parts = message.split(";",2);
         switch (parts[0].trim().toLowerCase()) {
         case "show":
@@ -76,24 +76,24 @@ public class PDF extends ImageRenderer {
         }
     }
 
-    public void keyPressed() {
-        if (key == CODED) {
-            switch (keyCode) {
-            // case PAGE_DOWN:
-            case DOWN:
-            case RETURN:
-            case ENTER:
-            // case SPACE:
-                goTo(current + 1);
-                break;
-            // case PAGE_UP:
-            case UP:
-            case BACKSPACE:
-                goTo(current - 1);
-                break;
-            }
-        }
-    }
+    // public void keyPressed() {
+    //     if (key == CODED) {
+    //         switch (keyCode) {
+    //         // case PAGE_DOWN:
+    //         case DOWN:
+    //         case RETURN:
+    //         case ENTER:
+    //         // case SPACE:
+    //             goTo(current + 1);
+    //             break;
+    //         // case PAGE_UP:
+    //         case UP:
+    //         case BACKSPACE:
+    //             goTo(current - 1);
+    //             break;
+    //         }
+    //     }
+    // }
 
     private void reload() {
         if (pdfFile != null) {

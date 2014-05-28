@@ -1,11 +1,11 @@
 
-public class Plus extends ZModule {
+public class Plus extends Module {
     // Lots and lots of plusses on the screen!
     private int size = 20;
     private int NUM_PLUS = 500;
     private float[][] positions = new float[NUM_PLUS][3];
 
-    public void zSetup(String message) {
+    public void setup(String message) {
         for (int i = 0; i < NUM_PLUS; i++) {
             // (x,y) coordinates
             positions[i][0] = random(width);
@@ -16,7 +16,7 @@ public class Plus extends ZModule {
         }
     }
 
-    public void zDraw() {
+    public void draw() {
         background();
         textAlign(CENTER);
         for (int i = 0; i < NUM_PLUS; i++) {

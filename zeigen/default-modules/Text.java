@@ -1,21 +1,21 @@
 
-public class Text extends ZModule {
+public class Text extends Module {
 
     private int size = 40;
     private String string = "";
 
-    public void zSetup(String message) {
-        zReceive(message);
+    public void setup(String message) {
+        receive(message);
     }
 
-    public void zDraw() {
+    public void draw() {
         background();
         textAlign(CENTER);
         textSize(size);
         text(string, width/2, height/2);
     }
 
-    public void zReceive(String message) {
+    public void receive(String message) {
         String[] parts = message.split(";", 2);
 
         switch (parts[0].trim().toLowerCase()) {
