@@ -24,6 +24,7 @@ public class Video extends ImageRenderer {
 
         if (movie != null) {
             if (movie.available()) {
+                m.read();
                 // print("-");
                 renderImage(movie, mode);
             // } else {
@@ -46,6 +47,7 @@ public class Video extends ImageRenderer {
         }
     }
 
+    // TODO: is not called as this is not the reference given to Movie"
     public void movieEvent(Movie m) {
         m.read();
         // print(".");
