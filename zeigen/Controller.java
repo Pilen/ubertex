@@ -150,6 +150,8 @@ public class Controller implements TaskPerformer {
         try {
             if (this.module != null) {
                 this.module.draw();
+            } else {
+                this.sketch.background();
             }
             if (this.blanked) {
                 this.sketch.background();
@@ -205,8 +207,8 @@ public class Controller implements TaskPerformer {
 
     private void kill() {
         if (this.module != null) {
-            this.module = null;
             System.out.println("TERMINATING: " + this.moduleName);
+            this.module = null;
             this.moduleName = "";
         } else {
             System.out.println("NO MODULE TO KILL");
