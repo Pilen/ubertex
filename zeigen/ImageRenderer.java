@@ -1,7 +1,7 @@
 
 import processing.core.PImage;
 
-public abstract class ImageRenderer extends ZModule {
+public abstract class ImageRenderer extends Module {
 
 
     public void renderImage(PImage image, String mode) {

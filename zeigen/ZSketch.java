@@ -1,5 +1,9 @@
 
-public final class ZSketch {
+import java.io.File;
+
+import processing.core.PApplet;
+
+public final class ZSketch extends PApplet {
 
     private final Controller controller;
 
@@ -22,20 +26,7 @@ public final class ZSketch {
     }
 
     public void draw() {
-        try {
-            controller.step();
-            if (controller.module != null) {
-                controller.module.draw();
-            }
-            if (controller.blank) {
-                background()
-            }
-        } catch (Exception e) {
-            System.out.println("======== ERROR ========\n" + "CURRENT MODULE THREW AN EXCEPTION\n" + e.toString());
-            e.printStackTrace();
-            System.out.println("=======================");
-            exit();
-        }
+        controller.step();
     }
 
     public boolean sketchFullScreen() {
@@ -56,7 +47,7 @@ public final class ZSketch {
         background(controller.backgroundColor);
     }
 
-    public int color(String color) {
+    public int color(String colorString) {
         try {
             String[] colors = colorString.split("[;,\\s]");
 
@@ -66,29 +57,24 @@ public final class ZSketch {
                 default: System.out.println("WRONG NUMBER OF ARGUMENTS TO COLOR"); break;
                 case 0:
                     return color(0);
-                    break;
                 case 1:
                     gray = Tools.parseFloat(colors[0]);
                     return color(gray);
-                    break;
                 case 2:
                     gray = Tools.parseFloat(colors[0]);
                     alpha = Tools.parseFloat(colors[3]);
                     return color(gray, alpha);
-                    break;
                 case 3:
                     r = Tools.parseFloat(colors[0]);
                     g = Tools.parseFloat(colors[1]);
                     b = Tools.parseFloat(colors[2]);
                     return color(r, g, b);
-                    break;
                 case 4:
                     r = Tools.parseFloat(colors[0]);
                     g = Tools.parseFloat(colors[1]);
                     b = Tools.parseFloat(colors[2]);
                     alpha = Tools.parseFloat(colors[3]);
                     return color(r, g, b, alpha);
-                    break;
                 }
             } else {
                 int gray, alpha, r, g, b;
@@ -96,29 +82,24 @@ public final class ZSketch {
                 default: System.out.println("WRONG NUMBER OF ARGUMENTS TO COLOR"); break;
                 case 0:
                     return color(0);
-                    break;
                 case 1:
                     gray = Tools.parseInt(colors[0]);
                     return color(gray);
-                    break;
                 case 2:
                     gray = Tools.parseInt(colors[0]);
                     alpha = Tools.parseInt(colors[3]);
                     return color(gray, alpha);
-                    break;
                 case 3:
                     r = Tools.parseInt(colors[0]);
                     g = Tools.parseInt(colors[1]);
                     b = Tools.parseInt(colors[2]);
                     return color(r, g, b);
-                    break;
                 case 4:
                     r = Tools.parseInt(colors[0]);
                     g = Tools.parseInt(colors[1]);
                     b = Tools.parseInt(colors[2]);
                     alpha = Tools.parseInt(colors[3]);
                     return color(r, g, b, alpha);
-                    break;
                 }
             }
         } catch (NumberFormatException e) {

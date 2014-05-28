@@ -1,11 +1,17 @@
 
-public class Controller {
+import java.io.File;
+import java.util.Collection;
+import java.util.HashSet;
 
+public class Controller implements TaskPerformer {
+
+    private TaskManager taskManager;
     private HashSet<String> names;
-    private File baseDir;
     private Module module;
     private String moduleName;
     private ZSketch sketch;
+
+    public File baseDir;
 
     public int width = -1;
     public int height = -1;
@@ -37,7 +43,39 @@ public class Controller {
     }
 
     public void message(String message) {
+        // Warning another thread runs this.
+        // Aka, dont do anything to cause raceconditions.
 
+        String[] headers = message.split(";", 4);
+        if (headers.length == 4 || headers.length == 3) {
+            String targets = headers[0];
+            long time = Tools.parseTime(headers[1]);
+            String command = headers[2].trim();
+            String options = headers.length == 4 ? headers[3] : "";
+
+            if (this.forMe(targets.split(" "))) {
+                System.out.println("RECEIVED: " + message);
+                if (command.equals("sync")) {
+                    this.sync(options);
+                } else {
+                    this.taskManager.addTask(time, command, options);
+                }
+            } else {
+                System.out.println("IGNORED MESSAGE");
+            }
+        } else {
+            System.out.println("MALFORMED MESSAGE RECEIVED: " + message);
+        }
+
+    }
+
+    private boolean forMe(String[] targets) {
+        for (String target : targets) {
+            if (this.names.contains(target.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void doTask(String command, String options) {
@@ -81,7 +119,7 @@ public class Controller {
             break;
         case "startblank": case "startblanked": case "starthidden": case "startpaused":
             this.blank(true);
-            this.startBlanked(options);
+            this.start(options);
             break;
         // case "sync": this.sync(); break;
         case "unblank": case "unhide": case "unpause": case "continue":
@@ -90,6 +128,44 @@ public class Controller {
         default: System.out.println("UNSUPPORTED COMMAND: " + command); break;
         }
     }
+
+    public void reset() {
+        this.sketch.randomSeed(this.randomSeed);
+        this.sketch.noiseSeed(this.noiseSeed);
+
+        if (this.width < 0) {
+            this.width = this.sketch.displayWidth;
+        }
+        if (this.height < 0) {
+            this.height = this.sketch.displayHeight;
+        }
+        this.sketch.size(this.width, this.height);
+        this.sketch.background();
+
+
+    }
+
+    public void step() {
+        this.taskManager.process();
+        try {
+            if (this.module != null) {
+                this.module.draw();
+            }
+            if (this.blanked) {
+                this.sketch.background();
+            }
+        } catch (Exception e) {
+            System.out.println("======== ERROR ========\n" + "CURRENT MODULE THREW AN EXCEPTION\n" + e.toString());
+            e.printStackTrace();
+            System.out.println("=======================");
+            this.quit();
+        }
+    }
+
+    /*
+     * Commands:
+     */
+
 
     private void abort() {
         this.clearqueue();
@@ -109,8 +185,18 @@ public class Controller {
         System.out.println("QUEUE CLEARED: " + cleared + " TASKS");
     }
 
+    private void cleanSync() {
+        assert false;
+        assert true;
+    }
+
+    private void download() {
+        assert false;
+        assert true;
+    }
+
     private void kill(String module) {
-        if (module.isEmpty() || this.moduleName.toLowerCase().equals(module.toLowerCase())) {
+        if (module.isEmpty() || this.moduleName.equals(module)) {
             this.kill();
         } else {
             System.out.println("CAN'T KILL: " + module);
@@ -133,7 +219,7 @@ public class Controller {
             return;
         }
 
-        String[] parts = message.split(";", 2);
+        String[] parts = options.split(";", 2);
 
         if (parts.length == 2) {
             String module = parts[0].trim();
@@ -168,21 +254,6 @@ public class Controller {
         }
     }
 
-    private void reset() {
-        this.sketch.randomSeed(this.randomSeed);
-        this.sketch.noiseSeed(this.noiseSeed);
-
-        if (this.width < 0) {
-            this.width = this.sketch.displayWidth;
-        }
-        if (this.height < 0) {
-            this.height = this.sketch.displayHeight;
-        }
-        this.sketch.size(this.width, this.height);
-        this.sketch.background()
-
-
-    }
     private void seed(String options) {
         String[] parts = options.split(";", 2);
 
@@ -203,14 +274,6 @@ public class Controller {
     }
 
     private void start(String options) {
-        this.start(message, false);
-    }
-
-    private void startBlanked(String options) {
-        this.start(message, true);
-    }
-
-    private void start(String options, boolean blanked) {
         String[] parts = options.split(";", 2);
 
         String moduleName = "";
@@ -260,7 +323,7 @@ public class Controller {
 
 
     private void quit() {
-        System.exit();
+        System.exit(0);
     }
 
     private void window(String options) {

@@ -46,14 +46,14 @@ public class ModuleLoader extends ClassLoader {
         return null;
     }
 
-    public static ZModule load(String modulename) {
+    public static Module load(String modulename) {
 
         try {
             ClassLoader parentClassLoader = ModuleLoader.class.getClassLoader();
             ModuleLoader classLoader = new ModuleLoader(parentClassLoader);
             Class moduleClass = classLoader.loadClass(modulename);
 
-            ZModule module = (ZModule) moduleClass.newInstance();
+            Module module = (Module) moduleClass.newInstance();
             return module;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             // System.out.println("COULD NOT LOAD CLASS: " + modulename);
