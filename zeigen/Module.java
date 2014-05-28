@@ -17,8 +17,4 @@ public abstract class Module {
     }
 
     public void setup() {}
-
-    public boolean sketchFullScreen() {
-        return false;
-    }
 }
