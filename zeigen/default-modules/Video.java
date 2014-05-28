@@ -24,7 +24,7 @@ public class Video extends ImageRenderer {
 
         if (movie != null) {
             if (movie.available()) {
-                m.read();
+                movie.read();
                 // print("-");
                 renderImage(movie, mode);
             // } else {
