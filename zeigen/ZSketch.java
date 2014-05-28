@@ -15,8 +15,6 @@ public final class ZSketch {
 
     public void setup() {
         controller.reset();
-        size(controller.width, controller.height);
-        background();
         frame.setBackground(new java.awt.Color(0, 0, 0));
         //The above does not currently work so we use a workaround, see https://github.com/processing/processing/issues/2071
         ((javax.swing.JFrame) frame).getContentPane().setBackground(new java.awt.Color(0,0,0));
@@ -40,7 +38,9 @@ public final class ZSketch {
         }
     }
 
-
+    public boolean sketchFullScreen() {
+        return false;
+    }
     /*
      * User functions:
      */

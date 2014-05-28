@@ -65,10 +65,24 @@ public class Controller {
         case "quit": this.quit(); break;
         case "seed": this.seed(options); break;
         case "message":
-        case "module": this.module(options); break;
-        case "start": this.start(options); break;
+        case "module":
+            this.blank(false);
+            this.module(options); break;
+        case "blankedmessage":
+        case "hiddenmessage":
+        case "blankedmodule":
+        case "hiddenmodule":
+            this.blank(true);
+            this.module(options);
+            break;
+        case "start":
+            this.blank(false);
+            this.start(options);
+            break;
         case "startblank": case "startblanked": case "starthidden": case "startpaused":
-            this.startBlanked(options); break;
+            this.blank(true);
+            this.startBlanked(options);
+            break;
         // case "sync": this.sync(); break;
         case "unblank": case "unhide": case "unpause": case "continue":
             this.blank(false); break;
@@ -154,6 +168,21 @@ public class Controller {
         }
     }
 
+    private void reset() {
+        this.sketch.randomSeed(this.randomSeed);
+        this.sketch.noiseSeed(this.noiseSeed);
+
+        if (this.width < 0) {
+            this.width = this.sketch.displayWidth;
+        }
+        if (this.height < 0) {
+            this.height = this.sketch.displayHeight;
+        }
+        this.sketch.size(this.width, this.height);
+        this.sketch.background()
+
+
+    }
     private void seed(String options) {
         String[] parts = options.split(";", 2);
 
@@ -199,8 +228,10 @@ public class Controller {
         this.module = ModuleLoader.load(moduleName);
 
         if (this.module != null) {
+            this.reset();
             this.moduleName = moduleName;
             this.module.initModule(this.sketch);
+            this.module.setup();
         } else {
             System.out.println("COULD NOT LOAD CLASS: " + moduleName);
         }
