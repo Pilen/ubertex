@@ -1,7 +1,7 @@
 
 public final class ZSketch {
 
-    private Controller controller;
+    private final Controller controller;
 
     public ZSketch(Controller controller) {
         super();
@@ -26,7 +26,9 @@ public final class ZSketch {
     public void draw() {
         try {
             controller.step();
-            controller.module.draw();
+            if (controller.module != null) {
+                controller.module.draw();
+            }
             if (controller.blank) {
                 background()
             }
@@ -38,6 +40,10 @@ public final class ZSketch {
         }
     }
 
+
+    /*
+     * User functions:
+     */
     public File dataFile(String filename) {
         File absolute = new File(filename);
         if (absolute.isAbsolute()) {
@@ -48,5 +54,76 @@ public final class ZSketch {
 
     public void background() {
         background(controller.backgroundColor);
+    }
+
+    public int color(String color) {
+        try {
+            String[] colors = colorString.split("[;,\\s]");
+
+            if (colorString.contains(".")) {
+                float gray, alpha, r, g, b;
+                switch (colors.length) {
+                default: System.out.println("WRONG NUMBER OF ARGUMENTS TO COLOR"); break;
+                case 0:
+                    return color(0);
+                    break;
+                case 1:
+                    gray = Tools.parseFloat(colors[0]);
+                    return color(gray);
+                    break;
+                case 2:
+                    gray = Tools.parseFloat(colors[0]);
+                    alpha = Tools.parseFloat(colors[3]);
+                    return color(gray, alpha);
+                    break;
+                case 3:
+                    r = Tools.parseFloat(colors[0]);
+                    g = Tools.parseFloat(colors[1]);
+                    b = Tools.parseFloat(colors[2]);
+                    return color(r, g, b);
+                    break;
+                case 4:
+                    r = Tools.parseFloat(colors[0]);
+                    g = Tools.parseFloat(colors[1]);
+                    b = Tools.parseFloat(colors[2]);
+                    alpha = Tools.parseFloat(colors[3]);
+                    return color(r, g, b, alpha);
+                    break;
+                }
+            } else {
+                int gray, alpha, r, g, b;
+                switch (colors.length) {
+                default: System.out.println("WRONG NUMBER OF ARGUMENTS TO COLOR"); break;
+                case 0:
+                    return color(0);
+                    break;
+                case 1:
+                    gray = Tools.parseInt(colors[0]);
+                    return color(gray);
+                    break;
+                case 2:
+                    gray = Tools.parseInt(colors[0]);
+                    alpha = Tools.parseInt(colors[3]);
+                    return color(gray, alpha);
+                    break;
+                case 3:
+                    r = Tools.parseInt(colors[0]);
+                    g = Tools.parseInt(colors[1]);
+                    b = Tools.parseInt(colors[2]);
+                    return color(r, g, b);
+                    break;
+                case 4:
+                    r = Tools.parseInt(colors[0]);
+                    g = Tools.parseInt(colors[1]);
+                    b = Tools.parseInt(colors[2]);
+                    alpha = Tools.parseInt(colors[3]);
+                    return color(r, g, b, alpha);
+                    break;
+                }
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("AN ARGUMENT FOR BACKGROUND-COLOR WAS NOT A LEGAL NUMBER: " + colorString);
+        }
+        return controller.backgroundColor;
     }
 }
