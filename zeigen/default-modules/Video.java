@@ -17,18 +17,18 @@ public class Video extends ImageRenderer {
         }
         println("Playing: " + movieName);
         movie = loadMovie(movieName);
-        movie.loop();
+        movie.play();
     }
 
     public void draw() {
 
         if (movie != null) {
-            // if (movie.available()) {
+            if (movie.available()) {
                 // print("-");
                 renderImage(movie, mode);
             // } else {
                 // print("v");
-            // }
+            }
         }
     }
 
