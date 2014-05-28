@@ -132,7 +132,7 @@ public class PDF extends ImageRenderer {
 
             File destination = new File(workDir, "img%d.png");
             String[] command = {"/usr/bin/mudraw",
-                                "-r", "300",
+                                "-r", "150",
                                 "-c", "rgba",
                                 "-o", destination.getAbsolutePath(),
                                 pdf.getAbsolutePath()};
