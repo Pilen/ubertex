@@ -1,9 +1,8 @@
 
-import processing.video.*;
 
 public class Video extends ImageRenderer {
 
-    Movie movie;
+    ZMovie movie;
     String mode;
 
     public void setup(String args) {
@@ -48,7 +47,7 @@ public class Video extends ImageRenderer {
     }
 
     // TODO: is not called as this is not the reference given to Movie"
-    public void movieEvent(Movie m) {
+    public void movieEvent(ZMovie m) {
         m.read();
     }
 
