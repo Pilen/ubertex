@@ -36,7 +36,7 @@ public class Controller implements TaskPerformer {
             this.names.add(name.toLowerCase());
         }
 
-        this.sounds = new ArrayList<ZMovie>()
+        this.sounds = new ArrayList<ZMovie>();
 
         this.baseDir = baseDir;
 
