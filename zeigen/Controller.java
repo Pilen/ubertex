@@ -119,10 +119,10 @@ public class Controller implements TaskPerformer {
             this.module(options);
             break;
         case "playsound":
-            this.playsound(options);
+            this.playSound(options);
             break;
         case "stopsounds":
-            this.stopsounds(options);
+            this.stopSounds();
             break;
         case "start":
             this.blank(false);
@@ -275,14 +275,10 @@ public class Controller implements TaskPerformer {
     }
 
     private void stopSounds() {
-        for (ZMovie movie : this.sounds) {
+        for (ZMovie sound : this.sounds) {
             sound.stop();
         }
-        this.sketch.sounds.clear();
-    }
-
-    private void seed(String options) {
-        this.sketch.play(options);
+        this.sounds.clear();
     }
 
     private void seed(String options) {
