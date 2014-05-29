@@ -19,16 +19,16 @@ public abstract class ImageRenderer extends Module {
                 parts = parts[1].replace("p","").split(",");
                 try {
                     // make optional:
-                    // float tempOffsetX = Tools.parseFloat(parts[0]);
-                    // float tempOffsetY = Tools.parseFloat(parts[1]);
-                    float xScale = Tools.parseFloat(parts[0]);
-                    float yScale = Tools.parseFloat(parts[1]);
+                    float tempOffsetX = Tools.parseFloat(parts[0]);
+                    float tempOffsetY = Tools.parseFloat(parts[1]);
+                    float xScale = Tools.parseFloat(parts[2]);
+                    float yScale = Tools.parseFloat(parts[3]);
                     float tempWidth = (width/100) * xScale;
                     float tempHeight = (height/100) * yScale;
                     // offsetX = tempOffsetX;
                     // offsetY = tempOffsetY;
-                    offsetX = (width - tempWidth) / 2;
-                    offsetY = (height - tempHeight) / 2;
+                    offsetX = (width - tempWidth) / 2 + tempOffsetX;
+                    offsetY = (height - tempHeight) / 2 + tempOffsetY;
 
                     width = tempWidth;
                     height = tempHeight;
