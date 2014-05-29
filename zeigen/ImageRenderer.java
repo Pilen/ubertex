@@ -5,6 +5,10 @@ public abstract class ImageRenderer extends Module {
 
 
     public void renderImage(PImage image, String mode) {
+        this.renderImage(image, mode, 0, 0, width, height);
+    }
+
+    public void renderImage(PImage image, String mode, float offsetX, float offsetY, float width, float height) {
         float x, y, w, h;
 
         switch(mode) {
@@ -12,7 +16,7 @@ public abstract class ImageRenderer extends Module {
         case "":
         case "stretched":
         case "full":
-            image(image, 0, 0, width, height);
+            image(image, x, y, width, height);
         break;
         case "plain":
             w = image.width;
@@ -20,7 +24,7 @@ public abstract class ImageRenderer extends Module {
 
             x = (width - w)/2;
             y = (height - h)/2;
-            image(image, x, y, w, h);
+            image(image, x + offsetX, y + offsetY, w, h);
             break;
         case "sized":
             w = image.width;
@@ -40,7 +44,7 @@ public abstract class ImageRenderer extends Module {
             x = (width - w)/2;
             y = (height - h)/2;
 
-            image(image, x, y, w, h);
+            image(image, x + offsetX, y + offsetY, w, h);
             break;
         }
     }
