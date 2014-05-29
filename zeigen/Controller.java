@@ -121,6 +121,9 @@ public class Controller implements TaskPerformer {
         case "playsound":
             this.playSound(options);
             break;
+        case "printfontlist":
+            this.printFontList();
+            break;
         case "stopsounds":
             this.stopSounds();
             break;
@@ -272,6 +275,10 @@ public class Controller implements TaskPerformer {
     private void playSound(String options) {
         ZMovie sound = this.sketch.playSound(options);
         this.sounds.add(sound);
+    }
+
+    private void printFontList() {
+        this.sketch.printFontList();
     }
 
     private void stopSounds() {

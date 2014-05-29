@@ -2,6 +2,7 @@
 import java.io.File;
 
 import processing.core.PApplet;
+import processing.core.PFont;
 
 public final class ZSketch extends PApplet {
 
@@ -38,6 +39,14 @@ public final class ZSketch extends PApplet {
         return sound;
 
     }
+
+    public void printFontList() {
+        String[] fonts = PFont.list();
+        for (String font : fonts) {
+            println(font);
+        }
+    }
+
     /*
      * User functions:
      */
