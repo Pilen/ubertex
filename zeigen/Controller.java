@@ -220,9 +220,9 @@ public class Controller implements TaskPerformer {
     }
 
     private void kill() {
+        this.stopSounds();
         if (this.module != null) {
             System.out.println("TERMINATING: " + this.moduleName);
-            this.stopSounds();
             this.module.onDeath();
             this.module = null;
             this.moduleName = "";
