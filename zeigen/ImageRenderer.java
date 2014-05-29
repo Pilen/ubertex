@@ -18,14 +18,15 @@ public abstract class ImageRenderer extends Module {
                 //TODO: change "p" back to "%"
                 parts = parts[1].replace("p","").split(",");
                 try {
+                    float tempOffsetX = Tools.parseFloat(parts[0]);
+                    float tempOffsetY = Tools.parseFloat(parts[1]);
                     float xScale = Tools.parseFloat(parts[0]);
                     float yScale = Tools.parseFloat(parts[1]);
-                    float tempWidth = (width/100) * xScale;
-                    float tempHeight = (height/100) * yScale;
-                    offsetX = (width - tempWidth)/2;
-                    offsetY = (width - tempHeight)/2;
-                    width = tempWidth;
-                    height =tempHeight;
+
+                    offsetX = tempOffsetX;
+                    offsetY = tempOffsetY;
+                    width = (width/100) * xScale;
+                    height = (height/100) * yScale;
                 } catch (NumberFormatException e) {
                     println("Wrom mode specifier");
                 }
