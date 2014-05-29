@@ -39,6 +39,8 @@ public abstract class Module {
 
     public final PImage loadImage(String filename) {return sketch.loadImage(filename);}
     public final void background() {sketch.background();}
+    public final void background(int color) {sketch.background(color);}
+    public final int color(int r, int g, int b) {return sketch.color(r, g, b);}
     public static final void println(String message) {ZSketch.println(message);}
     public static final void println(long message) {ZSketch.println(message);}
     public final void image(PImage image, float a, float b, float c, float d) {sketch.image(image, a, b, c, d);}
@@ -56,4 +58,6 @@ public abstract class Module {
     public final float noise(float a) {return sketch.noise(a);}
 
     public final Movie loadMovie(String filename) {return new Movie(sketch, filename);}
+
+    public final void line(float a, float b, float c, float d) {sketch.line(a, b, c, d);}
 }
