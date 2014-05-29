@@ -18,10 +18,11 @@ public abstract class ImageRenderer extends Module {
                 //TODO: change "p" back to "%"
                 parts = parts[1].replace("p","").split(",");
                 try {
-                    float tempOffsetX = Tools.parseFloat(parts[0]);
-                    float tempOffsetY = Tools.parseFloat(parts[1]);
-                    float xScale = Tools.parseFloat(parts[2]);
-                    float yScale = Tools.parseFloat(parts[3]);
+                    // make optional:
+                    // float tempOffsetX = Tools.parseFloat(parts[0]);
+                    // float tempOffsetY = Tools.parseFloat(parts[1]);
+                    float xScale = Tools.parseFloat(parts[0]);
+                    float yScale = Tools.parseFloat(parts[1]);
 
                     offsetX = tempOffsetX;
                     offsetY = tempOffsetY;
