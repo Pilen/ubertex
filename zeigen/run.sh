@@ -19,7 +19,9 @@ javac -cp $CLASSPATH *.java
 
 echo "Compiling sketches"
 javac -cp "$CLASSPATH" default-modules/*.java
-javac -cp "$CLASSPATH" modules/*.java
+if [ -d "$DIR/modules/" ]; then
+    javac -cp "$CLASSPATH" modules/*.java
+fi
 
 if [[ $# == 1 ]]; then
     echo "Deploying modules"
