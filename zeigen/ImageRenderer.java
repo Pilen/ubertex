@@ -14,8 +14,8 @@ public abstract class ImageRenderer extends Module {
         String[] parts = mode.split("/", 2);
         if (parts.length == 2) {
             mode = parts[0];
-            if (parts[1].contains("%")) {
-                parts = parts[1].replace("%","").split(",");
+            if (parts[1].contains("p")) {
+                parts = parts[1].replace("p","").split(",");
                 try {
                     float xScale = Tools.parseFloat(parts[2]);
                     float yScale = Tools.parseFloat(parts[3]);
