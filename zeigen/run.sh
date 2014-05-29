@@ -27,14 +27,14 @@ if [[ $# == 1 ]]; then
     echo "Deploying modules"
     # TODO: copy only .class files
     echo "Transferring modules"
-    cp -r "$DIR/modules/." "$1/modules/"
+    cp -u -r "$DIR/modules/." "$1/modules/"
     sh trans.sh
 fi
 
 if [[ $# == 3 ]]; then
     if [ -d "$DIR/modules/." ]; then
         echo "Deploying modules"
-        cp -r "$DIR/modules/." "$3/modules/"
+        cp -u -r "$DIR/modules/." "$3/modules/"
     fi
     echo "Running"
     $PROCESSING/java/bin/java -cp $CLASSPATH Zeigen "$@"
