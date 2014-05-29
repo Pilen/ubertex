@@ -20,10 +20,12 @@ public abstract class ImageRenderer extends Module {
                 try {
                     float xScale = Tools.parseFloat(parts[0]);
                     float yScale = Tools.parseFloat(parts[1]);
-                    width = (width/100) * xScale;
-                    height = (height/100) * yScale;
-                    println("" +width);
-                    println("" +height);
+                    float tempWidth = (width/100) * xScale;
+                    float tempHeight = (height/100) * yScale;
+                    offsetX = (width - tempWidth)/2;
+                    offsetY = (width - tempHeight)/2;
+                    width = tempWidth;
+                    height =tempHeight;
                 } catch (NumberFormatException e) {
                     println("Wrom mode specifier");
                 }
