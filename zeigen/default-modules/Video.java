@@ -22,13 +22,11 @@ public class Video extends ImageRenderer {
     public void draw() {
 
         if (movie != null) {
-            // if (movie.available()) {
-                // movie.read();
+            if (movie.available()) {
+                movie.read();
                 // print("-");
                 renderImage(movie, mode);
-            // } else {
-                // print("v");
-            // }
+            }
         }
     }
 
