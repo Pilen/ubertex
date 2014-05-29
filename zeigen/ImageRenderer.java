@@ -14,14 +14,31 @@ public abstract class ImageRenderer extends Module {
         String[] parts = mode.split("/", 2);
         if (parts.length == 2) {
             mode = parts[0];
-            parts = parts[1].split(",");
-            try {
-                offsetX = Tools.parseFloat(parts[0]);
-                offsetY = Tools.parseFloat(parts[1]);
-                width = Tools.parseFloat(parts[2]);
-                height = Tools.parseFloat(parts[3]);
-            } catch (NumberFormatException e) {
-                println("Wrong mode specifier");
+            if (parts[1].contains("%")) {
+                parts = parts[1].replace("%","").split(",");
+                try {
+                    float xScale = Tools.parseFloat(parts[2]);
+                    float yScale = Tools.parseFloat(parts[3]);
+                    width *= xScale;
+                    height *= yScale;
+                } catch (NumberFormatException e) {
+                    println("Wrom mode specifier");
+                }
+            } else {
+                parts = parts[1].split(",");
+                try {
+                    float tempOffsetX = Tools.parseFloat(parts[0]);
+                    float tempOffsetY = Tools.parseFloat(parts[1]);
+                    float tempWidth = Tools.parseFloat(parts[2]);
+                    float tempHeight = Tools.parseFloat(parts[3]);
+
+                    offsetX = tempOffsetX;
+                    offsetY = tempOffsetY;
+                    width = tempWidth;
+                    height = tempHeight;
+                } catch (NumberFormatException e) {
+                    println("Wrong mode specifier");
+                }
             }
         }
 
