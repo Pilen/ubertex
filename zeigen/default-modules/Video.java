@@ -29,7 +29,7 @@ public class Video extends ImageRenderer {
                 renderImage(movie, mode);
             // } else {
                 // print("v");
-            }
+            // }
         }
     }
 
