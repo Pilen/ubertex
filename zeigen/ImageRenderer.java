@@ -22,6 +22,8 @@ public abstract class ImageRenderer extends Module {
                     float yScale = Tools.parseFloat(parts[1]);
                     width *= xScale;
                     height *= yScale;
+                    println("" +width);
+                    println("" +height);
                 } catch (NumberFormatException e) {
                     println("Wrom mode specifier");
                 }
