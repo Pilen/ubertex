@@ -20,8 +20,8 @@ public abstract class ImageRenderer extends Module {
                 try {
                     float xScale = Tools.parseFloat(parts[0]);
                     float yScale = Tools.parseFloat(parts[1]);
-                    width *= xScale;
-                    height *= yScale;
+                    width = (width/100) * xScale;
+                    height = (height/100) * yScale;
                     println("" +width);
                     println("" +height);
                 } catch (NumberFormatException e) {
