@@ -53,4 +53,9 @@ public class Video extends ImageRenderer {
         // print(".");
     }
 
+    public void onDeath() {
+        movie.stop();
+        movie = null;
+    }
+
 }

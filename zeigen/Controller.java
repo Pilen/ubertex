@@ -208,6 +208,7 @@ public class Controller implements TaskPerformer {
     private void kill() {
         if (this.module != null) {
             System.out.println("TERMINATING: " + this.moduleName);
+            this.module.onDeath();
             this.module = null;
             this.moduleName = "";
         } else {

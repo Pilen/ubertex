@@ -24,6 +24,8 @@ public abstract class Module {
 
     public void draw() {}
 
+    public void onDeath() {}
+
     /*
      * Processing fields:
      */
