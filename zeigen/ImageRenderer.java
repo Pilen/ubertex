@@ -15,6 +15,7 @@ public abstract class ImageRenderer extends Module {
         if (parts.length == 2) {
             mode = parts[0];
             if (parts[1].contains("p")) {
+                //TODO: change "p" back to "%"
                 parts = parts[1].replace("p","").split(",");
                 try {
                     float xScale = Tools.parseFloat(parts[2]);
