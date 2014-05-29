@@ -24,8 +24,8 @@ public abstract class ImageRenderer extends Module {
                     float xScale = Tools.parseFloat(parts[0]);
                     float yScale = Tools.parseFloat(parts[1]);
 
-                    offsetX = tempOffsetX;
-                    offsetY = tempOffsetY;
+                    // offsetX = tempOffsetX;
+                    // offsetY = tempOffsetY;
                     width = (width/100) * xScale;
                     height = (height/100) * yScale;
                 } catch (NumberFormatException e) {
