@@ -31,6 +31,7 @@ public abstract class Module {
     public int height;
 
     public int CENTER = PConstants.CENTER;
+    public int CORNERS = PConstants.CORNERS;
 
     /*
      * Processing functions:
@@ -60,4 +61,8 @@ public abstract class Module {
     public final Movie loadMovie(String filename) {return new Movie(sketch, filename);}
 
     public final void line(float a, float b, float c, float d) {sketch.line(a, b, c, d);}
+
+    public final void rectMode(int a) {sketch.rectMode(a);}
+    public final void rect(float a, float b, float c, float d) {sketch.rect(a, b, c, d);}
+
 }
