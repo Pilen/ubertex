@@ -26,6 +26,9 @@ public abstract class Module {
 
     public void onDeath() {}
 
+
+    public void movieEvent(Movie m) {}
+
     /*
      * Processing fields:
      */

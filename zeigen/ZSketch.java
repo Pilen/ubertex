@@ -2,6 +2,7 @@
 import java.io.File;
 
 import processing.core.PApplet;
+import processing.video.Movie;
 
 public final class ZSketch extends PApplet {
 
@@ -35,13 +36,6 @@ public final class ZSketch extends PApplet {
     /*
      * User functions:
      */
-    public File dataFile(String filename) {
-        File absolute = new File(filename);
-        if (absolute.isAbsolute()) {
-            return absolute;
-        }
-        return new File(controller.baseDir, filename);
-    }
 
     public void background() {
         background(controller.backgroundColor);
@@ -107,4 +101,17 @@ public final class ZSketch extends PApplet {
         }
         return controller.backgroundColor;
     }
+
+    public File dataFile(String filename) {
+        File absolute = new File(filename);
+        if (absolute.isAbsolute()) {
+            return absolute;
+        }
+        return new File(controller.baseDir, filename);
+    }
+
+    public void movieEvent(Movie m) {
+        this.controller.module.movieEvent(m);
+    }
+
 }

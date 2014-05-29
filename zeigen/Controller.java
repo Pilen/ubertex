@@ -7,10 +7,10 @@ public class Controller implements TaskPerformer {
 
     private TaskManager taskManager;
     private HashSet<String> names;
-    private Module module;
     private String moduleName;
     private ZSketch sketch;
 
+    public Module module;
     public File baseDir;
 
     public int width = -1;
