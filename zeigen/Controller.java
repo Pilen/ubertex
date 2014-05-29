@@ -113,6 +113,9 @@ public class Controller implements TaskPerformer {
             this.blank(true);
             this.module(options);
             break;
+        case "playsound":
+            this.playsound(options);
+            break;
         case "start":
             this.blank(false);
             this.start(options);
@@ -255,6 +258,10 @@ public class Controller implements TaskPerformer {
         } else {
             System.out.println("OFFSET NEEDS BOTH AN X-OFFSET AND AN Y-OFFSET");
         }
+    }
+
+    private void seed(String options) {
+        this.sketch.play(options);
     }
 
     private void seed(String options) {

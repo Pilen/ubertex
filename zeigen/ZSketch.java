@@ -23,7 +23,6 @@ public final class ZSketch extends PApplet {
         frame.setBackground(new java.awt.Color(0, 0, 0));
         //The above does not currently work so we use a workaround, see https://github.com/processing/processing/issues/2071
         ((javax.swing.JFrame) frame).getContentPane().setBackground(new java.awt.Color(0,0,0));
-
     }
 
     public void draw() {
@@ -32,6 +31,12 @@ public final class ZSketch extends PApplet {
 
     public boolean sketchFullScreen() {
         return false;
+    }
+
+    public void playSound(String filename) {
+        sound = loadMovie(filename);
+        sound.play();
+
     }
     /*
      * User functions:
