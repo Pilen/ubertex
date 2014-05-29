@@ -110,7 +110,7 @@ public final class ZSketch extends PApplet {
         return new File(controller.baseDir, filename);
     }
 
-    public void movieEvent(Movie m) {
+    public void movieEvent(ZMovie m) {
         this.controller.module.movieEvent(m);
     }
 

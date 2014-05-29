@@ -3,7 +3,6 @@ import java.io.File;
 
 import processing.core.PImage;
 import processing.core.PConstants;
-import processing.video.Movie;
 
 public abstract class Module {
 
@@ -27,7 +26,7 @@ public abstract class Module {
     public void onDeath() {}
 
 
-    public void movieEvent(Movie m) {}
+    public void movieEvent(ZMovie m) {}
 
     /*
      * Processing fields:
@@ -63,7 +62,7 @@ public abstract class Module {
     public final long millis() {return sketch.millis();}
     public final float noise(float a) {return sketch.noise(a);}
 
-    public final Movie loadMovie(String filename) {return new Movie(sketch, filename);}
+    public final ZMovie loadMovie(String filename) {return new ZMovie(sketch, filename);}
 
     public final void line(float a, float b, float c, float d) {sketch.line(a, b, c, d);}
 
