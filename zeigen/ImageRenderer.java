@@ -4,7 +4,7 @@ import processing.core.PImage;
 public abstract class ImageRenderer extends Module {
 
     public void renderImage(PImage image, String mode) {
-        float x, y, w, h;
+        float x = 0, y = 0, w = 0, h = 0;
 
         float offsetX = 0;
         float offsetY = 0;
@@ -14,7 +14,7 @@ public abstract class ImageRenderer extends Module {
         String[] parts = mode.split("/", 2);
         if (parts.length == 2) {
             mode = parts[0];
-            parts = parts[1].split(",")
+            parts = parts[1].split(",");
             try {
                 offsetX = Tools.parseFloat(parts[0]);
                 offsetY = Tools.parseFloat(parts[1]);
