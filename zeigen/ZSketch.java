@@ -33,9 +33,9 @@ public final class ZSketch extends PApplet {
     }
 
     public ZMovie playSound(String filename) {
-        sound = loadMovie(filename);
+        ZMovie sound = new ZMovie(this, filename);
         sound.play();
-        return ZMovie;
+        return sound;
 
     }
     /*
