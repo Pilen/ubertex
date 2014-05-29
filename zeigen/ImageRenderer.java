@@ -20,8 +20,8 @@ public abstract class ImageRenderer extends Module {
                 try {
                     float tempOffsetX = Tools.parseFloat(parts[0]);
                     float tempOffsetY = Tools.parseFloat(parts[1]);
-                    float xScale = Tools.parseFloat(parts[0]);
-                    float yScale = Tools.parseFloat(parts[1]);
+                    float xScale = Tools.parseFloat(parts[2]);
+                    float yScale = Tools.parseFloat(parts[3]);
 
                     offsetX = tempOffsetX;
                     offsetY = tempOffsetY;
