@@ -1,5 +1,6 @@
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -9,6 +10,8 @@ public class Controller implements TaskPerformer {
     private HashSet<String> names;
     private String moduleName;
     private ZSketch sketch;
+    private ArrayList<ZMovie> sounds;
+
 
     public Module module;
     public File baseDir;
@@ -32,6 +35,8 @@ public class Controller implements TaskPerformer {
         for (String name : names) {
             this.names.add(name.toLowerCase());
         }
+
+        this.sounds = new ArrayList<ZMovie>()
 
         this.baseDir = baseDir;
 
@@ -211,6 +216,12 @@ public class Controller implements TaskPerformer {
     private void kill() {
         if (this.module != null) {
             System.out.println("TERMINATING: " + this.moduleName);
+
+            for (ZMovie movie : this.sounds) {
+                sound.stop()
+            }
+            this.sketch.sounds.clear();
+
             this.module.onDeath();
             this.module = null;
             this.moduleName = "";
@@ -258,6 +269,11 @@ public class Controller implements TaskPerformer {
         } else {
             System.out.println("OFFSET NEEDS BOTH AN X-OFFSET AND AN Y-OFFSET");
         }
+    }
+
+    private void playSound(String options) {
+        ZMovie sound = this.sketch.playSound(options);
+        this.sounds.add(sound);
     }
 
     private void seed(String options) {

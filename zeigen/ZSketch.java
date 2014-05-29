@@ -2,7 +2,6 @@
 import java.io.File;
 
 import processing.core.PApplet;
-import processing.video.Movie;
 
 public final class ZSketch extends PApplet {
 
@@ -33,9 +32,10 @@ public final class ZSketch extends PApplet {
         return false;
     }
 
-    public void playSound(String filename) {
+    public ZMovie playSound(String filename) {
         sound = loadMovie(filename);
         sound.play();
+        return ZMovie;
 
     }
     /*
