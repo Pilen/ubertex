@@ -32,8 +32,10 @@ if [[ $# == 1 ]]; then
 fi
 
 if [[ $# == 3 ]]; then
-    echo "Deploying modules"
-    cp -r "$DIR/modules/." "$3/modules/"
+    if [ -d "$DIR/modules/." ]; then
+        echo "Deploying modules"
+        cp -r "$DIR/modules/." "$3/modules/"
+    fi
     echo "Running"
     $PROCESSING/java/bin/java -cp $CLASSPATH Zeigen "$@"
     # java -cp $CLASSPATH Zeigen "$@"
