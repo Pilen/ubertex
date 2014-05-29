@@ -85,9 +85,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun revy-start ()
+  (interactive)
   (setq revy-stack '())
   (push (current-buffer) revy-stack)
-  (revy-ubersicht-mode))
+  (revy-ubersicht-mode t))
 
 
 (define-minor-mode revy-ubersicht-mode

@@ -104,14 +104,25 @@ But it will also accept a string with end being ignored in that case."
 (defun revy-sync-files (&optional worker)
   "Sync local files to worker(s).
 If a worker is supplied this worker is synced, else every worker is synced."
-  (revy-send-message "syncfiles"))
+  ;; (revy-send-message "syncfiles")
+)
 
 
-(defun revy-blank ())
-(defun revy-blank-all ())
-(defun revy-unblank-all ())
+(defun revy-blank ()
+  (interactive)
+  (revy-send-message "blank"))
 
-(defun revy-abort ())
+(defun revy-blank-all ()
+  (revy-blank))
+
+(defun revy-unblank-all ()
+  (interactive)
+  (revy-send-message "unblank"))
+
+(defun revy-abort ()
+  (interactive)
+  (revy-send-message "abort"))
+
 (defun revy-abort-all ())
 
 
@@ -125,7 +136,7 @@ If a worker is supplied this worker is synced, else every worker is synced."
 
 (defun revy-pdf-open (file)
   "Open a PDF file"
-  (revy-send-message "start" "PDF" 0 0 "sized" file))
+  (revy-send-message "start" "PDF" "sized" file))
 
 (defun revy-pdf-reload ()
   "Reload current pdf"
@@ -138,3 +149,12 @@ If a worker is supplied this worker is synced, else every worker is synced."
 (defun revy-pdf-next ()
   "Goto next slide"
   (revy-send-message "module" "next"))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π Text
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun revy-show-text (text)
+  (interactive "sText: ")
+  (revy-send-message "start" "Text" "text" text))

@@ -24,11 +24,12 @@
 (defstruct revy-worker name port location display dir) ; user@location:0.display
 
 (defvar revy-worker-brok (make-revy-worker :name "brok" :port "9999" :location "revy@brok" :display ":0" :dir revy-default-dir))
+(defvar revy-worker-intro (make-revy-worker :name "brok" :port "9999" :location "pilen@intro" :display ":0" :dir revy-default-dir))
 (defvar revy-worker-local (make-revy-worker :name "local" :port "9999" :location "localhost" :display ":0" :dir revy-default-dir))
 (defvar revy-default-worker revy-worker-brok)
 (make-variable-buffer-local 'revy-default-worker)
-(defvar revy-currrent-worker revy-default-worker)
-(make-variable-buffer-local 'revy-currrent-worker)
+(defvar revy-current-worker revy-default-worker)
+(make-variable-buffer-local 'revy-current-worker)
 
 
 
@@ -118,3 +119,4 @@ can be temporarily pushed on the `revy-stack' while another is executed")
 ;; (require 'ubercom)
 ;; (require 'ubertex)
 ;; (require 'ubersicht)
+;; (require 'manus)
