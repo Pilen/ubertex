@@ -1,7 +1,7 @@
 
 public class SlowTyper extends Module {
 
-    private int size = 40;
+    private int size = 36;
     private String string = "";
     private String actual = "";
     private int current = 0;
@@ -9,8 +9,8 @@ public class SlowTyper extends Module {
 
     // private double min = 171.4;
     // private double max = 240;
-    private double min = 100;
-    private double max = 200;
+    private double min = 50;
+    private double max = 150;
 
     public void setup(String message) {
         receive(message);
