@@ -174,7 +174,7 @@ public class Controller implements TaskPerformer {
             System.out.println("======== ERROR ========\n" + "CURRENT MODULE THREW AN EXCEPTION\n" + e.toString());
             e.printStackTrace();
             System.out.println("=======================");
-            this.quit();
+            this.abort();
         }
     }
 
@@ -330,7 +330,14 @@ public class Controller implements TaskPerformer {
             this.module.initModule(this.sketch);
             this.module.width = width;
             this.module.height = height;
-            this.module.setup(arguments);
+            try {
+                this.module.setup(arguments);
+            } catch (Exception e) {
+                System.out.println("======== ERROR ========\n" + "CURRENT MODULE THREW AN EXCEPTION\n" + e.toString());
+                e.printStackTrace();
+                System.out.println("=======================");
+                this.abort();
+            }
         } else {
             System.out.println("COULD NOT LOAD CLASS: " + moduleName);
         }
