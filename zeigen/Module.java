@@ -68,5 +68,6 @@ public abstract class Module {
 
     public final void rectMode(int a) {sketch.rectMode(a);}
     public final void rect(float a, float b, float c, float d) {sketch.rect(a, b, c, d);}
+    public final void stroke(int r, int g, int b) {sketch.stroke(r, g, b);}
 
 }
