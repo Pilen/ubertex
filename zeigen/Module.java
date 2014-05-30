@@ -36,7 +36,7 @@ public abstract class Module {
 
     public int CENTER = PConstants.CENTER;
     public int CORNERS = PConstants.CORNERS;
-
+    public int RIGHT = PConstants.RIGHT;
     /*
      * Processing functions:
      */
