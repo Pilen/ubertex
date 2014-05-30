@@ -9,8 +9,8 @@ public class SlowTyper extends Module {
 
     // private double min = 171.4;
     // private double max = 240;
-    private double min = 50;
-    private double max = 150;
+    private double min = 30;
+    private double max = 75;
 
     public void setup(String message) {
         receive(message);
