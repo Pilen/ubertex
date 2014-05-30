@@ -1,7 +1,7 @@
 
 public class Text extends Module {
 
-    private int size = 36;
+    private int size = 30;
     private String string = "";
 
     public void setup(String message) {

@@ -1,7 +1,7 @@
 
 public class SlowTyper extends Module {
 
-    private int size = 36;
+    private int size = 30;
     private String string = "";
     private String actual = "";
     private int current = 0;
