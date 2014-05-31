@@ -30,7 +30,8 @@
 (defun revy-start-leiter ()
   "Start leiter.
 If leiter is allready running, kill it first, and restart it."
-  (delete-process revy-leiter)
+  (when (not (null revy-leiter))
+    (delete-process revy-leiter))
   (let ((process-connection-type nil)) ;; Use pipes
     (setq revy-leiter
           (start-process "leiter" "*leiter*"
@@ -123,11 +124,25 @@ If a worker is supplied this worker is synced, else every worker is synced."
   (interactive)
   (revy-send-message "abort"))
 
-(defun revy-abort-all ())
+(defun revy-abort-all ()
+  (interactive)
+  (revy-send-message revy-worker-all "abort"))
 
 
-(defun revy-kill-sketch ())
+(defun revy-kill (&optional sketch)
+  (interactive)
+  (if (null sketch)
+      (revy-send-message "kill")
+    (revy-send-message "kill" sketch)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π Image
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun revy-image-open (&rest files)
+  "Open one or more images, and show the first."
+  (revy-send-message "start" "Image" "sized" (pop files))
+  (mapc (lambda (file) (revy-send-message "preload" file)) files))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -136,7 +151,7 @@ If a worker is supplied this worker is synced, else every worker is synced."
 
 (defun revy-pdf-open (file)
   "Open a PDF file"
-  (revy-send-message "start" "PDF" "sized" file))
+  (revy-send-message "start" "PDF" "sized/0,70,90p,90p" file))
 
 (defun revy-pdf-reload ()
   "Reload current pdf"
@@ -150,6 +165,19 @@ If a worker is supplied this worker is synced, else every worker is synced."
   "Goto next slide"
   (revy-send-message "module" "next"))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π Sound
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun revy-play-sound (file)
+  "Play a sound overlay"
+  (revy-send-message "playsound" file))
+
+(defun revy-stop-sounds ()
+  "Stop all overlay sounds"
+  (interactive)
+  (revy-send-message "stopsounds")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Text

@@ -23,10 +23,15 @@
 
 (defstruct revy-worker name port location display dir) ; user@location:0.display
 
+(makunbound 'revy-worker-brok)
+(makunbound 'revy-worker-intro)
+(makunbound 'revy-worker-local)
+(makunbound 'revy-default-worker)
+(makunbound 'revy-current-worker)
 (defvar revy-worker-brok (make-revy-worker :name "brok" :port "9999" :location "revy@brok" :display ":0" :dir revy-default-dir))
-(defvar revy-worker-intro (make-revy-worker :name "brok" :port "9999" :location "pilen@intro" :display ":0" :dir revy-default-dir))
+(defvar revy-worker-intro (make-revy-worker :name "intro" :port "9999" :location "pilen@intro" :display ":0" :dir revy-default-dir))
 (defvar revy-worker-local (make-revy-worker :name "local" :port "9999" :location "localhost" :display ":0" :dir revy-default-dir))
-(defvar revy-default-worker revy-worker-brok)
+(defvar revy-default-worker revy-worker-intro)
 (make-variable-buffer-local 'revy-default-worker)
 (defvar revy-current-worker revy-default-worker)
 (make-variable-buffer-local 'revy-current-worker)
