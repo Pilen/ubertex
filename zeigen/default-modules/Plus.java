@@ -9,7 +9,7 @@ public class Plus extends Module {
         for (int i = 0; i < NUM_PLUS; i++) {
             // (x,y) coordinates
             positions[i][0] = random(width);
-            positions[i][1] = random(height);
+            positions[i][1] = -1 * random(height);
 
             // text size
             positions[i][2] = random(5, 40);
