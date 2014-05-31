@@ -59,7 +59,7 @@ public abstract class ImageRenderer extends Module {
         case "":
         case "stretched":
         case "full":
-            image(image, x, y, width, height);
+            image(image, x+offsetX, y+offsetY, width, height);
         break;
         case "plain":
             w = image.width;
