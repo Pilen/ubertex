@@ -73,7 +73,7 @@
 (defun revy-quit ()
   (interactive)
   (revy-unhide)
-  (revy-kill)
+  (revy-abort-all)
   (pop-to-buffer (pop revy-stack)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
