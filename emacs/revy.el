@@ -176,7 +176,9 @@ Then it will load it"
         (insert name "\n"
                 destination "\n")))
 
-    (message "%s has been created" name)))
+    (message "%s has been created" name)
+    (revy-load ubersicht)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Loading
@@ -189,17 +191,40 @@ Then it will load it"
         (latest-revy (concat (file-name-as-directory local) "latest-revy"))
         (latest-name "")
         (latest-location ""))
+
+    ;; Find latest if wanted and existing
     (when (null destination)
-      (if (not (file-exists-p latest-revy))
-          (setq location (expand-file-name (read-directory-name "Please specify revy directory: " nil nil t)))
-          (with-temp-buffer
-            (insert-file-contents latest-revy)
-            (setq latest-name (progn (search-forward-regexp "^.*?$" nil t) (match-string 0)))
-            (setq latest-location (progn (search-forward-regexp "^.*?$" nil t) (match-string 0))))
-          (let ((choice (ido-completing-read "Do you want to load: " '(latest-name "Other revy...") nil t)))
-            (if (string= choice "Other revy...")
+      (when (file-exists-p latest-revy)
+        (with-temp-buffer
+          (insert-file-contents latest-revy)
+          (setq latest-name (progn (search-forward-regexp "^.*?$" nil t) (match-string 0)))
+          (setq latest-location (progn (search-forward-regexp "^.*?$" nil t) (match-string 0))))
+        (let ((choice (ido-completing-read "Do you want to load: " '(latest-name "Other revy...") nil t)))
+          (when (not (string= choice "Other revy..."))
+            (when (file-exists-p latest-location)
+              (setq destination latest-location))))))
 
-  )
+    ;; Find .revy in directory
+    (while (or (null destination)
+               (not (string= "revy" (file-name-extension destination)))
+               (not (file-exists-p destination)))
+      (setq destination (expand-file-name (read-directory-name "Please specify revy directory: " destination nil t)))
+      (let ((content (directory-files destination t ".*?\\.revy")))
+        (when (not (null content))
+          (when (= (length content) 1)
+            (setq destination (car content)))
+          (setq destination (ido-completing-read "Do you want to load: " (nconc content '("No, find other..." nil t)))))))
 
+    ;; Open and load stuff
+    (find-file destination)
+    (require 'uberrevy)
+    (revy-uberrevy-mode 1)
+    (revy-ubersicht-mode 1)
+
+    ;; Load settings
+    (let ((settings (concat (file-name-sans-extension destination) "-config.el")))
+      (if (file-exists-p settings)
+          (load-file settings)
+        (message "No settings found!")))))
 
 (provide 'revy)
