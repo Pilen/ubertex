@@ -8,7 +8,7 @@
 ;π Installation directory
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar revy-ubertex-dir (file-name-directory (directory-file-name (file-name-directory (locate-library "revy"))))
+(defvar revy-ubertex-dir (file-name-directory (directory-file-name (file-name-directory load-file-name)))
   "The revy-ubertex-dir (where ubertex is installed). Is automatically set when revy.el is being loaded.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
