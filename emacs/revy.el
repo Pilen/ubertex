@@ -8,9 +8,8 @@
 ;π Installation directory
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar revy-ubertex-dir (file-name-directory (directory-file-name (file-name-directory (buffer-file-name))))
+(defvar revy-ubertex-dir (file-name-directory (directory-file-name (file-name-directory (locate-library "revy"))))
   "The revy-ubertex-dir (where ubertex is installed). Is automatically set when revy.el is being loaded.")
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Creation
@@ -47,7 +46,7 @@ Then it will load it"
 
 
     (setq destination (file-name-as-directory destination))
-    (setq ubersicht (concat destination name ".el"))
+    (setq ubersicht (concat destination name ".revy"))
 
     ;; Create ubersicht
     ;; Does source exist?
@@ -174,7 +173,7 @@ Then it will load it"
         (make-directory local))
       (with-temp-file latest-revy
         (insert name "\n"
-                destination "\n")))
+                ubersicht "\n")))
 
     (message "%s has been created" name)
     (revy-load ubersicht)))
@@ -187,10 +186,10 @@ Then it will load it"
 (defun revy-load (&optional destination)
   (interactive)
 
-  (let ((local (concat (file-name-as-directory revy-ubertex-dir) "local"))
-        (latest-revy (concat (file-name-as-directory local) "latest-revy"))
-        (latest-name "")
-        (latest-location ""))
+  (let* ((local (concat (file-name-as-directory revy-ubertex-dir) "local"))
+         (latest-revy (concat (file-name-as-directory local) "latest-revy"))
+         (latest-name "")
+         (latest-location ""))
 
     ;; Find latest if wanted and existing
     (when (null destination)
@@ -199,7 +198,8 @@ Then it will load it"
           (insert-file-contents latest-revy)
           (setq latest-name (progn (search-forward-regexp "^.*?$" nil t) (match-string 0)))
           (setq latest-location (progn (search-forward-regexp "^.*?$" nil t) (match-string 0))))
-        (let ((choice (ido-completing-read "Do you want to load: " '(latest-name "Other revy...") nil t)))
+          (print latest-name)
+        (let ((choice (ido-completing-read "Do you want to load: " (list latest-name "Other revy...") nil t)))
           (when (not (string= choice "Other revy..."))
             (when (file-exists-p latest-location)
               (setq destination latest-location))))))
@@ -226,5 +226,4 @@ Then it will load it"
       (if (file-exists-p settings)
           (load-file settings)
         (message "No settings found!")))))
-
 (provide 'revy)
