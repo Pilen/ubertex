@@ -52,6 +52,7 @@ If leiter is allready running, kill it first, and restart it."
 
 ;; Should concat by itself
 (defun revy-shell (command &optional worker)
+  ;; TODO: Refactor!!!
   "Evaluate shell command on a given worker.
 If no worker is given/worker is nil,
 the command will be executed on this machine."
