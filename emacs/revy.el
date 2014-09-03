@@ -29,6 +29,10 @@ Is automatically set when revy.el is being loaded or evaluated")
 Will prompt a series of questions and create a revy based on the answers.
 Then it will load it"
   (interactive)
+
+  ;; Load libraries, (the user decided to use the revy, so it is safe to load (and polute) the environment)
+  (require 'uberrevy)
+
   (let ((name (read-string "Name: "))
         (destination "")
         (plan "")
