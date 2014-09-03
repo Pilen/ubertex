@@ -5,28 +5,38 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defvar revy-scp-mode nil)
-(defvar revy-dir "/home/pilen/av/2014/")
 
-(defvar revy-ubertex-dir "/home/pilen/code/ubertex/")
+(defgroup uberrevy nil
+  "Group for all uberrevy settings")
+
+(defcustom revy-scp-mode nil
+  "When true, will scp the .pdf to the server when starting/restarting"
+  :group 'uberrevy)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Internal variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar revy-leiter nil)
-(defvar revy-stack '())
+(defvar revy-leiter nil "Variable storing the leiter process")
+(defvar revy-stack '() "Variable storing the stack of sketches being executed")
+(defvar revy-dir nil
+  "The directory the current revy is stored in")
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Workers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defvar revy-worker-default-dir (concat "~/revy" (format-time-string "%Y")))
+
+(defvar revy-worker-default-dir (concat "~/revy" (format-time-string "%Y"))
+  "The default directory to store files for the revy on workers")
 
 (defstruct revy-worker name port location display dir) ; user@location:0.display
 
-(defvar revy-current-worker nil "The current worker.\nUse `setq-default' to set the default worker when none is chosen explicitly.")
+(defvar revy-current-worker nil
+  "The current worker.
+Use `setq-default' to set the default worker when none is chosen explicitly.")
 (make-variable-buffer-local 'revy-current-worker)
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -69,7 +79,6 @@
 ;π Cursors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 (defvar revy-cursor nil
   "The global cursor is where you actually are.
 This is what currently is being displayed")
@@ -87,7 +96,7 @@ can be temporarily pushed on the `revy-stack' while another is executed")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun revy-string-ends-with (string regex)
-  "Returns true if the string starts with the prefix specified in regex."
+  "Returns true if the string ends with the prefix specified in regex."
   (and (string-match (concat regex "^") string)
        t))
 
@@ -121,3 +130,5 @@ can be temporarily pushed on the `revy-stack' while another is executed")
 ;; (require 'ubertex)
 ;; (require 'ubersicht)
 ;; (require 'manus)
+
+(provide 'uberrevy)
