@@ -133,7 +133,7 @@ If a worker is supplied this worker is synced, else every worker is synced."
   (interactive)
   (if (null sketch)
       (revy-send-message "kill")
-    (revy-send-message "kill" sketch)
+    (revy-send-message "kill" sketch)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Image
