@@ -49,25 +49,6 @@ By default the one the point is located in"
   ;; (goto-match-paren)
   )
 
-(defun revy-open (filename &optional screen)
-  (message "running revy-open!")
-  (push (current-buffer) revy-stack)
-  (find-file-other-window filename)
-  (when screen
-    (setq revy-default-screen screen))
-  (if (string= (downcase (file-name-extension filename)) "tex")
-      (progn (revy-manus-mode t)
-             (revy-ubertex-mode t))
-    (revy-ubersicht-mode t)))
-
-(defun revy-nop (&optional &rest _))
-
-(defun revy-quit ()
-  (interactive)
-  (revy-unhide)
-  (revy-abort-all)
-  (pop-to-buffer (pop revy-stack)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;π Overall

@@ -1,3 +1,9 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;π Ubercom
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Handle communication
 
 (defun revy-send-message (&rest args)
   "Send a message"
@@ -90,99 +96,8 @@ But it will also accept a string with end being ignored in that case."
       (eval (read (start)))
     (eval-region start end)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;π Commands
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; All commands are based on the current worker `revy-current-worker'
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π General
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun revy-sync-files (&optional worker)
   "Sync local files to worker(s).
 If a worker is supplied this worker is synced, else every worker is synced."
   ;; (revy-send-message "syncfiles")
 )
-
-
-(defun revy-blank ()
-  (interactive)
-  (revy-send-message "blank"))
-
-(defun revy-blank-all ()
-  (revy-blank))
-
-(defun revy-unblank-all ()
-  (interactive)
-  (revy-send-message "unblank"))
-
-(defun revy-abort ()
-  (interactive)
-  (revy-send-message "abort"))
-
-(defun revy-abort-all ()
-  (interactive)
-  (revy-send-message revy-worker-all "abort"))
-
-
-(defun revy-kill (&optional sketch)
-  (interactive)
-  (if (null sketch)
-      (revy-send-message "kill")
-    (revy-send-message "kill" sketch)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π Image
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun revy-image-open (&rest files)
-  "Open one or more images, and show the first."
-  (revy-send-message "start" "Image" "sized" (pop files))
-  (mapc (lambda (file) (revy-send-message "preload" file)) files))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π PDF
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun revy-pdf-open (file)
-  "Open a PDF file"
-  (revy-send-message "start" "PDF" "sized/0,70,90p,90p" file))
-
-(defun revy-pdf-reload ()
-  "Reload current pdf"
-  (revy-send-message "module" "PDF" "reload"))
-
-(defun revy-pdf-goto-slide (slide)
-  "Goto pdf slide."
-  (revy-send-message "module" "PDF" "goto" slide))
-
-(defun revy-pdf-next ()
-  "Goto next slide"
-  (revy-send-message "module" "next"))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π Sound
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun revy-play-sound (file)
-  "Play a sound overlay"
-  (revy-send-message "playsound" file))
-
-(defun revy-stop-sounds ()
-  "Stop all overlay sounds"
-  (interactive)
-  (revy-send-message "stopsounds")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π Text
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun revy-show-text (text)
-  (interactive "sText: ")
-  (revy-send-message "start" "Text" "text" text))
