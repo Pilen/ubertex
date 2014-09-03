@@ -5,23 +5,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun revy-ubersicht-next ()
+  "Enter the item after the current"
   (interactive)
   (goto-char (overlay-end revy-local-cursor))
   (revy-ubersicht-enter))
-  ;; (search-forward-regexp "^(")
-  ;; (backward-char)
-  ;; (let  ((start (point)))
-  ;;   (goto-match-paren)
-  ;;   (move-overlay revy-local-cursor start (point) (current-buffer))
-  ;;   (move-overlay revy-cursor start (point) (current-buffer))
-  ;;   (eval-region start (point) standard-output)))
 
-;; Should this behave more like revy-enter?
 (defun revy-ubersicht-enter ()
+  "Enter an item
+By default the one the point is located in"
   (interactive)
-  ;; (let ((start (search-backward-regexp "^(")))
-  ;;   (goto-match-paren)
-  ;;   (eval-region start (point) standard-output)))
   (let ((orig (point))
         (start nil)
         (end nil))
@@ -83,6 +75,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun revy-start ()
+  "Start a loaded revy"
   (interactive)
   (setq revy-stack '())
   (push (current-buffer) revy-stack)
