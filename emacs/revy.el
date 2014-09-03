@@ -41,6 +41,13 @@ Then it will load it"
       (setq name (read-string "Name (for the revy): ")))
     (setq name (replace-regexp-in-string "[[:blank:]/]" "-" name))
 
+    ;; Ask to append year
+    (let* ((year (format-time-string "%Y"))
+           (name-year (concat name "-" year)))
+      (when (not (revy-string-ends-with name year))
+        (when (yes-or-no-p (concat "do you want to append the year: " name-year))
+          (setq name name-year))))
+
     ;; Find destination (directory)
     (setq destination (expand-file-name (read-directory-name "Destination: " nil nil nil)))
     (when (not (file-exists-p destination))
@@ -133,7 +140,7 @@ Then it will load it"
       ;; Default directories
       (insert "(setq revy-dir \"" destination "\")\n"
               "(setq revy-worker-default-dir \""
-              (file-name-as-directory (read-string "Default directory on workers: " (concat "~/revy-" (format-time-string "%Y"))))
+              (file-name-as-directory (read-string "Default directory on workers: " (concat "~/" name)))
               "\")\n"
               "\n")
 
