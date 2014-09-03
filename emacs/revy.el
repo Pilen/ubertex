@@ -204,6 +204,13 @@ Then it will load it"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun revy-load (&optional destination)
+  "Load a revy, and execute its settings.
+
+If current buffer is a revy, load it.
+Else ask if the latest created revy should be used.
+Else try to find it somewhere
+
+"
   (interactive)
 
   (let* ((local (concat (file-name-as-directory revy-ubertex-dir) "local"))
@@ -242,14 +249,14 @@ Then it will load it"
           (setq destination (ido-completing-read "Do you want to load: " (nconc content '("No, find other..." nil t)))))))
 
     ;; Open and load stuff
-    (find-file destination)
     (require 'uberrevy)
-    (revy-uberrevy-mode 1)
-    (revy-ubersicht-mode 1)
+    (find-file destination)
+    (revy-ubersicht-mode)
 
     ;; Load settings
     (let ((settings (concat (file-name-sans-extension destination) "-config.el")))
       (if (file-exists-p settings)
           (load-file settings)
         (message "No settings found!")))))
+
 (provide 'revy)

@@ -79,26 +79,29 @@ By default the one the point is located in"
   (interactive)
   (setq revy-stack '())
   (push (current-buffer) revy-stack)
-  (revy-ubersicht-mode t))
+  ;; Ensure we are in correct mode, most likely unnecessary most of the time
+  (revy-ubersicht-mode))
 
 
-(define-minor-mode revy-ubersicht-mode
-  "Minor mode for ubersicht buffers"
-  :lighter "ubersicht"
-  :keymap (let ((revy-ubersicht-mode-map (make-sparse-keymap)))
-            (define-key revy-ubersicht-mode-map (kbd "<next>") 'revy-ubersicht-next)
-            (define-key revy-ubersicht-mode-map (kbd "<end>") 'revy-ubersicht-enter)
-            revy-ubersicht-mode-map)
-  (when (not revy-ubersicht-mode)
-    (revy-unhide))
+(define-derived-mode revy-ubersicht-mode emacs-lisp-mode
+  "Ubersicht"
+  "Major mode for ubersicht buffers
+Based off `emacs-lisp-mode'"
+
+  ;; Clear old cursor
   (when (not (null revy-local-cursor))
     (delete-overlay revy-local-cursor)
     (setq revy-local-cursor nil))
-  (when revy-ubersicht-mode
-    (setq revy-local-cursor (make-overlay 0 0 (current-buffer) t t))
-    (overlay-put revy-local-cursor 'face 'revy-local-cursor-face)
-    (overlay-put revy-local-cursor 'priority 4999)
-    (overlay-put revy-local-cursor 'revy t)
-    (message "kamel")
-    (goto-char (point-min)))
-  )
+
+  ;; Create new local cursor
+  (setq revy-local-cursor (make-overlay 0 0 (current-buffer) t t))
+  (overlay-put revy-local-cursor 'face 'revy-local-cursor-face)
+  (overlay-put revy-local-cursor 'priority 4999)
+  (overlay-put revy-local-cursor 'revy t)
+
+  (goto-char (point-min)))
+
+(add-to-list 'auto-mode-alist '("\\.revy\\'" . revy-ubersicht-mode))
+
+(define-key revy-ubersicht-mode-map (kbd "<next>") 'revy-ubersicht-next)
+(define-key revy-ubersicht-mode-map (kbd "<end>") 'revy-ubersicht-enter)
