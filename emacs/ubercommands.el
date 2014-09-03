@@ -13,6 +13,14 @@
 ;; uberscript handling
 ;; These functions do stuff on the controller, not the workers
 
+(defun revy-start ()
+  "Start a loaded revy"
+  (interactive)
+  (setq revy-stack '())
+  (push (current-buffer) revy-stack)
+  ;; Ensure we are in correct mode, most likely unnecessary most of the time
+  (revy-ubersicht-mode))
+
 (defun revy-open (filename &optional screen)
   "Open a new uberscript or ubertex file and start it"
   (message "running revy-open!")

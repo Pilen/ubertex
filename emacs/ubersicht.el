@@ -55,15 +55,6 @@ By default the one the point is located in"
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun revy-start ()
-  "Start a loaded revy"
-  (interactive)
-  (setq revy-stack '())
-  (push (current-buffer) revy-stack)
-  ;; Ensure we are in correct mode, most likely unnecessary most of the time
-  (revy-ubersicht-mode))
-
-
 (define-derived-mode revy-ubersicht-mode emacs-lisp-mode
   "Ubersicht"
   "Major mode for ubersicht buffers
