@@ -211,6 +211,12 @@ Then it will load it"
          (latest-name "")
          (latest-location ""))
 
+    (when (and (null destination)
+               (string= (file-name-extension buffer-file-name)
+                        "revy"))
+      (setq destination buffer-file-name))
+
+
     ;; Find latest if wanted and existing
     (when (null destination)
       (when (file-exists-p latest-revy)
