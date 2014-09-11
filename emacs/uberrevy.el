@@ -90,12 +90,25 @@ Use `setq-default' to set the default worker when none is chosen explicitly.")
   "The global cursor is where you actually are.
 This is what currently is being displayed")
 
-;; Find out what to do here, perhaps this should be buffer local, but how do you then see which cursor is actually being shown?. Perhaps this should be buffer local in ubersicht but not ubertex? Perhaps we should have both a buffer cursor and a global cursor being on top.
 (defvar revy-local-cursor nil
   "Local cursors show where you are in the current buffer.
 This might not be the current cursor being displayed as buffers
 can be temporarily pushed on the `revy-stack' while another is executed")
 (make-variable-buffer-local 'revy-local-cursor)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π Misc functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun revy-clear-overlays ()
+  "Delete all revy overlays in buffer"
+  (let ((beginning (buffer-end -1))
+        (end (buffer-end 1)))
+    (remove-overlays beginning end 'revy t)
+    (remove-overlays beginning end 'face 'revy-cursor-face)
+    (remove-overlays beginning end 'face 'revy-local-cursor-face)
+    (remove-overlays beginning end 'face 'revy-hidden-face)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
