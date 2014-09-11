@@ -52,10 +52,8 @@ By default the one the point is located in"
   "Major mode for ubersicht buffers
 Based off `emacs-lisp-mode'"
 
-  ;; Clear old cursor
-  (when (not (null revy-local-cursor))
-    (delete-overlay revy-local-cursor)
-    (setq revy-local-cursor nil))
+  ;; Clear old cursors
+  (revy-clear-overlays)
 
   ;; Create new local cursor
   (setq revy-local-cursor (make-overlay 0 0 (current-buffer) t t))
