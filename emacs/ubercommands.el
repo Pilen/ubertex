@@ -20,7 +20,9 @@
   (setq revy-stack '())
   (push (current-buffer) revy-stack)
   ;; Ensure we are in correct mode, most likely unnecessary most of the time
-  (revy-ubersicht-mode))
+  ;; (revy-ubersicht-mode)
+  ;; It is!
+  )
 
 (defun revy-open (filename &optional screen)
   "Open a new uberscript or ubertex file and start it"
@@ -30,9 +32,9 @@
   (when screen
     (setq revy-default-screen screen))
   (if (string= (downcase (file-name-extension filename)) "tex")
-      (progn (revy-manus-mode t)
+      (progn (revy-manus-mode t) ;; Should this be activated?
              (revy-ubertex-mode t))
-    (revy-ubersicht-mode t)))
+    (revy-ubersicht-mode)))
 
 (defun revy-nop (&optional &rest _)
   "Do nothing
