@@ -4,6 +4,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handle communication
+(provide 'revy-ubercom)
+
 
 (defun revy-send-message (&rest args)
   "Send a message"

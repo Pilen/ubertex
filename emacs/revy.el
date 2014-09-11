@@ -2,6 +2,7 @@
 ;π revy.el
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; loading this file ensures only two functions are loaded until more is needed.
+(provide 'revy)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -258,5 +259,3 @@ Else try to find it somewhere
       (if (file-exists-p settings)
           (load-file settings)
         (message "No settings found!")))))
-
-(provide 'revy)

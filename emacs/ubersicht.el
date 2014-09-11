@@ -3,6 +3,8 @@
 ;π Ubersicht
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(provide 'revy-ubersicht)
+
 
 (defun revy-ubersicht-next ()
   "Enter the item after the current"

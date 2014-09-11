@@ -1,5 +1,7 @@
 ;thisisred
 
+(provide 'uberrevy)
+
 (eval-when-compile (require 'cl))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -130,5 +132,3 @@ can be temporarily pushed on the `revy-stack' while another is executed")
 ;; (require 'ubertex)
 ;; (require 'ubersicht)
 ;; (require 'manus)
-
-(provide 'uberrevy)
