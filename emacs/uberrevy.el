@@ -40,6 +40,11 @@
 Use `setq-default' to set the default worker when none is chosen explicitly.")
 (make-variable-buffer-local 'revy-current-worker)
 
+(defconst revy-worker-all (make-revy-worker :name "all"
+                                            :port ""
+                                            :location ""
+                                            :display ""
+                                            :dir ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Faces
