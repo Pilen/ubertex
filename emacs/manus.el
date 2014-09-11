@@ -19,7 +19,7 @@ the functions can be called on their own."
 
 
 
-(setq revy-overtex-preamble "\\documentclass[14pt]{beamer}
+(defconst revy-overtex-preamble "\\documentclass[14pt]{beamer}
 \\usepackage[danish]{babel}
 \\usepackage[utf8]{inputenc}
 \\usepackage{overtex}
