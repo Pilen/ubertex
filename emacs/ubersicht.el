@@ -20,7 +20,7 @@ By default the one the point is located in"
     (setq start (search-backward-regexp "^(" nil t))
 
     (if (null start)
-        ;; We are at the start of the buffer  and should evaluate the first slide
+        ;; We are at the start of the buffer and should evaluate the first slide
         (setq end 0)
       ;; goto end of current slide
       (goto-match-paren)
