@@ -23,33 +23,24 @@ By default the one the point is located in"
 
     (if (null start)
         ;; We are at the start of the buffer and should evaluate the first slide
+        ;; We therefore say that the end of the (non-existing) previous slide is before the point.
         (setq end 0)
       ;; goto end of current slide
       (goto-match-paren)
       (setq end (point)))
 
-    (if (< orig end)
-        (progn
-          (print "<- eval current")
-          (move-overlay revy-local-cursor start end (current-buffer))
-          (move-overlay revy-cursor start end (current-buffer))
-          (eval-region start end))
-      (progn
-        (print "-> eval next")
-        (search-forward-regexp "^(" nil t) ;; Fails from last slide, continuously marking last slide (except last paren).
-        (backward-char)
-        (setq start (point))
-        (goto-match-paren)
-        (move-overlay revy-local-cursor start (point) (current-buffer))
-        (move-overlay revy-cursor start (point) (current-buffer))
-        (eval-region start (point))
-        )
+    (when (>= orig end)
+      ;; Point is located outside previous instruction
+      ;; So we should move forward and evaluate the next instruction
+      (search-forward-regexp "^(" nil t) ;; Fails from last slide, continuously marking last slide (except last paren).
+      (backward-char)
+      (setq start (point))
+      (goto-match-paren)
+      (setq end (point)))
 
-    ))
-  ;; (search-forward-regexp "^(")
-  ;; (backward-char)
-  ;; (goto-match-paren)
-  )
+    (move-overlay revy-local-cursor start end (current-buffer))
+    (move-overlay revy-cursor start end (current-buffer))
+    (eval-region start end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
