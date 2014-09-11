@@ -5,7 +5,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-minor-mode revy-manus-mode
-  "Minor mode for converting tex files to and editing manuscripts."
+  "Minor mode for converting tex files to and editing manuscripts.
+The mode is simple in that it only defines keyboard shortcuts. It
+is therefore not required to be enabled for editing a manus, as
+the functions can be called on their own."
   :lighter "manus"
   :keymap (let ((revy-manus-mode-map (make-sparse-keymap)))
             (define-key revy-manus-mode-map (kbd "<f6>") 'revy-manus-slide)
