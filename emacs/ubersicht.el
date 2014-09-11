@@ -57,8 +57,7 @@ By default the one the point is located in"
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-derived-mode revy-ubersicht-mode emacs-lisp-mode
-  "Ubersicht"
+(define-derived-mode revy-ubersicht-mode emacs-lisp-mode "Ubersicht"
   "Major mode for ubersicht buffers
 Based off `emacs-lisp-mode'"
 
