@@ -174,7 +174,7 @@ Then it will load it"
                     " :location \"" location "\""
                     " :display \"" display "\""
                     (if (null dir)
-                        " :dir revy-default-dir"
+                        " :dir revy-worker-default-dir"
                       (concat " :dir\"" dir "\""))
                     "))\n")
             (push (concat "revy-worker-" name) workers)))
