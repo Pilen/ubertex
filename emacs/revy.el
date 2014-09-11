@@ -169,10 +169,10 @@ Then it will load it"
               (when (not (yes-or-no-p "Use default directory on worker?"))
                 (setq dir (read-string "Dir: "))))
             (insert "(setq revy-worker-" name " (make-revy-worker"
-                    " :name\"" name "\""
-                    " :port\"" port "\""
-                    " :location\"" location "\""
-                    " :display\"" display "\""
+                    " :name \"" name "\""
+                    " :port \"" port "\""
+                    " :location \"" location "\""
+                    " :display \"" display "\""
                     (if (null dir)
                         " :dir revy-default-dir"
                       (concat " :dir\"" dir "\""))
