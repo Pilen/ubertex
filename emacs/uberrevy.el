@@ -15,6 +15,15 @@
   "When true, will scp the .pdf to the server when starting/restarting"
   :group 'uberrevy)
 
+(defcustom revy-follow-cursor 'recenter
+  "How point should follow the cursor.
+nil means nothing is done.
+'follow means the point will follow the cursor when it is moved.
+'recenter means point should follow and that the window should recenter when the cursor is moved (This is the default)."
+  :group 'uberrevy
+  :type '(choice (const :tag "nothing" nil)
+                 (const :tag "Follow cursor" follow)
+                 (const :tag "Follow and recenter" recenter)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Internal variables
