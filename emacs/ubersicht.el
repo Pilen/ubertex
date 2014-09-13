@@ -6,12 +6,6 @@
 (provide 'revy-ubersicht)
 
 
-(defun revy-ubersicht-next ()
-  "Enter the instruction after the current"
-  (interactive)
-  (goto-char (overlay-end revy-local-cursor))
-  (revy-ubersicht-enter))
-
 (defun revy-ubersicht-enter ()
   "Enter an instruction
 By default the one the point is located in"
