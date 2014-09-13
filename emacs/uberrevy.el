@@ -111,7 +111,10 @@ can be temporarily pushed on the `revy-stack' while another is executed")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun revy-clear-overlays ()
-  "Delete all revy overlays in buffer"
+  "Clear all revy overlays in buffer
+The overlays are not deleted, so if they are referenced like revy-cursor, they
+can still be used when moved in to the buffer. So the enter functions will still
+work with the global cursor"
   (let ((beginning (buffer-end -1))
         (end (buffer-end 1)))
     (remove-overlays beginning end 'revy t)
