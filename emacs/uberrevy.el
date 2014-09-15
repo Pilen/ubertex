@@ -1,6 +1,6 @@
 ;thisisred
 
-(provide 'uberrevy)
+(provide 'revy-uberrevy)
 
 (eval-when-compile (require 'cl))
 
@@ -158,7 +158,10 @@ work with the global cursor"
 ;π Includes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (require 'ubercom)
-;; (require 'ubertex)
-;; (require 'ubersicht)
-;; (require 'manus)
+(require 'revy)
+(require 'revy-ubermode "ubermode.el")
+(require 'revy-ubercom "ubercom.el")
+(require 'revy-uberinstructions "uberinstructions.el")
+(require 'revy-ubersicht "ubersicht.el")
+(require 'revy-ubertex "ubertex.el")
+(require 'revy-ubermanus "ubermanus.el")
