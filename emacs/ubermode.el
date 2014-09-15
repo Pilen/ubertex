@@ -44,7 +44,7 @@ By default it doesn't do anything."
   (interactive)
   (if (not (or (null revy-mode-enter-function)
                (eq revy-mode-enter-function 'revy-mode-enter-function)))
-      (funcall 'revy-mode-enter-function)
+      (funcall revy-mode-enter-function)
 
     (message "No default behaviour")
     nil))
@@ -58,21 +58,17 @@ setting a function in `revy-mode-next-function'"
   (interactive)
   (if (not (or (null revy-mode-next-function)
                (eq revy-mode-next-function 'revy-mode-next-function)))
-      (funcall 'revy-mode-next-function)
+      (funcall revy-mode-next-function)
 
-    (let  (pos)
-      (save-excursion
-        (setq pos (goto-char (overlay-end revy-local-cursor)))
-        (revy-mode-enter))
-      (message "kat")
-      (unless (null revy-follow-cursor)
-        (goto-char pos)
-        (message "hund")
+    (save-excursion
+      (goto-char (overlay-end revy-local-cursor))
+      (revy-mode-enter))
+
+    (unless (null revy-follow-cursor)
+        (goto-char (overlay-end revy-local-cursor))
         (unless (eq revy-follow-cursor 'follow)
-          (recenter)
-          (message "hund")))
+          (recenter)))))
 
-      (message "fisk"))))
 
 
 (defun revy-mode-point-forward ()
@@ -85,7 +81,7 @@ By default it doesn't do anything."
   (interactive)
   (if (not (or (null revy-mode-point-forward-function)
                (eq revy-mode-point-forward-function 'revy-mode-point-forward-function)))
-      (funcall 'revy-mode-point-forward-function)
+      (funcall revy-mode-point-forward-function)
 
     (message "No default behaviour")
     nil))
@@ -101,7 +97,7 @@ By default it doesn't do anything."
   (interactive)
   (if (not (or (null revy-mode-point-backward-function)
                (eq revy-mode-point-backward-function 'revy-mode-point-backward-function)))
-      (funcall 'revy-mode-point-backward-function)
+      (funcall revy-mode-point-backward-function)
 
     (message "No default behaviour")
     nil))
