@@ -129,7 +129,7 @@ This function will also call revy-abort-all "
 (defun revy-stop-sounds ()
   "Stop all overlay sounds"
   (interactive)
-  (revy-send-message "stopsounds")
+  (revy-send-message "stopsounds"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Text
