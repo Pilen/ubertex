@@ -6,6 +6,28 @@
 (provide 'revy-ubersicht)
 
 
+(define-derived-mode revy-ubersicht-mode emacs-lisp-mode "Ubersicht"
+  "Major mode for ubersicht buffers
+Based off `emacs-lisp-mode'"
+
+  ;; Clear old cursors
+  (revy-clear-overlays)
+
+  ;; Create new local cursor
+  (setq revy-local-cursor (make-overlay 0 0 (current-buffer) t t))
+  (overlay-put revy-local-cursor 'face 'revy-local-cursor-face)
+  (overlay-put revy-local-cursor 'priority 4999)
+  (overlay-put revy-local-cursor 'revy t)
+
+  ;; Setup metafunctions
+  (setq revy-mode-enter-function 'revy-ubersicht-enter)
+
+  ;; Go to beginning
+  (goto-char (point-min)))
+
+(add-to-list 'auto-mode-alist '("\\.revy\\'" . revy-ubersicht-mode))
+
+
 (defun revy-ubersicht-enter ()
   "Enter an instruction
 By default the one the point is located in"
@@ -35,29 +57,3 @@ By default the one the point is located in"
     (move-overlay revy-local-cursor start end (current-buffer))
     (move-overlay revy-cursor start end (current-buffer))
     (eval-region start end)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;π Overall
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-derived-mode revy-ubersicht-mode emacs-lisp-mode "Ubersicht"
-  "Major mode for ubersicht buffers
-Based off `emacs-lisp-mode'"
-
-  ;; Clear old cursors
-  (revy-clear-overlays)
-
-  ;; Create new local cursor
-  (setq revy-local-cursor (make-overlay 0 0 (current-buffer) t t))
-  (overlay-put revy-local-cursor 'face 'revy-local-cursor-face)
-  (overlay-put revy-local-cursor 'priority 4999)
-  (overlay-put revy-local-cursor 'revy t)
-
-  (goto-char (point-min)))
-
-(add-to-list 'auto-mode-alist '("\\.revy\\'" . revy-ubersicht-mode))
-
-(define-key revy-ubersicht-mode-map (kbd "<next>") 'revy-ubersicht-next)
-(define-key revy-ubersicht-mode-map (kbd "<end>") 'revy-ubersicht-enter)
