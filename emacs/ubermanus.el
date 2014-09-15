@@ -3,6 +3,7 @@
 ;π Manus
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(provide 'revy-ubermanus)
 
 (define-minor-mode revy-manus-mode
   "Minor mode for converting tex files to and editing manuscripts.
