@@ -22,42 +22,27 @@
 ;π Minor mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-minor-mode revy-ubertex-mode
-  "Minor mode for ubertex buffers
-The standard entry for opening an overtex file and playing it's sketch."
-  :lighter "ubertex"
-  :keymap (let ((revy-ubertex-mode-map (make-sparse-keymap)))
-            (define-key revy-ubertex-mode-map (kbd "<next>") 'revy-ubertex-next)
-            (define-key revy-ubertex-mode-map (kbd "<home>") 'revy-ubertex-start)
-            (define-key revy-ubertex-mode-map (kbd "<end>") 'revy-ubertex-enter)
-            (define-key revy-ubertex-mode-map (kbd "<delete>") 'revy-blank)
-            (define-key revy-ubertex-mode-map (kbd "<f11>") 'revy-ubertex-hide)
-            (define-key revy-ubertex-mode-map (kbd "<f12>") 'revy-unhide)
-            revy-ubertex-mode-map)
-  (if (not revy-ubertex-mode)
-      (revy-unhide))
-  (revy-ubertex-start))
+(define-derived-mode revy-ubertex-mode latex-mode "Ubertex"
+  "Major mode for ubertex buffers
+The standard entry for opening an overtex file and playing it's sketch.
+Starts the sketch from the beginning.
+Based off `latex-mode' so it will work with both the standard latex mode and AUCTeX."
+  ;; :keymap (let ((revy-ubertex-mode-map (make-sparse-keymap)))
+  ;;           (define-key revy-ubertex-mode-map (kbd "<next>") 'revy-ubertex-next)
+  ;;           (define-key revy-ubertex-mode-map (kbd "<home>") 'revy-ubertex-start)
+  ;;           (define-key revy-ubertex-mode-map (kbd "<end>") 'revy-ubertex-enter)
+  ;;           (define-key revy-ubertex-mode-map (kbd "<delete>") 'revy-blank)
+  ;;           (define-key revy-ubertex-mode-map (kbd "<f11>") 'revy-ubertex-hide)
+  ;;           (define-key revy-ubertex-mode-map (kbd "<f12>") 'revy-unhide)
+  ;;           revy-ubertex-mode-map)
 
-(defun revy-ubertex-start ()
-  "Start a sketch for the current ubertex buffer from the beginning.
-This does not set the `revy-ubertex-mode' and is primarily used while working on the overtex file."
-  (interactive)
   (beginning-of-buffer)
-  (revy-ubertex-restart))
 
-(defun revy-ubertex-restart ()
-  "(Re)start a sketch for the current ubertex buffer from the current point
-This does not set the `revy-ubertex-mode' and is primarily used while working on the overtex file."
-  (interactive)
+  ;; Clear old cursors
+  (revy-unhide) ;; remove revy-unhide entirely
+  (revy-clear-overlays)
 
-  ;; Make sure revy-ubertex-mode is on.
-  (when (not revy-ubertex-mode)
-    (revy-ubertex-mode))
-
-  ;; Delete old overlays and recreate them.
-  (when (not (null revy-local-cursor))
-    (delete-overlay revy-local-cursor)
-    (setq revy-local-cursor nil))
+  ;; Create new local cursor
   (setq revy-local-cursor (make-overlay 0 0 (current-buffer) t t))
   (overlay-put revy-local-cursor 'face 'revy-local-cursor-face)
   (overlay-put revy-local-cursor 'priority 4999)
@@ -72,12 +57,26 @@ This does not set the `revy-ubertex-mode' and is primarily used while working on
     (when revy-scp-mode
       (revy-scp-file filename "pdfs")))
 
-  ;; Open
-  (revy-pdf-open (revy-data-path (buffer-file-name) ".pdf"))
+  ;; Open pdf on worker
+  (revy-pdf-open (revy-data-path (buffer-file-name) ".pdf")))
 
-  ;; (sleep-for 1) ;; probably not needed anymore
-  (revy-ubertex-enter))
 
+;; (defun revy-ubertex-start ()
+;;   "Start a sketch for the current ubertex buffer from the beginning.
+;; This does not set the `revy-ubertex-mode' and is primarily used while working on the overtex file."
+;;   (interactive)
+;;   (beginning-of-buffer)
+;;   (revy-ubertex-restart))
+
+(defun revy-ubertex-restart ()
+  "(Re)start a sketch for the current ubertex buffer from the current point
+This calls `revy-ubertex-mode' but continues from the current point.
+Is primarily used while working on the overtex file."
+  (interactive)
+  (save-excursion
+    (revy-ubertex-mode))
+  ;; TODO: Ensure the correct slide is entered
+  (revy-mode-enter))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Navigation
@@ -216,10 +215,10 @@ Also does all the preparations for the buffer "
   "Unhides hidden text.
 This restores the buffer to the default tex look."
   (interactive)
-  (revy-ubertex-unnumerize)
-  (remove-text-properties (buffer-end -1) (buffer-end 1) 'bold)
-  (remove-overlays (buffer-end -1) (buffer-end 1) 'revy t)
-  (remove-overlays (buffer-end -1) (buffer-end 1) 'face 'revy-cursor-face))
+  (revy-ubertex-unnumerize))
+  ;; (remove-text-properties (buffer-end -1) (buffer-end 1) 'bold)
+  ;; (remove-overlays (buffer-end -1) (buffer-end 1) 'revy t)
+  ;; (remove-overlays (buffer-end -1) (buffer-end 1) 'face 'revy-cursor-face))
 
 (defun revy-ubertex-insert-blank-comments()
   "Turns empty comments into comments containing the line 'blank'.
