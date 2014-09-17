@@ -88,12 +88,6 @@ Does not affect the cursor."
   (interactive)
   (search-forward-regexp "\\\\begin{overtex}\n\\|\\\\pause\\({}\\)?" nil t))
 
-(defun revy-ubertex-next ()
-  "Moves point and cursor to the next slide after the currently shown."
-  (interactive)
-  (goto-char (overlay-end revy-local-cursor))
-  (revy-ubertex-enter))
-
 (defun revy-ubertex-enter ()
   "Moves cursor to the slide where the point is located."
   (interactive)
