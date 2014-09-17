@@ -319,10 +319,26 @@ This makes it easier to visually spot empty slides."
     (search-backward-regexp "\\\\n{\\([0-9]+\\)}" nil t)
     (message (match-string 1))))
 
+(defun revy-ubertex-slide-number ()
+  "Finds the slide number for the slide where point resides or the previous."
+  (interactive)
+  (save-excursion
+    ;; (let* ((overlays (overlays-at (- (point) 1)))
+    ;;        (overlay (find nil overlays :test (lambda (_ o)
+    ;;                                            (unless (null o)
+    ;;                                              (overlay-get o 'revy-slide-number))))))
+    ;;   (overlay-get overlay 'revy-slide-number))))
 
-
-
-
+    (let ((overlays (overlays-at (- (point) 1)))
+          overlay
+          slide)
+      (while overlays
+        (setq overlay (car overlays))
+        (let ((revy-slide-number (overlay-get overlay 'revy-slide-number)))
+          (unless (null revy-slide-number)
+            (setq slide revy-slide-number)
+            (setq overlays nil))))
+      slide)))
 
 
 
