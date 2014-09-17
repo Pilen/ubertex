@@ -36,7 +36,12 @@ Based off `latex-mode' so it will work with both the standard latex mode and AUC
   ;;           (define-key revy-ubertex-mode-map (kbd "<f12>") 'revy-unhide)
   ;;           revy-ubertex-mode-map)
 
-  (beginning-of-buffer)
+  ;; Go to beginning
+  (goto-char (point-min))
+
+  ;; Setup metafunctions
+  (setq revy-mode-enter-function 'revy-ubertex-enter)
+  (setq revy-mode-forward-function 'revy-forward-enter)
 
   ;; Clear old cursors
   (revy-unhide) ;; remove revy-unhide entirely
