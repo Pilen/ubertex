@@ -127,7 +127,7 @@ To make it easier to visually keep an overview.
 Also does all the preparations for the buffer "
   (interactive)
   (revy-unhide)
-  (revy-ubertex-numerize)
+  ;; (revy-ubertex-numerize)
   (revy-ubertex-insert-blank-comments)
   ;; (setq revy-ubertex-hidden '())
   (save-excursion
