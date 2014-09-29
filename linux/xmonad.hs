@@ -1,5 +1,5 @@
 import XMonad
-  import XMonad.Layout.NoBorders
+import XMonad.Layout.NoBorders
 
   main = xmonad $ defaultConfig {
     terminal = "urxvt",
