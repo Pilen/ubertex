@@ -6,7 +6,7 @@ DIR=$(dirname $(readlink -f $0))
 
 if [ -z $DISPLAY ]; then
     echo "No DISPLAY set, assuming DISPLAY=:0"
-    DISPLAY=:0
+    export DISPLAY=:0
 fi
 
 
