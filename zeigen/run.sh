@@ -5,13 +5,14 @@ set -e
 DIR=$(dirname $(readlink -f $0))
 
 PROCESSING="/usr/share/processing"
+
 if [ ! -d "$PROCESSING" ]; then
     echo "$PROCESSING not found"
     PROCESSING="$DIR/processing-2.2.1"
     echo "Trying $PROCESSING"
 fi
 
-CLASSPATH="$PROCESSING/core/library/core.jar:$DIR:$DIR/..:$DIR/default-modules/:./video.jar:$PROCESSING/modes/java/libraries/video/library/gstreamer-java.jar:$PROCESSING/modes/java/libraries/video/library/jna.jar"
+CLASSPATH="$PROCESSING/core/library/core.jar:$DIR:$DIR/..:$DIR/default-modules/:./video.jar:$PROCESSING/modes/java/libraries/video/library/gstreamer-java.jar:$PROCESSING/modes/java/libraries/video/library/jna.jar:$PROCESSING/modes/java/libraries/video/library/video.jar"
 # ./video.jar:./gstreamer-java.jar:./jna.jar"
 
 echo "Compiling"
