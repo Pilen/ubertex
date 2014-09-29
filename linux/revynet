@@ -1,0 +1,8 @@
+Description='Default static network configuration for the AV-setup'
+Interface=eth0
+Connection=ethernet
+IP=static
+Address=('192.168.0.XXX/24')
+Gateway='192.168.0.YYY'
+DNS='8.8.8.8'
+SkipNoCarrier=yes
