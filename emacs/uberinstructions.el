@@ -57,19 +57,23 @@ This function will also call revy-abort-all "
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; All the following instructions are based on the current worker
 ;; aka the `revy-current-worker'
+;; (use revy-on-worker to run the instruction on another worker instead).
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π General
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun revy-blank ()
+  "Show blank screen temporarily"
   (interactive)
   (revy-send-message "blank"))
 
 (defun revy-blank-all ()
+  "Show blank screen temporarily on all workers"
   (revy-blank))
 
 (defun revy-unblank-all ()
+  "Continue showing what was previously shown"
   (interactive)
   (revy-send-message "unblank"))
 
@@ -86,6 +90,7 @@ This function will also call revy-abort-all "
   (if (null sketch)
       (revy-send-message "kill")
     (revy-send-message "kill" sketch)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Image
@@ -130,6 +135,7 @@ This function will also call revy-abort-all "
   "Stop all overlay sounds"
   (interactive)
   (revy-send-message "stopsounds"))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Text
