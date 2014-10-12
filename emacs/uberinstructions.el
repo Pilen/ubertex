@@ -48,7 +48,10 @@ This function will also call revy-abort-all "
   (revy-abort-all)
   (pop-to-buffer (pop revy-stack)))
 
-
+(defun revy-restart ()
+  "Restart the current sketch"
+  (interactive)
+  (funcall major-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
