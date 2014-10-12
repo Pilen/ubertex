@@ -246,59 +246,19 @@ This makes it easier to visually spot empty slides."
       ;; (revy-elisp (match-string 1)))))
 
 
-
-
-;; Doesn't work on overlay properties.
-;; (defun revy-ubertex-slide-number ()
-;;   (interactive)
-;;   (save-excursion
-;;     (search-backward-regexp "\\\\begin{overtex}\\|\\\\pause\\({}\\)?")
-;;     (let ((overlays (overlays-at (point)))
-;;           (continue t)
-;;           (overlay nil))
-;;       (while (and continue (not (null overlays)))
-;;         (setq overlay (pop overlays))
-;;         (when (overlay-get overlay 'revy-slide-number)
-;;           (setq continue nil)))
-;;       (if (null overlay)
-;;           (message "There is no slide")
-;;         (print overlay)
-
-;;         (print (overlay-get overlay 'revy-slide-number))
-;;         (message (int-to-string (overlay-get overlay 'revy-slide-number)))))))
-;; ;    (message (int-to-string (overlay-get (car (overlays-at (point))) 'revy-slide-number)))))
-
-
-;;Works on revy-ubertex-numerize
 (defun revy-ubertex-slide-number ()
   "Finds the slide number for the slide where point resides or the previous."
   (interactive)
-  (save-excursion
-    (search-backward-regexp "\\\\n{\\([0-9]+\\)}" nil t)
-    (message (match-string 1))))
-
-(defun revy-ubertex-slide-number ()
-  "Finds the slide number for the slide where point resides or the previous."
-  (interactive)
-  (save-excursion
-    ;; (let* ((overlays (overlays-at (- (point) 1)))
-    ;;        (overlay (find nil overlays :test (lambda (_ o)
-    ;;                                            (unless (null o)
-    ;;                                              (overlay-get o 'revy-slide-number))))))
-    ;;   (overlay-get overlay 'revy-slide-number))))
-
-    (let ((overlays (overlays-at (- (point) 1)))
-          overlay
-          slide)
-      (while overlays
-        (setq overlay (car overlays))
-        (let ((revy-slide-number (overlay-get overlay 'revy-slide-number)))
-          (unless (null revy-slide-number)
-            (setq slide revy-slide-number)
-            (setq overlays nil))))
-      slide)))
-
-
-
-
-; (defun revy-ubertex-create-local-cursor ()
+  ;; TODO; decide whether to search back first
+  (let ((overlays (overlays-at (- (point) 1)))
+        overlay
+        slide)
+    ;; Search through overlays for one with the 'revy-slide-number property
+    (while overlays
+      (setq overlay (car overlays))
+      (let ((revy-slide-number (overlay-get overlay 'revy-slide-number)))
+        (unless (null revy-slide-number)
+          ;; End loop and return slide number
+          (setq slide revy-slide-number)
+          (setq overlays nil))))
+    slide))
