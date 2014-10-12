@@ -6,6 +6,26 @@
 (provide 'revy-ubermode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π Revy-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-minor-mode revy-mode
+  "Minor mode for revy.
+This mode provides an interface over the various modes in the revy system.
+Its primary focus is to provide a centralized set of keybindings to create a
+uniform interface."
+  :lighter "revy-mode"
+  :keymap (let ((revy-mode-map (make-sparse-keymap)))
+            (define-key revy-mode-map (kbd "<end>") 'revy-mode-enter)
+            (define-key revy-mode-map (kbd "<next>") 'revy-mode-next)
+            (define-key revy-mode-map (kbd "<delete>") 'revy-blank)
+            revy-mode-map))
+
+(define-global-minor-mode global-revy-mode revy-mode
+  (lambda ()
+    (when (member major-mode '(revy-ubersicht-mode revy-ubertex-mode))
+      (revy-mode))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Meta function variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
