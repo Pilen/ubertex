@@ -33,7 +33,7 @@
     (setq revy-default-screen screen))
   (if (string= (downcase (file-name-extension filename)) "tex")
       (progn (revy-manus-mode t) ;; Should this be activated?
-             (revy-ubertex-mode t))
+             (revy-ubertex-mode))
     (revy-ubersicht-mode)))
 
 (defun revy-nop (&optional &rest _)

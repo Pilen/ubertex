@@ -254,6 +254,8 @@ Else try to find it somewhere
     (find-file destination)
     (revy-ubersicht-mode)
 
+    (revy-global-mode)
+
     ;; Load settings
     (let ((settings (concat (file-name-sans-extension destination) "-config.el")))
       (if (file-exists-p settings)
