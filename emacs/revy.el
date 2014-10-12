@@ -32,7 +32,7 @@ Then it will load it"
   (interactive)
 
   ;; Load libraries, (the user decided to use the revy, so it is safe to load (and polute) the environment)
-  (require 'uberrevy)
+  (require 'revy-uberrevy)
 
   (let ((name (read-string "Name: "))
         (destination "")
@@ -250,7 +250,7 @@ Else try to find it somewhere
           (setq destination (ido-completing-read "Do you want to load: " (nconc content '("No, find other..." nil t)))))))
 
     ;; Open and load stuff
-    (require 'uberrevy)
+    (require 'revy-uberrevy)
     (find-file destination)
     (revy-ubersicht-mode)
 
