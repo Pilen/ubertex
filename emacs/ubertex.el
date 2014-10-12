@@ -45,7 +45,7 @@ Based off `latex-mode' so it will work with both the standard latex mode and AUC
   (overlay-put revy-local-cursor 'face 'revy-local-cursor-face)
 
   ;; Prepare buffer.
-  (revy-ubertex-hide)
+  (revy-ubertex-prepare)
 
   ;; Transfer pdf
   (revy-sync-files)
@@ -102,7 +102,7 @@ Does not affect the cursor."
 ;π Tex parsing/preparation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun revy-ubertex-hide ()
+(defun revy-ubertex-prepare ()
   "Hides command tags in the buffer.
 To make it easier to visually keep an overview.
 Also does all the preparations for the buffer "
