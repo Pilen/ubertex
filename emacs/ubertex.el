@@ -106,8 +106,13 @@ Does not affect the cursor."
   "Hides command tags in the buffer.
 To make it easier to visually keep an overview.
 Also does all the preparations for the buffer "
-  (revy-ubertex-insert-blank-comments)
   (save-excursion
+
+    ;; Turns empty comments into comments containing the line 'blank'.
+    ;; This makes it easier to visually spot empty slides.
+    (replace-string "\\begin{overtex}\n\\end{overtex}"
+                    "\\begin{overtex}\n%blank\n\\end{overtex}"
+                    nil (point-min) (point-max))
 
     ;; insert missing parens around elisp expressions
     (goto-char (point-min))
@@ -136,12 +141,6 @@ Also does all the preparations for the buffer "
             (overlay-put overlay 'revy-slide-number n)
             (incf n))
           (overlay-put overlay 'revy-slide-number n))))))
-
-(defun revy-ubertex-insert-blank-comments()
-  "Turns empty comments into comments containing the line 'blank'.
-This makes it easier to visually spot empty slides."
-  (interactive)
-  (replace-string "\\begin{overtex}\n\\end{overtex}" "\\begin{overtex}\n%blank\n\\end{overtex}" nil (point-min) (point-max)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
