@@ -107,11 +107,9 @@ Does not affect the cursor."
 To make it easier to visually keep an overview.
 Also does all the preparations for the buffer "
   (interactive)
-  (revy-unhide)
-  ;; (revy-ubertex-numerize)
   (revy-ubertex-insert-blank-comments)
-  ;; (setq revy-ubertex-hidden '())
   (save-excursion
+
     ;; insert missing parens around elisp expressions
     (goto-char (point-min))
     (while (search-forward-regexp "\\\\elisp{(\\([^(][^)}]+\\)}" nil t)
@@ -121,58 +119,24 @@ Also does all the preparations for the buffer "
     (goto-char (point-min))
     (search-forward-regexp "\\\\begin{overtex}" nil t)
     (let ((overlay (make-overlay 0 (match-beginning 0) (current-buffer) t nil)))
-      ;; (overlay-put overlay 'invisible t)
       (overlay-put overlay 'revy t)
-      (overlay-put overlay 'face 'revy-hidden-face)
-      ;; (push overlay revy-ubertex-hidden)
-      )
-
+      (overlay-put overlay 'face 'revy-hidden-face))
 
     ;; Put overlays on tex to hide
     (goto-char (point-min))
     (let ((n 0))
       ;; Search over everything that needs overlays
-      (while (search-forward-regexp "\\\\n{\\([0-9]+\\)}\\|\\\\begin{overtex}\\|\\\\end{overtex}\n\\|\\\\pause\\({}\\)?\\|^\n" nil t)
+      (while (search-forward-regexp "\\\\begin{overtex}\\|\\\\end{overtex}\n\\|\\\\pause\\({}\\)?\\|^\n" nil t)
         ;; Create overlay
         (let ((overlay (make-overlay (match-beginning 0) (match-end 0) (current-buffer) t nil)))
           (overlay-put overlay 'revy t)
           (overlay-put overlay 'priority 9000)
           (overlay-put overlay 'face 'revy-hidden-face)
-          ;(overlay-put overlay 'invisible t)
 
-          ;; (when (string= (match-string 0) "\\\\begin{overtex})
-          (cond ((string= (match-string 0) "\n")
-                 ;; (overlay-put overlay 'invisible t)
-                 )
-                ((string= (match-string 0) "\\end{overtex}\n")
-                 ;; (overlay-put overlay 'invisible t)
-                 )
-                ((or (string= (match-string 0) "\\begin{overtex}")
-                     (string= (match-string 0) "\\pause")
-                     (string= (match-string 0) "\\pause{}"))
-                 (overlay-put overlay 'revy-slide-number n)
-                 (incf n)))
-          (overlay-put overlay 'revy-slide-number n)
-          (when (string= (match-string 0) "\\begin{overtex}")
-            ;; (overlay-put overlay 'before-string "")
-            ;; (overlay-put overlay 'invisible t)
-            )
-          (unless (or (string= (match-string 0) "\\pause")
-                    (string= (match-string 0) "\\pause{}"))
-            (message "kat")
-            ;; (let ((icon (make-overlay (- (match-beginning 0) 1) (match-beginning 0) (current-buffer) t nil)))
-            ;;       (overlay-put icon 'revy t)
-            ;;       (overlay-put icon 'priority 9000)
-            ;;       (overlay-put icon 'after-string "$")
-            ;;       (push icon revy-ubertex-hidden))
-;            (overlay-put overlay 'invisible t)
-            )
-
-
-          ;; (push overlay revy-ubertex-hidden)
-         ;(put-text-property (match-beginning 0) (match-end 0) 'invisible t)
-          )))))
-
+          (when (member (match-string 0) '("\\end{overtex}" "\pause" "\pause{}"))
+            (overlay-put overlay 'revy-slide-number n)
+            (incf n))
+          (overlay-put overlay 'revy-slide-number n))))))
 
 (defun revy-ubertex-insert-blank-comments()
   "Turns empty comments into comments containing the line 'blank'.
