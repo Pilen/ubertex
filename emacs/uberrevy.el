@@ -1,4 +1,4 @@
-;thisisred
+; This text is red!
 
 (provide 'revy-uberrevy)
 
@@ -84,7 +84,7 @@ Use `setq-default' to set the default worker when none is chosen explicitly.")
 (set-face-foreground 'revy-hidden-face "gray50")
 (set-face-background 'revy-cursor-face "firebrick4")
 
-(setq revy-cursor (make-overlay 0 10 (current-buffer) t t))
+(setq revy-cursor (make-overlay 0 20 (current-buffer) t t))
 (overlay-put revy-cursor 'face 'revy-cursor-face)
 (overlay-put revy-cursor 'priority 5000)
 (overlay-put revy-cursor 'revy t)
