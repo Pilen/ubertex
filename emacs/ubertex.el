@@ -83,9 +83,8 @@ Does not affect the cursor."
   (let ((start nil)
         (end nil))
 
-    ;(save-excursion
-      (search-forward-regexp "\\\\end{overtex}\\|\\\\pause\\({}\\)?" nil t)
-      (setq end (match-end 0))
+    (search-forward-regexp "\\\\end{overtex}\\|\\\\pause\\({}\\)?" nil t)
+    (setq end (match-end 0))
 
     (save-excursion
       (search-backward-regexp "\\\\begin{overtex}" nil t)
@@ -95,8 +94,6 @@ Does not affect the cursor."
 
     (move-overlay revy-local-cursor (+ 7 start) end (current-buffer))
     (move-overlay revy-cursor (+ 7 start) end (current-buffer))
-    ;(move-overlay revy-local-cursor (match-end 0) end (current-buffer))
-    ;(move-overlay revy-cursor (match-end 0) end (current-buffer))
     (revy-pdf-goto-slide (revy-ubertex-slide-number))
     (revy-ubertex-scan start end)))
 
