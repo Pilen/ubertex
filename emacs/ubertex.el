@@ -27,14 +27,6 @@
 The standard entry for opening an overtex file and playing it's sketch.
 Starts the sketch from the beginning.
 Based off `latex-mode' so it will work with both the standard latex mode and AUCTeX."
-  ;; :keymap (let ((revy-ubertex-mode-map (make-sparse-keymap)))
-  ;;           (define-key revy-ubertex-mode-map (kbd "<next>") 'revy-ubertex-next)
-  ;;           (define-key revy-ubertex-mode-map (kbd "<home>") 'revy-ubertex-start)
-  ;;           (define-key revy-ubertex-mode-map (kbd "<end>") 'revy-ubertex-enter)
-  ;;           (define-key revy-ubertex-mode-map (kbd "<delete>") 'revy-blank)
-  ;;           (define-key revy-ubertex-mode-map (kbd "<f11>") 'revy-ubertex-hide)
-  ;;           (define-key revy-ubertex-mode-map (kbd "<f12>") 'revy-unhide)
-  ;;           revy-ubertex-mode-map)
 
   ;; Go to beginning
   (goto-char (point-min))
