@@ -106,7 +106,6 @@ Does not affect the cursor."
   "Hides command tags in the buffer.
 To make it easier to visually keep an overview.
 Also does all the preparations for the buffer "
-  (interactive)
   (revy-ubertex-insert-blank-comments)
   (save-excursion
 
