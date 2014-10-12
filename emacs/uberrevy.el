@@ -154,6 +154,18 @@ work with the global cursor"
     file))
 
 
+(defun revy-define-buffer-key (key command)
+  "Define a keyboard shortcut for the majormode locally in the current buffer"
+  (use-local-map (copy-keymap (current-local-map)))
+  (local-set-key key command))
+
+(defun revy-on-worker (worker function &rest args)
+  "Run instruction on another worker than the current
+Used like (revy-on-worker revy-worker-brok 'revy-play-sound \"sound.mp3\")"
+  (let ((revy-current-worker worker))
+    (apply function args)))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Includes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
