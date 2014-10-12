@@ -58,13 +58,6 @@ Based off `latex-mode' so it will work with both the standard latex mode and AUC
   (revy-pdf-open (revy-data-path (buffer-file-name) ".pdf")))
 
 
-;; (defun revy-ubertex-start ()
-;;   "Start a sketch for the current ubertex buffer from the beginning.
-;; This does not set the `revy-ubertex-mode' and is primarily used while working on the overtex file."
-;;   (interactive)
-;;   (goto-char (point-min))
-;;   (revy-ubertex-restart))
-
 (defun revy-ubertex-restart-from-here ()
   "(Re)start a sketch for the current ubertex buffer from the current point
 This calls `revy-ubertex-mode' but continues from the current point.
