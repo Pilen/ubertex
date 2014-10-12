@@ -70,7 +70,7 @@ Based off `latex-mode' so it will work with both the standard latex mode and AUC
 ;;   "Start a sketch for the current ubertex buffer from the beginning.
 ;; This does not set the `revy-ubertex-mode' and is primarily used while working on the overtex file."
 ;;   (interactive)
-;;   (beginning-of-buffer)
+;;   (goto-char (point-min))
 ;;   (revy-ubertex-restart))
 
 (defun revy-ubertex-restart-from-here ()
@@ -132,12 +132,12 @@ Also does all the preparations for the buffer "
   ;; (setq revy-ubertex-hidden '())
   (save-excursion
     ;; insert missing parens around elisp expressions
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (while (search-forward-regexp "\\\\elisp{(\\([^(][^)}]+\\)}" nil t)
        (replace-match "\\\\elisp{(\\1)}" nil nil))
 
     ;; Hide preamble and everything up until the first slide:
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (search-forward-regexp "\\\\begin{overtex}" nil t)
     (let ((overlay (make-overlay 0 (match-beginning 0) (current-buffer) t nil)))
       ;; (overlay-put overlay 'invisible t)
@@ -148,7 +148,7 @@ Also does all the preparations for the buffer "
 
 
     ;; Put overlays on tex to hide
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (let ((n 0))
       ;; Search over everything that needs overlays
       (while (search-forward-regexp "\\\\n{\\([0-9]+\\)}\\|\\\\begin{overtex}\\|\\\\end{overtex}\n\\|\\\\pause\\({}\\)?\\|^\n" nil t)
@@ -196,7 +196,7 @@ Also does all the preparations for the buffer "
   "Numerates each slide by inserting a \n{...} tag at the beginning of each."
   (interactive)
   (save-excursion
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (let ((n 0))
       (while (search-forward-regexp "\\\\begin{overtex}\\|\\\\pause\\({}\\)?" nil t)
       (insert "\\n{" (int-to-string n) "}")
@@ -206,7 +206,7 @@ Also does all the preparations for the buffer "
   "Remove all numerating tags \n{...} in the buffer."
   (interactive)
   (save-excursion
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (replace-regexp "\\\\n{[0-9]+}" "")))
 
 
@@ -224,7 +224,7 @@ This restores the buffer to the default tex look."
 This makes it easier to visually spot empty slides."
   (interactive)
   (save-excursion
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (replace-string "\\begin{overtex}\n\\end{overtex}" "\\begin{overtex}\n%blank\n\\end{overtex}")))
 
 

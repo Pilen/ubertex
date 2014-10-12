@@ -105,23 +105,23 @@ Then it will load it"
         ;; (search-forward-regexp "sketches/[^.]*.tex")
         ;; (search-forward-regexp "\\(sketches/[^.]*\\).tex")
 
-        (beginning-of-buffer)
+        (goto-char (point-min))
         (when (yes-or-no-p "Replace all .tex sketches with .el sketches?")
           (replace-regexp "\\(sketches/.*?\\.\\)tex" "\\1el"))
 
-        (beginning-of-buffer)
+        (goto-char (point-min))
         (when (yes-or-no-p "Replace all .tex videos with .el videos?")
           (replace-regexp "\\(video/.*?\\.\\)tex" "\\1el"))
 
-        (beginning-of-buffer)
+        (goto-char (point-min))
         (replace-regexp "\\(^[^/\n]*/.*?\\.\\(tex\\|el\\)\\)" "(revy-open \"\\1\")")
 
-        (beginning-of-buffer)
+        (goto-char (point-min))
         (insert "\n(revy-start)\n\n\n")
 
 
         ;; Copy songs:
-        (beginning-of-buffer)
+        (goto-char (point-min))
         ;; Only if wanted
         (when (yes-or-no-p "Do you want to copy over songtexts?")
           (let ((songs (file-name-as-directory (concat (file-name-directory plan) "sange")))
