@@ -36,7 +36,6 @@ Based off `latex-mode' so it will work with both the standard latex mode and AUC
   (setq revy-mode-forward-function 'revy-forward-enter)
 
   ;; Clear old cursors
-  (revy-unhide) ;; remove revy-unhide entirely
   (revy-clear-overlays)
 
   ;; Create new local cursor
@@ -177,32 +176,6 @@ Also does all the preparations for the buffer "
          ;(put-text-property (match-beginning 0) (match-end 0) 'invisible t)
           )))))
 
-(defun revy-ubertex-numerize ()
-  "Numerates each slide by inserting a \n{...} tag at the beginning of each."
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (let ((n 0))
-      (while (search-forward-regexp "\\\\begin{overtex}\\|\\\\pause\\({}\\)?" nil t)
-      (insert "\\n{" (int-to-string n) "}")
-      (incf n)))))
-
-(defun revy-ubertex-unnumerize ()
-  "Remove all numerating tags \n{...} in the buffer."
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (replace-regexp "\\\\n{[0-9]+}" "")))
-
-
-(defun revy-unhide ()
-  "Unhides hidden text.
-This restores the buffer to the default tex look."
-  (interactive)
-  (revy-ubertex-unnumerize))
-  ;; (remove-text-properties (buffer-end -1) (buffer-end 1) 'bold)
-  ;; (remove-overlays (buffer-end -1) (buffer-end 1) 'revy t)
-  ;; (remove-overlays (buffer-end -1) (buffer-end 1) 'face 'revy-cursor-face))
 
 (defun revy-ubertex-insert-blank-comments()
   "Turns empty comments into comments containing the line 'blank'.
