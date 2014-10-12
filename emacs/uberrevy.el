@@ -129,7 +129,7 @@ work with the global cursor"
 
 (defun revy-string-ends-with (string regex)
   "Returns true if the string ends with the prefix specified in regex."
-  (and (string-match (concat regex "^") string)
+  (and (string-match (concat regex "$") string)
        t))
 
 (defun revy-string-starts-with (string regex)
