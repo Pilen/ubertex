@@ -181,16 +181,7 @@ Also does all the preparations for the buffer "
   "Turns empty comments into comments containing the line 'blank'.
 This makes it easier to visually spot empty slides."
   (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (replace-string "\\begin{overtex}\n\\end{overtex}" "\\begin{overtex}\n%blank\n\\end{overtex}")))
-
-
-
-
-
-
-
+  (replace-string "\\begin{overtex}\n\\end{overtex}" "\\begin{overtex}\n%blank\n\\end{overtex}" nil (point-min) (point-max)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
