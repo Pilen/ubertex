@@ -45,7 +45,7 @@ Based off `latex-mode' so it will work with both the standard latex mode and AUC
   (overlay-put revy-local-cursor 'face 'revy-local-cursor-face)
 
   ;; Prepare buffer.
-  (revy-ubertex-prepare)
+  (revy-ubertex--prepare)
 
   ;; Transfer pdf
   (revy-sync-files)
@@ -94,15 +94,15 @@ Does not affect the cursor."
 
     (move-overlay revy-local-cursor (+ 7 start) end (current-buffer))
     (move-overlay revy-cursor (+ 7 start) end (current-buffer))
-    (revy-pdf-goto-slide (revy-ubertex-slide-number))
-    (revy-ubertex-scan start end)))
+    (revy-pdf-goto-slide (revy-ubertex--slide-number))
+    (revy-ubertex--scan start end)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Tex parsing/preparation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun revy-ubertex-prepare ()
+(defun revy-ubertex--prepare ()
   "Hides command tags in the buffer.
 To make it easier to visually keep an overview.
 Also does all the preparations for the buffer "
@@ -147,7 +147,7 @@ Also does all the preparations for the buffer "
 ;π Ubertex slide handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (defun revy-ubertex-scan (start end)
+;; (defun revy-ubertex--scan (start end)
 ;;   (interactive)
 
 ;;   (save-excursion
@@ -167,7 +167,7 @@ Also does all the preparations for the buffer "
 ;;       (when (not (null (search-forward-regexp "\\\\elisp{(\\([^)}]+\\)}" end t)))
 ;;       (revy-elisp (match-beginning 1) (match-end 1))))))
 
-(defun revy-ubertex-scan (start end)
+(defun revy-ubertex--scan (start end)
   (interactive)
   ;; (print end)
   (save-excursion ;should end before evaluating code (so we can jump around)
@@ -196,7 +196,7 @@ Also does all the preparations for the buffer "
       ;; (revy-elisp (match-string 1)))))
 
 
-(defun revy-ubertex-slide-number ()
+(defun revy-ubertex--slide-number ()
   "Finds the slide number for the slide where point resides or the previous."
   (interactive)
   ;; TODO; decide whether to search back first
