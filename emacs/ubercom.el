@@ -9,7 +9,7 @@
 
 (defun revy-send-message (&rest args)
   "Send a message"
-  (let* ((worker (if (revy-worker-p (car args))
+  (let* ((worker (if (revy-workerp (car args))
                      (pop args)
                    revy-current-worker))
          (time (cond ((integerp (car args))
@@ -21,7 +21,7 @@
                      (t
                       "now")))
 
-         (list (cons (revy-worker-name worker) (cons time args)))
+         (list (cons (revy-worker-get-name worker) (cons time args)))
          (message (mapconcat (lambda (x) (if (integerp x) (int-to-string x) x))
                              list ";"))
          (quoted (concat (replace-regexp-in-string "\n" "\\\\n" message) "\n")))
@@ -63,16 +63,16 @@ the command will be executed on this machine."
         (call-process-shell-command command nil 0)
       (let ((com
              ;; (concat "ssh "
-             ;;                       (revy-worker-location worker)
+             ;;                       (revy-worker-get-location worker)
              ;;                       " -T << EOF \n"
              ;;                       " export DISPLAY="
-             ;;                       (revy-worker-display worker)
+             ;;                       (revy-worker-get-display worker)
              ;;                       " ; "
              ;;                       command
              ;;                       " \n EOF ")))
-             (concat "ssh " (revy-worker-location worker) " \""
-                     "export DISPLAY=" (revy-worker-display worker) ";\n"
-                     "cd " (revy-worker-dir worker) ";\n"
+             (concat "ssh " (revy-worker-get-location worker) " \""
+                     "export DISPLAY=" (revy-worker-getdisplay worker) ";\n"
+                     "cd " (revy-worker-get-dir worker) ";\n"
                      command
                      ";\"")))
         ;(print com)
@@ -87,8 +87,8 @@ the command will be executed on this machine."
     (revy-shell
      (concat "scp "
              filename
-             " " (revy-worker-location revy-current-worker)
-             ":" (revy-worker-dir revy-current-worker)
+             " " (revy-worker-get-location revy-current-worker)
+             ":" (revy-worker-get-dir revy-current-worker)
              subdir (file-name-nondirectory filename)))))
 
 (defun revy-elisp (start &optional end)
@@ -96,11 +96,46 @@ the command will be executed on this machine."
 Default is to give it a region from start to end.
 But it will also accept a string with end being ignored in that case."
   (if (stringp start)
-      (eval (read (start)))
+      (if (string= start "")
+          (message "<WARNING:> Evaluating empty string!")
+        (eval (read start)))
     (eval-region start end)))
+
+(defvar revy-syncing-files 0
+  "Number off machines being synced to currently")
 
 (defun revy-sync-files (&optional worker)
   "Sync local files to worker(s).
-If a worker is supplied this worker is synced, else every worker is synced."
+If a worker or a list of workers are supplied these workers are synced, else every worker is synced.
+Syncs using rsync."
+  ;; TODO: if rsync fails we might want to use scp (check exit code).
+
   ;; (revy-send-message "syncfiles")
-)
+  (let ((workers (if worker
+                     (if (listp worker)
+                         worker
+                       (list worker))
+                   (revy-worker-get-all-workers))))
+    (print workers)
+    (mapc
+     (lambda (worker)
+       (when (revy-worker-get-location worker)
+         (lexical-let* ((name (revy-worker-get-name  worker))
+                        (process (start-process (concat "revy-rsync-" name)
+                                                (concat "*revy-rsync-" name "*")
+                                                "rsync"
+                                                "-r" "-u" "-P" "-e" "ssh"
+                                                revy-dir
+                                                (concat (revy-worker-get-location worker)
+                                                        ":"
+                                                        (revy-worker-get-dir worker)))))
+           (incf revy-syncing-files)
+           (message "Syncing: %s" name)
+           (set-process-sentinel process
+                                 (lambda (process event)
+                                   (decf revy-syncing-files)
+                                   (if (string= event "finished\n")
+                                       (message "Sync with %s completed [%d left]" name revy-syncing-files)
+                                     (message "Sync with %s failed with exit code %i [%d left]"
+                                              name (process-exit-status process) revy-syncing-files)))))))
+     workers)))

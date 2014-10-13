@@ -48,10 +48,10 @@ Based off `latex-mode' so it will work with both the standard latex mode and AUC
   (revy-ubertex--prepare)
 
   ;; Transfer pdf
-  (revy-sync-files)
-  (let ((filename (concat (file-name-sans-extension (buffer-file-name)) ".pdf")))
-    (when revy-scp-mode
-      (revy-scp-file filename "pdfs")))
+  ;; (revy-sync-files)
+  ;; (let ((filename (concat (file-name-sans-extension (buffer-file-name)) ".pdf")))
+  ;;   (when revy-scp-mode
+  ;;     (revy-scp-file filename "pdfs")))
 
   ;; Open pdf on worker
   (revy-pdf-open (revy-data-path (buffer-file-name) ".pdf")))
@@ -92,10 +92,10 @@ Does not affect the cursor."
       (when (char-equal (char-after start) ?\n)
         (incf start)))
 
-    (move-overlay revy-local-cursor (+ 7 start) end (current-buffer))
-    (move-overlay revy-cursor (+ 7 start) end (current-buffer))
+    (move-overlay revy-local-cursor start end (current-buffer))
+    (move-overlay revy-cursor start end (current-buffer))
     (revy-pdf-goto-slide (revy-ubertex--slide-number))
-    (revy-ubertex--scan start end)))
+    (revy-ubertex--scan end)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -137,10 +137,10 @@ Also does all the preparations for the buffer "
           (overlay-put overlay 'priority 9000)
           (overlay-put overlay 'face 'revy-hidden-face)
 
-          (when (member (match-string 0) '("\\end{overtex}" "\pause" "\pause{}"))
+          (when (member (match-string 0) '("\\end{overtex}\n" "\\pause" "\\pause{}"))
             (overlay-put overlay 'revy-slide-number n)
-            (incf n))
-          (overlay-put overlay 'revy-slide-number n))))))
+            (incf n))))
+      n)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -167,7 +167,7 @@ Also does all the preparations for the buffer "
 ;;       (when (not (null (search-forward-regexp "\\\\elisp{(\\([^)}]+\\)}" end t)))
 ;;       (revy-elisp (match-beginning 1) (match-end 1))))))
 
-(defun revy-ubertex--scan (start end)
+(defun revy-ubertex--scan (end)
   (interactive)
   ;; (print end)
   (save-excursion ;should end before evaluating code (so we can jump around)
@@ -195,6 +195,27 @@ Also does all the preparations for the buffer "
       ;; (search-forward-regexp "\\\\elisp}\\(.+\\)}" end t)
       ;; (revy-elisp (match-string 1)))))
 
+(defun revy-ubertex--scan (end)
+  (let ((code nil))
+    (save-excursion
+      (goto-char end)
+      (search-backward-regexp "\\\\begin{overtex}\\|\\\\pause[{}]?" nil t)
+      (save-excursion
+        (while (search-forward-regexp "\\\\shell{\\([^}]*\\)}" end t)
+          (revy-shell (match-string 1))))
+
+      ;; Collect all lisp code
+      (while (search-forward-regexp "\\\\elisp{\\([^}]*\\)}" end t)
+        ;; Dont evaluate in save-excursion, so we can jump around
+        (message "fisk")
+        (push (match-string 1) code)))
+
+    ;; Evaluate lisp code in correct order
+    (setq code (nreverse code))
+    (while code
+      (revy-elisp (car code))
+      (setq code (cdr code)))))
+
 
 (defun revy-ubertex--slide-number ()
   "Finds the slide number for the slide where point resides or the previous."
@@ -206,6 +227,7 @@ Also does all the preparations for the buffer "
     ;; Search through overlays for one with the 'revy-slide-number property
     (while overlays
       (setq overlay (car overlays))
+      (setq overlays (cdr overlays))
       (let ((revy-slide-number (overlay-get overlay 'revy-slide-number)))
         (unless (null revy-slide-number)
           ;; End loop and return slide number

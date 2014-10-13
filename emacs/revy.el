@@ -147,17 +147,21 @@ Then it will load it"
               "(setq revy-worker-default-dir \""
               (file-name-as-directory (read-string "Default directory on workers: " (concat "~/" name)))
               "\")\n"
+              "(setq revy-worker-default-installation \""
+              (file-name-as-directory (read-string "Default installation directory on workers: " (concat "~/ubertex")))
+              "\")\n"
               "\n")
 
       ;; Workers
       (let ((workers '()))
-        (insert "(setq revy-worker-all (make-revy-worker :name\"all\" :port\"\" :location\"\" :display\"\" :dir revy-default-dir))\n")
+        (insert "(setq revy-worker-all (revy-create-worker \"all\"))\n")
         (while (yes-or-no-p "Do you want to create a worker?")
           (let ((name "")
                 (port "")
                 (location "")
                 (display "")
-                (dir nil)) ;; Should be default dir
+                (dir nil)
+                (installation nil)) ;; Should be default dir
 
             (setq name (read-string "Name: "))
             (while (member (concat "revy-worker-" name) workers)
@@ -167,15 +171,20 @@ Then it will load it"
               (setq port (read-string "Port: " "9999"))
               (setq display (read-string "Display: " ":0"))
               (when (not (yes-or-no-p "Use default directory on worker?"))
-                (setq dir (read-string "Dir: "))))
-            (insert "(setq revy-worker-" name " (make-revy-worker"
-                    " :name \"" name "\""
-                    " :port \"" port "\""
-                    " :location \"" location "\""
-                    " :display \"" display "\""
+                (setq dir (read-string "Dir: ")))
+              (when (not (yes-or-no-p "Use default installation directory on worker?"))
+                (setq installation (read-string "Installation: "))))
+            (insert "(setq revy-worker-" name " (revy-create-worker"
+                    " \"" name "\""
+                    " \"" location "\""
+                    " \"" port "\""
+                    " \"" display "\""
                     (if (null dir)
-                        " :dir revy-worker-default-dir"
-                      (concat " :dir\"" dir "\""))
+                        " revy-worker-default-dir"
+                      (concat " \"" dir "\""))
+                    (if (null installation)
+                        " revy-worker-default-installation"
+                      (concat " \"" installation "\""))
                     "))\n")
             (push (concat "revy-worker-" name) workers)))
         (push "revy-worker-all" workers)
