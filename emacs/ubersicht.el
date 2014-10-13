@@ -15,9 +15,9 @@ Based off `emacs-lisp-mode'"
 
   ;; Create new local cursor
   (setq revy-local-cursor (make-overlay 0 0 (current-buffer) t t))
-  (overlay-put revy-local-cursor 'face 'revy-local-cursor-face)
-  (overlay-put revy-local-cursor 'priority 4999)
   (overlay-put revy-local-cursor 'revy t)
+  (overlay-put revy-local-cursor 'priority 4999)
+  (overlay-put revy-local-cursor 'face 'revy-local-cursor-face)
 
   ;; Setup metafunctions
   (setq revy-mode-enter-function 'revy-ubersicht-enter)
