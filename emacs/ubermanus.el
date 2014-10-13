@@ -3,9 +3,13 @@
 ;π Manus
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(provide 'revy-ubermanus)
 
 (define-minor-mode revy-manus-mode
-  "Minor mode for converting tex files to and editing manuscripts."
+  "Minor mode for converting tex files to and editing manuscripts.
+The mode is simple in that it only defines keyboard shortcuts. It
+is therefore not required to be enabled for editing a manus, as
+the functions can be called on their own."
   :lighter "manus"
   :keymap (let ((revy-manus-mode-map (make-sparse-keymap)))
             (define-key revy-manus-mode-map (kbd "<f6>") 'revy-manus-slide)
@@ -16,10 +20,10 @@
 
 
 
-(setq revy-overtex-preamble "\\documentclass[14pt]{beamer}
+(defconst revy-overtex-preamble "\\documentclass[14pt]{beamer}
 \\usepackage[danish]{babel}
 \\usepackage[utf8]{inputenc}
-\\usepackage{overtex}
+\\usepackage{../overtex}
 
 \\begin{document}
 \\obeylines
@@ -32,7 +36,7 @@
 
 (defun revy-manus-preamble ()
   (interactive)
-  (beginning-of-buffer)
+  (goto-char (point-min))
   (while (search-forward-regexp "\\\\sings{\\|\\\\scene{" nil t)
     (backward-delete-char 7)
     (insert "%% ")
@@ -44,7 +48,7 @@
     (when (< (point) (line-end-position))
       (insert "\n"))
     )
-  (beginning-of-buffer)
+  (goto-char (point-min))
   (search-forward "\\begin{song}")
   (delete-region (point-min) (point))
   (insert revy-overtex-preamble)
@@ -63,14 +67,14 @@
 ;; Does not catch the space in "text \pause"
 (defun revy-manus-clean ()
   (interactive)
-  (beginning-of-buffer)
+  (goto-char (point-min))
   (let ((i nil))
     (while (search-forward-regexp "^[[:space:]]*[.,-]" nil t)
       (setq i (read-key-sequence "' '=replace"))
       (when (string= i " ")
         (backward-delete-char 1)
         (move-beginning-of-line nil)))
-    (beginning-of-buffer)
+    (goto-char (point-min))
     ;; (while (search-forward-regexp "\\([.,-]\\)\\\\pause[[:space:]]*$" nil t)
     ;;   (setq i (read-key-sequence "n=next"))
     ;;   (when (string= i " ")
@@ -81,7 +85,7 @@
         (backward-delete-char 1)
         (move-beginning-of-line nil))))
   (message "done")
-  (beginning-of-buffer)
+  (goto-char (point-min))
   (replace-regexp "\\\\pause\n\\\\end{overtex}" "\n\\\\end{overtex}")
   (indent-region (point-min) (point-max))
   (end-of-buffer))

@@ -1,7 +1,15 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;π Ubercom
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Handle communication
+(provide 'revy-ubercom)
+
 
 (defun revy-send-message (&rest args)
   "Send a message"
-  (let* ((worker (if (revy-worker-p (car args))
+  (let* ((worker (if (revy-workerp (car args))
                      (pop args)
                    revy-current-worker))
          (time (cond ((integerp (car args))
@@ -13,7 +21,7 @@
                      (t
                       "now")))
 
-         (list (cons (revy-worker-name worker) (cons time args)))
+         (list (cons (revy-worker-get-name worker) (cons time args)))
          (message (mapconcat (lambda (x) (if (integerp x) (int-to-string x) x))
                              list ";"))
          (quoted (concat (replace-regexp-in-string "\n" "\\\\n" message) "\n")))
@@ -46,6 +54,7 @@ If leiter is allready running, kill it first, and restart it."
 
 ;; Should concat by itself
 (defun revy-shell (command &optional worker)
+  ;; TODO: Refactor!!!
   "Evaluate shell command on a given worker.
 If no worker is given/worker is nil,
 the command will be executed on this machine."
@@ -54,16 +63,16 @@ the command will be executed on this machine."
         (call-process-shell-command command nil 0)
       (let ((com
              ;; (concat "ssh "
-             ;;                       (revy-worker-location worker)
+             ;;                       (revy-worker-get-location worker)
              ;;                       " -T << EOF \n"
              ;;                       " export DISPLAY="
-             ;;                       (revy-worker-display worker)
+             ;;                       (revy-worker-get-display worker)
              ;;                       " ; "
              ;;                       command
              ;;                       " \n EOF ")))
-             (concat "ssh " (revy-worker-location worker) " \""
-                     "export DISPLAY=" (revy-worker-display worker) ";\n"
-                     "cd " (revy-worker-dir worker) ";\n"
+             (concat "ssh " (revy-worker-get-location worker) " \""
+                     "export DISPLAY=" (revy-worker-getdisplay worker) ";\n"
+                     "cd " (revy-worker-get-dir worker) ";\n"
                      command
                      ";\"")))
         ;(print com)
@@ -78,8 +87,8 @@ the command will be executed on this machine."
     (revy-shell
      (concat "scp "
              filename
-             " " (revy-worker-location revy-current-worker)
-             ":" (revy-worker-dir revy-current-worker)
+             " " (revy-worker-get-location revy-current-worker)
+             ":" (revy-worker-get-dir revy-current-worker)
              subdir (file-name-nondirectory filename)))))
 
 (defun revy-elisp (start &optional end)
@@ -87,102 +96,46 @@ the command will be executed on this machine."
 Default is to give it a region from start to end.
 But it will also accept a string with end being ignored in that case."
   (if (stringp start)
-      (eval (read (start)))
+      (if (string= start "")
+          (message "<WARNING:> Evaluating empty string!")
+        (eval (read start)))
     (eval-region start end)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;π Commands
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; All commands are based on the current worker `revy-current-worker'
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π General
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defvar revy-syncing-files 0
+  "Number off machines being synced to currently")
 
 (defun revy-sync-files (&optional worker)
   "Sync local files to worker(s).
-If a worker is supplied this worker is synced, else every worker is synced."
+If a worker or a list of workers are supplied these workers are synced, else every worker is synced.
+Syncs using rsync."
+  ;; TODO: if rsync fails we might want to use scp (check exit code).
+
   ;; (revy-send-message "syncfiles")
-)
-
-
-(defun revy-blank ()
-  (interactive)
-  (revy-send-message "blank"))
-
-(defun revy-blank-all ()
-  (revy-blank))
-
-(defun revy-unblank-all ()
-  (interactive)
-  (revy-send-message "unblank"))
-
-(defun revy-abort ()
-  (interactive)
-  (revy-send-message "abort"))
-
-(defun revy-abort-all ()
-  (interactive)
-  (revy-send-message revy-worker-all "abort"))
-
-
-(defun revy-kill (&optional sketch)
-  (interactive)
-  (if (null sketch)
-      (revy-send-message "kill")
-    (revy-send-message "kill" sketch)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π Image
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun revy-image-open (&rest files)
-  "Open one or more images, and show the first."
-  (revy-send-message "start" "Image" "sized" (pop files))
-  (mapc (lambda (file) (revy-send-message "preload" file)) files))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π PDF
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun revy-pdf-open (file)
-  "Open a PDF file"
-  (revy-send-message "start" "PDF" "sized/0,70,90p,90p" file))
-
-(defun revy-pdf-reload ()
-  "Reload current pdf"
-  (revy-send-message "module" "PDF" "reload"))
-
-(defun revy-pdf-goto-slide (slide)
-  "Goto pdf slide."
-  (revy-send-message "module" "PDF" "goto" slide))
-
-(defun revy-pdf-next ()
-  "Goto next slide"
-  (revy-send-message "module" "next"))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π Sound
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun revy-play-sound (file)
-  "Play a sound overlay"
-  (revy-send-message "playsound" file))
-
-(defun revy-stop-sounds ()
-  "Stop all overlay sounds"
-  (interactive)
-  (revy-send-message "stopsounds")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π Text
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun revy-show-text (text)
-  (interactive "sText: ")
-  (revy-send-message "start" "Text" "text" text))
+  (let ((workers (if worker
+                     (if (listp worker)
+                         worker
+                       (list worker))
+                   (revy-worker-get-all-workers))))
+    (print workers)
+    (mapc
+     (lambda (worker)
+       (when (revy-worker-get-location worker)
+         (lexical-let* ((name (revy-worker-get-name  worker))
+                        (process (start-process (concat "revy-rsync-" name)
+                                                (concat "*revy-rsync-" name "*")
+                                                "rsync"
+                                                "-r" "-u" "-P" "-e" "ssh"
+                                                revy-dir
+                                                (concat (revy-worker-get-location worker)
+                                                        ":"
+                                                        (revy-worker-get-dir worker)))))
+           (incf revy-syncing-files)
+           (message "Syncing: %s" name)
+           (set-process-sentinel process
+                                 (lambda (process event)
+                                   (decf revy-syncing-files)
+                                   (if (string= event "finished\n")
+                                       (message "Sync with %s completed [%d left]" name revy-syncing-files)
+                                     (message "Sync with %s failed with exit code %i [%d left]"
+                                              name (process-exit-status process) revy-syncing-files)))))))
+     workers)))
