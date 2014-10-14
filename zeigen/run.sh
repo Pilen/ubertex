@@ -44,6 +44,6 @@ if [ $# == 3 ]; then
         cp -u -r "$DIR/modules/." "$3/modules/"
     fi
     echo "Running"
-    $PROCESSING/java/bin/java -cp $CLASSPATH Zeigen "$@"
+    $PROCESSING/java/bin/java -Xms512m -Xmx2048m -cp $CLASSPATH Zeigen "$@"
     # java -cp $CLASSPATH Zeigen "$@"
 fi
