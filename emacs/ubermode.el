@@ -18,7 +18,13 @@ uniform interface."
             (define-key revy-mode-map (kbd "<end>") 'revy-mode-enter)
             (define-key revy-mode-map (kbd "<next>") 'revy-mode-next)
             (define-key revy-mode-map (kbd "<delete>") 'revy-blank)
+            (define-key revy-mode-map (kbd "<XF86Launch1>") 'revy-abort-all)
             revy-mode-map))
+
+(setq revy-uberclear? t)
+(global-set-key (kbd "<print>") (lambda () (interactive) (if revy-uberclear? (revy-clear-overlays) (revy-sync-wait revy-current-worker) (revy-ubertex-mode)) (setq revy-uberclear? (not revy-uberclear?))))
+(global-set-key (kbd "<XF86AudioMicMute>") (lambda () (interactive) (revy-sync-files revy-current-worker) (sleep-for 1) (revy-ubertex-mode)))
+(global-set-key (kbd "<XF86Launch1>") 'revy-abort-all)
 
 (define-global-minor-mode global-revy-mode revy-mode
   (lambda ()
