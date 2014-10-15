@@ -28,6 +28,7 @@ The standard entry for opening an overtex file and playing it's sketch.
 Starts the sketch from the beginning.
 Based off `latex-mode' so it will work with both the standard latex mode and AUCTeX."
 
+  (revy-manus-mode)
   ;; Go to beginning
   (goto-char (point-min))
 
@@ -54,7 +55,9 @@ Based off `latex-mode' so it will work with both the standard latex mode and AUC
   ;;     (revy-scp-file filename "pdfs")))
 
   ;; Open pdf on worker
-  (revy-pdf-open (revy-data-path (buffer-file-name) ".pdf")))
+  (revy-pdf-open (revy-data-path (buffer-file-name) ".pdf"))
+  ;; Todo: Enter!
+  )
 
 
 (defun revy-ubertex-start-from-here ()
