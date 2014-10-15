@@ -30,7 +30,7 @@ public final class ZSketch extends PApplet {
     }
 
     public boolean sketchFullScreen() {
-        return false;
+        return true;
     }
 
     public ZMovie playSound(String filename) {
