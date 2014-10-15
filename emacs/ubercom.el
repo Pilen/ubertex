@@ -54,31 +54,44 @@ If leiter is allready running, kill it first, and restart it."
 
 ;; Should concat by itself
 (defun revy-shell (command &optional worker)
-  ;; TODO: Refactor!!!
-  "Evaluate shell command on a given worker.
+  "Evaluate shell command on a given worker asynchronously.
 If no worker is given/worker is nil,
-the command will be executed on this machine."
+the command will be executed on revy-current-worker."
   (save-window-excursion
-    (if (null worker)
-        (call-process-shell-command command nil 0)
-      (let ((com
-             ;; (concat "ssh "
-             ;;                       (revy-worker-get-location worker)
-             ;;                       " -T << EOF \n"
-             ;;                       " export DISPLAY="
-             ;;                       (revy-worker-get-display worker)
-             ;;                       " ; "
-             ;;                       command
-             ;;                       " \n EOF ")))
-             (concat "ssh " (revy-worker-get-location worker) " \""
-                     "export DISPLAY=" (revy-worker-getdisplay worker) ";\n"
-                     "cd " (revy-worker-get-dir worker) ";\n"
-                     command
-                     ";\"")))
-        ;(print com)
-        (call-process-shell-command com nil 0)))))
-        ;(start-process-shell-command "ubertex" nil com)))))
-        ;(async-shell-command com nil nil)))))
+    (when (null worker)
+      (setq worker revy-current-worker))
+    (start-process "revy-shell" "*revy-shell*"
+                   "ssh" (revy-worker-get-location worker)
+                   (concat "export DISPLAY=" (revy-worker-get-display worker) ";\n"
+                           "cd " (revy-worker-get-dir worker) ";\n"
+                           command))))
+
+(defun revy-shell-sync (command &optional worker)
+  "Evaluate shell command on a given worker synchronously.
+If no worker is given/worker is nil,
+the command will be executed on revy-current-worker."
+  (save-window-excursion
+    (with-current-buffer "*revy-shell*"
+      (goto-char (point-max))
+      (when (null worker)
+        (setq worker revy-current-worker))
+      (call-process "ssh" nil "*revy-shell*" t
+                    (revy-worker-get-location worker)
+                    (concat "export DISPLAY=" (revy-worker-get-display worker) ";\n"
+                            "cd " (revy-worker-get-dir worker) ";\n"
+                            command)))))
+
+(defun revy-shell-local (command)
+  "Evaluate shell command on this machine asynchronously."
+  (save-window-excursion
+    (start-process-shell-command "revy-shell" "*revy-shell*" command)))
+
+(defun revy-shell-sync-local (command)
+  "Evaluate shell command on this machine synchronously."
+  (save-window-excursion
+    (with-current-buffer "*revy-shell*"
+      (goto-char (point-max))
+      (call-process-shell-command command nil "*revy-shell*" t))))
 
 ;; Might be unnecessary if using sshmount
 (defun revy-scp-file (filename subdir)
@@ -116,7 +129,6 @@ Syncs using rsync."
                          worker
                        (list worker))
                    (revy-worker-get-all-workers))))
-    (print workers)
     (mapc
      (lambda (worker)
        (when (revy-worker-get-location worker)
@@ -138,4 +150,17 @@ Syncs using rsync."
                                        (message "Sync with %s completed [%d left]" name revy-syncing-files)
                                      (message "Sync with %s failed with exit code %i [%d left]"
                                               name (process-exit-status process) revy-syncing-files)))))))
-     workers)))
+     workers))
+  nil)
+
+(defun revy-sync-wait (worker)
+  "Sync local file with a worker and wait for the completion"
+  (let* ((name (revy-worker-get-name  worker))
+         (process (call-process "rsync" nil
+                                (concat "*revy-rsync-" name "*")
+                                t
+                                "-r" "-u" "-P" "-e" "ssh"
+                                revy-dir
+                                (concat (revy-worker-get-location worker)
+                                        ":"
+                                        (revy-worker-get-dir worker)))))))
