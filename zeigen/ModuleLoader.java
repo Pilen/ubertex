@@ -6,16 +6,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 
-public class SketchLoader extends ClassLoader {
+public class ModuleLoader extends ClassLoader {
 
     private static File path;
 
     public static void setPath(File baseDir) {
-        path = new File(baseDir, "sketches");
+        path = new File(baseDir, "modules");
         path.mkdir();
     }
 
-    public SketchLoader(ClassLoader parent) {
+    public ModuleLoader(ClassLoader parent) {
         super(parent);
     }
 
@@ -46,17 +46,17 @@ public class SketchLoader extends ClassLoader {
         return null;
     }
 
-    public static ZSketch load(String sketchname) {
+    public static Module load(String modulename) {
 
         try {
-            ClassLoader parentClassLoader = SketchLoader.class.getClassLoader();
-            SketchLoader classLoader = new SketchLoader(parentClassLoader);
-            Class sketchClass = classLoader.loadClass(sketchname);
+            ClassLoader parentClassLoader = ModuleLoader.class.getClassLoader();
+            ModuleLoader classLoader = new ModuleLoader(parentClassLoader);
+            Class moduleClass = classLoader.loadClass(modulename);
 
-            ZSketch sketch = (ZSketch) sketchClass.newInstance();
-            return sketch;
+            Module module = (Module) moduleClass.newInstance();
+            return module;
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            // System.out.println("COULD NOT LOAD CLASS: " + sketchname);
+            // System.out.println("COULD NOT LOAD CLASS: " + modulename);
         }
 
         return null;

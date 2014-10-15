@@ -17,7 +17,7 @@ public class Image extends ImageRenderer {
 
     private String mode = "";
 
-    public void zSetup(String args) {
+    public void setup(String args) {
         String[] parts = args.split(";",2);
         if (parts.length == 2) {
             mode = parts[0].trim();
@@ -27,15 +27,15 @@ public class Image extends ImageRenderer {
         }
     }
 
-    public void zDraw() {
-        background(zBackgroundColor);
+    public void draw() {
+        background();
 
         if (currentImage != null) {
             renderImage(currentImage, mode);
         }
     }
 
-    public void zReceive(String message) {
+    public void receive(String message) {
         String[] parts = message.split(";", 2);
         switch (parts[0].trim().toLowerCase()) {
         case "show":

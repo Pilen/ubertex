@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/python3
 
 import socket
 
@@ -45,10 +45,6 @@ if __name__ == "__main__":
     newlines = args.newlines
     size = args.size
     verbose = args.verbose
-
-    if newlines:
-        # Unescape escaped string by converting it to a bytestream and decoding it back to unicode
-        message = bytes(message, "utf-8").decode("unicode-escape")
 
     if protocol == "udp":
         udp(host, port, message, size, verbose)

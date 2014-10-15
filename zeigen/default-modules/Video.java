@@ -1,12 +1,11 @@
 
-import processing.video.*;
 
 public class Video extends ImageRenderer {
 
-    Movie movie;
+    ZMovie movie;
     String mode;
 
-    public void zSetup(String args) {
+    public void setup(String args) {
         String[] parts = args.split(";", 2);
         String movieName;
         if (parts.length == 2) {
@@ -16,28 +15,27 @@ public class Video extends ImageRenderer {
             movieName = args;
         }
         println("Playing: " + movieName);
-        movie = new Movie(this, movieName);
-        movie.loop();
+        movie = loadMovie(movieName);
+        movie.play();
     }
 
-    public void zDraw() {
+    public void draw() {
 
         if (movie != null) {
-            // if (movie.available()) {
+            if (movie.available()) {
+                movie.read();
                 // print("-");
                 renderImage(movie, mode);
-            // } else {
-                // print("v");
-            // }
+            }
         }
     }
 
-    public void zReceive(String message) {
+    public void receive(String message) {
         String[] parts = message.split(";", 2);
         switch (parts[0].trim().toLowerCase()) {
         case "open":
         case "load":
-            movie = new Movie(this, parts[1]);
+            movie = loadMovie(parts[1]);
             break;
         case "play":
             movie.play();
@@ -46,9 +44,14 @@ public class Video extends ImageRenderer {
         }
     }
 
-    public void movieEvent(Movie m) {
+    // TODO: is not called as this is not the reference given to Movie"
+    public void movieEvent(ZMovie m) {
         m.read();
-        // print(".");
+    }
+
+    public void onDeath() {
+        movie.stop();
+        movie = null;
     }
 
 }

@@ -1,61 +1,55 @@
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Collection;
-
 import java.io.File;
-
-import java.util.concurrent.locks.ReentrantLock;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 
 public class Controller implements TaskPerformer {
-    private ReentrantLock lock;
 
-    private final TaskManager taskManager;
-
-    private final HashSet<String> names;
-    private final File baseDir;
+    private TaskManager taskManager;
+    private HashSet<String> names;
+    private String moduleName;
     private ZSketch sketch;
-    private String sketchName;
+    private ArrayList<ZMovie> sounds;
 
-    private int zWidth;
-    private int zHeight;
-    private int zOffsetX;
-    private int zOffsetY;
-    private int zNoiseSeed;
-    private int zRandomSeed;
-    private String zBackgroundColor;
+
+    public Module module;
+    public File baseDir;
+
+    public int width = -1;
+    public int height = -1;
+    public int offsetX = 0;
+    public int offsetY = 0;
+    public int noiseSeed = 0;
+    public int randomSeed = 0;
+    public int backgroundColor = 0;
+
+    public boolean blanked = false;
 
     public Controller(Collection<String> names, File baseDir) {
-        this.lock = new ReentrantLock(true);
-        this.lock.lock();
-
         this.taskManager = new TaskManager(this);
-        Thread taskThread = new Thread(this.taskManager);
-        taskThread.start();
+        // Thread taskThread = new Thread(this.taskManager);
+        // taskThread.start();
 
         this.names = new HashSet<String>(names.size());
         for (String name : names) {
             this.names.add(name.toLowerCase());
         }
 
+        this.sounds = new ArrayList<ZMovie>();
+
         this.baseDir = baseDir;
 
-        this.sketch = null;
-        this.sketchName = "";
+        this.module = null;
+        this.moduleName = "";
 
-        this.zWidth = -1; //displayWidth
-        this.zHeight = -1; //displayHeigth
-        this.zOffsetX = 0;
-        this.zOffsetY = 0;
-        this.zRandomSeed = zRandomSeed;
-        this.zNoiseSeed = zNoiseSeed;
-        this.zBackgroundColor = "";
-
-        this.lock.unlock();
+        this.sketch = new ZSketch(this);
+        this.sketch.zStart();
     }
 
     public void message(String message) {
+        // Warning another thread runs this.
+        // Aka, dont do anything to cause raceconditions.
 
         String[] headers = message.split(";", 4);
         if (headers.length == 4 || headers.length == 3) {
@@ -66,10 +60,10 @@ public class Controller implements TaskPerformer {
 
             if (this.forMe(targets.split(" "))) {
                 System.out.println("RECEIVED: " + message);
-                switch (command) {
-                case "sketch": this.sketch(time, options); break;
-                case "sync": this.sync(options); break;
-                default: this.taskManager.addTask(time, command, options); break;
+                if (command.equals("sync")) {
+                    this.sync(options);
+                } else {
+                    this.taskManager.addTask(time, command, options);
                 }
             } else {
                 System.out.println("IGNORED MESSAGE");
@@ -77,6 +71,7 @@ public class Controller implements TaskPerformer {
         } else {
             System.out.println("MALFORMED MESSAGE RECEIVED: " + message);
         }
+
     }
 
     private boolean forMe(String[] targets) {
@@ -98,15 +93,48 @@ public class Controller implements TaskPerformer {
         case "blank": case "pause": case "hide":
             this.blank(true); break;
         case "clearqueue": this.clearqueue(); break;
+        case "cleansync":
+            this.cleanSync(); break;
+        case "download":
+        case "rsync":
+        case "syncfiles":
+            this.download(); break;
         case "exit": this.quit(); break;
         case "kill": this.kill(options); break;
         case "offset" : this.offset(options); break;
+        case "ping":
+        case "hello":
+            System.out.println("pong"); break;
         case "quit": this.quit(); break;
         case "seed": this.seed(options); break;
-        // case "sketch": all ready handled
-        case "start": this.start(options); break;
+        case "message":
+        case "module":
+            this.blank(false);
+            this.module(options); break;
+        case "blankedmessage":
+        case "hiddenmessage":
+        case "blankedmodule":
+        case "hiddenmodule":
+            this.blank(true);
+            this.module(options);
+            break;
+        case "playsound":
+            this.playSound(options);
+            break;
+        case "printfontlist":
+            this.printFontList();
+            break;
+        case "stopsounds":
+            this.stopSounds();
+            break;
+        case "start":
+            this.blank(false);
+            this.start(options);
+            break;
         case "startblank": case "startblanked": case "starthidden": case "startpaused":
-            this.startPaused(options); break;
+            this.blank(true);
+            this.start(options);
+            break;
         // case "sync": this.sync(); break;
         case "unblank": case "unhide": case "unpause": case "continue":
             this.blank(false); break;
@@ -115,69 +143,114 @@ public class Controller implements TaskPerformer {
         }
     }
 
-    public boolean hasName() {
-        return !this.names.isEmpty();
+    public void reset() {
+        this.sketch.randomSeed(this.randomSeed);
+        this.sketch.noiseSeed(this.noiseSeed);
+
+        if (this.width < 0) {
+            this.width = this.sketch.displayWidth;
+        }
+        if (this.height < 0) {
+            this.height = this.sketch.displayHeight;
+        }
+        this.sketch.size(this.width, this.height);
+        this.sketch.background();
+
+
+    }
+
+    public void step() {
+        this.taskManager.process();
+        try {
+            if (this.module != null) {
+                this.module.draw();
+            } else {
+                this.sketch.background();
+            }
+            if (this.blanked) {
+                this.sketch.background();
+            }
+        } catch (Exception e) {
+            System.out.println("======== ERROR ========\n" + "CURRENT MODULE THREW AN EXCEPTION\n" + e.toString());
+            e.printStackTrace();
+            System.out.println("=======================");
+            this.abort();
+        }
     }
 
     /*
-     * COMMANDS:
+     * Commands:
      */
 
+
     private void abort() {
-        this.lock.lock();
         this.clearqueue();
         this.kill();
-        this.lock.unlock();
     }
 
     private void backgroundColor(String options) {
-        this.lock.lock();
-        this.zBackgroundColor = options;
-        this.lock.unlock();
+        this.backgroundColor = this.sketch.color(options);
     }
 
     private void blank(boolean blanked) {
-        this.lock.lock();
-        if (this.sketch != null) {
-            this.sketch.zBlank = blanked;
-        }
-        this.lock.unlock();
+        this.blanked = blanked;
     }
 
     private void clearqueue() {
-        this.lock.lock();
         int cleared = this.taskManager.clear();
-        int sketchCleared = 0;
-        if (this.sketch != null) {
-            sketchCleared = this.sketch.clearTasks();
-        }
-        System.out.println("CONTROLLER CLEARED: " + cleared + "    SKETCH CLEARED: " + sketchCleared);
-        this.lock.unlock();
+        System.out.println("QUEUE CLEARED: " + cleared + " TASKS");
     }
 
-    private void kill(String sketch) {
-        this.lock.lock();
-        if (sketch.isEmpty() || this.sketchName.toLowerCase().equals(sketch.toLowerCase())) {
+    private void cleanSync() {
+        assert false;
+        assert true;
+    }
+
+    private void download() {
+        assert false;
+        assert true;
+    }
+
+    private void kill(String module) {
+        if (module.isEmpty() || this.moduleName.equals(module)) {
             this.kill();
         } else {
-            System.out.println("CAN'T KILL: " + sketch);
+            System.out.println("CAN'T KILL: " + module);
         }
-        this.lock.unlock();
     }
 
     private void kill() {
-        this.lock.lock();
-
-        if (this.sketch != null) {
-            this.sketch.exit();
-            this.sketch = null;
-            System.out.println("TERMINATING: " + this.sketchName);
-            this.sketchName = "";
+        this.stopSounds();
+        if (this.module != null) {
+            System.out.println("TERMINATING: " + this.moduleName);
+            this.module.onDeath();
+            this.module = null;
+            this.moduleName = "";
         } else {
-            System.out.println("NO SKETCH TO KILL");
+            System.out.println("NO MODULE TO KILL");
+        }
+    }
+
+    private void module(String options) {
+        if (module == null) {
+            System.out.println("NO ACTIVE MODULE, CANT DELIVER MESSAGE");
+            return;
         }
 
-        this.lock.unlock();
+        String[] parts = options.split(";", 2);
+
+        if (parts.length == 2) {
+            String module = parts[0].trim();
+            String message = parts[1];
+
+            if (module.isEmpty() || module.equals(this.moduleName)) {
+                this.module.receive(message);
+            } else {
+                System.out.println("RECEIVED MESSAGE FOR WRONG MODULE: " + module);
+            }
+        } else {
+            System.out.println("OPTIONS FOR MODULE COMMAND MUST CONSIST OF TARGET AND MESSAGE");
+        }
     }
 
     private void offset(String options) {
@@ -186,21 +259,33 @@ public class Controller implements TaskPerformer {
         if (parts.length == 2) {
             try {
                 // Ensures both seeds are integers
-                int zOffsetX = Tools.parseInt(parts[0]);
-                int zOffsetY = Tools.parseInt(parts[1]);
+                int offsetX = Tools.parseInt(parts[0]);
+                int offsetY = Tools.parseInt(parts[1]);
 
-                this.lock.lock();
-                this.zOffsetX = zOffsetX;
-                this.zOffsetY = zOffsetY;
-                this.lock.unlock();
+                this.offsetX = offsetX;
+                this.offsetY = offsetY;
             } catch (NumberFormatException e) {
                 System.out.println("OFFSETS MUST BE INTEGERS");
             }
-
         } else {
             System.out.println("OFFSET NEEDS BOTH AN X-OFFSET AND AN Y-OFFSET");
         }
+    }
 
+    private void playSound(String options) {
+        ZMovie sound = this.sketch.playSound(options);
+        this.sounds.add(sound);
+    }
+
+    private void printFontList() {
+        this.sketch.printFontList();
+    }
+
+    private void stopSounds() {
+        for (ZMovie sound : this.sounds) {
+            sound.stop();
+        }
+        this.sounds.clear();
     }
 
     private void seed(String options) {
@@ -209,103 +294,53 @@ public class Controller implements TaskPerformer {
         if (parts.length == 2) {
             try {
                 // Ensures both seeds are integers
-                int zRandomSeed = Tools.parseInt(parts[0]);
-                int zNoiseSeed = Tools.parseInt(parts[1]);
+                int randomSeed = Tools.parseInt(parts[0]);
+                int noiseSeed = Tools.parseInt(parts[1]);
 
-                this.lock.lock();
-                this.zRandomSeed = zRandomSeed;
-                this.zNoiseSeed = zNoiseSeed;
-                this.lock.unlock();
+                this.randomSeed = randomSeed;
+                this.noiseSeed = noiseSeed;
             } catch (NumberFormatException e) {
                 System.out.println("SEEDS MUST BE INTEGERS");
             }
-
         } else {
             System.out.println("SEED NEEDS BOTH A RANDOMSEED AND A NOISESEED");
         }
     }
 
-    private void sketch(long time, String message) {
-        if (sketch == null) {
-            System.out.println("NO ACTIVE SKETCH, CANT DELIVER MESSAGE");
-            return;
-        }
+    private void start(String options) {
+        String[] parts = options.split(";", 2);
 
-        String[] parts = message.split(";", 2);
-
-        if (parts.length == 2) {
-            String sketch = parts[0].trim();
-            String options = parts[1];
-
-            this.lock.lock();
-            if (sketch.isEmpty() || sketch.equals(this.sketchName)) {
-                this.sketch.addTask(time, options);
-            } else {
-                System.out.println("RECEIVED MESSAGE FOR WRONG SKETCH: " + sketch);
-            }
-            this.lock.unlock();
-        } else {
-            System.out.println("OPTIONS FOR SKETCH COMMAND MUST CONSIST OF TARGET AND MESSAGE");
-        }
-    }
-
-    private void start(String message) {
-        this.start(message, false);
-    }
-
-    private void startPaused(String message) {
-        this.start(message, true);
-    }
-
-    private void start(String message, boolean blanked) {
-        String[] parts = message.split(";", 4);
-
-        String sketchName = "";
-        int zOffsetX = this.zOffsetX;
-        int zOffsetY = this.zOffsetY;
+        String moduleName = "";
         String arguments = "";
-
         switch (parts.length) {
-        default: System.out.println("WRONG NUMBER OF ARGUMENTS TO START"); return;
-        case 2: System.out.println("EITHER BOTH OFFSETS ARE NEEDED OR NONE"); return;
-        case 4: arguments = parts[3];
-        case 3:
-            try {
-                // Ensures both seeds are integers
-                int tempX = Tools.parseInt(parts[1]);
-                int tempY = Tools.parseInt(parts[2]);
-
-                zOffsetX = tempX;
-                zOffsetY = tempY;
-            } catch (NumberFormatException e) {
-                System.out.println("OFFSETS MUST BE INTEGERS");
-            }
-        case 1: sketchName = parts[0];
+        default: System.out.println("NO SKETCH SPECIFIED"); return;
+        case 2: arguments = parts[1];
+        case 1: moduleName = parts[0];
         }
 
-
-
-        this.lock.lock();
-
-        if (this.sketch != null) {
+        if (this.module != null) {
             this.kill();
         }
 
-        this.sketch = SketchLoader.load(sketchName);
+        this.module = ModuleLoader.load(moduleName);
 
-        if (this.sketch != null) {
-            this.sketch.zBlank = blanked;
-            this.sketch.zStart(arguments, this.baseDir,
-                               this.zWidth, this.zHeight,
-                               zOffsetX, zOffsetY,
-                               this.zRandomSeed, this.zNoiseSeed,
-                               this.zBackgroundColor);
-            this.sketchName = sketchName;
+        if (this.module != null) {
+            this.reset();
+            this.moduleName = moduleName;
+            this.module.initModule(this.sketch);
+            this.module.width = width;
+            this.module.height = height;
+            try {
+                this.module.setup(arguments);
+            } catch (Exception e) {
+                System.out.println("======== ERROR ========\n" + "CURRENT MODULE THREW AN EXCEPTION\n" + e.toString());
+                e.printStackTrace();
+                System.out.println("=======================");
+                this.abort();
+            }
         } else {
-            System.out.println("COULD NOT LOAD CLASS: " + sketchName);
+            System.out.println("COULD NOT LOAD CLASS: " + moduleName);
         }
-
-        this.lock.unlock();
     }
 
     private void sync(String options) {
@@ -317,6 +352,7 @@ public class Controller implements TaskPerformer {
                     long serverTime = Tools.parseTime(parts[1]);
 
                     Time.setClock(serverTime);
+                    System.out.println("SYNCED");
                 } catch (NumberFormatException e) {
                     System.out.println("SERVERTIME MUST BE A LONG");
                 }
@@ -328,6 +364,7 @@ public class Controller implements TaskPerformer {
         }
     }
 
+
     private void quit() {
         System.exit(0);
     }
@@ -338,13 +375,11 @@ public class Controller implements TaskPerformer {
         if (parts.length == 2) {
             try {
                 // Ensures both seeds are integers
-                int zWidth = Tools.parseInt(parts[0]);
-                int zHeight = Tools.parseInt(parts[1]);
+                int width = Tools.parseInt(parts[0]);
+                int height = Tools.parseInt(parts[1]);
 
-                this.lock.lock();
-                this.zWidth = zWidth;
-                this.zHeight = zHeight;
-                this.lock.unlock();
+                this.width = width;
+                this.height = height;
             } catch (NumberFormatException e) {
                 System.out.println("SIZES MUST BE INTEGERS");
             }

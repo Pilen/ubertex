@@ -1,7 +1,7 @@
 
-public class SlowTyper extends ZSketch {
+public class SlowTyper extends Module {
 
-    private int size = 40;
+    private int size = 30;
     private String string = "";
     private String actual = "";
     private int current = 0;
@@ -9,14 +9,14 @@ public class SlowTyper extends ZSketch {
 
     // private double min = 171.4;
     // private double max = 240;
-    private double min = 100;
-    private double max = 200;
+    private double min = 30;
+    private double max = 75;
 
-    public void zSetup(String message) {
-        zReceive(message);
+    public void setup(String message) {
+        receive(message);
     }
 
-    public void zDraw() {
+    public void draw() {
         if (millis() >= next) {
             if (current < string.length()){
                 // Print another char
@@ -32,7 +32,7 @@ public class SlowTyper extends ZSketch {
         text(actual, width/2, height/2);
     }
 
-    public void zReceive(String message) {
+    public void receive(String message) {
         String[] parts = message.split(";", 2);
 
         switch (parts[0].trim().toLowerCase()) {
