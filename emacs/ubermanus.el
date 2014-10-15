@@ -37,6 +37,7 @@ the functions can be called on their own."
 (defun revy-manus-preamble ()
   (interactive)
   (goto-char (point-min))
+  ;; Fix mellemrum
   (while (search-forward-regexp "\\\\sings{\\|\\\\scene{" nil t)
     (backward-delete-char 7)
     (insert "%% ")
@@ -84,10 +85,14 @@ the functions can be called on their own."
       (when (string= " " (read-key-sequence "' '=replace"))
         (backward-delete-char 1)
         (move-beginning-of-line nil))))
-  (message "done")
   (goto-char (point-min))
   (replace-regexp "\\\\pause\n\\\\end{overtex}" "\n\\\\end{overtex}")
+  (goto-char (point-min))
+  (replace-regexp "[[:space:]]*\\\\pause" "\\\\pause")
+  (goto-char (point-min))
+  (replace-regexp"\\\\pause\n\\\\end{overtex}" "\\end{overtex}")
   (indent-region (point-min) (point-max))
+  (message "done")
   (end-of-buffer))
 
 
@@ -119,3 +124,11 @@ the functions can be called on their own."
 (defun revy-manus-comment (text)
   (interactive "sComment: ")
   (insert "\\comment{" text "}"))
+
+(defun revy-manus-textitparens ()
+  ;; todo fix
+  (interactive)
+  (goto-char (point-min))
+  (while (search-forward-regexp "([^)])" nil t)
+    (when (y-or-n-p "\\textit parens?")
+      (replace-match "\\textit{\\1}"))))
