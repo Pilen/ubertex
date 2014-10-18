@@ -174,7 +174,8 @@ Also does all the preparations for the buffer "
   (interactive)
   ;; (print end)
   (save-excursion ;should end before evaluating code (so we can jump around)
-    (goto-char end)
+    ;; point might be at the end of the current \pause and should look for the previous instead.
+    (goto-char (- end 1))
     (search-backward-regexp "\\\\begin{overtex}\\|\\\\pause[{}]?" nil t) ;; skriv regexes sådan
     (save-excursion
       (when (not (null (search-forward-regexp "\\\\shell{(\\([^}]*\\)}" end t)))
