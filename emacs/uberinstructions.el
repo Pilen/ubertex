@@ -46,7 +46,10 @@ This function will also call revy-abort-all "
   (interactive)
   (revy-unhide)
   (revy-abort-all)
-  (pop-to-buffer (pop revy-stack)))
+  (pop-to-buffer (pop revy-stack))
+  (let ((start (overlay-start revy-local-cursor))
+        (end (overlay-end revy-local-cursor)))
+    (move-overlay revy-cursor start end (current-buffer))))
 
 (defun revy-restart ()
   "Restart the current sketch"
