@@ -89,7 +89,9 @@ This function will also call revy-abort-all "
 
 (defun revy-abort-all ()
   (interactive)
-  (revy-send-message revy-worker-all "abort"))
+  (revy-send-message revy-worker-all "abort")
+  ;; todo fix:
+  (revy-kill-mplayer))
 
 (defun revy-kill (&optional sketch)
   (interactive)
@@ -141,6 +143,23 @@ This function will also call revy-abort-all "
   "Stop all overlay sounds"
   (interactive)
   (revy-send-message "stopsounds"))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π Mplayer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Todo outsource this to work through zeigen
+
+(defun revy-mplayer (file &optional x y w h)
+  "Play a video through mplayer on current worker"
+  (revy-kill-mplayer)
+  ;; (revy-shell (concat "mplayer -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 500 -geometry 49%:40% \"" file "\"")))
+  (revy-shell (concat "mplayer -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 400 -geometry 55%:45% \"" file "\"")))
+
+(defun revy-kill-mplayer ()
+  "Killall instances of mplayer on worker"
+  (interactive)
+  (revy-shell-sync "killall mplayer"))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
