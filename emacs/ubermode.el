@@ -22,9 +22,9 @@ uniform interface."
             revy-mode-map))
 
 (setq revy-uberclear? t)
-(global-set-key (kbd "<print>") (lambda () (interactive) (if revy-uberclear? (revy-clear-overlays) (revy-sync-wait revy-current-worker) (revy-ubertex-mode)) (setq revy-uberclear? (not revy-uberclear?))))
+(global-set-key (kbd "<print>") (lambda () (interactive) (if revy-uberclear? (revy-clear-overlays) (revy-ubertex-mode)) (setq revy-uberclear? (not revy-uberclear?))))
+(global-set-key (kbd "<Scroll_Lock>") (lambda () (interactive) (revy-sync-files)))
 (global-set-key (kbd "<XF86AudioMicMute>") (lambda () (interactive) (revy-sync-files revy-current-worker) (sleep-for 1) (revy-ubertex-mode)))
-(global-set-key (kbd "<XF86Launch1>") 'revy-abort-all)
 
 (define-global-minor-mode global-revy-mode revy-mode
   (lambda ()
@@ -62,7 +62,8 @@ Use `nil' for default behaviour.")
 
 
 (defun revy-mode-enter ()
-  "Enter the item/instruction/slide the cursor is located in or, if outside any, the following.
+  "Enter the item/instruction/slide the cursor is located in or, if outside any,
+  the following.
 
 This function is mode generic but can be specialized in modes by
 setting a function in `revy-mode-enter-function'
