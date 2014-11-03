@@ -67,6 +67,7 @@ the command will be executed on revy-current-worker."
                            command))))
 
 (defun revy-shell-sync (command &optional worker)
+  ;; Todo, does not seem to work with current worker?!
   "Evaluate shell command on a given worker synchronously.
 If no worker is given/worker is nil,
 the command will be executed on revy-current-worker."
