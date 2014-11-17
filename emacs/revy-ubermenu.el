@@ -61,6 +61,36 @@
   (revy-ubermenu-add 'revy-mode-enter)
   (revy-ubermenu-add 'revy-mode-next)
 
+  (revy-ubermenu-add 'eshell)
+  (revy-ubermenu-add 'save-some-buffers "save-all-buffers")
+  (revy-ubermenu-add 'save-buffer)
+  (revy-ubermenu-add 'isearch-forward)
+  (revy-ubermenu-add 'isearch-backward)
+  (revy-ubermenu-add 'replace-string)
+  (revy-ubermenu-add 'other-window)
+  (revy-ubermenu-add 'ido-switch-buffer)
+  (revy-ubermenu-add 'ibuffer)
+  (revy-ubermenu-add 'undo)
+
+  (revy-ubermenu-add 'kill-line)
+  (revy-ubermenu-add 'kill-whole-line)
+
+  (revy-ubermenu-add 'previous-line)
+  (revy-ubermenu-add 'left-char)
+  (revy-ubermenu-add 'next-line)
+  (revy-ubermenu-add 'right-char)
+  (revy-ubermenu-add 'beginning-of-line)
+  (revy-ubermenu-add 'end-of-line)
+  (revy-ubermenu-add 'scroll-down-command)
+  (define-key revy-simple-mode-map (kbd "M-K") 'scroll-up-command)
+
+  (revy-ubermenu-add 'revert-buffer)
+
+  (revy-ubermenu-add 'next-buffer)
+  (revy-ubermenu-add 'previous-buffer)
+
+  (revy-ubermenu-add 'join-line)
+
   (revy-ubermenu-add 'rename-file-and-buffer)
   (revy-ubermenu-add 'move-buffer-file)
   (revy-ubermenu-add 'emacs-lisp-mode)
