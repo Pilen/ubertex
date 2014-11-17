@@ -163,28 +163,19 @@ Use `setq-default' to set the default worker when none is chosen explicitly.")
 
 (defface revy-cursor-face
   '((((type x w32 mac))
-     (:foreground "black" :background "red")))
+     (:foreground "black" :background "firebrick4")))
   "")
 
 (defface revy-local-cursor-face
   '((((type x w32 mac))
-     (:foreground "black" :background "4D3B3B")))
+     ;; (:foreground "black" :background "4D3B3B")))
+     (:foreground "black" :background "gray20")))
   "")
 
 (defface revy-hidden-face
   '((((type x w32 mac))
-     (:font "DejaVu Sans Mono")
-     (:height 90)
-     (:background "gray20")))
+     (:font "DejaVu Sans Mono" :height 50 :foreground "gray50")))
   "")
-
-;; TODO: Clean up the below
-(set-face-attribute 'revy-hidden-face nil :height 50)
-(set-face-attribute 'revy-hidden-face nil :font "DejaVu Sans Mono")
-
-(set-face-background 'revy-hidden-face "gray30")
-(set-face-foreground 'revy-hidden-face "gray50")
-(set-face-background 'revy-cursor-face "firebrick4")
 
 (setq revy-cursor (make-overlay 0 20 (current-buffer) t t))
 (overlay-put revy-cursor 'revy t)
