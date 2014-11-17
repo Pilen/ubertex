@@ -72,7 +72,7 @@ the command will be executed on revy-current-worker."
 If no worker is given/worker is nil,
 the command will be executed on revy-current-worker."
   (save-window-excursion
-    (with-current-buffer "*revy-shell*"
+    (with-current-buffer (get-buffer-create "*revy-shell*")
       (goto-char (point-max))
       (when (null worker)
         (setq worker revy-current-worker))
@@ -90,7 +90,7 @@ the command will be executed on revy-current-worker."
 (defun revy-shell-sync-local (command)
   "Evaluate shell command on this machine synchronously."
   (save-window-excursion
-    (with-current-buffer "*revy-shell*"
+    (with-current-buffer (get-buffer-create "*revy-shell*")
       (goto-char (point-max))
       (call-process-shell-command command nil "*revy-shell*" t))))
 
