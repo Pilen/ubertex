@@ -101,4 +101,9 @@
 
 (require 'revy)
 
-(find-file (expand-file-name "revy-ubertex-dir
+(find-file (concat
+            (file-name-as-directory
+             (concat
+              (file-name-as-directory revy-ubertex-dir)
+              "emacs"))
+            "help.el"))
