@@ -43,20 +43,6 @@ nil means nothing is done.
 ;π Workers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar revy-worker-default-dir (concat "~/revy" (format-time-string "%Y"))
-  "The default directory to store files for the revy on workers")
-
-(defvar revy-worker-default-installation (concat "~/revy" (format-time-string "%Y"))
-  "The default directory to store files for the revy on workers")
-
-(defvar revy-current-worker nil
-  "The current worker.
-Use `setq-default' to set the default worker when none is chosen explicitly.")
-(make-variable-buffer-local 'revy-current-worker)
-
-(defconst revy-worker-all (revy-create-worker "all")
-  "Default virtual worker for all workers.")
-
 (defun revy-create-worker (name &optional location port display dir installation)
   "Create a worker
 `Name' is a string with the name of the worker.
@@ -154,6 +140,22 @@ It does NOT ensure the worker is actually defined in the list of revy-workers"
    (lambda (worker)
      (vector 'revy-worker (car worker)))
    revy-workers))
+
+
+
+(defvar revy-worker-default-dir (concat "~/revy" (format-time-string "%Y"))
+  "The default directory to store files for the revy on workers")
+
+(defvar revy-worker-default-installation (concat "~/revy" (format-time-string "%Y"))
+  "The default directory to store files for the revy on workers")
+
+(defvar revy-current-worker nil
+  "The current worker.
+Use `setq-default' to set the default worker when none is chosen explicitly.")
+(make-variable-buffer-local 'revy-current-worker)
+
+(defconst revy-worker-all (revy-create-worker "all")
+  "Default virtual worker for all workers.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Faces
