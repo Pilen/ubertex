@@ -44,7 +44,7 @@ Ignores all arguments")
   "Finish the current sketch and return to the one opening it
 This function will also call revy-abort-all "
   (interactive)
-  (revy-unhide)
+  (revy-clear-overlays)
   (revy-abort-all)
   (pop-to-buffer (pop revy-stack))
   (let ((start (overlay-start revy-local-cursor))
