@@ -122,6 +122,7 @@ But it will also accept a string with end being ignored in that case."
   "Sync local files to worker(s).
 If a worker or a list of workers are supplied these workers are synced, else every worker is synced.
 Syncs using rsync."
+  (interactive)
   ;; TODO: if rsync fails we might want to use scp (check exit code).
 
   ;; (revy-send-message "syncfiles")
