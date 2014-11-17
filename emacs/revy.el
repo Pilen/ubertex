@@ -255,9 +255,9 @@ Else try to find it somewhere
       (setq destination (expand-file-name (read-directory-name "Please specify revy directory: " destination nil t)))
       (let ((content (directory-files destination t ".*?\\.revy")))
         (when (not (null content))
-          (when (= (length content) 1)
-            (setq destination (car content)))
-          (setq destination (ido-completing-read "Do you want to load: " (nconc content '("No, find other..." nil t)))))))
+          (if (= (length content) 1)
+              (setq destination (car content))
+            (setq destination (ido-completing-read "Do you want to load: " (nconc content '("No, find other..." nil t))))))))
 
     ;; Open and load stuff
     (require 'revy-uberrevy "uberrevy.el")
