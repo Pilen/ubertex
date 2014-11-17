@@ -290,3 +290,4 @@ Used like (revy-on-worker revy-worker-brok 'revy-play-sound \"sound.mp3\")"
 (require 'revy-ubersicht "ubersicht.el")
 (require 'revy-ubertex "ubertex.el")
 (require 'revy-ubermanus "ubermanus.el")
+(require 'revy-ubermenu "ubermenu.el")
