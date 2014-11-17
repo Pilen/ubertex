@@ -1,5 +1,7 @@
 (provide 'revy-simple)
 
+(setq inhibit-startup-message t)
+
 (fset 'yes-or-no-p 'y-or-n-p)
 (show-paren-mode t)
 (setq show-paren-delay 0)
@@ -63,8 +65,8 @@
             (define-key revy-simple-mode-map (kbd "M-l") 'right-char)
             (define-key revy-simple-mode-map (kbd "M-J") 'beginning-of-line)
             (define-key revy-simple-mode-map (kbd "M-L") 'end-of-line)
-            (define-key revy-simple-mode-map (kbd "M-I") 'scroll-up-command)
-            (define-key revy-simple-mode-map (kbd "M-K") 'scroll-down-command)
+            (define-key revy-simple-mode-map (kbd "M-I") 'scroll-down-command)
+            (define-key revy-simple-mode-map (kbd "M-K") 'scroll-up-command)
 
             (define-key revy-simple-mode-map (kbd "<f5>") 'revert-buffer)
             revy-simple-mode-map))
