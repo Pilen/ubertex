@@ -263,7 +263,7 @@ Else try to find it somewhere
     (find-file destination)
     (revy-ubersicht-mode)
 
-    (revy-global-mode)
+    (global-revy-mode)
 
     ;; Load settings
     (let ((settings (concat (file-name-sans-extension destination) "-config.el")))
