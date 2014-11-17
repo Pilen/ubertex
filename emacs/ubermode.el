@@ -91,6 +91,10 @@ setting a function in `revy-mode-next-function'"
       (goto-char (overlay-end revy-local-cursor))
       (revy-mode-enter))
 
+    (unless (eq (current-buffer)
+                (overlay-buffer revy-cursor))
+      (pop-to-buffer (overlay-buffer revy-cursor)))
+
     (unless (null revy-follow-cursor)
         (goto-char (overlay-end revy-local-cursor))
         (unless (eq revy-follow-cursor 'follow)
