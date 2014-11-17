@@ -101,9 +101,10 @@
 
 (require 'revy)
 
-(find-file (concat
-            (file-name-as-directory
-             (concat
-              (file-name-as-directory revy-ubertex-dir)
-              "emacs"))
-            "help.el"))
+(progn (find-file (concat
+                   (file-name-as-directory
+                    (concat
+                     (file-name-as-directory revy-ubertex-dir)
+                     "emacs"))
+                   "help.el"))
+       (setq truncate-lines t))
