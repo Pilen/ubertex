@@ -100,6 +100,8 @@
 (revy-simple-mode)
 
 (require 'revy)
+(require 'revy-ubermenu "ubermenu.el")
+
 
 (progn (find-file (concat
                    (file-name-as-directory
