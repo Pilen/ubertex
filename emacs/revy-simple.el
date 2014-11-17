@@ -93,7 +93,7 @@
 
 
 
-            (define-key revy-simple-mode-map (kbd "<f9>") 'revy-command-center)
+            (define-key revy-simple-mode-map (kbd "<f9>") 'revy-ubermenu)
 
             revy-simple-mode-map))
 
