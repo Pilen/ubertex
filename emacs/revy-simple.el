@@ -3,7 +3,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 (show-paren-mode t)
 (setq show-paren-delay 0)
-(setq show-paren-style 'expression)
+
 (setq echo-keystrokes 0.01)
 (setq linum-eager nil)
 (global-linum-mode t)
@@ -36,5 +36,39 @@
 (ido-mode 1)
 
 (global-auto-revert-mode)
+
+(load-theme 'tango-dark t)
+
+(ignore-errors
+  (maximize-window))
+
+(define-minor-mode revy-simple-mode
+  "Minor mode for simple keybindings"
+  :lighter "simple"
+  :global t
+  :keymap (let ((revy-simple-mode-map (make-sparse-keymap)))
+            (define-key revy-simple-mode-map (kbd "C-s") 'save-buffer)
+            (define-key revy-simple-mode-map (kbd "C-f") 'isearch-forward)
+            (define-key revy-simple-mode-map (kbd "C-F") 'isearch-backward)
+            (define-key revy-simple-mode-map (kbd "C-o") 'other-window)
+            (define-key revy-simple-mode-map (kbd "C-b") 'ibuffer)
+            (define-key revy-simple-mode-map (kbd "C-z") 'undo)
+
+            (define-key revy-simple-mode-map (kbd "C-d") 'kill-line)
+            (define-key revy-simple-mode-map (kbd "C-D") 'kill-whole-line)
+
+            (define-key revy-simple-mode-map (kbd "M-i") 'previous-line)
+            (define-key revy-simple-mode-map (kbd "M-j") 'left-char)
+            (define-key revy-simple-mode-map (kbd "M-k") 'next-line)
+            (define-key revy-simple-mode-map (kbd "M-l") 'right-char)
+            (define-key revy-simple-mode-map (kbd "M-J") 'beginning-of-line)
+            (define-key revy-simple-mode-map (kbd "M-L") 'end-of-line)
+            (define-key revy-simple-mode-map (kbd "M-I") 'scroll-up-command)
+            (define-key revy-simple-mode-map (kbd "M-K") 'scroll-down-command)
+
+            (define-key revy-simple-mode-map (kbd "<f5>") 'revert-buffer)
+            revy-simple-mode-map))
+
+(revy-simple-mode)
 
 (require 'revy)
