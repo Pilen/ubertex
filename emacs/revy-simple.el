@@ -15,12 +15,6 @@
 (require 'uniquify)
 (set-fringe-mode '(0 . 0))
 
-(require 'visible-mark)
-(set-face-background 'visible-mark-face1 "DarkSlateGray4")
-(set-face-background 'visible-mark-face1 "SkyBlue4")
-(set-face-background 'visible-mark-face1 "DodgerBlue4")
-(global-visible-mark-mode)
-(setq visible-mark-inhibit-trailing-overlay nil)
 (setq auto-save-default 1)
 (setq auto-save-visited-file-name nil) ;;Dont save to current file
 (setq delete-auto-save-files 1) ;;Delete autosaves on save
