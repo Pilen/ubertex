@@ -229,6 +229,7 @@ Else try to find it somewhere
          (latest-location ""))
 
     (when (and (null destination)
+               (buffer-file-name)
                (string= (file-name-extension buffer-file-name)
                         "revy"))
       (setq destination buffer-file-name))
