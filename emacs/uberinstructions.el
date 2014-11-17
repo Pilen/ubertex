@@ -16,7 +16,6 @@
 
 (defun revy-start ()
   "Start a loaded revy"
-  (interactive)
   (setq revy-stack '())
   (push (current-buffer) revy-stack)
   ;; Ensure we are in correct mode, most likely unnecessary most of the time
@@ -26,7 +25,6 @@
 
 (defun revy-open (filename &optional screen)
   "Open a new uberscript or ubertex file and start it"
-  (message "running revy-open!")
   (push (current-buffer) revy-stack)
   (find-file-other-window filename)
   (when screen
