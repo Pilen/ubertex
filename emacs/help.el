@@ -16,8 +16,8 @@
 ;|previous-buffer    |              |            |            |            |            |            |            |            |            |            |            |            |               |
 ;|___________________|______________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|__             |
 ;|Cpslock               |a             |s           |d           |f           |g           |h           |j           |k           |l           |æ           |ø           |'           |            |
-;|                      |              |save        |kill-line-fw|search-fwd  |stop        |>>|         |left-char   |scroll-down |right-char  |other-window|            |            |            |
-;|                      |              |            |kill-line-wh|search-bwd  |            ||<<         |beg-of-line |next-line   |end-of-line |            |            |            |            |
+;|                      |              |save        |kill-line-fw|search-fwd  |stop        |>>|         |left-char   |scroll-down |right-char  |other-window|balance-wins|del-window  |            |
+;|                      |              |            |kill-line-wh|search-bwd  |            ||<<         |beg-of-line |next-line   |end-of-line |            |            |del-othr-win|            |
 ;|                      |              |            |            |            |            |            |            |            |            |            |            |            |            |
 ;|______________________|______________|____________|____________|____________|___________(#)___________|____________|____________|____________|____________|____________|____________|____________|
 ;|Shift           |<             |z           |x           |c           |v           |b           |n           |m           |,           |.           |-           |Shift                          |
