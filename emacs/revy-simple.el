@@ -91,8 +91,8 @@
 
             ;; (define-key revy-simple-mode-map (kbd "<f7>") 'toggle-window-dedicated)
 
-            (define-key revy-simple-mode-map (kbd "C-p") 'split-vertically)
-            (define-key revy-simple-mode-map (kbd "M-p") 'split-horizontally)
+            (define-key revy-simple-mode-map (kbd "C-p") 'split-window-vertically)
+            (define-key revy-simple-mode-map (kbd "M-p") 'split-window-horizontally)
             (define-key revy-simple-mode-map (kbd "C-'") 'delete-window)
             (define-key revy-simple-mode-map (kbd "M-*") 'delete-other-windows)
             (define-key revy-simple-mode-map (kbd "<f9>") 'revy-ubermenu)
