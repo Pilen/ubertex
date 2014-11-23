@@ -65,6 +65,9 @@ The worker and its informations will actually be stored in the internal list, bu
   (when (integerp port)
     (setq port (int-to-string port)))
 
+  (unless (null dir)
+    (setq dir (file-name-as-directory dir)))
+
   (let* ((symbol (intern name))
          (worker (assq symbol revy-workers))
          (insert nil))
@@ -143,10 +146,10 @@ It does NOT ensure the worker is actually defined in the list of revy-workers"
 
 
 
-(defvar revy-worker-default-dir (concat "~/revy" (format-time-string "%Y"))
+(defvar revy-worker-default-dir (file-name-as-directory (concat "~/revy" (format-time-string "%Y")))
   "The default directory to store files for the revy on workers")
 
-(defvar revy-worker-default-installation (concat "~/revy" (format-time-string "%Y"))
+(defvar revy-worker-default-installation (file-name-as-directory (concat "~/revy" (format-time-string "%Y")))
   "The default directory to store files for the revy on workers")
 
 (defvar revy-current-worker nil

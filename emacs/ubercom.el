@@ -103,7 +103,7 @@ the command will be executed on revy-current-worker."
              filename
              " " (revy-worker-get-location revy-current-worker)
              ":" (revy-worker-get-dir revy-current-worker)
-             subdir (file-name-nondirectory filename)))))
+             (file-name-as-directory subdir) (file-name-nondirectory filename)))))
 
 (defun revy-elisp (start &optional end)
   "Evaluates elisp code.
@@ -139,7 +139,7 @@ Syncs using rsync."
                                                 (concat "*revy-rsync-" name "*")
                                                 "rsync"
                                                 "-r" "-u" "-P" "-e" "ssh"
-                                                revy-dir
+                                                (file-name-as-directory revy-dir)
                                                 (concat (revy-worker-get-location worker)
                                                         ":"
                                                         (revy-worker-get-dir worker)))))
@@ -162,7 +162,7 @@ Syncs using rsync."
                                 (concat "*revy-rsync-" name "*")
                                 t
                                 "-r" "-u" "-P" "-e" "ssh"
-                                revy-dir
+                                (file-name-as-directory revy-dir)
                                 (concat (revy-worker-get-location worker)
                                         ":"
                                         (revy-worker-get-dir worker)))))))
