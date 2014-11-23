@@ -13,9 +13,8 @@
   (file-name-directory
    (directory-file-name
     (file-name-directory
-     (if (null load-file-name)
-         buffer-file-name
-       load-file-name))))
+     (or load-file-name
+         buffer-file-name))))
   "The revy-ubertex-dir
 This is where ubertex is installed.
 Is automatically set when revy.el is being loaded or evaluated")
