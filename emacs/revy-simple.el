@@ -63,6 +63,9 @@
             (define-key revy-simple-mode-map (kbd "<f9>") 'revy-ubermenu)
             (define-key revy-simple-mode-map (kbd "C-o") 'ido-find-file)
 
+            (define-key revy-simple-mode-map (kbd "C-s") 'save-buffer)
+            (define-key revy-simple-mode-map (kbd "C-d") 'save-buffer)
+
             (define-key revy-simple-mode-map (kbd "C-e") 'end-of-line)
             (define-key revy-simple-mode-map (kbd "C-k") 'kill-line)
             (define-key revy-simple-mode-map (kbd "C-K") 'kill-whole-line)
