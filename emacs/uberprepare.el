@@ -11,6 +11,7 @@
 
 (defun revy-build ()
   "Build all .tex files"
+  (interactive)
   (save-some-buffers)
   (let ((directories (list revy-dir))
         (dir nil))
@@ -40,6 +41,7 @@
   "Compile a .tex file if it has been changed since last compile.
 If no filename is given, the current buffer
 Returns the process used to compile the tex file"
+  (interactive)
   (when (null file)
     (setq file (buffer-file-name)))
 
