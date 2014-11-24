@@ -138,7 +138,7 @@ Syncs using rsync."
                         (process (start-process (concat "revy-rsync-" name)
                                                 (concat "*revy-rsync-" name "*")
                                                 "rsync"
-                                                "-r" "-u" "-P" "-e" "ssh"
+                                                "-r" "-u" "-t" "-P" "-e" "ssh"
                                                 (file-name-as-directory revy-dir)
                                                 (concat (revy-worker-get-location worker)
                                                         ":"
@@ -161,7 +161,7 @@ Syncs using rsync."
          (process (call-process "rsync" nil
                                 (concat "*revy-rsync-" name "*")
                                 t
-                                "-r" "-u" "-P" "-e" "ssh"
+                                "-r" "-u" "-t" "-P" "-e" "ssh"
                                 (file-name-as-directory revy-dir)
                                 (concat (revy-worker-get-location worker)
                                         ":"
