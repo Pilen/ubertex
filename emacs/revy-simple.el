@@ -53,54 +53,61 @@
 
 (setq local-function-key-map (delq '(kp-tab . [9]) local-function-key-map))
 
+(menu-bar-mode -1)
+(tool-bar-mode -1)
 (define-minor-mode revy-simple-mode
   "Minor mode for simple keybindings"
   :lighter "simple"
   :global t
   :keymap (let ((revy-simple-mode-map (make-sparse-keymap)))
-            (define-key revy-simple-mode-map (kbd "C-s") 'save-buffer)
+            (define-key revy-simple-mode-map (kbd "<f9>") 'revy-ubermenu)
+            (define-key revy-simple-mode-map (kbd "C-o") 'ido-find-file)
+
+            (define-key revy-simple-mode-map (kbd "C-e") 'end-of-line)
+            (define-key revy-simple-mode-map (kbd "C-k") 'kill-line)
+            (define-key revy-simple-mode-map (kbd "C-K") 'kill-whole-line)
+            (define-key revy-simple-mode-map (kbd "H-<backspace>") 'join-line)
+
             (define-key revy-simple-mode-map (kbd "C-f") 'isearch-forward)
-            (define-key revy-simple-mode-map (kbd "C-F") 'isearch-backward)
+            (define-key revy-simple-mode-map (kbd "C-S-f") 'isearch-backward)
             (define-key revy-simple-mode-map (kbd "C-r") 'replace-string)
-            (define-key revy-simple-mode-map (kbd "C-æ") 'other-window)
-            (define-key revy-simple-mode-map (kbd "C-b") 'ido-switch-buffer)
-            (define-key revy-simple-mode-map (kbd "<menu>") 'ibuffer)
+
             (define-key revy-simple-mode-map (kbd "C-z") 'undo)
 
-            (define-key revy-simple-mode-map (kbd "C-d") 'kill-line)
-            (define-key revy-simple-mode-map (kbd "C-D") 'kill-whole-line)
+            (define-key revy-simple-mode-map (kbd "C-t") 'eshell)
 
-            (define-key revy-simple-mode-map (kbd "M-i") 'previous-line)
-            (define-key revy-simple-mode-map (kbd "M-j") 'left-char)
-            (define-key revy-simple-mode-map (kbd "M-k") 'next-line)
-            (define-key revy-simple-mode-map (kbd "M-l") 'right-char)
-            (define-key revy-simple-mode-map (kbd "M-J") 'beginning-of-line)
-            (define-key revy-simple-mode-map (kbd "M-L") 'end-of-line)
-            (define-key revy-simple-mode-map (kbd "M-I") 'scroll-down-command)
-            (define-key revy-simple-mode-map (kbd "M-K") 'scroll-up-command)
+            (define-key revy-simple-mode-map (kbd "C-b") 'ido-switch-buffer)
+            (define-key revy-simple-mode-map (kbd "<menu>") 'ibuffer)
 
-            (define-key revy-simple-mode-map (kbd "<f5>") 'revert-buffer)
+            (define-key revy-simple-mode-map (kbd "<f5>") 'delete-window)
+            (define-key revy-simple-mode-map (kbd "<f6>") 'split-window-horizontally)
+            (define-key revy-simple-mode-map (kbd "<f7>") 'revy-simple-setup-windows)
+            (define-key revy-simple-mode-map (kbd "<f8>") 'other-window)
 
-            (define-key revy-simple-mode-map (kbd "C-e") 'eshell)
-            (define-key revy-simple-mode-map (kbd "M-<tab>") 'next-buffer)
-            (define-key revy-simple-mode-map (kbd "M-<tab>") 'previous-buffer)
+            (define-key revy-simple-mode-map (kbd "C-æ") 'other-window)
+            ;; (define-key revy-simple-mode-map (kbd "C-p") 'split-window-horizontally)
+            ;; (define-key revy-simple-mode-map (kbd "M-p") 'split-window-vertically)
+
+            ;; (define-key revy-simple-mode-map (kbd "C-'") 'delete-window)
+            ;; (define-key revy-simple-mode-map (kbd "M-*") 'delete-other-windows)
+            (define-key revy-simple-mode-map (kbd "C-ø") 'balance-windows)
+
 
             ;; (define-key revy-simple-mode-map (kbd "M-<tab>") 'goto-match-paren)
             ;; (define-key revy-simple-mode-map (kbd "M-S-<tab>") 'goto-match-paren)
-            (define-key revy-simple-mode-map (kbd "H-<backspace>") 'join-line)
 
             ;; (define-key revy-simple-mode-map (kbd "<f7>") 'toggle-window-dedicated)
 
-            (define-key revy-simple-mode-map (kbd "C-p") 'split-window-vertically)
-            (define-key revy-simple-mode-map (kbd "M-p") 'split-window-horizontally)
-            (define-key revy-simple-mode-map (kbd "C-'") 'delete-window)
-            (define-key revy-simple-mode-map (kbd "M-*") 'delete-other-windows)
-            (define-key revy-simple-mode-map (kbd "<f9>") 'revy-ubermenu)
-            (define-key revy-simple-mode-map (kbd "C-ø") 'balance-windows)
 
             revy-simple-mode-map))
 
 (revy-simple-mode)
+
+(defun revy-simple-setup-windows ()
+  "Setup windows in a sane order"
+  (interactive)
+  (delete-other-windows)
+  (split-window-horizontally))
 
 (require 'revy)
 (require 'revy-ubermenu "ubermenu.el")
