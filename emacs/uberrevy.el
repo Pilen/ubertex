@@ -233,14 +233,19 @@ work with the global cursor"
   (and (string-match (concat "^" regex) string)
        t))
 
+(defun revy-replace-extension (file extension)
+  "Replace extension of FILE with EXTENSION
+If FILE has no extension, EXTENSION is simply added at the end."
+  (concat (file-name-sans-extension file)
+          (if (revy-string-starts-with extension "\\.") "" ".")
+          extension))
+
 (defun revy-data-path (file &optional alternative-extension)
   "Returns the path for the file as a relative path in the revy-dir."
-  (when (null alternative-extension)
-    (setq alternative-extension ""))
+
   ;; Replace file extension.
-  (setq file (concat (file-name-sans-extension file)
-                     (if (revy-string-starts-with alternative-extension "\\.") "" ".")
-                     alternative-extension))
+  (when alternative-extension
+    (setq file (revy-replace-extension file alternative-extension)))
 
   (if (file-name-absolute-p file)
       (if (revy-string-starts-with file (file-name-as-directory revy-dir))
