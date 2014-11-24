@@ -82,7 +82,6 @@
   (revy-ubermenu-add 'beginning-of-line)
   (revy-ubermenu-add 'end-of-line)
   (revy-ubermenu-add 'scroll-down-command)
-  (define-key revy-simple-mode-map (kbd "M-K") 'scroll-up-command)
 
   (revy-ubermenu-add 'revert-buffer)
 
