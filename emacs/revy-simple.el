@@ -110,7 +110,8 @@
   "Setup windows in a sane order"
   (interactive)
   (delete-other-windows)
-  (split-window-horizontally))
+  (split-window-horizontally)
+  (previous-buffer))
 
 (require 'revy)
 (require 'revy-ubermenu "ubermenu.el")
