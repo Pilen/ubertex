@@ -34,7 +34,7 @@ the functions can be called on their own."
 ")
 
 
-(defun revy-manus-preamble ()
+(defun revy-manus-prepare ()
   (interactive)
   (goto-char (point-min))
   ;; Fix mellemrum

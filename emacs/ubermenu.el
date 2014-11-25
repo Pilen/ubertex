@@ -47,7 +47,7 @@
   (revy-ubermenu-add 'revy-upload-files)
   (revy-ubermenu-add 'revy-manus-break)
   (revy-ubermenu-add 'revy-manus-comment)
-  (revy-ubermenu-add 'revy-manus-preamble)
+  (revy-ubermenu-add 'revy-manus-prepare)
   (revy-ubermenu-add 'revy-manus-clean)
   (revy-ubermenu-add (lambda () (interactive) (insert "\\pause{}")) "revy manus \\pause{}")
 
