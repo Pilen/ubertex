@@ -22,6 +22,9 @@ Based off `emacs-lisp-mode'"
   ;; Setup metafunctions
   (setq revy-mode-enter-function 'revy-ubersicht-enter)
 
+  ;; Clean up on mode change
+  (add-hook 'change-major-mode-hook #'revy-clear-overlays nil t)
+
   ;; Go to beginning
   (goto-char (point-min)))
 

@@ -48,6 +48,9 @@ Based off `latex-mode' so it will work with both the standard latex mode and AUC
   ;; Prepare buffer.
   (revy-ubertex--prepare)
 
+  ;; Clean up on mode change
+  (add-hook 'change-major-mode-hook #'revy-clear-overlays nil t)
+
   ;; Transfer pdf
   ;; (revy-sync-files)
   ;; (let ((filename (concat (file-name-sans-extension (buffer-file-name)) ".pdf")))
