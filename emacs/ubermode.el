@@ -15,13 +15,20 @@ Its primary focus is to provide a centralized set of keybindings to create a
 uniform interface."
   :lighter "revy-mode"
   :keymap (let ((revy-mode-map (make-sparse-keymap)))
+            (define-key revy-mode-map (kbd "<home>") 'revy-mode-enter)
             (define-key revy-mode-map (kbd "<end>") 'revy-mode-enter)
-            (define-key revy-mode-map (kbd "<next>") 'revy-mode-next)
             (define-key revy-mode-map (kbd "<delete>") 'revy-blank)
+
+            (define-key revy-mode-map (kbd "<f11>") 'revy-mode-point-backward)
+            (define-key revy-mode-map (kbd "<f12>") 'revy-mode-point-forward)
+            (define-key revy-mode-map (kbd "<insert>") 'revy-mode-enter)
+
             (define-key revy-mode-map (kbd "<XF86Launch1>") 'revy-abort-all)
+            (define-key revy-mode-map (kbd "<f10>") (lambda () (interactive) (save-buffer) (revy-compile-tex) (revy-ubertex-mode)))
             revy-mode-map))
 
 (setq revy-uberclear? t)
+(define-key revy-mode-map (kbd "<next>") 'revy-mode-next)
 (global-set-key (kbd "<print>") (lambda () (interactive) (if revy-uberclear? (revy-clear-overlays) (revy-ubertex-mode)) (setq revy-uberclear? (not revy-uberclear?))))
 (global-set-key (kbd "<Scroll_Lock>") (lambda () (interactive) (revy-sync-files)))
 (global-set-key (kbd "<XF86AudioMicMute>") (lambda () (interactive) (revy-sync-files revy-current-worker) (sleep-for 1) (revy-ubertex-mode)))
