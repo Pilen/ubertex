@@ -62,38 +62,7 @@ the functions can be called on their own."
 \\end{overtex}")
     )
   (indent-region (point-min) (point-max))
-)
-
-
-;; Does not catch the space in "text \pause"
-(defun revy-manus-clean ()
-  (interactive)
-  (goto-char (point-min))
-  (let ((i nil))
-    (while (search-forward-regexp "^[[:space:]]*[.,-]" nil t)
-      (setq i (read-key-sequence "' '=replace"))
-      (when (string= i " ")
-        (backward-delete-char 1)
-        (move-beginning-of-line nil)))
-    (goto-char (point-min))
-    ;; (while (search-forward-regexp "\\([.,-]\\)\\\\pause[[:space:]]*$" nil t)
-    ;;   (setq i (read-key-sequence "n=next"))
-    ;;   (when (string= i " ")
-    ;;     (replace-match "\\pause"))))))
-    (while (search-forward-regexp "\\([.,-]\\)[ ]*\\(\\\\pause\\)?[[:space:]]*$" nil t)
-      (goto-char (match-end 1))
-      (when (string= " " (read-key-sequence "' '=replace"))
-        (backward-delete-char 1)
-        (move-beginning-of-line nil))))
-  (goto-char (point-min))
-  (replace-regexp "\\\\pause\n\\\\end{overtex}" "\n\\\\end{overtex}")
-  (goto-char (point-min))
-  (replace-regexp "[[:space:]]*\\\\pause" "\\\\pause")
-  (goto-char (point-min))
-  (replace-regexp"\\\\pause\n\\\\end{overtex}" "\\end{overtex}")
-  (indent-region (point-min) (point-max))
-  (message "done")
-  (end-of-buffer))
+  )
 
 
 (defun revy-manus-slide ()
@@ -108,10 +77,10 @@ the functions can be called on their own."
     (when (< (point) (mark))
       (insert "\\pause")
       (move-beginning-of-line nil)
-      (next-line)))
+      (forward-line)))
   (insert "\n\\end{overtex}")
   (move-beginning-of-line nil)
-  (next-line))
+  (forward-line))
 
 (defun revy-manus-pause ()
   (interactive)
@@ -125,10 +94,121 @@ the functions can be called on their own."
   (interactive "sComment: ")
   (insert "\\comment{" text "}"))
 
-(defun revy-manus-textitparens ()
-  ;; todo fix
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π Clean
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun revy-manus-clean ()
   (interactive)
   (goto-char (point-min))
-  (while (search-forward-regexp "([^)])" nil t)
-    (when (y-or-n-p "\\textit parens?")
-      (replace-match "\\textit{\\1}"))))
+
+  (revy-manus-textitparens)
+  (revy-manus-split)
+  (revy-manus-fix-casing)
+
+  ;; Delete beginning punctuation
+  (goto-char (point-min))
+  (while (search-forward-regexp "^[[:space:]]*\\([.,-]\\)" nil t)
+    (when (y-or-n-p (concat "Delete: " (match-string 1)))
+      (backward-delete-char 1)
+      (move-beginning-of-line nil)))
+
+  ;; Delete trailing punctuation
+  (goto-char (point-min))
+    ;; (while (search-forward-regexp "\\([.,-]\\)\\\\pause[[:space:]]*$" nil t)
+    ;;   (setq i (read-key-sequence "n=next"))
+    ;;   (when (string= i " ")
+    ;;     (replace-match "\\pause"))))))
+  (while (search-forward-regexp "\\([.,-]\\)[ ]*\\(\\\\pause\\)?[[:space:]]*$" nil t)
+      (goto-char (match-end 1))
+      (when (y-or-n-p (concat "Delete: " (match-string 1)))
+        (backward-delete-char 1)
+        (move-beginning-of-line nil)))
+
+  ;; Delete -
+  (goto-char (point-min))
+  (while (search-forward-regexp "-" nil t)
+    (when (y-or-n-p "Delete: -")
+      (replace-match "")))
+
+  ;; Delete double pauses
+  (goto-char (point-min))
+  (replace-regexp "\\\\pause\n\\\\end{overtex}" "\n\\\\end{overtex}")
+
+  ;; Delete space before \pause
+  (goto-char (point-min))
+  (replace-regexp "[[:space:]]+\\\\pause" "\\\\pause")
+
+  ;; Delete \pause\pause
+  (goto-char (point-min))
+  (replace-regexp "\\\\pause\\\\pause" "\\\\pause")
+
+  (indent-region (point-min) (point-max))
+  (goto-char (point-max))
+  (message "done"))
+
+
+(defun revy-manus-textitparens ()
+  "Turn parens into italic"
+  (interactive)
+  (goto-char (point-min))
+  (while (search-forward-regexp "(\\([^)]*\\))" nil t)
+    (if (y-or-n-p "\\textit parens?")
+        (replace-match "\\\\textit{\\1}")
+      (when (y-or-n-p "delete parens?")
+        (replace-match "\\1")))))
+
+
+(defun revy-manus-fix-casing ()
+  "Fix lettercasing.
+ most slides should start with a Capital letter and subsequent lines with lowercase"
+  (interactive)
+
+  (let ((case-fold-search nil))
+    ;; Capitalize
+    (goto-char (point-min))
+    (while (search-forward-regexp
+            (rx "\\begin{overtex}" (* (any whitespace "\n")) lower)
+            nil t)
+      (when (y-or-n-p "Capitalize?")
+        (backward-char)
+        (capitalize-word 1)))
+
+    ;; Downcase
+    (goto-char (point-min))
+    (while (search-forward-regexp
+            (rx "\\pause" "\n" (* whitespace) upper)
+            nil t)
+      (when (y-or-n-p "Downcase?")
+        (backward-char)
+        (downcase-word 1)))
+    ))
+
+(defun revy-manus-split ()
+  "Split slides into two"
+  (interactive)
+  (goto-char (point-min))
+
+  (let ((start nil)
+        (end nil)
+        (lines nil))
+    ;; Split on frames with multiple lines, where a line after line 2 starts with a capital letter.
+    (while (search-forward-regexp (rx "\\begin{overtex}" (* (any whitespace "\n"))) nil t)
+      (setq start (point))
+      (search-forward-regexp "\\\\end{overtex}")
+      (setq end (match-beginning 0))
+      (save-restriction
+        (narrow-to-region start end)
+        (goto-char (point-min))
+        (setq lines (- (line-number-at-pos end) (line-number-at-pos start)))
+        (forward-line 2)
+        (when (and (looking-at (rx (* (any whitespace "\n")) upper))
+                   (y-or-n-p "Split here?"))
+          (insert "\\end{overtex}\n\\begin{overtex}\n")
+          )
+        (goto-char start)
+
+
+        ))))
