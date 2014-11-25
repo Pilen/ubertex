@@ -116,6 +116,7 @@ the functions can be called on their own."
       (move-beginning-of-line nil)))
 
   ;; Delete trailing punctuation
+  ;; TODO, delete stuff like: bla bla, \comment{bla bla}\pause
   (goto-char (point-min))
     ;; (while (search-forward-regexp "\\([.,-]\\)\\\\pause[[:space:]]*$" nil t)
     ;;   (setq i (read-key-sequence "n=next"))
