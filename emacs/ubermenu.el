@@ -44,7 +44,7 @@
   (revy-ubermenu-add 'revy-show-text)
   (revy-ubermenu-add 'revy-ubertex-mode)
   (revy-ubermenu-add 'revy-ubersicht-mode)
-  (revy-ubermenu-add 'revy-sync-files)
+  (revy-ubermenu-add 'revy-upload-files)
   (revy-ubermenu-add 'revy-manus-break)
   (revy-ubermenu-add 'revy-manus-comment)
   (revy-ubermenu-add 'revy-manus-preamble)

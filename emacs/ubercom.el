@@ -118,7 +118,7 @@ But it will also accept a string with end being ignored in that case."
 (defvar revy-syncing-files 0
   "Number off machines being synced to currently")
 
-(defun revy-sync-files (&optional worker)
+(defun revy-upload-files (&optional worker)
   "Sync local files to worker(s).
 If a worker or a list of workers are supplied these workers are synced, else every worker is synced.
 Syncs using rsync."
@@ -155,7 +155,7 @@ Syncs using rsync."
      workers))
   nil)
 
-(defun revy-sync-wait (worker)
+(defun revy-upload-sync (worker)
   "Sync local file with a worker and wait for the completion"
   (let* ((name (revy-worker-get-name  worker))
          (process (call-process "rsync" nil

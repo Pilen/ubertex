@@ -33,7 +33,7 @@
     (setq revy--compile-processes nil)
     (accept-process-output)
 ))
-    ;; (revy-sync-files)))
+    ;; (revy-upload-files)))
 
 
 
