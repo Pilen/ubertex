@@ -155,12 +155,21 @@ the functions can be called on their own."
   (interactive)
   (goto-char (point-min))
   (while (search-forward-regexp "(\\([^)]*\\))" nil t)
-    (if (y-or-n-p "\\textit parens?")
-        (replace-match "\\\\textit{\\1}")
-      (when (y-or-n-p "delete parens?")
-        (replace-match "\\1")))))
+    (let ((choice (save-match-data
+                    (setq replace (if (y-or-n-p "\\textit parens?")
+                                      'textit
+                                    (if (y-or-n-p "delete parens?")
+                                        'delete
+                                      nil))))))
+      (case choice
+        ('textit (replace-match "\\\\textit{\\1}"))
+        ('delete (replace-match "\\1"))))))
 
-
+;; TODO ignore latex macros
+;; \begin{overtex}
+;;   \textit{abc}\pause
+;;   \textit{Abc}
+;; \end{overtex}}
 (defun revy-manus-fix-casing ()
   "Fix lettercasing.
  most slides should start with a Capital letter and subsequent lines with lowercase"
