@@ -15,7 +15,7 @@ Its primary focus is to provide a centralized set of keybindings to create a
 uniform interface."
   :lighter "revy-mode"
   :keymap (let ((revy-mode-map (make-sparse-keymap)))
-            (define-key revy-mode-map (kbd "<home>") 'revy-mode-enter)
+            (define-key revy-mode-map (kbd "<home>") 'revy-mode-next )
             (define-key revy-mode-map (kbd "<end>") 'revy-mode-enter)
             (define-key revy-mode-map (kbd "<delete>") 'revy-blank)
 
