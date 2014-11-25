@@ -57,6 +57,7 @@ Based off `latex-mode' so it will work with both the standard latex mode and AUC
   ;; Open pdf on worker
   (revy-pdf-open (revy-data-path (buffer-file-name) ".pdf"))
   ;; Todo: Enter!
+  (revy-ubertex-enter)
   )
 
 
