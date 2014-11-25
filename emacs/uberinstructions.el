@@ -102,11 +102,16 @@ This function will also call revy-abort-all "
 ;π Image
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun revy-image-open (&rest files)
+(defun revy-image-open (file &optional dimensions)
   "Open one or more images, and show the first."
-  (revy-send-message "start" "Image" "sized" (pop files))
-  (mapc (lambda (file) (revy-send-message "preload" file)) files))
+  (unless dimensions
+    (setq dimensions "sized"))
+  (revy-send-message "start" "Image" dimensions file))
 
+(defun revy-image-preload (&rest files)
+  "Open one or more images, and show the first."
+  (dolist (file files)
+    (revy-send-message "preload" "sized" file)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π PDF
