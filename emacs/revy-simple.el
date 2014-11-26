@@ -73,7 +73,7 @@
 
             (define-key revy-simple-mode-map (kbd "C-f") 'isearch-forward)
             (define-key revy-simple-mode-map (kbd "C-S-f") 'isearch-backward)
-            (define-key revy-simple-mode-map (kbd "C-r") 'replace-string)
+            (define-key revy-simple-mode-map (kbd "C-r") 'query-replace)
 
             (define-key revy-simple-mode-map (kbd "C-z") 'undo)
 
@@ -105,6 +105,10 @@
             revy-simple-mode-map))
 
 (revy-simple-mode)
+
+(define-key isearch-mode-map (kbd "C-f") 'isearch-repeat-forward)
+(define-key isearch-mode-map (kbd "C-S-F") 'isearch-repeat-backward)
+
 
 (defun revy-simple-setup-windows ()
   "Setup windows in a sane order"
