@@ -37,8 +37,9 @@
 
 (progn
   (revy-ubermenu-clear)
-  (revy-ubermenu-add 'revy-quit)
+  (revy-ubermenu-add 'revy-load)
   (revy-ubermenu-add 'revy-abort-all)
+  (revy-ubermenu-add 'revy-quit)
   (revy-ubermenu-add 'revy-abort)
   (revy-ubermenu-add 'revy-stop-sounds)
   (revy-ubermenu-add 'revy-show-text)
