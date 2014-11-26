@@ -97,6 +97,9 @@ This function will also call revy-abort-all "
       (revy-send-message "kill")
     (revy-send-message "kill" sketch)))
 
+(defun revy-test-all ()
+  (interactive)
+  (revy-send-message revy-worker-all "start" "Test"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Image
