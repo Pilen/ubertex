@@ -68,7 +68,7 @@
 
             (define-key revy-simple-mode-map (kbd "C-e") 'end-of-line)
             (define-key revy-simple-mode-map (kbd "C-k") 'kill-line)
-            (define-key revy-simple-mode-map (kbd "C-K") 'kill-whole-line)
+            (define-key revy-simple-mode-map (kbd "C-S-k") 'kill-whole-line)
             (define-key revy-simple-mode-map (kbd "H-<backspace>") 'join-line)
 
             (define-key revy-simple-mode-map (kbd "C-f") 'isearch-forward)
