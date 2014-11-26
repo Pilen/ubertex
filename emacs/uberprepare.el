@@ -9,6 +9,7 @@
   "List of processes compiling latex files.
  We shouldn't sync till these are finished.")
 
+;; Todo only upload when all compiles succeeded
 (defun revy-build ()
   "Build all .tex files"
   (interactive)
@@ -31,9 +32,8 @@
       (while (process-live-p process)
         (sleep-for 0 200)))
     (setq revy--compile-processes nil)
-    (accept-process-output)
-))
-    ;; (revy-upload-files)))
+    (accept-process-output))
+  (revy-upload-files))
 
 
 
@@ -61,7 +61,7 @@ Returns the process used to compile the tex file"
                                    "pdflatex"
                                    "-halt-on-error"
                                    "-file-line-error"
-                                   ;; "-interaction" "nonstopmode"
+                                   "-interaction" "nonstopmode"
                                    "-output-directory" (file-name-directory tex)
                                    tex))
       (set-process-sentinel process
