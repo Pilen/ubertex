@@ -43,6 +43,7 @@ if [ $# == 3 ]; then
         echo "Deploying modules"
         cp -u -r "$DIR/modules/." "$3/modules/"
     fi
+    CLASSPATH="$CLASSPATH:$3/modules/"
     echo "Running"
     $PROCESSING/java/bin/java -Xms512m -Xmx2048m -cp $CLASSPATH Zeigen "$@"
     # java -cp $CLASSPATH Zeigen "$@"
