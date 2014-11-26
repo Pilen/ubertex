@@ -48,6 +48,7 @@ public abstract class Module {
     public final int color(int r, int g, int b) {return sketch.color(r, g, b);}
     public static final void println(String message) {ZSketch.println(message);}
     public static final void println(long message) {ZSketch.println(message);}
+    public final void image(PImage image, float a, float b) {sketch.image(image, a, b);}
     public final void image(PImage image, float a, float b, float c, float d) {sketch.image(image, a, b, c, d);}
     public final File dataFile(String filename) {return sketch.dataFile(filename);}
 
