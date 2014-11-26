@@ -100,17 +100,65 @@ the functions can be called on their own."
 ;π Clean
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Todo match begins and ends
+;; Todo make it posible to undo undo
+;; Todo ensure no text is outside slides
 (defun revy-manus-clean ()
   (interactive)
   (goto-char (point-min))
 
+  ;; Delete characters from bad sets
+  (goto-char (point-min))
+  (replace-regexp "–" "-")
+  (goto-char (point-min))
+  (replace-regexp "’" "'")
+  (goto-char (point-min))
+  (replace-regexp "…" "...")
+  (goto-char (point-min))
+  (let ((outside t))
+    (while (search-forward-regexp "”" nil t)
+      (if outside
+          (progn
+            (if (y-or-n-p "Replace ” with `` ?")
+                (progn (backward-delete-char 1)
+                       (insert "``")
+                       (setq outside nil))
+              (when (y-or-n-p "Replace ” with '' ?")
+                (backward-delete-char 1)
+                (insert "''")
+                (setq outside t))))
+        (if (y-or-n-p "Replace ” with '' ?")
+            (progn (backward-delete-char 1)
+                   (insert "''")
+                   (setq outside t))
+          (when (y-or-n-p "Replace ” with `` ?")
+            (backward-delete-char 1)
+            (insert "``")
+            (setq outside nil))))))
+
+  ;; change ... into ldots?
+  (goto-char (point-min))
+  (while (search-forward-regexp "\\.\\.\\.*" nil t)
+    (when (save-match-data (y-or-n-p (format "Replace %s with \ldots?" (match-string 0))))
+      (if (save-match-data (looking-at "[[:space:]\n]"))
+          (replace-match "\\\\ldots")
+        (replace-match "\\\\ldots{}"))))
+
+
+  ;; Delete an almost invisible char
+  (goto-char (point-min))
+  (replace-regexp " " "")
+
+
+  (revy-manus-match-environments)
   (revy-manus-textitparens)
   (revy-manus-split)
   (revy-manus-fix-casing)
 
+
   ;; Delete beginning punctuation
   (goto-char (point-min))
-  (while (search-forward-regexp "^[[:space:]]*\\([.,-]\\)" nil t)
+  (while (search-forward-regexp "^[[:space:]]*\\([.,:;-]\\)" nil t)
     (when (y-or-n-p (concat "Delete: " (match-string 1)))
       (backward-delete-char 1)
       (move-beginning-of-line nil)))
@@ -122,7 +170,7 @@ the functions can be called on their own."
     ;;   (setq i (read-key-sequence "n=next"))
     ;;   (when (string= i " ")
     ;;     (replace-match "\\pause"))))))
-  (while (search-forward-regexp "\\([.,-]\\)[ ]*\\(\\\\pause\\)?[[:space:]]*$" nil t)
+  (while (search-forward-regexp "\\([.,:;-]\\)[ ]*\\(\\\\pause\\)?[[:space:]]*$" nil t)
       (goto-char (match-end 1))
       (when (y-or-n-p (concat "Delete: " (match-string 1)))
         (backward-delete-char 1)
@@ -145,6 +193,7 @@ the functions can be called on their own."
   ;; Delete \pause\pause
   (goto-char (point-min))
   (replace-regexp "\\\\pause\\\\pause" "\\\\pause")
+
 
   (indent-region (point-min) (point-max))
   (goto-char (point-max))
@@ -219,6 +268,18 @@ the functions can be called on their own."
           (insert "\\end{overtex}\n\\begin{overtex}\n")
           )
         (goto-char start)
-
-
         ))))
+
+(defun revy-manus-match-environments ()
+  "Ensure begins and ends are matching"
+  (goto-char (point-min))
+  (let ((outside t))
+    (while (search-forward-regexp "\\\\begin{overtex}\\|\\\\end{overtex}" nil t)
+      (if (string= "\\begin{overtex}" (match-string 0))
+          (if outside
+              (setq outside nil)
+            (error "duplicate \\begin"))
+        ;; \end{overtex}
+        (if outside
+            (error "duplicate \\end")
+          (setq outside t))))))
