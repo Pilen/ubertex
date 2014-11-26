@@ -18,7 +18,7 @@ if [ ! -d "$PROCESSING" ]; then
     echo "Trying $PROCESSING"
 fi
 
-CLASSPATH="$PROCESSING/core/library/core.jar:$DIR:$DIR/..:$DIR/default-modules/:./video.jar:$PROCESSING/modes/java/libraries/video/library/gstreamer-java.jar:$PROCESSING/modes/java/libraries/video/library/jna.jar:$PROCESSING/modes/java/libraries/video/library/video.jar"
+CLASSPATH="$DIR:$DIR/..:$DIR/default-modules/:./video.jar:$PROCESSING/core/library/core.jar:$PROCESSING/modes/java/libraries/video/library/gstreamer-java.jar:$PROCESSING/modes/java/libraries/video/library/jna.jar:$PROCESSING/modes/java/libraries/video/library/video.jar"
 # ./video.jar:./gstreamer-java.jar:./jna.jar"
 
 echo "Compiling"
