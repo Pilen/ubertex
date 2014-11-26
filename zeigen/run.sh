@@ -44,7 +44,7 @@ if [ $# == 3 ]; then
         cp -u -r "$DIR/modules/." "$3/modules/"
     fi
     CLASSPATH="$CLASSPATH:$3/modules/"
-    for file in "$3/modules/*.java"
+    for file in $3/modules/*.java
     do
         javac -cp "$CLASSPATH" "$file"
     done
