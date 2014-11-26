@@ -42,12 +42,12 @@ if [ $# == 3 ]; then
     if [ -d "$DIR/modules/." ]; then
         echo "Deploying modules"
         cp -u -r "$DIR/modules/." "$3/modules/"
-        for file in "$3/modules/*.java"
-        do
-            javac -cp "$CLASSPATH" "$file"
-        done
     fi
     CLASSPATH="$CLASSPATH:$3/modules/"
+    for file in "$3/modules/*.java"
+    do
+        javac -cp "$CLASSPATH" "$file"
+    done
     echo "Running"
     $PROCESSING/java/bin/java -Xms512m -Xmx2048m -cp $CLASSPATH Zeigen "$@"
     # java -cp $CLASSPATH Zeigen "$@"
