@@ -31,11 +31,19 @@ if [ -d "$DIR/modules/" ]; then
 fi
 
 if [ $# == 1 ]; then
-    echo "Deploying modules"
+    # echo "Deploying modules"
     # TODO: copy only .class files
-    echo "Transferring modules"
     cp -u -r "$DIR/modules/." "$1/modules/"
-    sh trans.sh
+    echo "Compiling modules"
+    CLASSPATH="$CLASSPATH:$3/modules/"
+    for file in $1/modules/*.java
+    do
+        javac -cp "$CLASSPATH" "$file"
+    done
+    # echo "Transferring modules"
+    # sh trans.sh
+
+
 fi
 
 if [ $# == 3 ]; then
@@ -43,6 +51,7 @@ if [ $# == 3 ]; then
         echo "Deploying modules"
         cp -u -r "$DIR/modules/." "$3/modules/"
     fi
+    echo "Compiling modules"
     CLASSPATH="$CLASSPATH:$3/modules/"
     for file in $3/modules/*.java
     do
