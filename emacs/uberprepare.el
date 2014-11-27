@@ -10,6 +10,7 @@
  We shouldn't sync till these are finished.")
 
 ;; Todo only upload when all compiles succeeded
+;; Todo deactivate all ubertex modes/ so they are rerun, aka so we renumber slides.
 (defun revy-build ()
   "Build all .tex files"
   (interactive)
