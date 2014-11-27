@@ -115,54 +115,57 @@ But it will also accept a string with end being ignored in that case."
         (eval (read start)))
     (eval-region start end)))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;π Uploading files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defvar revy-syncing-files 0
   "Number off machines being synced to currently")
 
-(defun revy-upload-files (&optional worker)
-  "Sync local files to worker(s).
-If a worker or a list of workers are supplied these workers are synced, else every worker is synced.
-Syncs using rsync."
+(defun revy-upload-files (&rest workers)
+  ;; Todo fix dokumentation
+  "Upload files to workers.
+If no workers are specified, the files will be uploaded to all workers.
+Remember only nonvirtual workers are updated
+
+Uses rsync to upload the files, based on the timestamp"
+
   (interactive)
   ;; TODO: if rsync fails we might want to use scp (check exit code).
 
   ;; (revy-send-message "syncfiles")
-  (let ((workers (if worker
-                     (if (listp worker)
-                         worker
-                       (list worker))
-                   (revy-worker-get-all-workers))))
-    (mapc
-     (lambda (worker)
-       (when (revy-worker-get-location worker)
-         (lexical-let* ((name (revy-worker-get-name  worker))
-                        (process (start-process (concat "revy-rsync-" name)
-                                                (concat "*revy-rsync-" name "*")
-                                                "rsync"
-                                                "-r" "-u" "-t" "-P" "-e" "ssh"
-                                                (file-name-as-directory revy-dir)
-                                                (concat (revy-worker-get-location worker)
-                                                        ":"
-                                                        (revy-worker-get-dir worker)))))
-           (incf revy-syncing-files)
-           (message "Syncing: %s" name)
-           (set-process-sentinel process
-                                 (lambda (process event)
-                                   (decf revy-syncing-files)
-                                   (if (string= event "finished\n")
-                                       (message "Sync with %s completed [%d left]" name revy-syncing-files)
-                                     (message "Sync with %s failed with exit code %i [%d left]"
-                                              name (process-exit-status process) revy-syncing-files)))))))
-     workers))
+  (unless workers
+    (setq workers (revy-worker-get-all-workers)))
+
+  (dolist (worker workers)
+    ;; Only sync nonvirtual workers
+    (when (revy-worker-get-location worker)
+      (lexical-let* ((name (revy-worker-get-name  worker))
+                     (process (start-process (concat "revy-rsync-" name)
+                                             (concat "*revy-rsync-" name "*")
+                                             "rsync"
+                                             "-r" "-u" "-t" "-P" "-e" "ssh"
+                                             (file-name-as-directory revy-dir)
+                                             (concat (revy-worker-get-location worker)
+                                                     ":"
+                                                     (revy-worker-get-dir worker)))))
+        (incf revy-syncing-files)
+        (message "Syncing: %s" name)
+        (set-process-sentinel process
+                              (lambda (process event)
+                                (decf revy-syncing-files)
+                                (if (string= event "finished\n")
+                                    (if (< 0 revy-syncing-files)
+                                        (message "Sync with %s completed [%d left]" name revy-syncing-files)
+                                      (message "Syncing done"))
+                                  (message "Sync with %s failed with exit code %i [%d left]"
+                                           name (process-exit-status process) revy-syncing-files)))))))
   nil)
 
-(defun revy-upload-sync (worker)
-  "Sync local file with a worker and wait for the completion"
-  (let* ((name (revy-worker-get-name  worker))
-         (process (call-process "rsync" nil
-                                (concat "*revy-rsync-" name "*")
-                                t
-                                "-r" "-u" "-t" "-P" "-e" "ssh"
-                                (file-name-as-directory revy-dir)
-                                (concat (revy-worker-get-location worker)
-                                        ":"
-                                        (revy-worker-get-dir worker)))))))
+(defun revy-upload-files-sync (&rest workers)
+  ("Sync files as `revy-upload-files', but blocking.
+Wont return untill all workers has been synced."
+  (revy-upload-files workers)
+  (while (< 0 revy-syncing-files)
+    (sleep 0 200)))
