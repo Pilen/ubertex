@@ -168,4 +168,4 @@ Uses rsync to upload the files, based on the timestamp"
 Wont return untill all workers has been synced."
   (revy-upload-files workers)
   (while (< 0 revy-syncing-files)
-    (sleep 0 200)))
+    (sleep 0 200))))
