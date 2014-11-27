@@ -95,6 +95,8 @@
             ;; (define-key revy-simple-mode-map (kbd "M-*") 'delete-other-windows)
             (define-key revy-simple-mode-map (kbd "C-ø") 'balance-windows)
 
+            (define-key revy-simple-mode-map (kbd "<f1>") 'revy-manus-insert-comment)
+
 
             ;; (define-key revy-simple-mode-map (kbd "M-<tab>") 'goto-match-paren)
             ;; (define-key revy-simple-mode-map (kbd "M-S-<tab>") 'goto-match-paren)
