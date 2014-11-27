@@ -60,6 +60,7 @@
   (revy-ubermenu-add 'revy-create)
   (revy-ubermenu-add 'revy-build)
   (revy-ubermenu-add 'revy-compile-tex)
+  (revy-ubermenu-add 'revy-test-all)
 
   (revy-ubermenu-add 'revy-mode-enter)
   (revy-ubermenu-add 'revy-mode-next)
