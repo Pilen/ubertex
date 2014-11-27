@@ -24,7 +24,7 @@ uniform interface."
             (define-key revy-mode-map (kbd "<insert>") 'revy-mode-enter)
 
             (define-key revy-mode-map (kbd "<XF86Launch1>") 'revy-abort-all)
-            (define-key revy-mode-map (kbd "<f10>") (lambda () (interactive) (save-buffer) (revy-compile-tex) (revy-ubertex-mode)))
+            (define-key revy-mode-map (kbd "<f10>") (lambda () (interactive) (save-buffer) (revy-compile-tex) (revy-upload-files-sync) (revy-ubertex-mode)))
             revy-mode-map))
 
 (setq revy-uberclear? t)
