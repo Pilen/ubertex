@@ -33,36 +33,57 @@ the functions can be called on their own."
 \\end{overtex}
 ")
 
+(defconst revy-overtex-postscript "
+\\begin{overtex}
+  % slut
+\\end{overtex}
+\\begin{overtex}
+  \\elisp{(revy-quit)}
+\\end{overtex}
+\\end{document}
+")
 
 (defun revy-manus-prepare ()
   (interactive)
-  (goto-char (point-min))
-  ;; Fix mellemrum
-  (while (search-forward-regexp "\\\\sings{\\|\\\\scene{" nil t)
-    (backward-delete-char 7)
-    (insert "%% ")
-    (search-forward "}")
-    (backward-delete-char 1)
-    (when (= 91 (char-after (point)))
-      (insert " ")
-      (search-forward "]"))
-    (when (< (point) (line-end-position))
-      (insert "\n"))
-    )
-  (goto-char (point-min))
-  (search-forward "\\begin{song}")
-  (delete-region (point-min) (point))
-  (insert revy-overtex-preamble)
-  (save-excursion
-    ;(search-forward "\\end{song}")
-    (replace-string "\\end{song}" "")
-    (insert "
-\\begin{overtex}
-  % slut
-\\end{overtex}")
-    )
-  (indent-region (point-min) (point-max))
-  )
+  (let ((melody nil))
+    (goto-char (point-min))
+    (when (search-forward-regexp "\\\\melody{\\([^}]*\\)}" nil t)
+      (setq melody (match-string 1)))
+
+    (goto-char (point-min))
+    ;; Fix mellemrum
+    (while (search-forward-regexp "\\\\sings{\\|\\\\scene{" nil t)
+      (backward-delete-char 7)
+      (insert "%% ")
+      (search-forward "}")
+      (backward-delete-char 1)
+      (when (= 91 (char-after (point)))
+        (insert " ")
+        (search-forward "]"))
+      (when (< (point) (line-end-position))
+        (insert "\n")))
+
+    (goto-char (point-min))
+    (search-forward "\\begin{song}")
+    (delete-region (point-min) (point))
+    (insert revy-overtex-preamble)
+    (save-excursion
+      ;; (search-forward "\\end{song}")
+      (replace-string "\\end{song}" "")
+      (insert revy-overtex-postscript)
+      )
+
+    (when melody
+      (goto-char (point-min))
+      (search-forward-regexp "\\\\begin{document}" nil t)
+      (beginning-of-line)
+      (insert "%% Melody: "
+              (replace-regexp-in-string "\n[[:space:]]*%*" "\n%% " melody)
+              "\n\n"))
+
+    (indent-region (point-min) (point-max))
+    (goto-char (point-min))
+    ))
 
 
 (defun revy-manus-slide ()
@@ -103,6 +124,7 @@ the functions can be called on their own."
 ;; Todo match begins and ends
 ;; Todo make it posible to undo undo
 ;; Todo ensure no text is outside slides
+;; Todo ask to insert \pause on lines missing them
 (defun revy-manus-clean ()
   (interactive)
   (goto-char (point-min))
@@ -137,12 +159,13 @@ the functions can be called on their own."
             (setq outside nil))))))
 
   ;; change ... into ldots?
-  (goto-char (point-min))
-  (while (search-forward-regexp "\\.\\.\\.*" nil t)
-    (when (save-match-data (y-or-n-p (format "Replace %s with \ldots?" (match-string 0))))
-      (if (save-match-data (looking-at "[[:space:]\n]"))
-          (replace-match "\\\\ldots")
-        (replace-match "\\\\ldots{}"))))
+  (when (y-or-n-p "Should ... be replaced with \ldots (will ask for each occurrence")
+    (goto-char (point-min))
+    (while (search-forward-regexp "\\.\\.\\.*" nil t)
+      (when (save-match-data (y-or-n-p (format "Replace %s with \ldots?" (match-string 0))))
+        (if (save-match-data (looking-at "[[:space:]\n]"))
+            (replace-match "\\\\ldots")
+          (replace-match "\\\\ldots{}")))))
 
 
   ;; Delete an almost invisible char
