@@ -111,7 +111,7 @@ the functions can be called on their own."
   (interactive)
   (insert "\\begin{overtex}\n  % Blank\n\\end{overtex}\n"))
 
-(defun revy-manus-comment (text)
+(defun revy-manus-insert-comment (text)
   (interactive "sComment: ")
   (insert "\\comment{" text "}"))
 
