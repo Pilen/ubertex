@@ -12,6 +12,7 @@ is therefore not required to be enabled for editing a manus, as
 the functions can be called on their own."
   :lighter "manus"
   :keymap (let ((revy-manus-mode-map (make-sparse-keymap)))
+            (define-key revy-manus-mode-map (kbd "<f1>") 'revy-manus-insert-comment)
             (define-key revy-manus-mode-map (kbd "<f2>") 'revy-manus-slide)
             (define-key revy-manus-mode-map (kbd "H-<f2>") 'revy-manus-pause)
             (define-key revy-manus-mode-map (kbd "S-<f2>") 'revy-manus-break)
