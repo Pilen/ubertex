@@ -6,31 +6,24 @@
 (provide 'revy-ubermenu)
 
 (defvar revy-ubermenu-commands '())
-(defvar revy-ubermenu-last-command nil)
 
-(defun revy-ubermenu-add (command &optional name)
-  (when (null name)
-    (if (symbolp command)
-        (setq name (symbol-name command))
-      (setq name (prin1-to-string command))))
-
-  (setq revy-ubermenu-commands (append
-                                 revy-ubermenu-commands
-                                 `((,name . ,command)))))
 
 (defun revy-ubermenu-clear ()
   (setq revy-ubermenu-commands '()))
+
+(defun revy-ubermenu-add (command &optional name)
+  (unless name
+    (setq name (symbol-name command)))
+  (add-to-list 'revy-ubermenu-commands (cons name command) t))
 
 (defun revy-ubermenu ()
   (interactive)
   (let* ((name (ido-completing-read
                 ">: "
-                (mapcar (lambda (x) (car x))
-                        (if (null revy-ubermenu-last-command)
-                            revy-ubermenu-commands
-                          (cons revy-ubermenu-last-command revy-ubermenu-commands)))))
-         (command (cdr (assoc name revy-ubermenu-commands))))
-    (setq revy-ubermenu-last-command (cons name command))
+                (mapcar #'car revy-ubermenu-commands)))
+         (command (cdr (assoc name revy-ubermenu-commands)))
+         (cell (cons name command)))
+    (setq revy-ubermenu-commands (cons cell (delete cell revy-ubermenu-commands)))
     (if (commandp command)
         (call-interactively command)
       (funcall command))))
@@ -39,6 +32,7 @@
   (revy-ubermenu-clear)
   (revy-ubermenu-add 'revy-load)
   (revy-ubermenu-add 'revy-abort-all)
+  (revy-ubermenu-add 'revy-build)
   (revy-ubermenu-add 'revy-quit)
   (revy-ubermenu-add 'revy-abort)
   (revy-ubermenu-add 'revy-stop-sounds)
@@ -58,7 +52,6 @@
   (revy-ubermenu-add 'revy-restart)
   (revy-ubermenu-add 'revy-load)
   (revy-ubermenu-add 'revy-create)
-  (revy-ubermenu-add 'revy-build)
   (revy-ubermenu-add 'revy-compile-tex)
   (revy-ubermenu-add 'revy-test-all)
 
