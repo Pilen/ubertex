@@ -8,7 +8,8 @@
 
 
 (defun revy-send-message (&rest args)
-  "Send a message"
+  "Send a message.
+If the first argument is a worker, that one is chosen, else the current-one is chosen."
   (let* ((worker (if (revy-workerp (car args))
                      (pop args)
                    revy-current-worker))
