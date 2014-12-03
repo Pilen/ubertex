@@ -103,6 +103,16 @@
 
             ;; (define-key revy-simple-mode-map (kbd "<f7>") 'toggle-window-dedicated)
 
+            (define-key revy-simple-mode-map (kbd "M-w") 'previous-line)
+            (define-key revy-simple-mode-map (kbd "M-a") 'left-char)
+            (define-key revy-simple-mode-map (kbd "M-s") 'next-line)
+            (define-key revy-simple-mode-map (kbd "M-d") 'right-char)
+
+            (define-key revy-simple-mode-map (kbd "M-<home>") 'revy-mode-next )
+            (define-key revy-simple-mode-map (kbd "M-<end>") 'revy-mode-enter)
+            (define-key revy-simple-mode-map (kbd "M-<delete>") 'revy-blank)
+
+
 
             revy-simple-mode-map))
 
