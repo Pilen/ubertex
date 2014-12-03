@@ -172,9 +172,11 @@ This function will also call revy-abort-all "
 ;π Text
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar revy-text-history nil)
+(defvar revy--show-text-history nil
+  "History variable for `revy-show-text'")
+
 (defun revy-show-text (&optional text)
   (interactive)
   (unless text
-    (setq text (read-from-minibuffer "Text: " nil nil nil 'revy-text-history)))
+    (setq text (read-from-minibuffer "Text: " nil nil nil 'revy--show-text-history)))
   (revy-send-message "start" "Text" "text" text))
