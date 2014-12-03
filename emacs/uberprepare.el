@@ -46,7 +46,7 @@
 
 (defun revy-compile-tex (&optional file)
   "Compile a .tex file if it has been changed since last compile.
-If no filename is given, the current buffer
+If no filename is given, the current buffer is compiled.
 Returns the process used to compile the tex file"
   (interactive)
   (when (null file)
@@ -55,7 +55,7 @@ Returns the process used to compile the tex file"
   (unless (file-exists-p file)
     (error "File does not exist: %s" file))
 
-  (lexical-let* ((short (revy-data-path file))
+  (lexical-let* ((short (revy-relative-data-path file))
                  (tex file)
                  (pdf (revy-replace-extension file "pdf"))
                  (process nil)
@@ -63,14 +63,16 @@ Returns the process used to compile the tex file"
 
     (when (file-newer-than-file-p tex pdf)
       (setq buffer (generate-new-buffer (concat "*revy-compile-" short "*")))
-      (setq process (start-process (concat "revy-compile-" short)
-                                   buffer
-                                   "pdflatex"
-                                   "-halt-on-error"
-                                   "-file-line-error"
-                                   "-interaction" "nonstopmode"
-                                   "-output-directory" (file-name-directory tex)
-                                   tex))
+      (let* ((sty (concat "TEXINPUTS=" revy-ubertex-dir ":" "$TEXINPUTS" ":" ".//" ":"))
+             (process-environment (cons sty process-environment)))
+        (setq process (start-process (concat "revy-compile-" short)
+                                     buffer
+                                     "pdflatex"
+                                     "-halt-on-error"
+                                     "-file-line-error"
+                                     "-interaction" "nonstopmode"
+                                     "-output-directory" (file-name-directory tex)
+                                     tex)))
       (set-process-sentinel process
                             (lambda (p event)
                               (unless (process-live-p process)
@@ -80,18 +82,21 @@ Returns the process used to compile the tex file"
                                         (error-line nil))
                                     (with-current-buffer buffer
                                       (goto-char (point-max))
-                                      (search-backward-regexp "^.*==> Fatal error")
-                                      (search-backward-regexp
-                                       (concat tex (rx ":" (group (+ digit)) ":" (* whitespace) (group (+ (not (any "."))) "."))))
-                                      (setq error-line (string-to-int (match-string 1))
-                                            error-message (replace-regexp-in-string "\n" "" (match-string 2))))
+                                      (when (search-backward-regexp "^.*==> Fatal error" nil t)
+                                        (search-backward-regexp
+                                         (concat tex (rx ":" (group (+ digit)) ":" (* whitespace) (group (+ (not (any "."))) "."))))
+                                        (setq error-line (string-to-int (match-string 1))
+                                              error-message (replace-regexp-in-string "\n" "" (match-string 2))))
+                                      (when (search-backward-regexp "! LaTeX Error: \\(.*\\)\\.\n" nil t)
+                                        (setq error-line 0)
+                                        (setq error-message (match-string 1))))
+
                                     (find-file tex)
                                     ;; (goto-line error-line)
                                     (goto-char (point-min))
                                     (forward-line (1- error-line))
                                     (message "An error ocurred during compilation of %s: %s" short error-message)))
 
-                                ;; (message "elefant")
                                 ;; (print buffer)
                                 (when buffer
                                   (kill-buffer buffer))
