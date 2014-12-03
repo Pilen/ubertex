@@ -801,7 +801,22 @@ Zeigen er et program til at køre andre programmer kaldet ``sketches''.
 
 Der sørges automatisk for at det korrekte major mode køres på .tex og .el filer
 \section{FAQ}
-ubertex tager ikke højde for pauser i comments, latex gør.
+Ubertex tager ikke højde for pauser i comments, latex gør.
+
+\subsection{\LaTeX{}}
+\subsubsection{File `overtex.sty' not found.}
+\texttt{overtex.sty} er en fil hvori de overtex speciffike kommandoer er
+defineret. \texttt{revy-manus-prepare} indsætter automatisk
+\code{\textbackslash{}usepackage\{overtex\}} i overtexfilerne. Når man kalder
+\texttt{revy-compile-tex} specificeres automatisk hvor denne fil findes. Kaldes
+pdflatex manuelt ved den ikke hvor denne fil findes.
+Den simpleste løsning er at oversætte med et kald til \texttt{revy-compile-tex}.
+
+Alternativt kan man enten kopiere \texttt{overtex.sty} ind i mappen hvor \texttt{.tex}
+filen ligger, sætte variablen \texttt{TEXINPUTS} til at indeholde mappen hvori
+\texttt{overtex.sty} ligger eller kopiere filen ind i
+\texttt{\~{}/texmf/tex/latex/overtex/overtex.sty} hvor den vil være synlig for oversætteren.
+
 
 \section{Værktøjer}
 \subsection{Schneider}
