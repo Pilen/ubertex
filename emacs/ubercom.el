@@ -6,6 +6,7 @@
 ;; Handle communication
 (provide 'revy-ubercom)
 
+(defvar revy--leiter nil "Variable storing the leiter process")
 
 (defun revy-send-message (&rest args)
   "Send a message.
@@ -31,18 +32,18 @@ If the first argument is a worker, that one is chosen, else the current-one is c
     ;;do something with the above
 
     ;; When leiter is not running start it
-    (when (or (not (processp revy-leiter))
-              (not (process-live-p revy-leiter)))
+    (when (or (not (processp revy--leiter))
+              (not (process-live-p revy--leiter)))
       (revy-start-leiter))
-    (process-send-string revy-leiter quoted)))
+    (process-send-string revy--leiter quoted)))
 
 (defun revy-start-leiter ()
   "Start leiter.
 If leiter is allready running, kill it first, and restart it."
-  (when (not (null revy-leiter))
-    (delete-process revy-leiter))
+  (when (not (null revy--leiter))
+    (delete-process revy--leiter))
   (let ((process-connection-type nil)) ;; Use pipes
-    (setq revy-leiter
+    (setq revy--leiter
           (start-process "leiter" "*leiter*"
                          (concat (file-name-as-directory revy-ubertex-dir)
                                  "tools/leiter.py")))))
@@ -121,7 +122,7 @@ But it will also accept a string with end being ignored in that case."
 ;π Uploading files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar revy-syncing-files 0
+(defvar revy--syncing-files 0
   "Number off machines being synced to currently")
 
 (defun revy-upload-files (&rest workers)
@@ -131,9 +132,11 @@ If no workers are specified, the files will be uploaded to all workers.
 Remember only nonvirtual workers are updated
 
 Uses rsync to upload the files, based on the timestamp"
-
   (interactive)
   ;; TODO: if rsync fails we might want to use scp (check exit code).
+
+  (when (> revy--syncing-files 0)
+    (error "Syncing already in progress"))
 
   ;; (revy-send-message "syncfiles")
   (unless workers
@@ -151,22 +154,22 @@ Uses rsync to upload the files, based on the timestamp"
                                              (concat (revy-worker-get-location worker)
                                                      ":"
                                                      (revy-worker-get-dir worker)))))
-        (incf revy-syncing-files)
+        (incf revy--syncing-files)
         (message "Syncing: %s" name)
         (set-process-sentinel process
                               (lambda (process event)
-                                (decf revy-syncing-files)
+                                (decf revy--syncing-files)
                                 (if (string= event "finished\n")
-                                    (if (< 0 revy-syncing-files)
-                                        (message "Sync with %s completed [%d left]" name revy-syncing-files)
+                                    (if (< 0 revy--syncing-files)
+                                        (message "Sync with %s completed [%d left]" name revy--syncing-files)
                                       (message "Syncing done"))
                                   (message "Sync with %s failed with exit code %i [%d left]"
-                                           name (process-exit-status process) revy-syncing-files)))))))
+                                           name (process-exit-status process) revy--syncing-files)))))))
   nil)
 
 (defun revy-upload-files-sync (&rest workers)
   ("Sync files as `revy-upload-files', but blocking.
 Wont return untill all workers has been synced."
   (revy-upload-files workers)
-  (while (< 0 revy-syncing-files)
+  (while (< 0 revy--syncing-files)
     (sleep 0 200))))
