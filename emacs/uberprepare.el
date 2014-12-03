@@ -17,7 +17,8 @@
   (interactive)
   (save-some-buffers)
   (let ((directories (list revy-dir))
-        (dir nil))
+        (dir nil)
+        (failed nil))
 
     (while directories
       (setq dir (car directories))
@@ -32,10 +33,14 @@
     (dolist (process revy--compile-processes)
       ;; Busy wait for process to finish
       (while (process-live-p process)
-        (sleep-for 0 200)))
+        (sleep-for 0 200))
+      (unless (= (process-exit-status process) 0)
+        (setq failed t)))
     (setq revy--compile-processes nil)
-    (accept-process-output))
-  (revy-upload-files))
+    (accept-process-output)
+    (if failed
+        (message "Compilation failed, nothing uploaded")
+      (revy-upload-files))))
 
 
 
