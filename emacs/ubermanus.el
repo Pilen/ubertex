@@ -24,7 +24,7 @@ the functions can be called on their own."
 (defconst revy-overtex-preamble "\\documentclass[14pt]{beamer}
 \\usepackage[danish]{babel}
 \\usepackage[utf8]{inputenc}
-\\usepackage{../overtex}
+\\usepackage{overtex}
 
 \\begin{document}
 \\obeylines
