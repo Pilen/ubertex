@@ -5,3 +5,6 @@
 *.out
 *.synctex.gz
 *.toc
+
+*.o
+*.d
