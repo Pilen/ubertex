@@ -1,7 +1,7 @@
 
-#include "ztypes.h"
-#include "zmemory.h"
-#include "zhash.h"
+#include "types.h"
+#include "memory.h"
+#include "hash.h"
 
 static Hash *symbol_table;
 static Hash *symbol_names;
@@ -20,10 +20,11 @@ Value symbol_add(Value name) {
         symbol = VALUE_SYMBOL(symbol_next_id);
         hash_set(symbol_table, name, symbol);
         hash_set(symbol_names, symbol, name);
+        symbol_next_id++;
     }
     return symbol;
 }
 
 Value symbol_name(Value symbol){
-    return hash_get(symbol_table, symbol);
+    return hash_get(symbol_names, symbol);
 }

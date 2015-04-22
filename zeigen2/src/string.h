@@ -1,11 +1,11 @@
 #ifndef Z_STRING_H
 #define Z_STRING_H
 
-#include "ztypes.h"
+#include "types.h"
 
 struct String_s {
     Unt refcount;
-    Unt size;
+    Unt length;
     char *text;
 };
 

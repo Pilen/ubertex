@@ -1,6 +1,8 @@
+#include "debug.h"
 
-#include "zbasic.h"
-#include "zlist.h"
+#include "basic.h"
+#include "list.h"
+#include "string.h"
 
 Bool equal(Value a, Value b) {
     /* TODO: find out how to handle comparison of 2.0 and 2 */
@@ -8,6 +10,33 @@ Bool equal(Value a, Value b) {
         return false;
     }
     switch (a.type) {
+    case ERROR:
+        return true;
+    case NIL:
+        return true;
+    case SYMBOL:
+        return a.val.symbol_val == b.val.symbol_val;
+    case INTEGER:
+        return a.val.integer_val == b.val.integer_val;
+    case FLOAT:
+        return a.val.float_val == b.val.float_val;
+    case STRING:
+        /* Assume the strings are normalized */
+        if (a.val.string_val -> length != b.val.string_val -> length) {
+            return false;
+        }
+        /* eq */
+        if (a.val.string_val -> text == b.val.string_val -> text) {
+            return true;
+        }
+        Unt length = a.val.string_val -> length;
+        for (Unt i = 0; i < length; i++) {
+            if (a.val.string_val -> text[i] !=
+                b.val.string_val -> text[i]) {
+                return false;
+            }
+        }
+        return true;
     case LIST:
         {
             List *a_list = a.val.list_val;
@@ -28,6 +57,9 @@ Bool equal(Value a, Value b) {
             }
             return true;
         }
+    case HASH:
+        /* TODO: implement */
+        debug("HASH VALUES CANT BE COMPARED YET!!!!");
     default:
         return false;
     }

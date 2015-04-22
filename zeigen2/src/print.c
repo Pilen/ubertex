@@ -2,9 +2,10 @@
 
 #include "stdio.h"
 
-#include "zprint.h"
-#include "zstring.h"
-#include "zsymbol.h"
+#include "print.h"
+#include "string.h"
+#include "list.h"
+#include "symbol.h"
 
 void print(Value value) {
     switch (value.type) {
@@ -17,10 +18,7 @@ void print(Value value) {
     case SYMBOL:
         {
             Value name = symbol_name(value);
-            debugv("name.type = %d", name.type);
             String *string = name.val.string_val;
-            debugv("%s", "\n\n\n");
-            debugv("string = %p", (void *) string);
             printf(string -> text);
         }
         break;
@@ -34,7 +32,15 @@ void print(Value value) {
         printf("\"%s\"", value.val.string_val -> text);
         break;
     case LIST:
-        printf("(some list)");
+        printf("(");
+        if (value.val.list_val -> length >= 1) {
+            print(LIST_GET_UNSAFE(value.val.list_val, 0));
+        }
+        for (Unt i = 1; i < value.val.list_val -> length; i++) {
+            printf(" ");
+            print(LIST_GET_UNSAFE(value.val.list_val, i));
+        }
+        printf(")");
         break;
     case HASH:
         printf("some hash value");

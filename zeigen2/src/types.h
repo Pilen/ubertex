@@ -10,8 +10,8 @@ typedef float Float;
 typedef double Double;
 typedef Int Bool;
 
-#define true 1;
-#define false 0;
+#define true 1
+#define false 0
 
 
 /* Enumeration of lisp types */

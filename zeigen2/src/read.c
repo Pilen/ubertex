@@ -3,21 +3,25 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "ztypes.h"
-#include "zmemory.h"
-#include "zread.h"
-#include "zsymbol.h"
-
-#include "zstring.h"
+#include "types.h"
+#include "memory.h"
+#include "read.h"
+#include "symbol.h"
+#include "list.h"
+#include "string.h"
 
 /* TODO: this file does not work with unicode yet!!! */
 
-Value read_expression(char **code, char *end, Unt *linenumber);
+Bool read_script(char **code, char *end, Unt *linenumber, Value *result);
+Bool read_expression(char **code, char *end, Unt *linenumber, Value *result);
 Bool read_munch_whitespace(char **code, char *end, Unt *linenumber);
+Bool read_munch_comment(char **code, char *end, Unt *linenumber);
 Bool read_integer(char **code, char *end, Unt *linenumber, Value *result);
 Bool read_float(char **code, char *end, Unt *linenumber, Value *result);
 Bool read_string(char **code, char *end, Unt *linenumber, Value *result);
 Bool read_symbol(char **code, char *end, Unt *linenumber, Value *result);
+Bool read_list(char **code, char *end, Unt *linenumber, Value *result);
+Bool read_quote(char **code, char *end, Unt *linenumber, Value *result);
 Bool read_char_exists_in(char character, char* text);
 
 
@@ -29,7 +33,8 @@ Value read(Value value) {
     char *code = value.val.string_val -> text;
     char *end = code + strlen(code) + 1;
     Unt linenumber = 0;
-    Value result = read_expression(&code, end, &linenumber);
+    Value result;
+    read_script(&code, end, &linenumber, &result);
     if (code == end) {
         return result;
     }
@@ -41,7 +46,8 @@ Value read_from_str(char *str) {
     char *end = code + strlen(code);
     /* debugv("code = %p, end = %p, diff=%td", code, end, end-code); */
     Unt linenumber = 0;
-    Value result = read_expression(&code, end, &linenumber);
+    Value result;
+    read_script(&code, end, &linenumber, &result);
     if (code == end) {
         return result;
     }
@@ -50,27 +56,63 @@ Value read_from_str(char *str) {
 }
 
 
+Bool read_script(char **code, char *end, Unt *linenumber, Value *result) {
+    char *p = *code;
+    List *list = list_create(2);
+
+    Value symbol_name = VALUE_STRING(string_create_from_str("progn"));
+    Value symbol = symbol_add(symbol_name);
+    list_push_back(list, symbol);
+
+    while (p < end) {
+        Value value;
+        read_munch_whitespace(&p, end, linenumber);
+        if (!read_expression(&p, end, linenumber, &value)) {
+            break;
+        }
+        list_push_back(list, value);
+    }
+    read_munch_whitespace(&p, end, linenumber);
+    if (p != end) {
+        list_destroy(list);
+        return false;
+    }
+    *code = p;
+    *result = VALUE_LIST(list);
+    return true;
+}
+
 /* End point to char just beyond the last printable, aka nul */
-Value read_expression(char **code, char *end, Unt *linenumber) {
+Bool read_expression(char **code, char *end, Unt *linenumber, Value *result) {
     /* Skip spaces */
-    read_munch_whitespace(code, end, linenumber);
+    /* read_munch_whitespace(code, end, linenumber); */
 
-    Value result;
-    if (read_float(code, end, linenumber, &result)) {
-        return result;
+    if (read_float(code, end, linenumber, result)) {
+        return true;
     }
-    if (read_integer(code, end, linenumber, &result)) {
-        return result;
+    if (read_integer(code, end, linenumber, result)) {
+        return true;
     }
-    if (read_string(code, end, linenumber, &result)) {
-        return result;
+    if (read_string(code, end, linenumber, result)) {
+        return true;
     }
-    if (read_symbol(code, end, linenumber, &result)) {
-        return result;
+    if (read_symbol(code, end, linenumber, result)) {
+        return true;
+    }
+    if (read_list(code, end, linenumber, result)) {
+        return true;
+    }
+    if (read_quote(code, end, linenumber, result)) {
+        return true;
     }
 
-
-    return VALUE_ERROR;
+    return false;
+    /* return */
+    /*     read_float(code, end, linenumber, result)   || */
+    /*     read_integer(code, end, linenumber, result) || */
+    /*     read_string(code, end, linenumber, result)  || */
+    /*     read_symbol(code, end, linenumber, result)  || */
+    /*     read_list(code, end, linenumber, result); */
 }
 
 Bool read_munch_whitespace(char **code, char *end, Unt *linenumber) {
@@ -84,6 +126,9 @@ Bool read_munch_whitespace(char **code, char *end, Unt *linenumber) {
         } else if (*p == '\n' || *p == '\r' || *p == '\f') {
             (*linenumber)++;
         } else {
+            if (read_munch_comment(&p, end, linenumber)) {
+                continue;
+            }
             break;
         }
         p++;
@@ -93,11 +138,24 @@ Bool read_munch_whitespace(char **code, char *end, Unt *linenumber) {
     return found;
 }
 
+Bool read_munch_comment(char **code, char *end, Unt *linenumber) {
+    char *p = *code;
+    if (p < end && *p != ';') {
+        return false;
+    }
+    p++;
+    while (p < end && !read_char_exists_in(*p, "\n\r\f")) {
+        p++;
+    }
+    *code = p;
+    return true;
+}
+
 Bool read_integer(char **code, char *end, Unt *linenumber, Value *result) {
     char *p = *code;
     Bool found = false;
 
-    if (*p == '-') {
+    if (p < end && *p == '-') {
         p++;
     }
     /* if (*p == "0" && *(++p) == 'x') { */
@@ -122,17 +180,17 @@ Bool read_integer(char **code, char *end, Unt *linenumber, Value *result) {
         return true;
     }
 }
-
+/* TODO: ensure that this works if end comes unexpected */
 Bool read_float(char **code, char *end, Unt *linenumber, Value *result) {
     char *p = *code;
     Bool found = false;
     Bool decimals = false;
 
-    if (*p == '-') {
+    if (p < end && *p == '-') {
         p++;
     }
 
-    if (*p == '.') {
+    if (p < end && *p == '.') {
         p++;
         decimals = true;
     }
@@ -146,7 +204,7 @@ Bool read_float(char **code, char *end, Unt *linenumber, Value *result) {
     }
 
     if (!decimals) {
-        if (*p == '.') {
+        if (p < end && *p == '.') {
             p++;
             decimals = true;
         }
@@ -155,13 +213,13 @@ Bool read_float(char **code, char *end, Unt *linenumber, Value *result) {
         }
     }
 
-    if (*p == 'e' || *p == 'E') {
+    if (p < end &&  (*p == 'e' || *p == 'E')) {
         /* Create a "roll-back point" */
         char *p_previous = p;
 
         p++;
 
-        if (*p == '+' || *p == '-') {
+        if (p < end && (*p == '+' || *p == '-')) {
             p++;
         }
 
@@ -195,7 +253,7 @@ Bool read_float(char **code, char *end, Unt *linenumber, Value *result) {
 Bool read_string(char **code, char *end, Unt *linenumber, Value *result) {
     char *p = *code;
 
-    if (*p != '\"') {
+    if (p >= end || *p != '\"') {
         return false;
     }
     p++;
@@ -230,8 +288,8 @@ Bool read_symbol(char **code, char *end, Unt *linenumber, Value *result) {
     }
 
     while (p < end) {
-        if (read_char_exists_in(*p, " \t\n\r\f0123456789()[];\"'.,:#\\")) {
-            return false;
+        if (read_char_exists_in(*p, " \t\n\r\f0123456789()[];\"'.,:#")) {
+            break;
         }
         if (*p == '\\') {
             if (p + 1 < end) {
@@ -261,6 +319,70 @@ Bool read_symbol(char **code, char *end, Unt *linenumber, Value *result) {
     *code = p;
     return true;
 
+}
+
+Bool read_list(char **code, char *end, Unt *linenumber, Value *result) {
+    char *p = *code;
+    Unt line = *linenumber;
+
+    if (p >= end || *p != '(') {
+        return false;
+    }
+    p++;
+    read_munch_whitespace(&p, end, &line);
+    if (p < end && *p == ')') {
+        p++;
+        *result = VALUE_NIL;
+        *linenumber = line;
+        *code = p;
+        return true;
+    }
+
+    read_munch_whitespace(&p, end, &line);
+
+    List *list = list_create(1);
+    while (p < end && *p != ')') {
+        Value value;
+        if (!read_expression(&p, end, &line, &value)) {
+            list_destroy(list);
+            return false;
+        }
+        list_push_back(list, value);
+        read_munch_whitespace(&p, end, &line);
+    }
+
+    if (p >= end) {
+        list_destroy(list);
+        return false;
+    }
+    p++;
+
+    *linenumber = line;
+    *code = p;
+    *result = VALUE_LIST(list);
+    return true;
+}
+
+Bool read_quote(char **code, char *end, Unt *linenumber, Value *result) {
+    char *p = *code;
+
+    if (p >= end || *p != '\'') {
+        return false;
+    }
+    p++;
+    Value value;
+    if (!read_expression(&p, end, linenumber, &value)) {
+        return false;
+    }
+    Value symbol_name = VALUE_STRING(string_create_from_str("quote"));
+    Value symbol = symbol_add(symbol_name);
+
+    List *list = list_create(2);
+    list_push_back(list, symbol);
+    list_push_back(list, value);
+    *result = VALUE_LIST(list);
+    *code = p;
+    return true;
 }
 
 Bool read_char_exists_in(char character, char* text) {

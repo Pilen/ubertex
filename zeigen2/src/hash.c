@@ -1,9 +1,10 @@
 #include "debug.h"
+#include "print.h"
+#include "string.h"
 
-#include "zhash.h"
-#include "zmemory.h"
-#include "zbasic.h"
-
+#include "hash.h"
+#include "memory.h"
+#include "basic.h"
 Unt hash_calculate(const Value *key);
 Unt hash_linear(Unt h1, Unt i);
 Unt hash_double(Unt h1, Unt h2, Unt i);
@@ -39,13 +40,13 @@ void hash_set(Hash *hash, Value key, Value data) {
     /* Resize if necessary */
     hash_resize(hash);
 
-    Unt length = hash -> length;
+    Unt size = hash -> size;
     Unt h1 = hash_calculate(&key);
     Unt h2 = h1;
 
     /* At least one entry is guaranteed to be empty */
-    for (Unt i = 0; i < length; i++) {
-        Unt index = hash_linear(h1, i);
+    for (Unt i = 0; i < size; i++) {
+        Unt index = hash_linear(h1, i) % size;
         Hash_entry *entry = hash -> entries + index;
         if (entry -> status == HASH_FREE || entry -> status == HASH_DELETED) {
 
@@ -65,14 +66,12 @@ void hash_set(Hash *hash, Value key, Value data) {
 }
 
 Value hash_get(Hash *hash, Value key) {
-    debugv("hash = %p", (void *)hash);
-    Unt length = hash -> length;
+    Unt size = hash -> size;
     Unt h1 = hash_calculate(&key);
     Unt h2 = h1;
 
-    debugv("length = %d", length);
-    for (Unt i = 0; i < length; i++) {
-        Unt index = hash_linear(h1, i);
+    for (Unt i = 0; i < size; i++) {
+        Unt index = hash_linear(h1, i) % size;
         Hash_entry *entry = hash -> entries + index;
 
         if (entry -> status == HASH_FREE) {
@@ -95,11 +94,11 @@ Value hash_get(Hash *hash, Value key) {
 }
 
 Bool hash_delete(Hash *hash, Value key) {
-    Unt length = hash -> length;
+    Unt size = hash -> size;
     Unt h1 = hash_calculate(&key);
     Unt h2 = h1;
 
-    for (Unt i = 0; i < length; i++) {
+    for (Unt i = 0; i < size; i++) {
         Unt index = hash_linear(h1, i);
         Hash_entry *entry = hash -> entries + index;
 

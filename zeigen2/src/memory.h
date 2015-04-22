@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#include "ztypes.h"
+#include "types.h"
 
 
 void *z_malloc(size_t size);

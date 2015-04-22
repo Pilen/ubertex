@@ -1,7 +1,7 @@
 
 #include <stdlib.h>
 
-#include "zmemory.h"
+#include "memory.h"
 
 
 void *z_malloc(size_t size) {

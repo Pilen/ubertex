@@ -1,7 +1,7 @@
 #ifndef Z_HASH_H
 #define Z_HASH_H
 
-#include "ztypes.h"
+#include "types.h"
 
 #define HASH_DEFAULT_SIZE 64
 #define HASH_EXPAND_FACTOR 2

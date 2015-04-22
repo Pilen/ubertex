@@ -1,7 +1,7 @@
 #ifndef Z_EVAL_H
 #define Z_EVAL_H
 
-#include "ztypes.h"
+#include "types.h"
 
 Value eval(Value expression);
 

@@ -1,7 +1,7 @@
 #ifndef Z_SYMBOL_H
 #define Z_SYMBOL_H
 
-#include "ztypes.h"
+#include "types.h"
 
 void symbol_initialize();
 
