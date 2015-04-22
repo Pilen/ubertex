@@ -5,9 +5,9 @@
 #include "hash.h"
 #include "memory.h"
 #include "basic.h"
-Unt hash_calculate(const Value *key);
-Unt hash_linear(Unt h1, Unt i);
-Unt hash_double(Unt h1, Unt h2, Unt i);
+Unt hash_calculate1(const Value *key);
+Unt hash_calculate2(const Value *key);
+Unt hash_index(Unt h1, Unt h2, Unt i, Unt size);
 void hash_resize(Hash *hash);
 
 
@@ -41,14 +41,14 @@ void hash_set(Hash *hash, Value key, Value data) {
     hash_resize(hash);
 
     Unt size = hash -> size;
-    Unt h1 = hash_calculate(&key);
-    Unt h2 = h1;
+    Unt h1 = hash_calculate1(&key);
+    Unt h2 = hash_calculate2(&key);
 
     /* At least one entry is guaranteed to be empty */
     for (Unt i = 0; i < size; i++) {
-        Unt index = hash_linear(h1, i) % size;
+        Unt index = hash_index(h1, h2, i, size);
         Hash_entry *entry = hash -> entries + index;
-        if (entry -> status == HASH_FREE || entry -> status == HASH_DELETED) {
+        if (entry -> status == HASH_EMPTY || entry -> status == HASH_DELETED) {
 
             entry -> status = HASH_OCCUPIED;
             entry -> key_hash1 = h1;
@@ -67,14 +67,14 @@ void hash_set(Hash *hash, Value key, Value data) {
 
 Value hash_get(Hash *hash, Value key) {
     Unt size = hash -> size;
-    Unt h1 = hash_calculate(&key);
-    Unt h2 = h1;
+    Unt h1 = hash_calculate1(&key);
+    Unt h2 = hash_calculate2(&key);
 
     for (Unt i = 0; i < size; i++) {
-        Unt index = hash_linear(h1, i) % size;
+        Unt index = hash_index(h1, h2, i, size);
         Hash_entry *entry = hash -> entries + index;
 
-        if (entry -> status == HASH_FREE) {
+        if (entry -> status == HASH_EMPTY) {
             return VALUE_NIL;
         }
         /* if (entry -> status == HASH_DELETED) { */
@@ -95,14 +95,14 @@ Value hash_get(Hash *hash, Value key) {
 
 Bool hash_delete(Hash *hash, Value key) {
     Unt size = hash -> size;
-    Unt h1 = hash_calculate(&key);
-    Unt h2 = h1;
+    Unt h1 = hash_calculate1(&key);
+    Unt h2 = hash_calculate2(&key);
 
     for (Unt i = 0; i < size; i++) {
-        Unt index = hash_linear(h1, i);
+        Unt index = hash_index(h1, h2, i, size);
         Hash_entry *entry = hash -> entries + index;
 
-        if (entry -> status == HASH_FREE) {
+        if (entry -> status == HASH_EMPTY) {
             return false;
         }
 
@@ -121,17 +121,20 @@ Bool hash_delete(Hash *hash, Value key) {
     return false;
 }
 
-Unt hash_calculate(const Value *key) {
+Unt hash_calculate1(const Value *key) {
     /* TODO: implement properly!! */
     return 1;
 }
-Unt hash_linear(Unt h1, Unt i) {
-    return h1 + i;
+Unt hash_calculate2(const Value *key) {
+    /* TODO: implement properly!! */
+    return 1;
 }
-Unt hash_double(Unt h1, Unt h2, Unt i) {
-    return (h1 + i * h2);
+Unt hash_index(Unt h1, Unt h2, Unt i, Unt size) {
+    /* TODO: assert(h2 != 0); */
+    /* Uses double hashing */
+    /* If h2 == 1, then it is equivalent to linear hashing */
+    return (h1 + i * h2) % size;
 }
-
 
 void hash_resize(Hash *hash) {
 

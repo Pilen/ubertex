@@ -10,7 +10,7 @@
 #define HASH_CONTRACT_LOAD 0.2
 
 typedef enum {
-    HASH_FREE,
+    HASH_EMPTY,
     HASH_OCCUPIED,
     HASH_DELETED,
 } Hash_status;

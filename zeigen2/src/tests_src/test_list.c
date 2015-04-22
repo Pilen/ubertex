@@ -71,6 +71,13 @@ void test_list_6(void) {
         TEST_M(list_get(list, i).val.integer_val == (i + 1) * 10, "i = %d, length = %d", i, list_length(list));
     }
     TEST(list -> size == 256);
+    for (Unt i = 0; i < 130; i++) {
+        Value val = list_pop_back(list);
+        TEST_M(list_length(list) == 130-i-1, "i = %d, length = %d", i, list_length(list));
+        TEST(val.val.integer_val == (130 - i)*10);
+    }
+    TEST(list -> size == 1);
+
 }
 
 DEFINE_TEST_SUITE(list) {
