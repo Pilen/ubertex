@@ -35,7 +35,7 @@ Hash *hash_create(void);
 /* void hash_destroy(Hash *); */
 
 void hash_set(Hash *hash, Value key, Value data);
-Value hash_get(Hash *hash, Value key);
+Bool hash_get(Hash *hash, Value key, Value *result);
 Bool hash_delete(Hash *hash, Value key);
 
 #endif

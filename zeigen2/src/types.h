@@ -1,5 +1,5 @@
-#ifndef Z_LISP_H
-#define Z_LISP_H
+#ifndef Z_TYPES_H
+#define Z_TYPES_H
 
 #include <stdint.h>
 
@@ -24,11 +24,13 @@ typedef enum {
     STRING,
     LIST,
     HASH,
+    FUNCTION,
 } Type;
 
 /* TODO: ensure this is a perfectly legal/good way of defining structs with unions
    If not replace all instances of this pattern in the code
 */
+/* TODO: ensure an error is logged every time this is called */
 #define VALUE_ERROR (Value){ERROR, {0}}
 #define VALUE_NIL (Value){NIL, {0}}
 #define VALUE_SYMBOL(val) (Value){SYMBOL, {.symbol_val = val}}
@@ -42,6 +44,7 @@ typedef enum {
 typedef struct List_s List;
 typedef struct String_s String;
 typedef struct Hash_s Hash;
+typedef struct Function_s Function;
 
 /* Definition of lisp values */
 typedef struct {
@@ -53,6 +56,7 @@ typedef struct {
         String *string_val;
         List *list_val;
         Hash *hash_val;
+        Function *function_val;
     } val;
 } Value;
 

@@ -65,7 +65,7 @@ void hash_set(Hash *hash, Value key, Value data) {
     }
 }
 
-Value hash_get(Hash *hash, Value key) {
+Bool hash_get(Hash *hash, Value key, Value *result) {
     Unt size = hash -> size;
     Unt h1 = hash_calculate1(&key);
     Unt h2 = hash_calculate2(&key);
@@ -75,7 +75,8 @@ Value hash_get(Hash *hash, Value key) {
         Hash_entry *entry = hash -> entries + index;
 
         if (entry -> status == HASH_EMPTY) {
-            return VALUE_NIL;
+            *result = VALUE_NIL;
+            return false;
         }
         /* if (entry -> status == HASH_DELETED) { */
         /*     And found later, relocate it to first deleted entry */
@@ -84,13 +85,15 @@ Value hash_get(Hash *hash, Value key) {
             if (entry -> key_hash1 == h1 &&
                 entry -> key_hash2 == h2 &&
                 equal(entry -> key, key)) {
-                return entry -> data;
+                *result = entry -> data;
+                return true;
             }
         }
     }
 
     /* TODO: should it return nil or some other value? */
-    return VALUE_NIL;
+    *result = VALUE_NIL;
+    return false;
 }
 
 Bool hash_delete(Hash *hash, Value key) {

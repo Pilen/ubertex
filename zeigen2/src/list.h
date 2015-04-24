@@ -17,6 +17,7 @@ struct List_s {
 };
 
 
+/* TODO: ensure this is called with size not length */
 List *list_create(Unt size);
 void list_destroy(List *list);
 /* void list_clear(List *list); */

@@ -60,9 +60,7 @@ Bool read_script(char **code, char *end, Unt *linenumber, Value *result) {
     char *p = *code;
     List *list = list_create(2);
 
-    Value symbol_name = VALUE_STRING(string_create_from_str("progn"));
-    Value symbol = symbol_add(symbol_name);
-    list_push_back(list, symbol);
+    list_push_back(list, symbols_progn);
 
     while (p < end) {
         Value value;
@@ -314,7 +312,7 @@ Bool read_symbol(char **code, char *end, Unt *linenumber, Value *result) {
 
     String *symbol_name = string_create_from_substr(*code, p - *code);
     Value string = VALUE_STRING(symbol_name);
-    Value symbol = symbol_add(string);
+    Value symbol = symbol_get(string);
     *result = symbol;
     *code = p;
     return true;
@@ -374,11 +372,9 @@ Bool read_quote(char **code, char *end, Unt *linenumber, Value *result) {
     if (!read_expression(&p, end, linenumber, &value)) {
         return false;
     }
-    Value symbol_name = VALUE_STRING(string_create_from_str("quote"));
-    Value symbol = symbol_add(symbol_name);
 
     List *list = list_create(2);
-    list_push_back(list, symbol);
+    list_push_back(list, symbols_quote);
     list_push_back(list, value);
     *result = VALUE_LIST(list);
     *code = p;
