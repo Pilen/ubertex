@@ -309,8 +309,18 @@ Bool read_symbol(char **code, char *end, Unt *linenumber, Value *result) {
         return false;
     }
 
-
     String *symbol_name = string_create_from_substr(*code, p - *code);
+    if (string_compare_str(symbol_name, "nil") == 0) {
+        *result = VALUE_NIL;
+        *code = p;
+        return true;
+    }
+    if (string_compare_str(symbol_name, "error") == 0) {
+        *result = VALUE_ERROR;
+        *code = p;
+        return true;
+    }
+
     Value string = VALUE_STRING(symbol_name);
     Value symbol = symbol_get(string);
     *result = symbol;

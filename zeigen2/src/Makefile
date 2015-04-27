@@ -51,6 +51,7 @@ CFLAGS=-std=c99 -Wall -Werror -pedantic -Wno-unused-result -ggdb -DDEBUG
 CFLAGS += -MD -MP
 
 SRC = $(wildcard *.c)
+SRC += $(wildcard lisp/*.c)
 TESTS_SRC = $(filter-out repl.c, $(SRC) $(wildcard tests_src/*.c))
 
 
@@ -66,7 +67,7 @@ tests: $(TESTS_SRC:%.c=%.o)
 	cc -o $@ $^
 
 test: tests
-	./tests
+	timeout 30s ./tests
 
 .PHONY: all clean
 

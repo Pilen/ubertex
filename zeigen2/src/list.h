@@ -5,8 +5,8 @@
 
 #include "types.h"
 
-#define LIST_EXPAND_FACTOR 2
-#define LIST_CONTRACT_FACTOR 2
+#define LIST_EXPANSION_FACTOR 2
+#define LIST_CONTRACT_LIMIT 0.33
 
 struct List_s {
     Unt refcount;

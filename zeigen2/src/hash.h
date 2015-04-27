@@ -4,10 +4,9 @@
 #include "types.h"
 
 #define HASH_DEFAULT_SIZE 64
-#define HASH_EXPAND_FACTOR 2
-#define HASH_CONTRACT_FACTOR 2
-#define HASH_EXPAND_LOAD 0.8
-#define HASH_CONTRACT_LOAD 0.2
+#define HASH_EXPANSION_FACTOR 2
+#define HASH_EXPAND_LIMIT 0.8
+#define HASH_CONTRACT_LIMIT 0.2
 
 typedef enum {
     HASH_EMPTY,
@@ -37,5 +36,9 @@ Hash *hash_create(void);
 void hash_set(Hash *hash, Value key, Value data);
 Bool hash_get(Hash *hash, Value key, Value *result);
 Bool hash_delete(Hash *hash, Value key);
+
+
+/* Unt hash_length(Hash *hash); */
+#define hash_length(hash) (hash -> length)
 
 #endif

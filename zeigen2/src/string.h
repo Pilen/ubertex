@@ -12,4 +12,6 @@ struct String_s {
 String *string_create_from_substr(char* str, Unt length);
 String *string_create_from_str(char *str);
 
+Bool string_compare(String *a, String *b);
+Bool string_compare_str(String *a, char *b);
 #endif

@@ -1,6 +1,7 @@
 #include "debug.h"
 #include "list.h"
 #include "memory.h"
+#include "assert.h"
 
 void list_expand(List *list);
 void list_contract(List *list);
@@ -8,6 +9,7 @@ void list_contract(List *list);
 
 
 List *list_create(Unt size) {
+    assert_build((1.0 / LIST_EXPANSION_FACTOR) > LIST_CONTRACT_LIMIT);
     List *list = z_malloc(sizeof(List));
     Value *data= z_calloc(size, sizeof(Value));
 
@@ -19,13 +21,14 @@ List *list_create(Unt size) {
 
     return list;
 }
+
 void list_destroy(List *list) {
 }
 
 /* void list_clear(List *list); */
 
 void list_push_front(List *list, Value value) {
-    if (list -> size == list -> length) {
+    if (list -> length == list -> size) {
         list_expand(list);
     }
 
@@ -38,7 +41,7 @@ void list_push_front(List *list, Value value) {
 }
 
 void list_push_back(List *list, Value value) {
-    if (list -> size == list -> length) {
+    if (list -> length == list -> size) {
         list_expand(list);
     }
 
@@ -63,7 +66,7 @@ Value list_pop_front(List *list) {
     list -> length--;
 
     /* TODO: ensure correctness */
-    if (list -> length < list -> size / LIST_CONTRACT_FACTOR) {
+    if (list -> length < list -> size * LIST_CONTRACT_LIMIT) {
         list_contract(list);
     }
 
@@ -82,7 +85,7 @@ Value list_pop_back(List *list) {
     list -> length--;
 
     /* TODO: ensure correctness */
-    if (list -> length < list -> size / LIST_CONTRACT_FACTOR) {
+    if (list -> length < list -> size * LIST_CONTRACT_LIMIT) {
         list_contract(list);
     }
 
@@ -149,7 +152,7 @@ Value list_get(List *list, Unt position) {
 
 /**** Private ****/
 void list_expand(List *list) {
-    Unt new_size = list -> size * LIST_EXPAND_FACTOR;
+    Unt new_size = list -> size * LIST_EXPANSION_FACTOR;
     /* Ensure the list always expands by at least 1 */
     if (new_size == list -> size) {
         new_size++;
@@ -180,8 +183,15 @@ void list_expand(List *list) {
 void list_contract(List *list) {
     /* TODO, design a "contract" for when to call list_contract,
        so that the content will always fit! (remember division floors)
-       It might be a good idea with an assertion here! */
-    Unt new_size = list -> size / LIST_CONTRACT_FACTOR;
+       It might be a good idea with an assertion here!
+
+       Something along, expansion and contraction is always a multiple of LIST_EXPANSION_FACTOR.
+       contraction happens when the length is below the size * LIST_CONTRACT_LIMIT
+
+ */
+
+    /* contract to previous size when under limit */
+    Unt new_size = list -> size / LIST_EXPANSION_FACTOR;
     Value *new_data = z_calloc(new_size, sizeof(Value));
     /* TODO: ensure correctenes of castings + roundings
        is start at the correct place when start = 0 and start at end? */

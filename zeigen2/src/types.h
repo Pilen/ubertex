@@ -2,6 +2,7 @@
 #define Z_TYPES_H
 
 #include <stdint.h>
+#include <stdio.h>
 
 /* Type aliases for C types */
 typedef int32_t Int;
@@ -31,14 +32,16 @@ typedef enum {
    If not replace all instances of this pattern in the code
 */
 /* TODO: ensure an error is logged every time this is called */
-#define VALUE_ERROR (Value){ERROR, {0}}
-#define VALUE_NIL (Value){NIL, {0}}
-#define VALUE_SYMBOL(val) (Value){SYMBOL, {.symbol_val = val}}
-#define VALUE_INTEGER(val) (Value){INTEGER, {.integer_val = val}}
-#define VALUE_FLOAT(val) (Value){FLOAT, {.float_val = val}}
-#define VALUE_STRING(val) (Value){STRING, {.string_val = val}}
-#define VALUE_LIST(val) (Value){LIST, {.list_val = val}}
-#define VALUE_HASH(val) (Value){HASH, {.hash_val = val}}
+/* #define VALUE_ERROR (printf("ERROR-IN: %s:%d: \n", __FILE__, __LINE__), (Value) {ERROR, {0}}) */
+#define VALUE_ERROR ((Value) {ERROR, {0}})
+#define VALUE_NIL ((Value) {NIL, {0}})
+#define VALUE_SYMBOL(val) ((Value) {SYMBOL, {.symbol_val = val}})
+#define VALUE_INTEGER(val) ((Value) {INTEGER, {.integer_val = val}})
+#define VALUE_FLOAT(val) ((Value) {FLOAT, {.float_val = val}})
+#define VALUE_STRING(val) ((Value) {STRING, {.string_val = val}})
+#define VALUE_LIST(val) ((Value) {LIST, {.list_val = val}})
+#define VALUE_HASH(val) ((Value) {HASH, {.hash_val = val}})
+#define VALUE_FUNCTION(val) ((Value) {FUNCTION, {.function_val = val}})
 
 /* Actual datatype declarations */
 typedef struct List_s List;

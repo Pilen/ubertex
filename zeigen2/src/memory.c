@@ -2,12 +2,12 @@
 #include <stdlib.h>
 
 #include "memory.h"
-
+#include "log.h"
 
 void *z_malloc(size_t size) {
     void *allocated = malloc(size);
     if (allocated == NULL) {
-        /* TODO: log error */
+        log_fatal("Internal failure in %s\nUnable to allocate additional memory!", __func__);
     }
     return allocated;
 }
@@ -19,7 +19,7 @@ void free(void *ptr) {
 void *z_calloc(size_t amount, size_t size) {
     void *allocated = calloc(amount, size);
     if (allocated == NULL) {
-        /* TODO: log error */
+        log_fatal("Internal failure in %s\nUnable to allocate additional memory!", __func__);
     }
     return allocated;
 

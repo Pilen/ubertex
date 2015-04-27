@@ -67,3 +67,20 @@ Bool equal(Value a, Value b) {
 }
 
 /* Bool eq(Value a, Value b); */
+
+Value copy_deep(Value value) {
+    switch (value.type) {
+    case LIST:
+        {
+            List *old_list = value.val.list_val;
+            List *new_list = list_create(old_list -> size);
+            for (Unt i = 0; i < old_list -> length; i++) {
+                Value copied = copy_deep(LIST_GET_UNSAFE(old_list, i));
+                list_push_back(new_list, copied);
+            }
+        }
+    case HASH:
+    default:
+        return value;
+    }
+}

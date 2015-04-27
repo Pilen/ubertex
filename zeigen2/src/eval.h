@@ -3,22 +3,12 @@
 
 #include "types.h"
 #include "hash.h"
-
-typedef struct {
-    Hash *variables;
-    Hash *functions;
-} Environment;
-
-typedef Value (*lisp_c_function) (List *args, List *call_stack);
-struct Function_s {
-    Bool special;
-    Bool c_code;
-    lisp_c_function c_function;
-    List *parameters;
-    Value body;
-};
+#include "environment.h"
+#include "lisp.h"
 
 Value eval(Value expression, Environment *environment, List* call_stack);
-Environment environment_create(void);
+void eval_bind(List *bindings, Environment *environment, List *old_bindings, List *not_bound);
+void eval_unbind(Environment *environment, List *old_bindings, List *not_bound);
+
 
 #endif

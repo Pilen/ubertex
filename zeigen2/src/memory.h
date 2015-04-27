@@ -10,9 +10,6 @@ void *z_malloc(size_t size);
 void z_free(void *ptr);
 void *z_calloc(size_t amount, size_t size);
 
-Value z_copy(Value value);
-
-
 /* #define INC_REF(item) (item -> refcount++) */
 /* #define DEC_REF(item) (item -> refcount--) */
 

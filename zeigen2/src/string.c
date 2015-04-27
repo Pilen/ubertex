@@ -46,3 +46,11 @@ String *string_create_from_substr(char* str, Unt length) {
 String *string_create_from_str(char *str) {
     return string_create_from_substr(str, strlen(str));
 }
+
+Bool string_compare(String *a, String *b) {
+    return strcmp(a -> text, b -> text);
+}
+
+Bool string_compare_str(String *a, char* b) {
+    return strcmp(a -> text, b);
+}

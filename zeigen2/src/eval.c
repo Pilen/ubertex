@@ -10,8 +10,6 @@
 Value eval_list(Value expression, Environment *environment, List *call_stack);
 Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment, List *call_stack);
 Bool eval_get_bindings(List *args, List *parameters, List *bindings);
-void eval_bind(List *bindings, Environment *environment, List *old_bindings, List *not_bound);
-void eval_unbind(List *old_bindings, List *not_bound, Environment *environment);
 
 Value eval(Value expression, Environment *environment, List *call_stack) {
     switch (expression.type) {
@@ -24,8 +22,7 @@ Value eval(Value expression, Environment *environment, List *call_stack) {
     default:
         return expression;
     case SYMBOL: {
-        debugr(hej)
-            Value result;
+        Value result;
         Bool found = hash_get(environment -> variables, expression, &result);
         if (found) {
             return result;
@@ -62,20 +59,20 @@ Value eval_list(Value expression, Environment *environment, List *call_stack) {
     Function *function = function_value.val.function_val;
 
     List *args = list_create(list -> size);
-    if (function -> special) {
-        for (Unt i = 1; i < list -> length; i++) {
-            list_push_back(args, LIST_GET_UNSAFE(list, i));
-        }
-    } else {
+    if (function -> eval) {
         for (Unt i = 1; i < list -> length; i++) {
             Value evaled_arg = eval(LIST_GET_UNSAFE(list, i), environment, call_stack);
             list_push_back(args, evaled_arg);
+        }
+    } else {
+        for (Unt i = 1; i < list -> length; i++) {
+            list_push_back(args, LIST_GET_UNSAFE(list, i));
         }
     }
 
     Value result;
     if (function -> c_code) {
-        result = function -> c_function(args, call_stack);
+        result = function -> c_function(args, environment, call_stack);
     } else {
         result = eval_apply(function_symbol, function, args, environment, call_stack);
     }
@@ -99,7 +96,7 @@ Value eval_apply(Value function_symbol, Function *function, List *args, Environm
     Value result = eval(function -> body, environment, call_stack);
     list_pop_back(call_stack);
 
-    eval_unbind(old_bindings, not_bound, environment);
+    eval_unbind(environment, old_bindings, not_bound);
     list_destroy(old_bindings);
     list_destroy(not_bound);
     return result;
@@ -196,7 +193,7 @@ void eval_bind(List *bindings, Environment *environment, List *old_bindings, Lis
     }
 }
 
-void eval_unbind(List *old_bindings, List *not_bound, Environment *environment) {
+void eval_unbind(Environment *environment, List *old_bindings, List *not_bound) {
     for (Unt i = 0; i < old_bindings -> length; i += 2) {
         Value symbol = LIST_GET_UNSAFE(old_bindings, i);
         Value old_value = LIST_GET_UNSAFE(old_bindings, i+1);
@@ -206,10 +203,4 @@ void eval_unbind(List *old_bindings, List *not_bound, Environment *environment) 
         Value symbol = LIST_GET_UNSAFE(not_bound, i);
         hash_delete(environment -> variables, symbol);
     }
-}
-
-Environment environment_create(void) {
-    Hash *variables = hash_create();
-    Hash *functions = hash_create();
-    return (Environment) {variables, functions};
 }

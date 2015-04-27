@@ -14,6 +14,7 @@ void symbol_initialize() {
     symbol_names = hash_create();
     symbol_next_id = 0;
 
+    symbols_t = symbol_get(VALUE_STRING(string_create_from_str("t")));
     symbols_progn = symbol_get(VALUE_STRING(string_create_from_str("progn")));
     symbols_quote = symbol_get(VALUE_STRING(string_create_from_str("quote")));
     symbols_ampersand_optional = symbol_get(VALUE_STRING(string_create_from_str("&optional")));

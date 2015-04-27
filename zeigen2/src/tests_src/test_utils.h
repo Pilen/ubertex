@@ -54,18 +54,20 @@ Bool Z_TEST_UTILS_successful;
 
 #define TEST(value)                                                     \
     do {                                                                \
-        if (!(value)) {                                                 \
+        Int Z_TEST_UTILS_test = (value);                                \
+        if (!(Z_TEST_UTILS_test)) {                                     \
             Z_TEST_UTILS_successful = false;                            \
-            printf("TEST FAILED: %s-> %s : %d\n", __FILE__, __func__, __LINE__); \
+            printf("TEST-FAILED: %s:%d: %s: (%s)\t gave %d\n", __FILE__, __LINE__, __func__, #value, Z_TEST_UTILS_test); \
             return;                                                     \
         }                                                               \
     } while (0);
 
 #define TEST_M(value, ...)                                              \
     do {                                                                \
-        if (!(value)) {                                                 \
+        Int Z_TEST_UTILS_test = (value);                                \
+        if (!(Z_TEST_UTILS_test)) {                                     \
             Z_TEST_UTILS_successful = false;                            \
-            printf("TEST FAILED: %s -> %s : %d\n\t", __FILE__, __func__, __LINE__); \
+            printf("TEST-FAILED: %s:%d: %s: (%s)\t gave %d\n\t", __FILE__, __LINE__, __func__, #value, Z_TEST_UTILS_test); \
             printf(__VA_ARGS__);                                        \
             printf("\n");                                               \
             return;                                                     \
