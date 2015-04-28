@@ -1,0 +1,68 @@
+#include "../types.h"
+#include "../eval.h"
+#include "../list.h"
+#include "../basic.h"
+#include "../symbol.h"
+#include "../eval.h"
+#include "../string.h"
+#include "../math.h"
+#include "../memory.h"
+#include "../debug.h"
+
+LISP_BUILTIN(defun, "") {
+    if (args -> length < 2) {
+        return VALUE_ERROR;
+    }
+
+    Value function_name = LIST_GET_UNSAFE(args, 0);
+    Value parameters = LIST_GET_UNSAFE(args, 1);
+    String *docstring = NULL;
+
+    if (function_name.type != SYMBOL) {
+        return VALUE_ERROR;
+    }
+
+    List *param_list;
+    if (parameters.type == LIST) {
+        param_list = parameters.val.list_val;
+    } else if (parameters.type == NIL) {
+        param_list = list_create_empty();
+    } else {
+        return VALUE_ERROR;
+    }
+    /* TODO: validate parameters */
+
+    if (args -> length >= 3) {
+        Value docstring_value = LIST_GET_UNSAFE(args, 2);
+        if (docstring_value.type == STRING) {
+            docstring = docstring_value.val.string_val;
+        }
+    }
+    if (docstring == NULL) {
+        docstring = string_create_from_str("Undocumented function");
+    }
+
+    List *body = list_create(round_up_to_power_of_2(args -> length - 2 + 1));
+    list_push_back(body, symbols_progn);
+    for (Unt i = 2; i < args -> length; i++) {
+        Value statement = LIST_GET_UNSAFE(args, i);
+        list_push_back(body, statement);
+    }
+
+    Function *function = z_malloc(sizeof(Function));
+    function -> eval = true;
+    function -> c_code = false;
+    function -> c_function = NULL;
+    function -> parameters = param_list;
+    function -> body = VALUE_LIST(body);
+    function -> docstring = docstring;
+    Value function_value = VALUE_FUNCTION(function);
+
+    hash_set(environment -> functions, function_name, function_value);
+    return function_name;
+}
+
+LISP_BUILTIN(lambda, "") {
+    /* List *lambda = list_create(round_up_to_power_of_2(args -> length + 1)) */
+    return VALUE_ERROR;
+}
