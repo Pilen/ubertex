@@ -261,9 +261,6 @@ LISP_BUILTIN(let, "") {
             }
             break;
         default:
-            debug_value(pair);
-            debugi(pair.type);
-            debugi(LIST);
             return VALUE_ERROR;
         }
     }
@@ -278,4 +275,61 @@ LISP_BUILTIN(let, "") {
     }
     eval_unbind(environment, old_bindings, not_bound);
     return result;
+}
+
+LISP_BUILTIN(let_star, "") {
+    if (args -> length < 1) {
+        return VALUE_ERROR;
+    }
+
+    Value pairs_value = LIST_GET_UNSAFE(args, 0);
+    List *pairs = pairs_value.val.list_val;
+
+    List *old_bindings = list_create_empty();
+    List *not_bound = list_create_empty();
+
+    for (Unt i = 0; i < pairs -> length; i++) {
+        Value pair = LIST_GET_UNSAFE(pairs, i);
+        Value symbol;
+        Value value = VALUE_NIL;
+        switch (pair.type) {
+        case SYMBOL:
+            symbol = pair;
+            break;
+        case LIST:
+            if (pair.val.list_val -> length == 1) {
+                symbol = LIST_GET_UNSAFE(pair.val.list_val, 0);
+            } else if (pair.val.list_val -> length == 2) {
+                symbol = LIST_GET_UNSAFE(pair.val.list_val, 0);
+                value = LIST_GET_UNSAFE(pair.val.list_val, 1);
+                value = eval(value, environment, call_stack);
+            } else {
+                list_destroy(old_bindings);
+                list_destroy(not_bound);
+                return VALUE_ERROR;
+            }
+            break;
+        default:
+            return VALUE_ERROR;
+        }
+        Value old_value;
+        Bool found = hash_get(environment -> variables, symbol, &old_value);
+        if (found) {
+            list_push_back(old_bindings, symbol);
+            list_push_back(old_bindings, old_value);
+            /* TODO: increase refcount */
+        } else {
+            list_push_back(not_bound, symbol);
+        }
+        hash_set(environment -> variables, symbol, value);
+    }
+
+    Value result = VALUE_NIL;
+    for (Unt i = 1; i < args -> length; i++) {
+        Value body = LIST_GET_UNSAFE(args, i);
+        result = eval(body, environment, call_stack);
+    }
+    eval_unbind(environment, old_bindings, not_bound);
+    return result;
+
 }

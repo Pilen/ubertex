@@ -5,8 +5,6 @@
 #include "memory.h"
 #include "string.h"
 
-/* Value lisp_progn(List *args, Environment *environment, List *call_stack); */
-
 
 void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN(symbols_progn, progn, false, environment);
@@ -23,19 +21,24 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(set, set, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(setq, setq, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(let, let, false, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(let*, let_star, false, environment);
+
+
+    LISP_REGISTER_BUILTIN_FROM_RAW(defun, defun, false, environment);
 
     LISP_REGISTER_BUILTIN_FROM_RAW(+, plus, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(-, minus, true, environment);
 
 }
 
-void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, Environment *environment) {
+void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, String *docstring, Environment *environment) {
     Function *function = z_malloc(sizeof(Function));
     function -> eval = eval;
     function -> c_code = true;
     function -> c_function = c_function;
     function -> parameters = NULL;
-    function -> body = VALUE_ERROR;
+    function -> body = (Value) {ERROR, {0}}; /* Done this way to avoid logging */
+    function -> docstring = docstring;
     Value function_value = VALUE_FUNCTION(function);
 
     hash_set(environment -> functions, symbol, function_value);

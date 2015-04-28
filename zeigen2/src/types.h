@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "log.h"
+
 /* Type aliases for C types */
 typedef int32_t Int;
 typedef uint32_t Unt;
@@ -32,8 +34,8 @@ typedef enum {
    If not replace all instances of this pattern in the code
 */
 /* TODO: ensure an error is logged every time this is called */
-/* #define VALUE_ERROR (printf("ERROR-IN: %s:%d: \n", __FILE__, __LINE__), (Value) {ERROR, {0}}) */
-#define VALUE_ERROR ((Value) {ERROR, {0}})
+#define VALUE_ERROR (log_error_in, (Value) {ERROR, {0}})
+/* #define VALUE_ERROR ((Value) {ERROR, {0}}) */
 #define VALUE_NIL ((Value) {NIL, {0}})
 #define VALUE_SYMBOL(val) ((Value) {SYMBOL, {.symbol_val = val}})
 #define VALUE_INTEGER(val) ((Value) {INTEGER, {.integer_val = val}})

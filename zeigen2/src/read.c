@@ -25,21 +25,21 @@ Bool read_quote(char **code, char *end, Unt *linenumber, Value *result);
 Bool read_char_exists_in(char character, char* text);
 
 
-Value read(Value value) {
+Value read_value(Value value) {
     if (value.type != STRING) {
         return VALUE_ERROR;
     }
-
-    char *code = value.val.string_val -> text;
-    char *end = code + strlen(code) + 1;
-    Unt linenumber = 0;
-    Value result;
-    read_script(&code, end, &linenumber, &result);
-    if (code == end) {
-        return result;
-    }
-    /* TODO: log error */
-    return VALUE_ERROR;
+    return read_from_str(value.val.string_val -> text);
+    /* char *code = value.val.string_val -> text; */
+    /* char *end = code + strlen(code); */
+    /* Unt linenumber = 0; */
+    /* Value result; */
+    /* read_script(&code, end, &linenumber, &result); */
+    /* if (code == end) { */
+    /*     return result; */
+    /* } */
+    /* /\* TODO: log error *\/ */
+    /* return VALUE_ERROR; */
 }
 Value read_from_str(char *str) {
     char *code = str;

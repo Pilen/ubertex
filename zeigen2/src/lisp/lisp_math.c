@@ -4,7 +4,6 @@
 #include "../list.h"
 
 LISP_BUILTIN(plus, "") {
-    debug("abe")
     Int int_sum = 0;
     Double float_sum = 0;
 

@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-Value read(Value value);
+Value read_value(Value value);
 Value read_from_str(char* str);
 
 #endif

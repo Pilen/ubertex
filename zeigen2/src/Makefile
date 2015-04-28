@@ -49,6 +49,7 @@
 
 CFLAGS=-std=c99 -Wall -Werror -pedantic -Wno-unused-result -ggdb -DDEBUG
 CFLAGS += -MD -MP
+LFLAGS=-lreadline
 
 SRC = $(wildcard *.c)
 SRC += $(wildcard lisp/*.c)
@@ -58,16 +59,16 @@ TESTS_SRC = $(filter-out repl.c, $(SRC) $(wildcard tests_src/*.c))
 all: repl test Makefile
 
 repl: $(SRC:%.c=%.o)
-	cc -o $@ $^
+	cc $(LFLAGS) -o $@ $^
 
 clean:
-	rm -f *.o *.d repl    tests_src/*.o tests_src/*.d tests
+	rm -f *.o *.d repl    lisp/*.o lisp/*.d    tests_src/*.o tests_src/*.d tests
 
 tests: $(TESTS_SRC:%.c=%.o)
-	cc -o $@ $^
+	cc $(LFLAGS) -o $@ $^
 
 test: tests
-	timeout 30s ./tests
+	timeout 30s ./tests && timeout 30s ./lisp_tests/lisp_test.py
 
 .PHONY: all clean
 

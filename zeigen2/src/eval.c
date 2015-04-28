@@ -6,6 +6,8 @@
 #include "symbol.h"
 #include "math.h"
 #include "hash.h"
+#include "log.h"
+#include "assert.h"
 
 Value eval_list(Value expression, Environment *environment, List *call_stack);
 Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment, List *call_stack);
@@ -37,7 +39,7 @@ Value eval(Value expression, Environment *environment, List *call_stack) {
 }
 
 Value eval_list(Value expression, Environment *environment, List *call_stack) {
-    /* TODO: assert(list.type == LIST) */
+    assert(expression.type == LIST);
     /* NOTE: Is this necesary? It should already be handled in the parser.
        But it might be needed due to eval */
     List *list = expression.val.list_val;
@@ -51,20 +53,21 @@ Value eval_list(Value expression, Environment *environment, List *call_stack) {
     Bool found = hash_get(environment -> functions, function_symbol, &function_value);
     if (!found) {
         /* TODO: log error */
-        printf("symbol: ");
-        print(function_symbol);
-        printf(" not found\n");
+        log_error("symbol XXX not found");
         return VALUE_ERROR;
     }
     Function *function = function_value.val.function_val;
 
-    List *args = list_create(list -> size);
+    List *args;
+    args = list_create(list -> size);
     if (function -> eval) {
         for (Unt i = 1; i < list -> length; i++) {
             Value evaled_arg = eval(LIST_GET_UNSAFE(list, i), environment, call_stack);
             list_push_back(args, evaled_arg);
         }
     } else {
+        /* args = list; */
+        /* list_pop_front(args); */
         for (Unt i = 1; i < list -> length; i++) {
             list_push_back(args, LIST_GET_UNSAFE(list, i));
         }
@@ -168,7 +171,7 @@ Bool eval_get_bindings(List *arguments, List *parameters, List *bindings) {
     }
 
 
-    if (a >= arguments -> length || p >= parameters -> length) {
+    if (a < arguments -> length || p < parameters -> length) {
         /* TODO: log error */
         return false;
     }
