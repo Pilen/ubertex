@@ -1,0 +1,17 @@
+;;;;TEST;;;;
+(defun foo (x) (+ x 10)) ;=> foo
+(foo 20) ;=> 30
+
+;;;;TEST;;;;
+(defun foo () 10)
+(foo) ;=> 10
+
+;;;;TEST;;;;
+(defun foo (x y) (+ x y 10))
+(defun bar (z) (+ z (foo z 5)))
+(bar 7) ;=> 29
+
+;;;;TEST;;;;
+(defun foo () (+ x y))
+(defun bar (x y) (foo))
+(bar 1 10) ;=> 11
