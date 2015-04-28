@@ -8,7 +8,7 @@ LISP_BUILTIN(plus, "") {
     Double float_sum = 0;
 
     Bool real = false;
-    for (Unt i = 0; i < args -> length; i++) {
+    for (Unt i = 1; i < args -> length; i++) {
         Value arg = LIST_GET_UNSAFE(args, i);
         switch (arg.type) {
         case INTEGER:
@@ -32,7 +32,7 @@ LISP_BUILTIN(plus, "") {
 
 LISP_BUILTIN(minus, "") {
     debug("hej")
-    if (args -> length == 0) {
+    if (args -> length == 1) {
         return VALUE_INTEGER(0);
     }
     Int int_sum = 0;
@@ -40,7 +40,7 @@ LISP_BUILTIN(minus, "") {
 
     Bool real = false;
 
-    Value first = LIST_GET_UNSAFE(args, 0);
+    Value first = LIST_GET_UNSAFE(args, 1);
     switch (first.type) {
     case INTEGER:
         int_sum = first.val.integer_val;
@@ -53,7 +53,7 @@ LISP_BUILTIN(minus, "") {
         /* TODO: log error */
         return VALUE_ERROR;
     }
-    if (args -> length == 1) {
+    if (args -> length == 2) {
         if (real) {
             return VALUE_FLOAT(- float_sum);
         } else {
@@ -62,7 +62,7 @@ LISP_BUILTIN(minus, "") {
 
     }
 
-    for (Unt i = 1; i < args -> length; i++) {
+    for (Unt i = 2; i < args -> length; i++) {
         Value arg = LIST_GET_UNSAFE(args, i);
         switch (arg.type) {
         case INTEGER:

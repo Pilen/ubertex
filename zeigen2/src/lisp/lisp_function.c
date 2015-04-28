@@ -10,12 +10,12 @@
 #include "../debug.h"
 
 LISP_BUILTIN(defun, "") {
-    if (args -> length < 2) {
+    if (args -> length < 3) {
         return VALUE_ERROR;
     }
 
-    Value function_name = LIST_GET_UNSAFE(args, 0);
-    Value parameters = LIST_GET_UNSAFE(args, 1);
+    Value function_name = LIST_GET_UNSAFE(args, 1);
+    Value parameters = LIST_GET_UNSAFE(args, 2);
     String *docstring = NULL;
 
     if (function_name.type != SYMBOL) {
@@ -32,8 +32,8 @@ LISP_BUILTIN(defun, "") {
     }
     /* TODO: validate parameters */
 
-    if (args -> length >= 3) {
-        Value docstring_value = LIST_GET_UNSAFE(args, 2);
+    if (args -> length >= 4) {
+        Value docstring_value = LIST_GET_UNSAFE(args, 3);
         if (docstring_value.type == STRING) {
             docstring = docstring_value.val.string_val;
         }
@@ -42,9 +42,9 @@ LISP_BUILTIN(defun, "") {
         docstring = string_create_from_str("Undocumented function");
     }
 
-    List *body = list_create(round_up_to_power_of_2(args -> length - 2 + 1));
+    List *body = list_create(round_up_to_power_of_2(args -> length - 3 + 1));
     list_push_back(body, symbols_progn);
-    for (Unt i = 2; i < args -> length; i++) {
+    for (Unt i = 3; i < args -> length; i++) {
         Value statement = LIST_GET_UNSAFE(args, i);
         list_push_back(body, statement);
     }
@@ -63,6 +63,6 @@ LISP_BUILTIN(defun, "") {
 }
 
 LISP_BUILTIN(lambda, "") {
-    /* List *lambda = list_create(round_up_to_power_of_2(args -> length + 1)) */
+    /* List *lambda = list_create(round_up_to_power_of_2(args -> length + 1)); */
     return VALUE_ERROR;
 }

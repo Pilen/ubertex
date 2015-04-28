@@ -59,18 +59,20 @@ Value eval_list(Value expression, Environment *environment, List *call_stack) {
     Function *function = function_value.val.function_val;
 
     List *args;
-    args = list_create(list -> size);
     if (function -> eval) {
+        args = list_create(round_up_to_power_of_2(list -> length + 1));
+        /* Not actually used, but keeps convention like when not evaling */
+        list_push_back(args, function_symbol);
         for (Unt i = 1; i < list -> length; i++) {
             Value evaled_arg = eval(LIST_GET_UNSAFE(list, i), environment, call_stack);
             list_push_back(args, evaled_arg);
         }
     } else {
-        /* args = list; */
+        args = list;
         /* list_pop_front(args); */
-        for (Unt i = 1; i < list -> length; i++) {
-            list_push_back(args, LIST_GET_UNSAFE(list, i));
-        }
+        /* for (Unt i = 1; i < list -> length; i++) { */
+        /*     list_push_back(args, LIST_GET_UNSAFE(list, i)); */
+        /* } */
     }
 
     Value result;
@@ -109,7 +111,7 @@ Bool eval_get_bindings(List *arguments, List *parameters, List *bindings) {
     /* Most of the error logging should be in defun, not here! */
     Bool optional = false;
     Bool rest = false;
-    Unt a = 0;
+    Unt a = 1; /* For the name */
     Unt p = 0;
     while (a < arguments -> length && p < parameters -> length) {
         Value parameter = LIST_GET_UNSAFE(parameters, p);
