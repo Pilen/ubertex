@@ -56,7 +56,7 @@ SRC += $(wildcard lisp/*.c)
 TESTS_SRC = $(filter-out repl.c, $(SRC) $(wildcard tests_src/*.c))
 
 
-all: repl test Makefile
+all: repl test Makefile linecount
 
 repl: $(SRC:%.c=%.o)
 	cc $(LFLAGS) -o $@ $^
@@ -68,8 +68,11 @@ tests: $(TESTS_SRC:%.c=%.o)
 	cc $(LFLAGS) -o $@ $^
 
 test: tests
-	timeout 30s ./tests && timeout 30s ./lisp_tests/lisp_test.py
+	@: timeout 30s ./tests && timeout 30s ./lisp_tests/lisp_test.py
 
-.PHONY: all clean
+linecount:
+	echo -n "linecount: " && cat *.c *.h */*.c */*.h */*.py */*.zlt | wc -l
+
+.PHONY: all clean linecount
 
 -include $(SRC:%.c=%.d) $(TESTS_SRC:%.c=%.d)
