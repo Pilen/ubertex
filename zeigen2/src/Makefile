@@ -68,7 +68,7 @@ tests: $(TESTS_SRC:%.c=%.o)
 	cc $(LFLAGS) -o $@ $^
 
 test: tests
-	@: timeout 30s ./tests && timeout 30s ./lisp_tests/lisp_test.py
+	timeout 30s ./tests && timeout 30s ./lisp_tests/lisp_test.py
 
 linecount:
 	echo -n "linecount: " && cat *.c *.h */*.c */*.h */*.py */*.zlt | wc -l
