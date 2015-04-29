@@ -63,6 +63,13 @@ LISP_BUILTIN(defun, "") {
 }
 
 LISP_BUILTIN(lambda, "") {
-    /* List *lambda = list_create(round_up_to_power_of_2(args -> length + 1)); */
-    return VALUE_ERROR;
+    if (args -> length < 2) {
+        return VALUE_ERROR;
+    }
+    Value params = LIST_GET_UNSAFE(args, 1);
+    if (params.type != NIL && params.type != LIST) {
+        return VALUE_ERROR;
+    }
+
+    return VALUE_LIST(args);
 }

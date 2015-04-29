@@ -25,6 +25,7 @@ void lisp_initialize(Environment *environment) {
 
 
     LISP_REGISTER_BUILTIN_FROM_RAW(defun, defun, false, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(lambda, lambda, false, environment);
 
     LISP_REGISTER_BUILTIN_FROM_RAW(+, plus, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(-, minus, true, environment);

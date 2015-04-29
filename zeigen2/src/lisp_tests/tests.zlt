@@ -305,3 +305,8 @@ x ;=> 1
 (setq x 1)
 (let* ((x (+ 10 x))) x) ;=> 11
 x ;=> 1
+
+;;;;TEST;;;;
+(setq x 10)
+((lumdba ()) (setq x 11))
+x

@@ -17,9 +17,10 @@ void symbol_initialize() {
     symbols_t = symbol_get(VALUE_STRING(string_create_from_str("t")));
     symbols_progn = symbol_get(VALUE_STRING(string_create_from_str("progn")));
     symbols_quote = symbol_get(VALUE_STRING(string_create_from_str("quote")));
+    symbols_lambda = symbol_get(VALUE_STRING(string_create_from_str("lambda")));
+    symbols_clojure = symbol_get(VALUE_STRING(string_create_from_str("clojure")));
     symbols_ampersand_optional = symbol_get(VALUE_STRING(string_create_from_str("&optional")));
     symbols_ampersand_rest = symbol_get(VALUE_STRING(string_create_from_str("&rest")));
-
 }
 
 Value symbol_get(Value name) {

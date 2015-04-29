@@ -12,6 +12,8 @@
 Value eval_list(Value expression, Environment *environment, List *call_stack);
 Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment, List *call_stack);
 Bool eval_get_bindings(List *args, List *parameters, List *bindings);
+Value eval_lambda(Value function_symbol, List *args, Environment *environment, List *call_stack);
+Value eval_clojure(Value function_symbol, List *args, Environment *environment, List *call_stack);
 
 Value eval(Value expression, Environment *environment, List *call_stack) {
     switch (expression.type) {
@@ -48,6 +50,38 @@ Value eval_list(Value expression, Environment *environment, List *call_stack) {
     }
 
     Value function_symbol = LIST_GET_UNSAFE(list, 0);
+
+    if (function_symbol.type == LIST &&
+        function_symbol.val.list_val -> length >= 1) {
+        Value head = LIST_GET_UNSAFE(function_symbol.val.list_val, 0);
+        Bool clojure;
+        if (head.type == SYMBOL && head.val.symbol_val == symbols_lambda.val.symbol_val) {
+            clojure = false;
+        } else if (head.type == SYMBOL && head.val.symbol_val == symbols_clojure.val.symbol_val) {
+            clojure = true;
+        } else {
+            debug_value(head);
+            debugi(head.type);
+            debugi(head.val.symbol_val);
+            debugi(symbols_lambda.val.symbol_val);
+            return VALUE_ERROR;
+        }
+        List *args = list_create(round_up_to_power_of_2(list -> length + 1));
+        /* Not actually used, but keeps convention like when not evaling */
+        list_push_back(args, symbols_lambda);
+        for (Unt i = 1; i < list -> length; i++) {
+            Value evaled_arg = eval(LIST_GET_UNSAFE(list, i), environment, call_stack);
+            list_push_back(args, evaled_arg);
+        }
+        Value result;
+        if (clojure) {
+            result = eval_clojure(function_symbol, args, environment, call_stack);
+        } else {
+            result = eval_lambda(function_symbol, args, environment, call_stack);
+        }
+        list_destroy(args);
+        return result;
+    }
 
     Value function_value;
     Bool found = hash_get(environment -> functions, function_symbol, &function_value);
@@ -105,6 +139,13 @@ Value eval_apply(Value function_symbol, Function *function, List *args, Environm
     list_destroy(old_bindings);
     list_destroy(not_bound);
     return result;
+}
+
+Value eval_lambda(Value function_symbol, List *args, Environment *environment, List *call_stack) {
+    return VALUE_ERROR;
+}
+Value eval_clojure(Value function_symbol, List *args, Environment *environment, List *call_stack) {
+    return VALUE_ERROR;
 }
 
 Bool eval_get_bindings(List *arguments, List *parameters, List *bindings) {
