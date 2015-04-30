@@ -1,3 +1,4 @@
+#include "options.h"
 #include "debug.h"
 #include "initialize.h"
 #include "symbol.h"
@@ -11,9 +12,12 @@ Environment *initialize(void) {
     /*     return; */
     /* } */
     /* initialized = true; */
-    log_level = LOG_LEVEL_MAX;
+    log_level = OPTION_LOG_LEVEL_INITIALIZATION;
+
+    log_section("====INITIALIZE====");
     symbol_initialize();
     Environment *environment = environment_create();
     lisp_initialize(environment);
+    log_section("====INITIALIZE-END====")
     return environment;
 }

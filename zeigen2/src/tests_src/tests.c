@@ -1,4 +1,5 @@
 #include "test_utils.h"
+#include "../log.h"
 
 DEFINE_TEST_PROGRAM {
     TEST_USE_SUITE(list);

@@ -42,12 +42,14 @@ Value read_value(Value value) {
     /* return VALUE_ERROR; */
 }
 Value read_from_str(char *str) {
+    log_section("====READ====");
     char *code = str;
     char *end = code + strlen(code);
     /* debugv("code = %p, end = %p, diff=%td", code, end, end-code); */
     Unt linenumber = 0;
     Value result;
     read_script(&code, end, &linenumber, &result);
+    log_section("====READ-END====");
     if (code == end) {
         return result;
     }

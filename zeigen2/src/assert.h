@@ -3,14 +3,14 @@
 
 #include "types.h"
 #include <stdlib.h>
+#include "options.h"
 
-#ifdef DEBUG
+#if OPTION_DEBUG
 #define assert(v)                                                       \
     do {                                                                \
         Int Z_ASSERT_assert = (v);                                      \
         if (!Z_ASSERT_assert) {                                         \
-            printf("ASSERTION-FAILURE: %s:%d: %s: %s gave %d",          \
-                   __FILE__, __LINE__, __func__, #v, Z_ASSERT_assert);  \
+            log_assert(#v, Z_ASSERT_assert);                            \
             exit(EXIT_FAILURE);                                         \
         }                                                               \
     } while (0);
