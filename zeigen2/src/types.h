@@ -2,6 +2,7 @@
 #define Z_TYPES_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "log.h"
@@ -11,10 +12,10 @@ typedef int32_t Int;
 typedef uint32_t Unt;
 typedef float Float;
 typedef double Double;
-typedef Int Bool;
+typedef bool Bool;
 
-#define true 1
-#define false 0
+/* #define true 1 */
+/* #define false 0 */
 
 
 /* Enumeration of lisp types */
