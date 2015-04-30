@@ -13,13 +13,14 @@
 #define z_calloc(amount, size) (log_calloc(amount, size), memory_calloc_actual(amount, size))
 #else
 #define z_malloc(size) memory_malloc_actual(size)
+#define z_cmalloc(size) memory_malloc_cleared_actual(size)
 #define z_calloc(amount, size) memory_calloc_actual(amount, size)
 #endif
 
 void *memory_malloc_actual(size_t size);
-void *memory_cleared_malloc_actual(size_t size);
-void memory_free(void *ptr);
+void *memory_malloc_cleared_actual(size_t size);
 void *memory_calloc_actual(size_t amount, size_t size);
+void memory_free(void *ptr);
 
 /* #define INC_REF(item) (item -> refcount++) */
 /* #define DEC_REF(item) (item -> refcount--) */
