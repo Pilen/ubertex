@@ -1,0 +1,6 @@
+;;;;TEST;;;;
+(not nil) ;=> t
+(not 1) ;=> nil
+;; TODO: compare emptied list
+(not 0) ;=> nil
+(not t) ;=> nil
