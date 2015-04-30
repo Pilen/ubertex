@@ -22,6 +22,8 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(setq, setq, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(let, let, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(let*, let_star, false, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(equal, equal, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(eq, eq, true, environment);
 
 
     LISP_REGISTER_BUILTIN_FROM_RAW(defun, defun, false, environment);
