@@ -9,7 +9,7 @@
 
 #if OPTION_DEBUG_MEMORY
 #define z_malloc(size) (log_malloc(size), memory_malloc_actual(size))
-#define z_cmalloc(size) (log_malloc(size), memory_cleared_malloc_actual(size))
+#define z_cmalloc(size) (log_malloc(size), memory_malloc_cleared_actual(size))
 #define z_calloc(amount, size) (log_calloc(amount, size), memory_calloc_actual(amount, size))
 #else
 #define z_malloc(size) memory_malloc_actual(size)
