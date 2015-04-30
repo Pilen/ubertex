@@ -8,36 +8,38 @@
 
 /* TODO: no way of escaping charactercodes!!! */
 
+/* Strings are based on incomplete structs
+   as described in http://www.informit.com/guides/content.aspx?g=cplusplus&seqNum=288 */
 
-String *string_create_from_substr(char* str, Unt length) {
+String *string_create_from_substr(char* str, Unt size) {
     /* TODO: As this only works with ASCII now, it holds that length == size.
        This is not true for unicode?!. */
-    String *string = z_malloc(sizeof(String));
+    String *string = z_cmalloc(sizeof(String) + sizeof(char) * size + 1);
     /* Add 1 for null char when allocating
        Cleared by calloc */
-    char *text = z_calloc(length + 1, sizeof(char));
+    /* char *text = z_calloc(length + 1, sizeof(char)); */
 
     string -> refcount = 0;
-    string -> length = length;
-    string -> text = text;
+    /* string -> length = length; */
+    string -> size = size;
+    /* string -> text = text; */
 
-    for (Unt i = 0, j = 0; i < length && str[i] != '\0'; i++, j++) {
+    for (Unt i = 0, j = 0; i < size && str[i] != '\0'; i++, j++) {
         if (str[i] == '\\') {
             debug("\\ incomming");
             i++;
-            if (i >= length ) {
+            if (i >= size ) {
                 /* TODO: log error */
                 /* No character is inserted when the final is '\' */
                 break;
             }
-            debug("switch");
             switch (str[i]) {
-            case 'n': text[j] = '\n'; break;
-            case 't': text[j] = '\t'; break;
+            case 'n': string -> text[j] = '\n'; break;
+            case 't': string -> text[j] = '\t'; break;
             }
             break;
         }
-        text[j] = str[i];
+        string -> text[j] = str[i];
     }
 
     return string;

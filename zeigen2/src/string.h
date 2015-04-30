@@ -5,8 +5,10 @@
 
 struct String_s {
     Unt refcount;
-    Unt length;
-    char *text;
+    /* TODO: decide if size should include nullbyte */
+    Unt size; /* length of string in bytes without nullbyte */
+    /* Unt length; */
+    char text[]; /* Incomplete type */
 };
 
 String *string_create_from_substr(char* str, Unt length);
