@@ -31,7 +31,6 @@ LISP_BUILTIN(plus, "") {
 }
 
 LISP_BUILTIN(minus, "") {
-    debug("hej")
     if (args -> length == 1) {
         return VALUE_INTEGER(0);
     }
