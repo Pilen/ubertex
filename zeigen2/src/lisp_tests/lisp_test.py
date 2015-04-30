@@ -54,13 +54,15 @@ def test_file(file):
         tests.append((current_linenumber, "".join(text)))
         # tests = f.read().split(test_separator)
 
+        total = 0
         failed = 0
         for i, (linenumber, test_case) in enumerate(tests):
             if test_case.strip() == "":
                 continue
+            total += 1
             if not test(file, linenumber, test_case):
                 failed += 1
-        return (len(tests), failed)
+        return (total, failed)
 
 
 def test(file, linenumber, code):
