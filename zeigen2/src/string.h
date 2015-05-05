@@ -5,9 +5,8 @@
 
 struct String_s {
     Unt refcount;
-    /* TODO: decide if size should include nullbyte */
-    Unt size; /* length of string in bytes without nullbyte */
-    /* Unt length; */
+    Unt size;
+    /* Unt length; /\* Length of string in bytes without nullbyte *\/ */
     char text[]; /* Incomplete type */
 };
 
