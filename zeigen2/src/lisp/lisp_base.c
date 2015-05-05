@@ -333,35 +333,3 @@ LISP_BUILTIN(let_star, "") {
     return result;
 
 }
-
-LISP_BUILTIN(equal, "") {
-    if (args -> length < 3) {
-        return VALUE_ERROR;
-    }
-
-    Value head = LIST_GET_UNSAFE(args, 1);
-    for (Unt i = 2; i < args -> length; i++) {
-        Value other = LIST_GET_UNSAFE(args, i);
-        if (!equal(head, other)) {
-            return VALUE_NIL;
-        }
-    }
-
-    return symbols_t;
-}
-
-LISP_BUILTIN(eq, "") {
-    if (args -> length < 3) {
-        return VALUE_ERROR;
-    }
-
-    Value head = LIST_GET_UNSAFE(args, 1);
-    for (Unt i = 2; i < args -> length; i++) {
-        Value other = LIST_GET_UNSAFE(args, i);
-        if (!eq(head, other)) {
-            return VALUE_NIL;
-        }
-    }
-
-    return symbols_t;
-}
