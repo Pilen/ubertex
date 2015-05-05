@@ -38,7 +38,7 @@ LISP_BUILTIN(defun, "") {
             docstring = docstring_value.val.string_val;
         }
     }
-    if (docstring == NULL) {
+    if (!docstring) {
         docstring = string_create_from_str("Undocumented function");
     }
 
