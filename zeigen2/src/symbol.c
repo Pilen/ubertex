@@ -46,7 +46,7 @@ Value symbol_get(Value name) {
 
 Value symbol_name(Value symbol){
     Value name;
-    found = hash_get(symbol_names, symbol, &name);
+    Bool found = hash_get(symbol_names, symbol, &name);
     assert(found);
     return name;
 }
