@@ -60,10 +60,6 @@ Value eval_list(Value expression, Environment *environment, List *call_stack) {
         } else if (head.type == SYMBOL && head.val.symbol_val == symbols_clojure.val.symbol_val) {
             clojure = true;
         } else {
-            debug_value(head);
-            debugi(head.type);
-            debugi(head.val.symbol_val);
-            debugi(symbols_lambda.val.symbol_val);
             return VALUE_ERROR;
         }
         List *args = list_create(round_up_to_power_of_2(list -> length + 1));
