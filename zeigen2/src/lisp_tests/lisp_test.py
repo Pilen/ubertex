@@ -7,6 +7,7 @@ test_files_dir = "lisp_tests"
 test_files =[
     "basic.zlt",
     "simple.zlt",
+    "comparison.zlt",
     "defun.zlt",
     # "tests.zlt"
 ]
