@@ -4,6 +4,7 @@
 #include "hash.h"
 #include "symbol.h"
 #include "string.h"
+#include "assert.h"
 
 static Hash *symbol_table;
 static Hash *symbol_names;
@@ -45,6 +46,7 @@ Value symbol_get(Value name) {
 
 Value symbol_name(Value symbol){
     Value name;
-    hash_get(symbol_names, symbol, &name);
+    found = hash_get(symbol_names, symbol, &name);
+    assert(found);
     return name;
 }
