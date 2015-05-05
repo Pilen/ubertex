@@ -21,6 +21,13 @@ void symbol_initialize() {
     symbols_clojure = symbol_get(VALUE_STRING(string_create_from_str("clojure")));
     symbols_ampersand_optional = symbol_get(VALUE_STRING(string_create_from_str("&optional")));
     symbols_ampersand_rest = symbol_get(VALUE_STRING(string_create_from_str("&rest")));
+
+    symbols_symbol = symbol_get(VALUE_STRING(string_create_from_str("symbol")));
+    symbols_integer = symbol_get(VALUE_STRING(string_create_from_str("integer")));
+    symbols_float = symbol_get(VALUE_STRING(string_create_from_str("float")));
+    symbols_string = symbol_get(VALUE_STRING(string_create_from_str("string")));
+    symbols_list = symbol_get(VALUE_STRING(string_create_from_str("list")));
+    symbols_hash = symbol_get(VALUE_STRING(string_create_from_str("hash")));
 }
 
 Value symbol_get(Value name) {
