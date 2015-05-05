@@ -34,8 +34,8 @@ Value read_value(Value value) {
     /* char *end = code + strlen(code); */
     /* Unt linenumber = 0; */
     /* Value result; */
-    /* read_script(&code, end, &linenumber, &result); */
-    /* if (code == end) { */
+    /* Bool found = read_script(&code, end, &linenumber, &result); */
+    /* if (found && code == end) { */
     /*     return result; */
     /* } */
     /* /\* TODO: log error *\/ */
@@ -49,9 +49,9 @@ Value read_from_str(char *str) {
     /* debugv("code = %p, end = %p, diff=%td", code, end, end-code); */
     Unt linenumber = 0;
     Value result;
-    read_script(&code, end, &linenumber, &result);
+    Bool found = read_script(&code, end, &linenumber, &result);
     log_section("====READ-END====");
-    if (code == end) {
+    if (found && code == end) {
         return result;
     }
     /* TODO: log error */
