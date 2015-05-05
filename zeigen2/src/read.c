@@ -41,6 +41,7 @@ Value read_value(Value value) {
     /* /\* TODO: log error *\/ */
     /* return VALUE_ERROR; */
 }
+
 Value read_from_str(char *str) {
     log_section("====READ====");
     char *code = str;
