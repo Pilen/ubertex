@@ -31,7 +31,7 @@ void initialize_SDL(Environment *environment) {
     }
     atexit(SDL_Quit);
 
-    SDL_Window *window = SDL_CreateWindow(PROGRAM_NAME,
+    SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME,
                                           SDL_WINDOWPOS_UNDEFINED,
                                           SDL_WINDOWPOS_UNDEFINED,
                                           0, 0,
