@@ -15,7 +15,6 @@ void program_loop(Environment *environment) {
 
     debugi(SDL_RenderClear(environment -> renderer));
     SDL_RenderPresent(environment -> renderer);
-    debug("hej");
 
     /* TODO: place this correctly */
     environment -> component_next_update = VALUE_NIL;
