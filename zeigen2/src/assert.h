@@ -26,4 +26,5 @@
     } while (0);
 #define assert_build(v) assert(v)
 #endif
+#define assertp(v) assert((v) != NULL);
 #endif
