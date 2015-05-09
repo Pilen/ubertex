@@ -36,6 +36,9 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(+, plus, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(-, minus, true, environment);
 
+    LISP_REGISTER_BUILTIN_FROM_RAW(-, update, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(-, event, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(-, draw, true, environment);
 }
 
 void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, String *docstring, Environment *environment) {
