@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <SDL2/SDL.h>
+
 #include "options.h"
 #include "debug.h"
 #include "initialize.h"
@@ -20,4 +23,27 @@ Environment *initialize(void) {
     lisp_initialize(environment);
     log_section("====INITIALIZE-END====")
     return environment;
+}
+
+void initialize_SDL(Environment *environment) {
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        log_fatal("Unable to initialize SDL: %s", SDL_GetError());
+    }
+    atexit(SDL_Quit);
+
+    SDL_Window *window = SDL_CreateWindow(PROGRAM_NAME,
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          0, 0,
+                                          SDL_WINDOW_FULLSCREEN_DESKTOP);
+    if (!window) {
+        log_fatal("Unable to create a window: %s", SDL_GetError());
+    }
+    environment -> window = window;
+
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+    if (!renderer) {
+        log_fatal("Unable to create a renderer: %s", SDL_GetError());
+    }
+    environment -> renderer = renderer;
 }
