@@ -15,6 +15,7 @@
 #include "readline.h"
 #include "log.h"
 #include "string.h"
+#include "program.h"
 
 int main(int argc, char **argv) {
     Environment *environment = initialize();
@@ -22,31 +23,35 @@ int main(int argc, char **argv) {
     List *call_stack = list_create_empty();
 
     Bool interactive = false;
-
-    Bool finished = false;
+    Bool test_only = false;
 
     List *statements = list_create_empty();
 
     int log_level_execution = OPTION_LOG_LEVEL_EXECUTION;
 
+    Bool finished = false;
     while (!finished) {
-        Int option = getopt(argc, argv, "ie:l:");
+        Int option = getopt(argc, argv, "e:il:t");
         switch (option) {
-        case 'i':
-            interactive = true;
-            break;
         case 'e':
             {
                 Value statement = VALUE_STRING(string_create_from_str(optarg));
                 list_push_back(statements, statement);
                 break;
             }
+        case 'i':
+            interactive = true;
+            test_only = true;
+            break;
         case 'l':
             if (strcmp(optarg, "max") == 0) {
                 log_level_execution = LOG_LEVEL_MAX;
             } else {
                 sscanf(optarg, "%d", &log_level_execution);
             }
+            break;
+        case 't':
+            test_only = true;
             break;
         case -1:
             finished = true;
@@ -55,6 +60,10 @@ int main(int argc, char **argv) {
             log_fatal("Illegal option");
             break;
         }
+    }
+
+    if (!test_only) {
+        initialize_SDL(environment);
     }
 
     log_section("====STATEMENT-EXECUTION====");
@@ -86,4 +95,9 @@ int main(int argc, char **argv) {
             printf("\n");
         }
     }
+
+    if (!test_only) {
+        program_loop(environment);
+    }
+    return EXIT_SUCCESS;
 }
