@@ -1,30 +1,33 @@
 
 #include <stdlib.h>
-#include <zmq.h>
+#include <nanomsg/nn.h>
+#include <nanomsg/pair.h>
+#include <nanomsg/pubsub.h>
 #include <SDL2/SDL.h>
 #include "communication.h"
 #include "assert.h"
+#include "read.h"
+#include "debug.h"
 
 Int communication_loop(void *data);
 
-void *communication_context;
-void *communication_log;
+Int communication_log = -1;
 
 void communication_initialize(char *host) {
-    communication_log = NULL;
+    communication_queue = list_create_empty();
+    communication_queue_lock = SDL_CreateMutex();
+    assertp(communication_queue_lock);
 
-    communication_context = zmq_ctx_new();
-    assert(communication_context != NULL); /* log_fatal("Could not create zmq context"); */
-    void *log = zmq_socket(communication_context, ZMQ_PAIR);
-    assert(log != NULL); /* log_fatal("Could not create zmq socket for communication_log"); */
-    Int bind_error = zmq_bind(log, "inproc://communication_log");
-    assert(bind_error == 0); /* log_fatal("Could not bind communication_log"); */
+    Int log = nn_socket(AF_SP, NN_PAIR);
+    assert(log != -1);
+    Int error = nn_bind(log, "inproc://communication_log");
+    assert(error != -1);
 
     SDL_Thread *thread = SDL_CreateThread(communication_loop, "communication", host);
-    assert(thread != NULL); /* log_fatal("Could not create communication thread"); */
+    assert(thread != NULL);
 
     /* Ensure the communication thread is ready before continuing */
-    Int ready = zmq_recv(log, NULL, 0, 0);
+    Int ready = nn_recv(log, NULL, 0, 0);
     assert(ready >= 0);
     communication_log = log;
 }
@@ -33,58 +36,64 @@ void communication_initialize(char *host) {
 Int communication_loop(void *data) {
     Int error;
 
-    void *log_input = zmq_socket(communication_context, ZMQ_PAIR);
-    assert(log_input != NULL);
-    error = zmq_connect(log_input, "inproc://communication_log");
-    assert(error == 0);
+    Int log_input = nn_socket(AF_SP, NN_PAIR);
+    assert(log_input != -1);
+    error = nn_connect(log_input, "inproc://communication_log");
+    assert(error != -1);
 
     char *host = (char *) data;
 
-    void *incoming = zmq_socket(communication_context, ZMQ_SUB);
-    assert(incoming != NULL);
-    error = zmq_bind(incoming, host);
-    if (error) {
-        log_fatal("Unable to bind incoming socket: %s", zmq_strerror(errno));
+    Int incoming = nn_socket(AF_SP, NN_SUB);
+    assert(incoming != -1);
+    debug(host);
+    error = nn_bind(incoming, host);
+    if (error == -1) {
+        log_fatal("Unable to bind incoming socket: %s", nn_strerror(errno));
     }
 
-    void *outgoing = zmq_socket(communication_context, ZMQ_PUB);
-    assert(outgoing != NULL);
+    Int outgoing = nn_socket(AF_SP, NN_PUB);
+    assert(outgoing != -1);
     /* Nothing to connect to yet */
 
     /* Send a message that we are ready, content not important */
-    Int send_error = zmq_send(log_input, "ready", 5, 0);
-    assert(send_error == 0);
+    error = nn_send(log_input, "ready", 5, 0);
+    assert(error != -1);
 
-    zmq_pollitem_t sockets[] = {
-        {log_input, 0, ZMQ_POLLIN, 0},
-        {incoming, 0, ZMQ_POLLIN, 0},
+    struct nn_pollfd sockets[] = {
+        {log_input, NN_POLLIN, 0},
+        {incoming, NN_POLLIN, 0},
     };
 
     while (true) {
-        zmq_poll(sockets, 2, -1);
+        debug("hund");
+        nn_poll(sockets, 2, -1);
+        debug("fisk");
 
-        if (sockets[0].revents & ZMQ_POLLIN) {
-            zmq_msg_t msg;
-            error = zmq_msg_init(&msg);
-            assert(error == 0);
-            error = zmq_msg_recv(&msg, log_input, 0);
-            assert(error == 0);
+        if (sockets[0].revents & NN_POLLIN) {
+            char* buffer = NULL;
+            Int bytes = nn_recv(log_input, &buffer, NN_MSG, 0);
+            assert(bytes >= 0);
 
-            error = zmq_msg_send(&msg, outgoing, 0);
-            assert(error == 0);
+
+            error = nn_send(outgoing, buffer, bytes, 0);
+            assert(error != -1);
+            debug("log_input");
         }
 
-        if (sockets[1].revents & ZMQ_POLLIN) {
-            /* zmq_msg_t header; */
-            /* error = zmq_msg_init(&header); */
-            /* assert(error == 0); */
+        if (sockets[1].revents & NN_POLLIN) {
+            char *buffer = NULL;
+            Int bytes = nn_recv(incoming, &buffer, NN_MSG, 0);
+            assert(bytes >= 0);
 
-            zmq_msg_t body;
-            error = zmq_msg_init(&body);
-            assert(error == 0);
-            char *text = zmq_msg_data(body);
-            Value lisp = read_from_str(text);
+            Value parsed = read_from_str(buffer);
 
+            debug("incomming");
+            if (SDL_LockMutex(communication_queue_lock) == 0) {
+                list_push_front(communication_queue, parsed);
+                SDL_UnlockMutex(communication_queue_lock);
+            } else {
+                assert(false);
+            }
         }
     }
 
