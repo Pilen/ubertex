@@ -29,6 +29,8 @@ void symbol_initialize() {
     symbols_string = symbol_get(VALUE_STRING(string_create_from_str("string")));
     symbols_list = symbol_get(VALUE_STRING(string_create_from_str("list")));
     symbols_hash = symbol_get(VALUE_STRING(string_create_from_str("hash")));
+
+    symbols_update = symbol_get(VALUE_STRING(string_create_from_str("update")));
 }
 
 Value symbol_get(Value name) {

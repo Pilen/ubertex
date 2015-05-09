@@ -25,4 +25,5 @@ Value symbols_string;
 Value symbols_list;
 Value symbols_hash;
 
+Value symbols_update;
 #endif
