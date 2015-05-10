@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include "list.h"
 
-List *communication_queue;
-SDL_mutex *communication_queue_lock;
-void communication_initialize(char *host);
+List *communication_parsed_queue;
+SDL_mutex *communication_parsed_queue_lock;
+void communication_initialize(Unt port);
 #endif
