@@ -2,24 +2,33 @@
 
 import socket
 
+HEADER_SIZE = 512
+
 host = "127.0.0.1"
 port = 1234
 message = "Hello, World!"
 
-def udp(host, port, message, size=None, verbose=False):
+def send_udp(host, port, bytemessage):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    sock.sendto(bytemessage, (host, port))
 
-    bytemessage = bytes(message, "utf-8")
+def send_tcp(host, port, bytemessage):
+    names = "a"
+    time = "0"
+    command = "lisp"
+    size = len(bytemessage)
 
-    if size is not None:
-        bytemessage = (bytemessage + bytes(max(0, size - len(bytemessage))))[:size]
+    header = "{names};{time};{command};{options}".format(names=names, time=time, command=command, options=size)
+    byteheader = bytes(header, "utf-8")
+    byteheader = (byteheader + bytes(HEADER_SIZE - len(byteheader)))[:HEADER_SIZE]
 
-    if verbose:
-        print(bytemessage)
-
-    sock.sendto(bytemessage, (host, int(port)))
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((host, port))
+    sock.sendall(byteheader)
+    sock.sendall(bytemessage)
+    sock.close()
 
 if __name__ == "__main__":
     import argparse
@@ -38,7 +47,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     host = args.host
-    port = args.port
+    port = int(args.port)
     message = args.message
 
     protocol = args.protocol
@@ -46,7 +55,14 @@ if __name__ == "__main__":
     size = args.size
     verbose = args.verbose
 
+    bytemessage = bytes(message, "utf-8")
+    if size is not None:
+        bytemessage = (bytemessage + bytes(max(0, size - len(bytemessage))))[:size]
+    if verbose:
+        print(bytemessage)
+
+
     if protocol == "udp":
-        udp(host, port, message, size, verbose)
+        send_udp(host, port, bytemessage)
     elif protocol == "tcp":
-        print("TCP protocol not yet supported")
+        send_tcp(host, port, bytemessage)
