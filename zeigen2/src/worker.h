@@ -1,6 +1,6 @@
-#ifndef Z_PROGRAM_H
-#define Z_PROGRAM_H
+#ifndef Z_WORKER_H
+#define Z_WORKER_H
 
-void program_loop(Environment *environment);
+void worker_loop(Environment *environment);
 
 #endif

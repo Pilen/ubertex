@@ -2,18 +2,19 @@
 #include <SDL2/SDL.h>
 
 #include "environment.h"
-#include "program.h"
+#include "worker.h"
 #include "debug.h"
 #include "list.h"
 #include "assert.h"
 #include "eval.h"
+#include "communication.h"
 
-void program_update(Environment *environment, List *call_stack);
+void worker_update(Environment *environment, List *call_stack);
 
-void program_loop(Environment *environment) {
+void worker_loop(Environment *environment) {
     SDL_SetRenderDrawColor(environment -> renderer, 255, 0, 0, 255);
 
-    debugi(SDL_RenderClear(environment -> renderer));
+    SDL_RenderClear(environment -> renderer);
     SDL_RenderPresent(environment -> renderer);
 
     /* TODO: place this correctly */
@@ -30,8 +31,21 @@ void program_loop(Environment *environment) {
             }
         }
 
+        if (SDL_TryLockMutex(communication_parsed_queue_lock) == 0) {
+            if (communication_parsed_queue -> length > 0){
+                Value expression = list_pop_front(communication_parsed_queue);
+                SDL_UnlockMutex(communication_parsed_queue_lock);
+                print(expression);
+                printf("\n");
+                Value result = eval(expression, environment, call_stack);
+                print(result);
+                printf("\n");
+            } else {
+                SDL_UnlockMutex(communication_parsed_queue_lock);
+            }
+        }
 
-        program_update(environment, call_stack);
+        worker_update(environment, call_stack);
         assert(call_stack -> length == 0);
 
         SDL_RenderPresent(environment -> renderer);
@@ -39,7 +53,7 @@ void program_loop(Environment *environment) {
     }
 }
 
-void program_update(Environment *environment, List *call_stack) {
+void worker_update(Environment *environment, List *call_stack) {
     /* Lookup must be done every frame as the body can be redefined. */
     Value next_update_symbol = environment -> component_next_update;
     /* TODO: or a lambda! */
