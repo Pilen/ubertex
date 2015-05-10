@@ -47,9 +47,9 @@
 
 # .PHONY: all clean
 
-CFLAGS=-std=c99 -Wall -Werror -pedantic -Wno-unused-result -ggdb -DDEBUG
+CFLAGS=-std=c99 -Wall -Werror -pedantic -Wno-unused-result -ggdb -DDEBUG -Wuninitialized -Wmaybe-uninitialized -Winit-self -Wunused-result -Wunused
 CFLAGS += -MD -MP
-LFLAGS=-lreadline
+LFLAGS=-lreadline -lSDL2 -lSDL2_net
 
 SRC = $(wildcard *.c)
 SRC += $(wildcard lisp/*.c)
@@ -61,18 +61,23 @@ all: repl test Makefile linecount
 repl: $(SRC:%.c=%.o)
 	cc $(LFLAGS) -o $@ $^
 
-clean:
-	rm -f *.o *.d repl    lisp/*.o lisp/*.d    tests_src/*.o tests_src/*.d tests
-
 tests: $(TESTS_SRC:%.c=%.o)
 	cc $(LFLAGS) -o $@ $^
 
 test: tests
 	timeout 30s ./tests && timeout 30s ./lisp_tests/lisp_test.py
 
+clean:
+	rm -f *.o *.d repl    lisp/*.o lisp/*.d    tests_src/*.o tests_src/*.d tests
+
 linecount:
 	echo -n "linecount: " && cat *.c *.h */*.c */*.h */*.py */*.zlt | wc -l
 
 .PHONY: all clean linecount
+
+-include .dummy
+.dummy: Makefile
+	@touch $@
+	@$(MAKE) -s clean
 
 -include $(SRC:%.c=%.d) $(TESTS_SRC:%.c=%.d)
