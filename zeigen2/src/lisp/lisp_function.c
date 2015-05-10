@@ -49,7 +49,7 @@ LISP_BUILTIN(defun, "") {
         list_push_back(body, statement);
     }
 
-    Function *function = z_malloc(sizeof(Function));
+    Function *function = memory_malloc(sizeof(Function));
     function -> eval = true;
     function -> c_code = false;
     function -> c_function = NULL;

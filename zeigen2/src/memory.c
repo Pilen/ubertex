@@ -35,8 +35,8 @@ void memory_free(void *ptr) {
     free(ptr);
 }
 
-void z_ref_inc(Value value) {
+void memory_ref_inc(Value value) {
 }
-void z_ref_dec(Value value) {
+void memory_ref_dec(Value value) {
 
 }

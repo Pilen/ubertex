@@ -17,8 +17,8 @@ Hash *hash_create(void) {
     assert_build((1.0 / HASH_EXPANSION_FACTOR) > HASH_CONTRACT_LIMIT);
     assert_build(HASH_EXPAND_LIMIT > HASH_CONTRACT_LIMIT);
     assert_build(HASH_EXPAND_LIMIT <= 1.0);
-    Hash *hash = z_malloc(sizeof(Hash));
-    Hash_entry *entries = z_calloc(HASH_DEFAULT_SIZE,
+    Hash *hash = memory_malloc(sizeof(Hash));
+    Hash_entry *entries = memory_calloc(HASH_DEFAULT_SIZE,
                                    sizeof(Hash_entry));
 
     hash -> refcount = 0;
@@ -98,8 +98,8 @@ Bool hash_delete(Hash *hash, Value key) {
             if (entry -> key_hash1 == h1 &&
                 entry -> key_hash2 == h2 &&
                 equal(entry -> key, key)) {
-                z_ref_dec(entry -> key);
-                z_ref_dec(entry -> data);
+                memory_ref_dec(entry -> key);
+                memory_ref_dec(entry -> data);
                 entry -> status = HASH_DELETED;
                 hash -> length--;
 
@@ -126,8 +126,8 @@ void hash_insert(Hash *hash, Unt h1, Unt h2, Value key, Value data) {
             /* NOTE: Should a copy of key be stored instead? */
             entry -> key = key;
             entry -> data = data;
-            z_ref_inc(key);
-            z_ref_inc(data);
+            memory_ref_inc(key);
+            memory_ref_inc(data);
 
             hash -> length++;
             return;
@@ -163,7 +163,7 @@ void hash_resize(Hash *hash) {
         return;
     }
 
-    Hash_entry *new_entries = z_calloc(new_size, sizeof(Hash_entry));
+    Hash_entry *new_entries = memory_calloc(new_size, sizeof(Hash_entry));
 
     hash -> size = new_size;
     hash -> entries = new_entries;

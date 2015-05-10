@@ -42,7 +42,7 @@ void lisp_initialize(Environment *environment) {
 }
 
 void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, String *docstring, Environment *environment) {
-    Function *function = z_malloc(sizeof(Function));
+    Function *function = memory_malloc(sizeof(Function));
     function -> eval = eval;
     function -> c_code = true;
     function -> c_function = c_function;

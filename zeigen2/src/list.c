@@ -10,8 +10,8 @@ void list_contract(List *list);
 
 List *list_create(Unt size) {
     assert_build((1.0 / LIST_EXPANSION_FACTOR) > LIST_CONTRACT_LIMIT);
-    List *list = z_malloc(sizeof(List));
-    Value *data= z_calloc(size, sizeof(Value));
+    List *list = memory_malloc(sizeof(List));
+    Value *data= memory_calloc(size, sizeof(Value));
 
     list -> refcount = 0;
     list -> size = size;
@@ -37,7 +37,7 @@ void list_push_front(List *list, Value value) {
     list -> start = index;
     list -> length++;
 
-    z_ref_inc(value);
+    memory_ref_inc(value);
 }
 
 void list_push_back(List *list, Value value) {
@@ -49,7 +49,7 @@ void list_push_back(List *list, Value value) {
     list -> data[index] = value;
     list -> length++;
 
-    z_ref_inc(value);
+    memory_ref_inc(value);
 }
 
 Value list_pop_front(List *list) {
@@ -59,7 +59,7 @@ Value list_pop_front(List *list) {
     }
 
     Value value = LIST_GET_UNSAFE(list, 0);
-    z_ref_dec(value);
+    memory_ref_dec(value);
 
     /* Move start 1 forward and decrease length so end stays the same */
     list -> start = (list -> start + 1) % list -> size;
@@ -80,7 +80,7 @@ Value list_pop_back(List *list) {
     }
 
     Value value = LIST_GET_UNSAFE(list, list -> length - 1);
-    z_ref_dec(value);
+    memory_ref_dec(value);
 
     list -> length--;
 
@@ -131,8 +131,8 @@ Bool list_set(List *list, Unt position, Value value) {
 
     Unt index = (list -> start + position) % list -> size;
 
-    z_ref_dec(list -> data[index]);
-    z_ref_inc(value);
+    memory_ref_dec(list -> data[index]);
+    memory_ref_inc(value);
 
     list -> data[index] = value;
     return true;
@@ -157,7 +157,7 @@ void list_expand(List *list) {
     if (new_size == list -> size) {
         new_size++;
     }
-    Value *new_data= z_calloc(new_size, sizeof(Value));
+    Value *new_data= memory_calloc(new_size, sizeof(Value));
 
     /* TODO: ensure correctenes of castings + roundings
            is start at the correct place when start = 0 and start at end? */
@@ -192,7 +192,7 @@ void list_contract(List *list) {
 
     /* contract to previous size when under limit */
     Unt new_size = list -> size / LIST_EXPANSION_FACTOR;
-    Value *new_data = z_calloc(new_size, sizeof(Value));
+    Value *new_data = memory_calloc(new_size, sizeof(Value));
     /* TODO: ensure correctenes of castings + roundings
        is start at the correct place when start = 0 and start at end? */
     Unt new_start = (Unt) ((float) list -> start / list -> size) * new_size;

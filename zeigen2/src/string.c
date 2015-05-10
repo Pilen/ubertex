@@ -14,10 +14,10 @@
 String *string_create_from_substr(char* str, Unt size) {
     /* TODO: As this only works with ASCII now, it holds that length == size.
        This is not true for unicode?!. */
-    String *string = z_cmalloc(sizeof(String) + sizeof(char) * size + 1);
+    String *string = memory_cmalloc(sizeof(String) + sizeof(char) * size + 1);
     /* Add 1 for null char when allocating
        Cleared by calloc */
-    /* char *text = z_calloc(length + 1, sizeof(char)); */
+    /* char *text = memory_calloc(length + 1, sizeof(char)); */
 
     string -> refcount = 0;
     /* string -> length = length; */
