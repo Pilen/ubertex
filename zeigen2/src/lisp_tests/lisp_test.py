@@ -85,7 +85,7 @@ def test(file, linenumber, code):
     return lisp(file, linenumber, statements, expected)
 
 def lisp(file, linenumber, statements, expected_values):
-    program = [repl, "-l", "0"]
+    program = [repl, "-t", "-l", "0"]
     for statement in statements:
         program.append("-e")
         program.append(statement)
