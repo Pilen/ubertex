@@ -15,7 +15,7 @@
 #include "readline.h"
 #include "log.h"
 #include "string.h"
-#include "program.h"
+#include "worker.h"
 #include "communication.h"
 
 int main(int argc, char **argv) {
@@ -85,7 +85,6 @@ int main(int argc, char **argv) {
     for (Unt i = 0; i < statements -> length; i++) {
         Value raw = LIST_GET_UNSAFE(statements, i);
         Value statement = read_value(raw);
-        /* print(statement); */
         log_section("====EVALUATION====");
         Value result = eval(statement, environment, call_stack);
         log_section("====EVALUATION-END====");
@@ -95,12 +94,12 @@ int main(int argc, char **argv) {
     }
 
     if (interactive) {
-        /* Do stuff */
         while (true) {
             char *line = z_readline("> ");
             if (strcmp(line, "(quit)") == 0 || strcmp(line, "(exit)") == 0) {
                 break;
             }
+            read_from_str("abc");
             Value statement = read_from_str(line);
             free(line);
             Value result = eval(statement, environment, call_stack);
@@ -110,8 +109,8 @@ int main(int argc, char **argv) {
     }
 
     if (!test_only) {
-        communication_initialize(host);
-        program_loop(environment);
+        communication_initialize(port);
+        worker_loop(environment);
     }
     return EXIT_SUCCESS;
 }
