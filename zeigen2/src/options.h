@@ -15,4 +15,6 @@
 #define OPTION_PROGRAM_NAME "zeigen"
 #define OPTION_DEFAULT_PORT 9999
 
+#define OPTION_HEADER_SIZE 512
+
 #endif
