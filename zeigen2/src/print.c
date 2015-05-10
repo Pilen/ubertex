@@ -49,4 +49,5 @@ void print(Value value) {
         printf("Illegal type: %d", value.type);
         break;
     }
+    fflush(stdout);
 }
