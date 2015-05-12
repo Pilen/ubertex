@@ -12,24 +12,21 @@
 void worker_update(Environment *environment);
 
 void worker_loop(Environment *environment) {
-    SDL_SetRenderDrawColor(environment -> renderer, 255, 0, 0, 255);
-
-    SDL_RenderClear(environment -> renderer);
-    SDL_RenderPresent(environment -> renderer);
-
-    /* TODO: place this correctly */
-    environment -> component_next_update = VALUE_NIL;
-    environment -> component_next_update_args = list_create_empty();
-
-    List *call_stack = list_create_empty();
-
     while (true) {
+        SDL_SetRenderDrawColor(environment -> renderer,
+                               environment -> setting_clear_red,
+                               environment -> setting_clear_green,
+                               environment -> setting_clear_blue,
+                               environment -> setting_clear_alpha);
+        SDL_RenderClear(environment -> renderer);
+
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 exit(EXIT_SUCCESS);
             }
         }
+
 
         if (SDL_TryLockMutex(communication_parsed_queue_lock) == 0) {
             if (communication_parsed_queue -> length > 0){
