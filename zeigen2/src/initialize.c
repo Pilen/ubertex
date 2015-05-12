@@ -8,6 +8,7 @@
 #include "lisp.h"
 #include "environment.h"
 #include "log.h"
+#include "resource.h"
 
 Environment *initialize(void) {
     /* static Bool initialized = false; */
@@ -21,6 +22,7 @@ Environment *initialize(void) {
     symbol_initialize();
     Environment *environment = environment_create();
     lisp_initialize(environment);
+    resource_initialize();
     log_section("====INITIALIZE-END====")
     return environment;
 }
