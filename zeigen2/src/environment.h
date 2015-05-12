@@ -11,11 +11,12 @@ typedef struct {
     Value component_next_update;
     List *component_next_update_args;
 
-    Bool setting_clear;
-    char setting_clear_red;
-    char setting_clear_green;
-    char setting_clear_blue;
-    char setting_clear_alpha;
+    /* TODO: decide color type */
+    uint8_t setting_clear_red;
+    uint8_t setting_clear_green;
+    uint8_t setting_clear_blue;
+    uint8_t setting_clear_alpha;
+
     Hash *other_settings;
     Int setting_screen_width; /* ??? */
     Int setting_screen_height; /* ??? */
