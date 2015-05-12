@@ -131,6 +131,7 @@ void communication_receive(TCPsocket socket) {
 }
 
 void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
+    Int error;
     char body[size + 1];
     body[size] = '\0';
     Int result = SDLNet_TCP_Recv(socket, body, size);
@@ -140,11 +141,10 @@ void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
     }
 
     Value parsed = read_from_str(body);
-    if (SDL_LockMutex(communication_parsed_queue_lock) == 0) {
-        list_push_front(communication_parsed_queue, parsed);
-        SDL_UnlockMutex(communication_parsed_queue_lock);
-    } else {
-        log_error("Couldn't lock mutex, communication_parsed_queue_lock");
-    }
+    error = SDL_LockMutex(communication_parsed_queue_lock);
+    assert(error == 0);
+    list_push_front(communication_parsed_queue, parsed);
+    error = SDL_UnlockMutex(communication_parsed_queue_lock);
+    assert(error == 0);
 
 }
