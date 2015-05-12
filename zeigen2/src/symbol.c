@@ -34,7 +34,6 @@ void symbol_initialize() {
 }
 
 Value symbol_get(Value name) {
-    /* TODO: a `hash_in' function might be useful */
     Value symbol;
     Bool found = hash_get(symbol_table, name, &symbol);
     if (!found) {
