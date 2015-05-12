@@ -50,6 +50,7 @@ typedef enum {
 #define VALUE_FUNCTION(val) ((Value) {FUNCTION, {.function_val = val}})
 #define VALUE_VECTOR4I(val) ((Value) {VECTOR4I, {.vector4i_val = val}})
 #define VALUE_VECTOR4F(val) ((Value) {VECTOR4F, {.vector4f_val = val}})
+#define VALUE_RESOURCE(val) ((Value) {RESOURCE, {.resource_val = val}})
 
 
 /* Actual datatype declarations */
