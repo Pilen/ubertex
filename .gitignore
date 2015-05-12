@@ -8,3 +8,6 @@
 
 *.o
 *.d
+
+*.agignore
+.dummy
