@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
     }
 
     if (!host) {
-        host = malloc(sizeof(char) * 256);
+        host = memory_malloc(sizeof(char) * 256);
         memset(host, '\0', 256);
         snprintf(host, 255, "tcp://*:%d", port);
     }
