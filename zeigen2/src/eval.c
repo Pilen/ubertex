@@ -9,13 +9,13 @@
 #include "log.h"
 #include "assert.h"
 
-Value eval_list(Value expression, Environment *environment, List *call_stack);
-Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment, List *call_stack);
+Value eval_list(Value expression, Environment *environment);
+Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment);
 Bool eval_get_bindings(List *args, List *parameters, List *bindings);
-Value eval_lambda(Value function_symbol, List *args, Environment *environment, List *call_stack);
-Value eval_clojure(Value function_symbol, List *args, Environment *environment, List *call_stack);
+Value eval_lambda(Value function_symbol, List *args, Environment *environment);
+Value eval_clojure(Value function_symbol, List *args, Environment *environment);
 
-Value eval(Value expression, Environment *environment, List *call_stack) {
+Value eval(Value expression, Environment *environment) {
     switch (expression.type) {
     case ERROR:
     case NIL:
@@ -36,11 +36,11 @@ Value eval(Value expression, Environment *environment, List *call_stack) {
         }
     }
     case LIST:
-        return eval_list(expression, environment, call_stack);
+        return eval_list(expression, environment);
     }
 }
 
-Value eval_list(Value expression, Environment *environment, List *call_stack) {
+Value eval_list(Value expression, Environment *environment) {
     assert(expression.type == LIST);
     /* NOTE: Is this necesary? It should already be handled in the parser.
        But it might be needed due to eval */
@@ -66,14 +66,14 @@ Value eval_list(Value expression, Environment *environment, List *call_stack) {
         /* Not actually used, but keeps convention like when not evaling */
         list_push_back(args, symbols_lambda);
         for (Unt i = 1; i < list -> length; i++) {
-            Value evaled_arg = eval(LIST_GET_UNSAFE(list, i), environment, call_stack);
+            Value evaled_arg = eval(LIST_GET_UNSAFE(list, i), environment);
             list_push_back(args, evaled_arg);
         }
         Value result;
         if (clojure) {
-            result = eval_clojure(function_symbol, args, environment, call_stack);
+            result = eval_clojure(function_symbol, args, environment);
         } else {
-            result = eval_lambda(function_symbol, args, environment, call_stack);
+            result = eval_lambda(function_symbol, args, environment);
         }
         list_destroy(args);
         return result;
@@ -94,7 +94,7 @@ Value eval_list(Value expression, Environment *environment, List *call_stack) {
         /* Not actually used, but keeps convention like when not evaling */
         list_push_back(args, function_symbol);
         for (Unt i = 1; i < list -> length; i++) {
-            Value evaled_arg = eval(LIST_GET_UNSAFE(list, i), environment, call_stack);
+            Value evaled_arg = eval(LIST_GET_UNSAFE(list, i), environment);
             list_push_back(args, evaled_arg);
         }
     } else {
@@ -107,15 +107,15 @@ Value eval_list(Value expression, Environment *environment, List *call_stack) {
 
     Value result;
     if (function -> c_code) {
-        result = function -> c_function(args, environment, call_stack);
+        result = function -> c_function(args, environment);
     } else {
-        result = eval_apply(function_symbol, function, args, environment, call_stack);
+        result = eval_apply(function_symbol, function, args, environment);
     }
     list_destroy(args);
     return result;
 }
 
-Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment, List *call_stack) {
+Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment) {
     List *bindings = list_create(args -> size);
     Bool bindings_wellformed = eval_get_bindings(args, function -> parameters, bindings);
     if (!bindings_wellformed) {
@@ -127,9 +127,9 @@ Value eval_apply(Value function_symbol, Function *function, List *args, Environm
     List *not_bound = list_create_empty();
     eval_bind(bindings, environment, old_bindings, not_bound);
 
-    list_push_back(call_stack, function_symbol);
-    Value result = eval(function -> body, environment, call_stack);
-    list_pop_back(call_stack);
+    list_push_back(environment -> call_stack, function_symbol);
+    Value result = eval(function -> body, environment);
+    list_pop_back(environment -> call_stack);
 
     eval_unbind(environment, old_bindings, not_bound);
     list_destroy(old_bindings);
@@ -137,10 +137,10 @@ Value eval_apply(Value function_symbol, Function *function, List *args, Environm
     return result;
 }
 
-Value eval_lambda(Value function_symbol, List *args, Environment *environment, List *call_stack) {
+Value eval_lambda(Value function_symbol, List *args, Environment *environment) {
     return VALUE_ERROR;
 }
-Value eval_clojure(Value function_symbol, List *args, Environment *environment, List *call_stack) {
+Value eval_clojure(Value function_symbol, List *args, Environment *environment) {
     return VALUE_ERROR;
 }
 
