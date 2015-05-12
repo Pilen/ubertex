@@ -12,7 +12,7 @@ LISP_BUILTIN(progn, "") {
     Value value = VALUE_NIL;
     for (Unt i = 1; i < args -> length; i++) {
         Value arg = LIST_GET_UNSAFE(args, i);
-        value = eval(arg, environment, call_stack);
+        value = eval(arg, environment);
     }
     return value;
 }
@@ -31,7 +31,7 @@ LISP_BUILTIN(eval, "") {
     }
 
     Value body = LIST_GET_UNSAFE(args, 1);
-    return eval(body, environment, call_stack);
+    return eval(body, environment);
 }
 
 LISP_BUILTIN(list, "") {
@@ -52,21 +52,21 @@ LISP_BUILTIN(if, "") {
         return VALUE_ERROR;
     }
 
-    Value condition = eval(LIST_GET_UNSAFE(args, 1), environment, call_stack);
+    Value condition = eval(LIST_GET_UNSAFE(args, 1), environment);
     condition = NILIFY(condition);
     switch (condition.type) {
     case ERROR:
         return VALUE_ERROR;
     default:
         {
-            Value consequent = eval(LIST_GET_UNSAFE(args, 2), environment, call_stack);
+            Value consequent = eval(LIST_GET_UNSAFE(args, 2), environment);
             return consequent;
         }
     case NIL:
         {
             Value alternative = VALUE_NIL;
             for (Unt i = 3; i < args -> length; i++) {
-                alternative = eval(LIST_GET_UNSAFE(args, i), environment, call_stack);
+                alternative = eval(LIST_GET_UNSAFE(args, i), environment);
             }
             return alternative;
         }
@@ -78,7 +78,7 @@ LISP_BUILTIN(when, "") {
     if (args -> length < 2) {
         return VALUE_ERROR;
     }
-    Value condition = eval(LIST_GET_UNSAFE(args, 1), environment, call_stack);
+    Value condition = eval(LIST_GET_UNSAFE(args, 1), environment);
     condition = NILIFY(condition);
     switch (condition.type) {
     case ERROR:
@@ -87,7 +87,7 @@ LISP_BUILTIN(when, "") {
         {
             Value alternative = VALUE_NIL;
             for (Unt i = 2; i < args -> length; i++) {
-                alternative = eval(LIST_GET_UNSAFE(args, i), environment, call_stack);
+                alternative = eval(LIST_GET_UNSAFE(args, i), environment);
             }
             return alternative;
         }
@@ -101,7 +101,7 @@ LISP_BUILTIN(unless, "") {
     if (args -> length < 2) {
         return VALUE_ERROR;
     }
-    Value condition = eval(LIST_GET_UNSAFE(args, 1), environment, call_stack);
+    Value condition = eval(LIST_GET_UNSAFE(args, 1), environment);
     condition = NILIFY(condition);
     switch (condition.type) {
     case ERROR:
@@ -112,7 +112,7 @@ LISP_BUILTIN(unless, "") {
         {
             Value alternative = VALUE_NIL;
             for (Unt i = 2; i < args -> length; i++) {
-                alternative = eval(LIST_GET_UNSAFE(args, i), environment, call_stack);
+                alternative = eval(LIST_GET_UNSAFE(args, i), environment);
             }
             return alternative;
         }
@@ -126,7 +126,7 @@ LISP_BUILTIN(while, "") {
 
     Value condition = LIST_GET_UNSAFE(args, 1);
     while (true) {
-        Value result = eval(condition, environment, call_stack);
+        Value result = eval(condition, environment);
         result = NILIFY(result);
         switch(result.type) {
         case ERROR:
@@ -136,7 +136,7 @@ LISP_BUILTIN(while, "") {
         default:
             for (Unt i = 2; i < args -> length; i++) {
                 Value body = LIST_GET_UNSAFE(args, i);
-                eval(body, environment, call_stack);
+                eval(body, environment);
             }
         }
     }
@@ -200,7 +200,7 @@ LISP_BUILTIN(setq, "") {
         symbol = NILIFY(symbol);
 
         value = LIST_GET_UNSAFE(args, i * 2 + 1 + 1);
-        value = eval(value, environment, call_stack);
+        value = eval(value, environment);
 
         if (symbol.type != SYMBOL ||
             symbol.val.symbol_val == symbols_t.val.symbol_val) {
@@ -212,7 +212,7 @@ LISP_BUILTIN(setq, "") {
 
     if (i * 2 < args -> length - 1) {
         symbol = LIST_GET_UNSAFE(args, i * 2 + 1);
-        symbol = eval(symbol, environment, call_stack);
+        symbol = eval(symbol, environment);
         symbol = NILIFY(symbol);
 
         if (symbol.type != SYMBOL ||
@@ -252,7 +252,7 @@ LISP_BUILTIN(let, "") {
                 } else if (pair.val.list_val -> length == 2) {
                     symbol = LIST_GET_UNSAFE(pair.val.list_val, 0);
                     value = LIST_GET_UNSAFE(pair.val.list_val, 1);
-                    value = eval(value, environment, call_stack);
+                    value = eval(value, environment);
                 } else {
                     return VALUE_ERROR;
                 }
@@ -271,7 +271,7 @@ LISP_BUILTIN(let, "") {
     Value result = VALUE_NIL;
     for (Unt i = 2; i < args -> length; i++) {
         Value body = LIST_GET_UNSAFE(args, i);
-        result = eval(body, environment, call_stack);
+        result = eval(body, environment);
     }
     eval_unbind(environment, old_bindings, not_bound);
     return result;
@@ -302,7 +302,7 @@ LISP_BUILTIN(let_star, "") {
             } else if (pair.val.list_val -> length == 2) {
                 symbol = LIST_GET_UNSAFE(pair.val.list_val, 0);
                 value = LIST_GET_UNSAFE(pair.val.list_val, 1);
-                value = eval(value, environment, call_stack);
+                value = eval(value, environment);
             } else {
                 list_destroy(old_bindings);
                 list_destroy(not_bound);
@@ -327,7 +327,7 @@ LISP_BUILTIN(let_star, "") {
     Value result = VALUE_NIL;
     for (Unt i = 2; i < args -> length; i++) {
         Value body = LIST_GET_UNSAFE(args, i);
-        result = eval(body, environment, call_stack);
+        result = eval(body, environment);
     }
     eval_unbind(environment, old_bindings, not_bound);
     return result;

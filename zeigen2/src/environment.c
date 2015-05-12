@@ -8,5 +8,7 @@ Environment *environment_create(void) {
     Environment *environment = memory_malloc(sizeof(Environment));
     environment -> variables = hash_create();
     environment -> functions = hash_create();
+
+    environment -> call_stack = list_create_empty();
     return environment;
 }

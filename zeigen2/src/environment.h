@@ -22,6 +22,8 @@ typedef struct {
 
     Hash *variables;
     Hash *functions;
+
+    List *call_stack;
 } Environment;
 
 Environment *environment_create(void);

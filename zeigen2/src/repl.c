@@ -17,10 +17,10 @@
 #include "string.h"
 #include "worker.h"
 #include "communication.h"
+#include "memory.h"
 
 int main(int argc, char **argv) {
     Environment *environment = initialize();
-    List *call_stack = list_create_empty();
 
     List *statements = list_create_empty();
 
@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
         Value raw = LIST_GET_UNSAFE(statements, i);
         Value statement = read_value(raw);
         log_section("====EVALUATION====");
-        Value result = eval(statement, environment, call_stack);
+        Value result = eval(statement, environment);
         log_section("====EVALUATION-END====");
         print(result);
         printf("\n");
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
             read_from_str("abc");
             Value statement = read_from_str(line);
             free(line);
-            Value result = eval(statement, environment, call_stack);
+            Value result = eval(statement, environment);
             print(result);
             printf("\n");
         }
