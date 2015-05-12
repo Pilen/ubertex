@@ -208,3 +208,17 @@ void list_contract(List *list) {
     list -> start = new_start;
     list -> data = new_data;
 }
+
+void list_sort(List *list, Int (*compare)(Value a, Value b)) {
+    /* if (list -> start + list -> length >= list -> size) { */
+    /*     /\* TODO: implement *\/ */
+    /*     /\* list_normalize(list); *\/ */
+    /*     assert(false); */
+    /* } */
+
+    /* qsort(list -> data, list -> length, sizeof(Value), list_sort_comparison, compare); */
+}
+
+void list_sort_comparison(const void *a, const void*b, void *comparison) {
+    /* return comparison(* (Value *)a, * (Value *) b); */
+}

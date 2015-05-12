@@ -40,4 +40,7 @@ Value list_get(List *list, Unt position);
 /* List *LIST_GET_UNSAFE(List *list, Unt position); */
 #define LIST_GET_UNSAFE(list, position) (list) -> data[((list) -> start + (position)) % (list) -> size]
 
+void list_sort(List *list, Int (*compare)(Value a, Value b));
+
+
 #endif
