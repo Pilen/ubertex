@@ -21,8 +21,7 @@ void communication_initialize(Unt port) {
     atexit(SDLNet_Quit);
 
     communication_parsed_queue = list_create_empty();
-    communication_parsed_queue_lock = SDL_CreateMutex();
-    assert(communication_parsed_queue_lock);
+    communication_parsed_queue_lock = mutex_create();
 
     /* Ensure the port is located on the heap, not the stack as it can change */
     Unt *port_heap = memory_malloc(sizeof(Unt));
@@ -131,7 +130,6 @@ void communication_receive(TCPsocket socket) {
 }
 
 void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
-    Int error;
     char body[size + 1];
     body[size] = '\0';
     Int result = SDLNet_TCP_Recv(socket, body, size);
@@ -141,10 +139,8 @@ void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
     }
 
     Value parsed = read_from_str(body);
-    error = SDL_LockMutex(communication_parsed_queue_lock);
-    assert(error == 0);
+    mutex_lock(communication_parsed_queue_lock);
     list_push_front(communication_parsed_queue, parsed);
-    error = SDL_UnlockMutex(communication_parsed_queue_lock);
-    assert(error == 0);
+    mutex_unlock(communication_parsed_queue_lock);
 
 }

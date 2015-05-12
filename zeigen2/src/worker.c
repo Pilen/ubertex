@@ -28,13 +28,15 @@ void worker_loop(Environment *environment) {
         }
 
 
-        if (SDL_TryLockMutex(communication_parsed_queue_lock) == 0) {
+        if (mutex_trylock(communication_parsed_queue_lock)) {
             if (communication_parsed_queue -> length > 0){
                 Value expression = list_pop_front(communication_parsed_queue);
-                SDL_UnlockMutex(communication_parsed_queue_lock); print(expression); printf("\n");
-                Value result = eval(expression, environment); print(result); printf("\n");
+                mutex_unlock(communication_parsed_queue_lock);
+                print(expression); printf("\n");
+                Value result = eval(expression, environment);
+                print(result); printf("\n");
             } else {
-                SDL_UnlockMutex(communication_parsed_queue_lock);
+                mutex_unlock(communication_parsed_queue_lock);
             }
         }
 

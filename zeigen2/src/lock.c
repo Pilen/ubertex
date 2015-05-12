@@ -4,7 +4,7 @@
 #include "memory.h"
 #include "assert.h"
 
-Lock_RW *lock_create_rw() {
+Lock_RW *lock_rw_create() {
     Lock_RW *lock = memory_malloc(sizeof(Lock_RW));
     lock -> readcount = 0;
     lock -> write = SDL_CreateMutex();
@@ -14,35 +14,56 @@ Lock_RW *lock_create_rw() {
 }
 
 void lock_read_lock(Lock_RW *lock) {
-    Int error;
-    error = SDL_LockMutex(lock -> incomming); assert(error == 0);
-    error = SDL_LockMutex(lock -> critical); assert(error == 0);
+    mutex_lock(lock -> incomming);
+    mutex_lock(lock -> critical);
     lock -> readcount++;
     if (lock -> readcount == 1) {
-        error = SDL_LockMutex(lock -> write); assert(error == 0);
+        mutex_lock(lock -> write);
     }
-    error = SDL_UnlockMutex(lock -> critical); assert(error == 0);
-    error = SDL_UnlockMutex(lock -> incomming); assert(error == 0);
+    mutex_unlock(lock -> critical);
+    mutex_unlock(lock -> incomming);
 }
 
 void lock_read_unlock(Lock_RW *lock) {
-    Int error;
-    error = SDL_LockMutex(lock -> critical); assert(error == 0);
+    mutex_lock(lock -> critical);
     lock -> readcount--;
     if (lock -> readcount== 0) {
-        error = SDL_UnlockMutex(lock -> write); assert(error == 0);
+        mutex_unlock(lock -> write);
     }
-    error = SDL_UnlockMutex(lock -> critical); assert(error == 0);
-
+    mutex_unlock(lock -> critical);
 }
+
 void lock_write_lock(Lock_RW *lock) {
-    Int error;
-    error = SDL_LockMutex(lock -> incomming); assert(error == 0);
-    error = SDL_LockMutex(lock -> write); assert(error == 0);
-    error = SDL_UnlockMutex(lock -> incomming); assert(error == 0);
+    mutex_lock(lock -> incomming);
+    mutex_lock(lock -> write);
+    mutex_unlock(lock -> incomming);
 }
 
 void lock_write_unlock(Lock_RW *lock) {
-    Int error;
-    error = SDL_UnlockMutex(lock -> write); assert(error == 0);
+    mutex_unlock(lock -> write);
+}
+
+
+Mutex *mutex_create() {
+    Mutex *mutex = SDL_CreateMutex();
+    assert(mutex);
+    return mutex;
+}
+void mutex_lock(Mutex *lock) {
+    Int error = SDL_LockMutex(lock);
+    assert(error == 0);
+}
+void mutex_unlock(Mutex *lock) {
+    Int error = SDL_UnlockMutex(lock);
+    assert(error == 0);
+}
+Bool mutex_trylock(Mutex *lock) {
+    Int status = SDL_TryLockMutex(lock);
+    if (status == 0) {
+        return true;
+    } else if (status == SDL_MUTEX_TIMEDOUT) {
+        return false;
+    }
+    assert(false);
+    return false;
 }
