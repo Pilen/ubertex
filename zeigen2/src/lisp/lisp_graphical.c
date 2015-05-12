@@ -8,6 +8,8 @@
 #include "../eval.h"
 #include "../debug.h"
 #include "../memory.h"
+#include "../resource.h"
+#include "../graphics.h"
 
 LISP_BUILTIN(color, "") {
     Int *colors = memory_malloc(sizeof(Int) * 4);
@@ -94,4 +96,27 @@ LISP_BUILTIN(clear, "") {
     /* TODO: reset rendering color */
 
     return VALUE_NIL;
+}
+
+LISP_BUILTIN(image, "") {
+    if (args -> length != 4) {
+        return VALUE_ERROR;
+    }
+
+    Value file = LIST_GET_UNSAFE(args, 1);
+    Value x_value = LIST_GET_UNSAFE(args, 2);
+    Value y_value = LIST_GET_UNSAFE(args, 3);
+    if (x_value.type != INTEGER || y_value.type != INTEGER) {
+        return VALUE_ERROR;
+    }
+    Int x = x_value.val.integer_val;
+    Int y = y_value.val.integer_val;
+    debug("resource_get_image:");
+    SDL_Texture *texture = resource_get_image(environment, file);
+    debug("resource_get_image done");
+    if (!texture) {
+        return VALUE_ERROR;
+    }
+    graphics_render_at(environment, texture, x, y);
+    return symbols_t;
 }
