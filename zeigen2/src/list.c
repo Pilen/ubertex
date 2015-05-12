@@ -210,6 +210,8 @@ void list_contract(List *list) {
 }
 
 void list_sort(List *list, Int (*compare)(Value a, Value b)) {
+    /* NOTE: Look into how this can be integrated with the resource sorting */
+
     /* if (list -> start + list -> length >= list -> size) { */
     /*     /\* TODO: implement *\/ */
     /*     /\* list_normalize(list); *\/ */
