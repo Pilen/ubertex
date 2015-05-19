@@ -32,16 +32,12 @@ SDL_Texture *resource_get_image(Environment *environment, Value filename) {
     Value resource_v;
     Resource *resource;
 
-    debug("kamel");
     assert(filename.type == STRING);
 
-    debug("larve");
     lock_read_lock(resource_images_lock);
-    debug("sommerfugl");
     Bool found = hash_get(resource_images, filename, &resource_v);
     lock_read_unlock(resource_images_lock);
 
-    debug("fisk");
     if (found) {
         /* This can be done here as we know resources are never changed or modified during a frame update (flush is never called now) */
         resource = resource_v.val.resource_val;
@@ -53,10 +49,8 @@ SDL_Texture *resource_get_image(Environment *environment, Value filename) {
     /* Texture must be loaded from disk */
     /* Ensure the texture has not been loaded while by a simultaneous thread */
     lock_write_lock(resource_images_lock);
-    debug("hund");
     found = hash_get(resource_images, filename, &resource_v);
     if (!found) {
-        debug("kat");
         char *filename_str = filename.val.string_val -> text;
         SDL_Surface *surface = SDL_LoadBMP(filename_str);
         if (!surface) {
@@ -98,8 +92,8 @@ Resource *resource_create(Environment *environment, Resource_type type, void *re
 }
 
 Unt resource_flush_cache(Environment *environment, Unt amount) {
-    /* WARNING: SHOULD ONLY EVER BE CALLED
-       WHILE NO REFERENCES TO THE ACTUAL RESOURCES ARE HELD
+    /* WARNING: SHOULD ONLY EVER BE CALLED WHILE
+       NO REFERENCES TO THE ACTUAL RESOURCES ARE HELD!
        Aka, don't call it during a frame update as the actual resources pointed at could become invalid.
        Else we need some kind of threadsafe metric of this resource being in use right now and probably a lock pr. resource.
     */
