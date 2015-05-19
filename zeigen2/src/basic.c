@@ -66,9 +66,9 @@ Bool equal(Value a, Value b) {
     case HASH:
         /* TODO: implement */
         debug("HASH VALUES CANT BE COMPARED YET!!!!");
+        assert(false);
     default:
         assert(false)
-        return false;
     }
     return false;
 }
@@ -96,7 +96,6 @@ Bool eq(Value a, Value b) {
         return a.val.hash_val == b.val.hash_val;
     default:
         assert(false);
-        return false;
     }
     return false;
 }
