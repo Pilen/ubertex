@@ -15,17 +15,15 @@ Value resource_create(Environment *environment, Value skeleton);
 Value resource_get(Environment *environment, Value skeleton);
 Int resource_comparison(const void *a, const void *b);
 
-List *resource_scores;
-Mutex *resource_scores_lock; /* Must be acquired while holding the other resource locks to avoid deadlocks */
 
-Hash *resource_images;
-Lock_RW *resource_images_lock;
+Hash *resource_cache;
+Lock_RW *resource_cache_lock;
+List *resource_scores; /* The resource_cache_lock must be held while using this */
 
 void resource_initialize(void) {
+    resource_cache = hash_create();
+    resource_cache_lock = lock_rw_create();
     resource_scores = list_create_empty();
-    resource_scores_lock = mutex_create();
-    resource_images = hash_create();
-    resource_images_lock = lock_rw_create();
 }
 
 SDL_Texture *resource_image(Environment *environment, Value filename) {
@@ -42,9 +40,9 @@ SDL_Texture *resource_image(Environment *environment, Value filename) {
 Value resource_get(Environment *environment, Value skeleton) {
     Value resource;
 
-    lock_read_lock(resource_images_lock);
-    Bool found = hash_get(resource_images, skeleton, &resource);
-    lock_read_unlock(resource_images_lock);
+    lock_read_lock(resource_cache_lock);
+    Bool found = hash_get(resource_cache, skeleton, &resource);
+    lock_read_unlock(resource_cache_lock);
 
     if (found) {
         /* This can be done here as we know resources are never changed, modified or removed during a frame update (flush is never called now) */
@@ -52,19 +50,17 @@ Value resource_get(Environment *environment, Value skeleton) {
     }
 
     /* Resource must be created/loaded from disk */
-    lock_write_lock(resource_images_lock);
+    lock_write_lock(resource_cache_lock);
     /* Ensure the resource has not been created by a simultaneous thread */
-    found = hash_get(resource_images, skeleton, &resource);
+    found = hash_get(resource_cache, skeleton, &resource);
     if (!found) {
         resource = resource_create(environment, skeleton);
         if (resource.type != ERROR) {
-            hash_set(resource_images, skeleton, resource);
-            mutex_lock(resource_scores_lock);
+            hash_set(resource_cache, skeleton, resource);
             list_push_back(resource_scores, resource);
-            mutex_unlock(resource_scores_lock);
         }
     }
-    lock_write_unlock(resource_images_lock);
+    lock_write_unlock(resource_cache_lock);
 
     return resource;
 }
@@ -108,8 +104,7 @@ Unt resource_flush_cache(Environment *environment, Unt amount) {
     */
 
     assert(environment -> call_stack -> length == 0);
-    lock_write_lock(resource_images_lock);
-    mutex_lock(resource_scores_lock); /* Must be locked last to avoid deadlocks */
+    lock_write_lock(resource_cache_lock);
     assert(resource_scores -> start == 0);
     qsort(resource_scores -> data,
           resource_scores -> length,
@@ -119,26 +114,35 @@ Unt resource_flush_cache(Environment *environment, Unt amount) {
     while (resource_scores -> length > 0 && cleared < amount) {
         list_pop_back(resource_scores);
     }
-    mutex_unlock(resource_scores_lock);
-    lock_write_unlock(resource_images_lock);
+    lock_write_unlock(resource_cache_lock);
 
     return cleared;
 
 }
 
 Int resource_comparison(const void *a, const void *b) {
-    /* Value *av = (Value *) a; */
-    /* Value *bv = (Value *) b; */
+    Value *av = (Value *) a;
+    Value *bv = (Value *) b;
+    Unt a_score;
+    Unt b_score;
 
-    /* assert(av -> type == IMAGE); */
-    /* assert(bv -> type == IMAGE); */
-
-    /* Unt a_score = av -> val.resource_val -> score; */
-    /* Unt b_score = bv -> val.resource_val -> score; */
-    /* if (a_score == b_score) { */
-    /*     return 0; */
-    /* } else { */
-    /*     return a_score < b_score ? -1 : 1; */
-    /* } */
-    return -1;
+    switch (av -> type) {
+    case IMAGE:
+        a_score = av -> val.image_val -> score;
+        break;
+    default:
+        assert(false);
+    }
+    switch (bv -> type) {
+    case IMAGE:
+        b_score = bv -> val.image_val -> score;
+        break;
+    default:
+        assert(false);
+    }
+    if (a_score == b_score) {
+        return 0;
+    } else {
+        return a_score < b_score ? -1 : 1;
+    }
 }
