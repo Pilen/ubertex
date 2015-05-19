@@ -37,7 +37,18 @@ void test_hash_2(void) {
     }
 }
 
+void test_hash_3(void) {
+    Hash *hash = hash_create();
+    Value key = VALUE_INTEGER(100);
+    for (Unt i = 0; i < 200; i++) {
+        Value data = VALUE_INTEGER(i + 900);
+        hash_set(hash, key, data);
+        TEST(hash -> length == 1);
+    }
+}
+
 DEFINE_TEST_SUITE(hash) {
     TEST_ADD(test_hash_1());
     TEST_ADD(test_hash_2());
+    TEST_ADD(test_hash_3());
 }
