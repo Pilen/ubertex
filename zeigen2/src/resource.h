@@ -10,18 +10,16 @@ typedef enum {
     /* RESOURCE_FONT */
 } Resource_type;
 
-struct Resource_s {
+struct Image_s {
     Unt refcount;
     float score;
-    Resource_type type;
-    union {
-        SDL_Texture *texture_val;
-    } val;
+    Value path;
+    SDL_Texture *texture;
 };
 
 void resource_initialize(void);
 
-SDL_Texture *resource_get_image(Environment *environment, Value filename);
+SDL_Texture *resource_image(Environment *environment, Value filename);
 Unt resource_flush_cache(Environment *environment, Unt amount);
 
 

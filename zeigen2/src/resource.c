@@ -11,11 +11,12 @@
 #include "memory.h"
 #include "debug.h"
 
-Resource *resource_create(Environment *environment, Resource_type type, void *resource_data);
+Value resource_create(Environment *environment, Value skeleton);
+Value resource_get(Environment *environment, Value skeleton);
 Int resource_comparison(const void *a, const void *b);
 
 List *resource_scores;
-Mutex *resource_scores_lock; /* Must be aquired while holding the other resource locks to avoid deadlocks */
+Mutex *resource_scores_lock; /* Must be acquired while holding the other resource locks to avoid deadlocks */
 
 Hash *resource_images;
 Lock_RW *resource_images_lock;
@@ -27,68 +28,76 @@ void resource_initialize(void) {
     resource_images_lock = lock_rw_create();
 }
 
-SDL_Texture *resource_get_image(Environment *environment, Value filename) {
-    SDL_Texture *texture = NULL;
-    Value resource_v;
-    Resource *resource;
+SDL_Texture *resource_image(Environment *environment, Value filename) {
+    Image *skeleton = memory_malloc(sizeof(Image));
+    skeleton -> path = filename;
+    Value result = resource_get(environment, VALUE_IMAGE(skeleton));
+    if (result.type == IMAGE) {
+        return result.val.image_val -> texture;
+    } else {
+        return NULL;
+    }
+}
 
-    assert(filename.type == STRING);
+Value resource_get(Environment *environment, Value skeleton) {
+    Value resource;
 
     lock_read_lock(resource_images_lock);
-    Bool found = hash_get(resource_images, filename, &resource_v);
+    Bool found = hash_get(resource_images, skeleton, &resource);
     lock_read_unlock(resource_images_lock);
 
     if (found) {
-        /* This can be done here as we know resources are never changed or modified during a frame update (flush is never called now) */
-        resource = resource_v.val.resource_val;
-        assert(resource -> type == RESOURCE_TEXTURE);
-        texture = resource -> val.texture_val;
-        return texture;
+        /* This can be done here as we know resources are never changed, modified or removed during a frame update (flush is never called now) */
+        return resource;
     }
 
-    /* Texture must be loaded from disk */
-    /* Ensure the texture has not been loaded while by a simultaneous thread */
+    /* Resource must be created/loaded from disk */
     lock_write_lock(resource_images_lock);
-    found = hash_get(resource_images, filename, &resource_v);
+    /* Ensure the resource has not been created by a simultaneous thread */
+    found = hash_get(resource_images, skeleton, &resource);
     if (!found) {
-        char *filename_str = filename.val.string_val -> text;
-        SDL_Surface *surface = SDL_LoadBMP(filename_str);
-        if (!surface) {
-            log_error("Unable to find file %s", filename_str);
-            texture = NULL;
-        } else {
-            texture = SDL_CreateTextureFromSurface(environment -> renderer, surface);
-            resource = resource_create(environment, RESOURCE_TEXTURE, texture);
-            resource_v = VALUE_RESOURCE(resource);
-            hash_set(resource_images, filename, resource_v);
-
+        resource = resource_create(environment, skeleton);
+        if (resource.type != ERROR) {
+            hash_set(resource_images, skeleton, resource);
             mutex_lock(resource_scores_lock);
-            list_push_back(resource_scores, resource_v);
+            list_push_back(resource_scores, resource);
             mutex_unlock(resource_scores_lock);
         }
-        SDL_FreeSurface(surface);
     }
     lock_write_unlock(resource_images_lock);
 
-    return texture;
+    return resource;
 }
 
-Resource *resource_create(Environment *environment, Resource_type type, void *resource_data) {
+Value resource_create(Environment *environment, Value skeleton) {
+    debug("hej");
     Unt initial_score = 1;
 
-    Resource *resource = memory_malloc(sizeof(Resource));
-    resource -> refcount = 0;
-    resource -> score = initial_score;
-    resource -> type = type;
-
-    switch (type) {
-    case RESOURCE_TEXTURE:
-        resource -> val.texture_val = (SDL_Texture *) resource_data;
-        break;
+    switch (skeleton.type) {
+    case IMAGE: {
+        Image *image = skeleton.val.image_val;
+        assert(image -> path.type == STRING);
+        char *filename = image -> path.val.string_val -> text;
+        SDL_Surface *surface = SDL_LoadBMP(filename);
+        if (!surface) {
+            SDL_FreeSurface(surface);
+            log_error("Unable to find file %s", filename);
+            return VALUE_ERROR;
+        } else {
+            SDL_Texture *texture;
+            texture = SDL_CreateTextureFromSurface(environment -> renderer,
+                                                   surface);
+            image -> texture = texture;
+            image -> refcount = 0;
+            image -> score = initial_score;
+            SDL_FreeSurface(surface);
+            return VALUE_IMAGE(image);
+        }
+    }
     default:
         assert(false);
     }
-    return resource;
+    return VALUE_ERROR;
 }
 
 Unt resource_flush_cache(Environment *environment, Unt amount) {
@@ -118,17 +127,18 @@ Unt resource_flush_cache(Environment *environment, Unt amount) {
 }
 
 Int resource_comparison(const void *a, const void *b) {
-    Value *av = (Value *) a;
-    Value *bv = (Value *) b;
+    /* Value *av = (Value *) a; */
+    /* Value *bv = (Value *) b; */
 
-    assert(av -> type == RESOURCE);
-    assert(bv -> type == RESOURCE);
+    /* assert(av -> type == IMAGE); */
+    /* assert(bv -> type == IMAGE); */
 
-    Unt a_score = av -> val.resource_val -> score;
-    Unt b_score = bv -> val.resource_val -> score;
-    if (a_score == b_score) {
-        return 0;
-    } else {
-        return a_score < b_score ? -1 : 1;
-    }
+    /* Unt a_score = av -> val.resource_val -> score; */
+    /* Unt b_score = bv -> val.resource_val -> score; */
+    /* if (a_score == b_score) { */
+    /*     return 0; */
+    /* } else { */
+    /*     return a_score < b_score ? -1 : 1; */
+    /* } */
+    return -1;
 }

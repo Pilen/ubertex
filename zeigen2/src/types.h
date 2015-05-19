@@ -31,7 +31,9 @@ typedef enum {
     FUNCTION,
     VECTOR4I,
     VECTOR4F,
-    RESOURCE,
+
+    /* Resources: */
+    IMAGE,
 } Type;
 
 /* TODO: ensure this is a perfectly legal/good way of defining structs with unions
@@ -50,7 +52,7 @@ typedef enum {
 #define VALUE_FUNCTION(val) ((Value) {FUNCTION, {.function_val = val}})
 #define VALUE_VECTOR4I(val) ((Value) {VECTOR4I, {.vector4i_val = val}})
 #define VALUE_VECTOR4F(val) ((Value) {VECTOR4F, {.vector4f_val = val}})
-#define VALUE_RESOURCE(val) ((Value) {RESOURCE, {.resource_val = val}})
+#define VALUE_IMAGE(val) ((Value) {IMAGE, {.image_val = val}})
 
 
 /* Actual datatype declarations */
@@ -58,7 +60,7 @@ typedef struct List_s List;
 typedef struct String_s String;
 typedef struct Hash_s Hash;
 typedef struct Function_s Function;
-typedef struct Resource_s Resource;
+typedef struct Image_s Image;
 
 /* Definition of lisp values */
 typedef struct {
@@ -73,7 +75,7 @@ typedef struct {
         Function *function_val;
         Int *vector4i_val;
         Double *vector4f_val;
-        Resource *resource_val;
+        Image *image_val;
     } val;
 } Value;
 
