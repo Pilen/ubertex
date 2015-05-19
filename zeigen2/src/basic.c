@@ -4,6 +4,7 @@
 #include "list.h"
 #include "string.h"
 #include "assert.h"
+#include "resource.h"
 
 Bool equal(Value a, Value b) {
     /* TODO: find out how to handle comparison of 2.0 and 2 */
@@ -67,6 +68,9 @@ Bool equal(Value a, Value b) {
         /* TODO: implement */
         debug("HASH VALUES CANT BE COMPARED YET!!!!");
         assert(false);
+
+    case IMAGE:
+        return equal(a.val.image_val -> path, b.val.image_val -> path);
     default:
         assert(false)
     }
