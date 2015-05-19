@@ -111,9 +111,7 @@ LISP_BUILTIN(image, "") {
     }
     Int x = x_value.val.integer_val;
     Int y = y_value.val.integer_val;
-    debug("resource_get_image:");
     SDL_Texture *texture = resource_get_image(environment, file);
-    debug("resource_get_image done");
     if (!texture) {
         return VALUE_ERROR;
     }
