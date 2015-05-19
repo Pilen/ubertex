@@ -34,10 +34,12 @@ void initialize_SDL(Environment *environment) {
     atexit(SDL_Quit);
 
     SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME,
-                                          SDL_WINDOWPOS_UNDEFINED,
-                                          SDL_WINDOWPOS_UNDEFINED,
-                                          0, 0,
-                                          SDL_WINDOW_FULLSCREEN_DESKTOP);
+                                          0,0,400,400,0
+                                          /* SDL_WINDOWPOS_UNDEFINED, */
+                                          /* SDL_WINDOWPOS_UNDEFINED, */
+                                          /* 0, 0, */
+                                          /* SDL_WINDOW_FULLSCREEN_DESKTOP */
+                                          );
     if (!window) {
         log_fatal("Unable to create a window: %s", SDL_GetError());
     }
