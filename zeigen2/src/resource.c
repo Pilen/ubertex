@@ -133,6 +133,7 @@ Int resource_comparison(const void *a, const void *b) {
     default:
         assert(false);
     }
+
     switch (bv -> type) {
     case IMAGE:
         b_score = bv -> val.image_val -> score;
@@ -140,6 +141,7 @@ Int resource_comparison(const void *a, const void *b) {
     default:
         assert(false);
     }
+
     if (a_score == b_score) {
         return 0;
     } else {
