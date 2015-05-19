@@ -333,3 +333,12 @@ LISP_BUILTIN(let_star, "") {
     return result;
 
 }
+
+LISP_BUILTIN(print, "") {
+    if (args -> length != 2) {
+        return VALUE_ERROR;
+    }
+    Value value = LIST_GET_UNSAFE(args, 1);
+    print(value);
+    return value;
+}
