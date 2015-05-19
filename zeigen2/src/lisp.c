@@ -17,6 +17,7 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(while, while, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(and, and, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(or, or, false, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(print, print, true, environment);
 
     LISP_REGISTER_BUILTIN_FROM_RAW(set, set, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(setq, setq, false, environment);
@@ -47,6 +48,9 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(setting-clear-color, setting_clear_color, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(clear, clear, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(image, image, true, environment);
+
+
+    LISP_REGISTER_BUILTIN_FROM_RAW(next-update, next_update, true, environment);
 
 }
 
