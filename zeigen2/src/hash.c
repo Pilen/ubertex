@@ -133,6 +133,7 @@ void hash_insert(Hash *hash, Unt h1, Unt h2, Value key, Value data) {
             return;
         }
     }
+    assert(false);
 }
 Unt hash_calculate1(const Value *key) {
     /* TODO: implement properly!! */
@@ -150,7 +151,6 @@ Unt hash_index(Unt h1, Unt h2, Unt i, Unt size) {
 }
 
 void hash_resize(Hash *hash) {
-
     Unt old_size = hash -> size;
     Hash_entry *old_entries = hash -> entries;
 
@@ -162,7 +162,9 @@ void hash_resize(Hash *hash) {
     } else {
         return;
     }
-
+    if (new_size <= HASH_DEFAULT_SIZE) {
+        return;
+    }
     Hash_entry *new_entries = memory_calloc(new_size, sizeof(Hash_entry));
 
     hash -> size = new_size;
@@ -179,5 +181,4 @@ void hash_resize(Hash *hash) {
             hash_insert(hash, h1, h2, key, data);
         }
     }
-    /* debugr(resize is done); */
 }
