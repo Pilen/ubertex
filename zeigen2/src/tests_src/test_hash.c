@@ -3,6 +3,7 @@
 #include "../types.h"
 #include "../hash.h"
 #include "../basic.h"
+#include "../math.h"
 
 void test_hash_1(void) {
     Hash *hash = hash_create();
@@ -47,8 +48,22 @@ void test_hash_3(void) {
     }
 }
 
+void test_hash_4(void) {
+    Hash *hash = hash_create();
+    Unt length = 200;
+    for (Unt i = 0; i < length; i++) {
+        Value key = VALUE_INTEGER(i);
+        Value data = VALUE_INTEGER(i+1000);
+        hash_set(hash, key, data);
+        TEST(hash -> length == i + 1);
+    }
+    TEST(hash -> length == length);
+    TEST(hash -> size == round_up_to_power_of_2(length));
+}
+
 DEFINE_TEST_SUITE(hash) {
     TEST_ADD(test_hash_1());
     TEST_ADD(test_hash_2());
     TEST_ADD(test_hash_3());
+    TEST_ADD(test_hash_4());
 }
