@@ -9,17 +9,14 @@
 
 #if OPTION_DEBUG_MEMORY
 #define memory_malloc(size) (log_malloc(size), memory_malloc_actual(size))
-#define memory_cmalloc(size) (log_malloc(size), memory_malloc_cleared_actual(size))
-#define memory_calloc(amount, size) (log_calloc(amount, size), memory_calloc_actual(amount, size))
+#define memory_cmalloc(size) (log_malloc(size), memory_cmalloc_actual(size))
 #else
 #define memory_malloc(size) memory_malloc_actual(size)
-#define memory_cmalloc(size) memory_malloc_cleared_actual(size)
-#define memory_calloc(amount, size) memory_calloc_actual(amount, size)
+#define memory_cmalloc(size) memory_cmalloc_actual(size)
 #endif
 
 void *memory_malloc_actual(size_t size);
-void *memory_malloc_cleared_actual(size_t size);
-void *memory_calloc_actual(size_t amount, size_t size);
+void *memory_cmalloc_actual(size_t size);
 void memory_free(void *ptr);
 
 /* #define INC_REF(item) (item -> refcount++) */

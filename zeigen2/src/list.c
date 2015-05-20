@@ -11,7 +11,7 @@ void list_contract(List *list);
 List *list_create(Unt size) {
     assert_build((1.0 / LIST_EXPANSION_FACTOR) > LIST_CONTRACT_LIMIT);
     List *list = memory_malloc(sizeof(List));
-    Value *data= memory_calloc(size, sizeof(Value));
+    Value *data= memory_cmalloc(sizeof(Value) * size);
 
     list -> refcount = 0;
     list -> size = size;
@@ -157,7 +157,7 @@ void list_expand(List *list) {
     if (new_size == list -> size) {
         new_size++;
     }
-    Value *new_data= memory_calloc(new_size, sizeof(Value));
+    Value *new_data= memory_cmalloc(sizeof(Value) * new_size);
 
     /* TODO: ensure correctenes of castings + roundings
            is start at the correct place when start = 0 and start at end? */
@@ -192,7 +192,7 @@ void list_contract(List *list) {
 
     /* contract to previous size when under limit */
     Unt new_size = list -> size / LIST_EXPANSION_FACTOR;
-    Value *new_data = memory_calloc(new_size, sizeof(Value));
+    Value *new_data = memory_cmalloc(sizeof(Value) * new_size);
     /* TODO: ensure correctenes of castings + roundings
        is start at the correct place when start = 0 and start at end? */
     Unt new_start = (Unt) ((float) list -> start / list -> size) * new_size;

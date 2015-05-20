@@ -17,7 +17,7 @@ String *string_create_from_substr(char* str, Unt size) {
     String *string = memory_cmalloc(sizeof(String) + sizeof(char) * size + 1);
     /* Add 1 for null char when allocating
        Cleared by calloc */
-    /* char *text = memory_calloc(length + 1, sizeof(char)); */
+    /* char *text = memory_cmalloc(sizeof(char) * (length + 1)); */
 
     string -> refcount = 0;
     /* string -> length = length; */

@@ -18,8 +18,7 @@ Hash *hash_create(void) {
     assert_build(HASH_EXPAND_LIMIT > HASH_CONTRACT_LIMIT);
     assert_build(HASH_EXPAND_LIMIT <= 1.0);
     Hash *hash = memory_malloc(sizeof(Hash));
-    Hash_entry *entries = memory_calloc(HASH_DEFAULT_SIZE,
-                                   sizeof(Hash_entry));
+    Hash_entry *entries = memory_cmalloc(sizeof(Hash_entry) * HASH_DEFAULT_SIZE);
 
     hash -> refcount = 0;
     hash -> size = HASH_DEFAULT_SIZE;
@@ -165,7 +164,7 @@ void hash_resize(Hash *hash) {
     if (new_size <= HASH_DEFAULT_SIZE) {
         return;
     }
-    Hash_entry *new_entries = memory_calloc(new_size, sizeof(Hash_entry));
+    Hash_entry *new_entries = memory_cmalloc(sizeof(Hash_entry) * new_size);
 
     hash -> size = new_size;
     hash -> entries = new_entries;
