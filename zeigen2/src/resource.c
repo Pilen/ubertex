@@ -96,14 +96,14 @@ Value resource_create(Environment *environment, Value skeleton) {
     return VALUE_ERROR;
 }
 
-Unt resource_flush_cache(Environment *environment, Unt amount) {
+Unt resource_flush_cache(Unt amount) {
     /* WARNING: SHOULD ONLY EVER BE CALLED WHILE
        NO REFERENCES TO THE ACTUAL RESOURCES ARE HELD!
        Aka, don't call it during a frame update as the actual resources pointed at could become invalid.
        Else we need some kind of threadsafe metric of this resource being in use right now and probably a lock pr. resource.
     */
 
-    assert(environment -> call_stack -> length == 0);
+    /* assert(environment -> call_stack -> length == 0); */
     lock_write_lock(resource_cache_lock);
     assert(resource_scores -> start == 0);
     qsort(resource_scores -> data,

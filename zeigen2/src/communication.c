@@ -35,6 +35,8 @@ Int communication_loop(void *data) {
     IPaddress ip;
     Int error;
 
+    memory_register_thread();
+
     assert(data);
     Unt port = *((Unt *) data);
     memory_free(data);

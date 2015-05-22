@@ -20,7 +20,7 @@ struct Image_s {
 void resource_initialize(void);
 
 SDL_Texture *resource_image(Environment *environment, Value filename);
-Unt resource_flush_cache(Environment *environment, Unt amount);
+Unt resource_flush_cache(Unt amount);
 
 
 #endif

@@ -8,6 +8,7 @@
 #include "assert.h"
 #include "eval.h"
 #include "communication.h"
+#include "memory.h"
 
 void worker_update(Environment *environment);
 
@@ -44,7 +45,8 @@ void worker_loop(Environment *environment) {
         assert(environment -> call_stack -> length == 0);
 
         SDL_RenderPresent(environment -> renderer);
-        SDL_Delay(1000);
+        memory_update();
+        SDL_Delay(1);
     }
 }
 

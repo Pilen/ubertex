@@ -9,6 +9,7 @@
 #include "environment.h"
 #include "log.h"
 #include "resource.h"
+#include "memory.h"
 
 Environment *initialize(void) {
     /* static Bool initialized = false; */
@@ -19,6 +20,7 @@ Environment *initialize(void) {
     log_level = OPTION_LOG_LEVEL_INITIALIZATION;
 
     log_section("====INITIALIZE====");
+    memory_initialize();
     symbol_initialize();
     Environment *environment = environment_create();
     lisp_initialize(environment);

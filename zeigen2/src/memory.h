@@ -3,6 +3,11 @@
 
 #include <stdlib.h>
 
+#define GC_THREADS
+#include <signal.h>
+#include <linux/signal.h>
+#include <gc.h>
+
 #include "options.h"
 #include "types.h"
 #include "log.h"
@@ -14,6 +19,10 @@
 #define memory_malloc(size) memory_malloc_actual(size)
 #define memory_cmalloc(size) memory_cmalloc_actual(size)
 #endif
+
+void memory_initialize(void);
+void memory_update(void);
+void memory_register_thread(void);
 
 void *memory_malloc_actual(size_t size);
 void *memory_cmalloc_actual(size_t size);
