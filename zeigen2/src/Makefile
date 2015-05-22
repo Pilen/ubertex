@@ -49,7 +49,7 @@
 
 CFLAGS=-std=c99 -Wall -Werror -pedantic -Wno-unused-result -ggdb -DDEBUG -Wuninitialized -Wmaybe-uninitialized -Winit-self -Wunused-result -Wunused
 CFLAGS += -MD -MP
-LFLAGS=-lreadline -lSDL2 -lSDL2_net
+LFLAGS=-lreadline -lSDL2 -lSDL2_net -lgc
 
 SRC = $(wildcard *.c)
 SRC += $(wildcard lisp/*.c)
@@ -65,7 +65,7 @@ tests: $(TESTS_SRC:%.c=%.o)
 	cc $(LFLAGS) -o $@ $^
 
 test: tests
-	timeout 30s ./tests && timeout 30s ./lisp_tests/lisp_test.py
+	timeout 300s ./tests && timeout 30s ./lisp_tests/lisp_test.py
 
 clean:
 	rm -f *.o *.d repl    lisp/*.o lisp/*.d    tests_src/*.o tests_src/*.d tests
