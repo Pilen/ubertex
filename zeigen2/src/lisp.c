@@ -18,6 +18,7 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(and, and, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(or, or, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(print, print, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(allocate_useless, allocate_useless, true, environment);
 
     LISP_REGISTER_BUILTIN_FROM_RAW(set, set, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(setq, setq, false, environment);

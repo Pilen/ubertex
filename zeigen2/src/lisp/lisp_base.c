@@ -7,6 +7,7 @@
 #include "../math.h"
 #include "../eval.h"
 #include "../debug.h"
+#include "../memory.h"
 
 LISP_BUILTIN(progn, "") {
     Value value = VALUE_NIL;
@@ -341,4 +342,14 @@ LISP_BUILTIN(print, "") {
     Value value = LIST_GET_UNSAFE(args, 1);
     print(value);
     return value;
+}
+
+LISP_BUILTIN(allocate_useless, "") {
+    size_t size = 10000;
+    Unt *mem = memory_malloc(sizeof(Unt) * size);
+    Unt i;
+    for (i = 0; i < size; i++) {
+        mem[i] = i;
+    }
+    return VALUE_INTEGER(i);
 }
