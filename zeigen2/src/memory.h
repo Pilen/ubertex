@@ -3,9 +3,11 @@
 
 #include <stdlib.h>
 
+#include "options.h"
+
 #define GC_THREADS
 #include <signal.h>
-#include <linux/signal.h>
+/* #include <linux/signal.h> */
 #include <gc.h>
 
 #include "options.h"
@@ -23,6 +25,7 @@
 void memory_initialize(void);
 void memory_update(void);
 void memory_register_thread(void);
+size_t memory_estimate_available(void);
 
 void *memory_malloc_actual(size_t size);
 void *memory_cmalloc_actual(size_t size);

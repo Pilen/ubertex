@@ -17,4 +17,6 @@
 
 #define OPTION_HEADER_SIZE 512
 
+#define OPTION_RESOURCE_PERCENTAGE 80
+
 #endif

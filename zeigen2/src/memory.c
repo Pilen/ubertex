@@ -66,13 +66,11 @@ void memory_on_garbage_collection(void *obj, void *cd) {
     mutex_lock(memory_lock);
     memory_garbage_collected += 1;
     mutex_unlock(memory_lock);
-    debug("hej");
 }
 
 void memory_update(void) {
     mutex_lock(memory_lock);
     if (memory_garbage_collected) {
-        debug("fisk");
     }
     memory_garbage_collected = 0;
     mutex_unlock(memory_lock);
@@ -82,4 +80,22 @@ void memory_register_thread(void) {
     struct GC_stack_base local_stack;
     GC_get_stack_base(&local_stack);
     GC_register_my_thread(&local_stack);
+}
+
+#ifdef WINDOWS
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
+size_t memory_estimate_available(void) {
+#ifdef WINDOWS
+    MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+    return status.ullTotalPhys;
+#else
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    return pages * page_size;
+#endif
 }

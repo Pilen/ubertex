@@ -19,11 +19,15 @@ Int resource_comparison(const void *a, const void *b);
 Hash *resource_cache;
 Lock_RW *resource_cache_lock;
 List *resource_scores; /* The resource_cache_lock must be held while using this */
+size_t resource_total_size;
 
 void resource_initialize(void) {
     resource_cache = hash_create();
     resource_cache_lock = lock_rw_create();
     resource_scores = list_create_empty();
+    resource_total_size = 0;
+    size_t available = memory_estimate_available();
+    resource_size_threshold = available / 100 * OPTION_RESOURCE_PERCENTAGE;
 }
 
 SDL_Texture *resource_image(Environment *environment, Value filename) {
@@ -87,6 +91,12 @@ Value resource_create(Environment *environment, Value skeleton) {
             image -> refcount = 0;
             image -> score = initial_score;
             SDL_FreeSurface(surface);
+
+            Int w, h;
+            SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+            image -> size = sizeof(Int) * w * h; /* Approximate size of texture */
+            resource_total_size += image -> size;
+
             return VALUE_IMAGE(image);
         }
     }
@@ -96,7 +106,7 @@ Value resource_create(Environment *environment, Value skeleton) {
     return VALUE_ERROR;
 }
 
-Unt resource_flush_cache(Unt amount) {
+Unt resource_flush_cache(void) {
     /* WARNING: SHOULD ONLY EVER BE CALLED WHILE
        NO REFERENCES TO THE ACTUAL RESOURCES ARE HELD!
        Aka, don't call it during a frame update as the actual resources pointed at could become invalid.
@@ -105,14 +115,30 @@ Unt resource_flush_cache(Unt amount) {
 
     /* assert(environment -> call_stack -> length == 0); */
     lock_write_lock(resource_cache_lock);
+
+    /* Only flush if enough memory has been consumed */
+    if (resource_total_size < resource_size_threshold) {
+        lock_write_unlock(resource_cache_lock);
+        return 0;
+    }
+
     assert(resource_scores -> start == 0);
     qsort(resource_scores -> data,
           resource_scores -> length,
           sizeof(Value),
           resource_comparison);
     Unt cleared = 0;
-    while (resource_scores -> length > 0 && cleared < amount) {
-        list_pop_back(resource_scores);
+    while (resource_scores -> length > 0 && resource_total_size >= resource_size_threshold) {
+        Value value = list_pop_back(resource_scores);
+        hash_delete(resource_cache, value);
+        switch (value.type) {
+        case IMAGE:
+            resource_total_size -= value.val.image_val -> size;
+            SDL_DestroyTexture(value.val.image_val -> texture);
+            break;
+        default:
+            assert(false);
+        }
     }
     lock_write_unlock(resource_cache_lock);
 

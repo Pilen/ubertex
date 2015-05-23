@@ -18,6 +18,7 @@
 #include "worker.h"
 #include "communication.h"
 #include "memory.h"
+#include "resource.h"
 
 int main(int argc, char **argv) {
     Environment *environment = initialize();
@@ -32,7 +33,7 @@ int main(int argc, char **argv) {
 
     Bool finished = false;
     while (!finished) {
-        Int option = getopt(argc, argv, "e:h:il:p:t");
+        Int option = getopt(argc, argv, "e:h:il:p:r:t");
         switch (option) {
         case 'e':
             {
@@ -56,6 +57,9 @@ int main(int argc, char **argv) {
             break;
         case 'p':
             sscanf(optarg, "%d", &port);
+            break;
+        case 'r':
+            sscanf(optarg, "%zud", &resource_size_threshold);
             break;
         case 't':
             test_only = true;
