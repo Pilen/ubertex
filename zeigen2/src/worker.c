@@ -14,6 +14,7 @@ void worker_update(Environment *environment);
 
 void worker_loop(Environment *environment) {
     while (true) {
+        worker_unfreeze = false;
         SDL_SetRenderDrawColor(environment -> renderer,
                                environment -> setting_clear_red,
                                environment -> setting_clear_green,

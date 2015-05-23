@@ -8,6 +8,7 @@
 #include "read.h"
 #include "debug.h"
 #include "memory.h"
+#include "worker.h"
 
 Int communication_loop(void *data);
 void communication_receive(TCPsocket socket);
@@ -123,6 +124,8 @@ void communication_receive(TCPsocket socket) {
     } else if (strcmp(command, "ready?")) {
         log_error("ready? command not yet implemented");
         assert(false);
+    } else if (strcmp(command, "unfreeze")) {
+        worker_unfreeze = true;
     } else {
         log_error("Header command not defined: %s", command);
     }
