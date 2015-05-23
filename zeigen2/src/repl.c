@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <getopt.h>
+#include <signal.h>
 
 #include "debug.h"
 
@@ -82,6 +83,9 @@ int main(int argc, char **argv) {
     if (!test_only) {
         initialize_SDL(environment);
     }
+    /* Must be done after initialize_SDL as SDL registers its own function */
+    /* It is not very pretty that cleanup is not performed, as the atexit functions are not called */
+    signal(SIGINT, SIG_DFL);
 
     log_section("====STATEMENT-EXECUTION====");
     log_level = log_level_execution;
