@@ -105,17 +105,15 @@ Value eval_list(Value expression, Environment *environment) {
         /* } */
     }
 
-    Value result;
-    if (function -> c_code) {
-        result = function -> c_function(args, environment);
-    } else {
-        result = eval_apply(function_symbol, function, args, environment);
-    }
+    Value result = eval_apply(function_symbol, function, args, environment);
     list_destroy(args);
     return result;
 }
 
 Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment) {
+    if (function -> c_code) {
+        return function -> c_function(args, environment);
+    }
     List *bindings = list_create(args -> size);
     Bool bindings_wellformed = eval_get_bindings(args, function -> parameters, bindings);
     if (!bindings_wellformed) {
