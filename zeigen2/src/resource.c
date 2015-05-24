@@ -87,9 +87,9 @@ Value resource_create(Environment *environment, Value skeleton) {
             SDL_Texture *texture;
             texture = SDL_CreateTextureFromSurface(environment -> renderer,
                                                    surface);
-            image -> texture = texture;
             image -> refcount = 0;
             image -> score = initial_score;
+            image -> texture = texture;
             SDL_FreeSurface(surface);
 
             Int w, h;
