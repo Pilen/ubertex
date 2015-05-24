@@ -28,8 +28,8 @@ LISP_BUILTIN(render_test, "") {
 }
 
 LISP_BUILTIN(pdf_test, "") {
-    Pdf pdf;
-    pdf.path = VALUE_STRING(string_create_from_str("/tmp/laesehovedet.pdf"));
-    pdf_load(environment, VALUE_PDF(&pdf), 1);
+    /* Pdf pdf; */
+    /* pdf.path = VALUE_STRING(string_create_from_str("/tmp/laesehovedet.pdf")); */
+    /* pdf_create(environment, VALUE_PDF(&pdf), 1); */
     return VALUE_NIL;
 }

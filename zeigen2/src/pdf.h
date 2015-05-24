@@ -6,16 +6,18 @@
 #include "environment.h"
 
 #define PDF_DPI 150
+
 struct Pdf_s {
     Unt refcount;
     float score;
     Value path;
     Unt size;
     Int pagecount;
-    SDL_Texture *pages;
-    fz_context *context;
+    SDL_Texture **pages;
 };
 
-void *pdf_load(Environment *environment, Value skeleton, Unt initial_score);
+SDL_Texture *pdf_get_slide(Environment *environment, Value filename, Int slide);
+
+Bool pdf_create(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
 
 #endif

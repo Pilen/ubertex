@@ -11,13 +11,28 @@
 #include "string.h"
 #include "debug.h"
 #include "graphics.h"
+#include "memory.h"
+#include "resource.h"
 
-void *pdf_load(Environment *environment, Value skeleton, Unt initial_score) {
+SDL_Texture *pdf_get_slide(Environment *environment, Value filename, Int slide) {
+    Pdf *skeleton = memory_malloc(sizeof(Pdf));
+    skeleton -> path = filename;
+    Value result = resource_get(environment, VALUE_PDF(skeleton));
+
+    if (result.type == PDF) {
+        Pdf *pdf = result.val.pdf_val;
+        if (slide >= 0 && slide < pdf -> pagecount) {
+            return pdf -> pages[slide];
+        }
+    }
+    return NULL;
+}
+
+Bool pdf_create(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
     debug("fisk");
     z_assert(skeleton.type == PDF);
     Pdf *pdf = skeleton.val.pdf_val;
     z_assert(skeleton.val.pdf_val -> path.type == STRING);
-    GError *error;
     cairo_status_t status;
 
     char *filename = skeleton.val.pdf_val -> path.val.string_val -> text;
@@ -32,25 +47,26 @@ void *pdf_load(Environment *environment, Value skeleton, Unt initial_score) {
         absolute = g_build_filename(dir, filename, NULL);
         free(dir);
     }
-    uri = g_filename_to_uri(absolute, NULL, &error);
+    uri = g_filename_to_uri(absolute, NULL, NULL);
     free(absolute);
     if (!uri) {
-        log_error("%s", error -> message);
-        return NULL;
+        log_error("Not a filename: %s", absolute);
+        return false;
     }
-
-
     char *password = "";
-    PopplerDocument *document = poppler_document_new_from_file(uri, password, &error);
+    PopplerDocument *document = poppler_document_new_from_file(uri, password, NULL);
     if (!document) {
-        log_error("Could not open file %s, %s", uri, error -> message);
-        return NULL;
+        log_error("Could not open file %s", uri);
+        return false;
     }
 
+    Unt size_sum = 0;
     Int pagecount = poppler_document_get_n_pages(document);
+    SDL_Texture **pages = memory_malloc(sizeof(SDL_Texture *) * pagecount);
 
-    /* for (Int pagenumber = 0; pagenumber < pagecount; pagenumber++) { */
-        PopplerPage *page = poppler_document_get_page(document, 1);
+    /* Load all the pages */
+    for (Int pagenumber = 0; pagenumber < pagecount; pagenumber++) {
+        PopplerPage *page = poppler_document_get_page(document, pagenumber);
         z_assert(page);
 
         Double width, height; /* In pixels, beamer default = 12.8cm * 9.6cm at 72 DPI = 362.835000 * 272.126000 */
@@ -88,20 +104,26 @@ void *pdf_load(Environment *environment, Value skeleton, Unt initial_score) {
         if (status) {
             log_error("%s", cairo_status_to_string(status));
         }
-        cairo_destroy(cairo);
-        status = cairo_surface_write_to_png(cairo_surface, "/tmp/test.png");
-        if (status) {
-            log_error("%s", cairo_status_to_string(status));
-        }
 
-        debug("kamel");
         SDL_Texture *texture = SDL_CreateTextureFromSurface(environment -> renderer, sdl_surface);
         z_assert(texture);
-        graphics_render_at(environment, texture, 10, 15);
+        pages[pagenumber] = texture;
 
+        cairo_destroy(cairo);
         cairo_surface_destroy(cairo_surface);
-        g_object_unref(document);
 
-        pdf -> pagecount = pagecount;
-        return NULL;
+        size_sum += sizeof(Unt) * width * height; /* Approximate size of texture */
+    }
+    debug("done");
+    g_object_unref(document);
+
+    pdf -> refcount = 0;
+    pdf -> score = initial_score;
+    pdf -> size = size_sum;
+    pdf -> pagecount = pagecount;
+    pdf -> pages = pages;
+
+    *size = size_sum;
+
+    return pdf;
 }

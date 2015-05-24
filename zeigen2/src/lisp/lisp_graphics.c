@@ -8,8 +8,9 @@
 #include "../eval.h"
 #include "../debug.h"
 #include "../memory.h"
-#include "../resource.h"
+#include "../image.h"
 #include "../graphics.h"
+#include "../pdf.h"
 
 LISP_BUILTIN(color, "") {
     Int *colors = memory_malloc(sizeof(Int) * 4);
@@ -111,10 +112,28 @@ LISP_BUILTIN(image, "") {
     }
     Int x = x_value.val.integer_val;
     Int y = y_value.val.integer_val;
-    SDL_Texture *texture = resource_image(environment, file);
+    SDL_Texture *texture = image_get_texture_from_file(environment, file);
     if (!texture) {
         return VALUE_ERROR;
     }
     graphics_render_at(environment, texture, x, y);
+    return symbols_t;
+}
+
+LISP_BUILTIN(pdf, "") {
+    if (args -> length != 3) {
+        return VALUE_ERROR;
+    }
+
+    Value file = LIST_GET_UNSAFE(args, 1);
+    Value slide = LIST_GET_UNSAFE(args, 2);
+    if (slide.type != INTEGER) {
+        return VALUE_ERROR;
+    }
+    SDL_Texture *texture = pdf_get_slide(environment, file, slide.val.integer_val);
+    if (!texture) {
+        return VALUE_ERROR;
+    }
+    graphics_render_at(environment, texture, 10, 15);
     return symbols_t;
 }

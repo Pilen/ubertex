@@ -10,9 +10,10 @@
 #include "lock.h"
 #include "memory.h"
 #include "debug.h"
+#include "image.h"
+#include "pdf.h"
 
-Value resource_create(Environment *environment, Value skeleton);
-Value resource_get(Environment *environment, Value skeleton);
+Bool resource_create(Environment *environment, Value skeleton);
 Int resource_comparison(const void *a, const void *b);
 
 
@@ -30,18 +31,8 @@ void resource_initialize(void) {
     resource_size_threshold = available / 100 * OPTION_RESOURCE_PERCENTAGE;
 }
 
-SDL_Texture *resource_image(Environment *environment, Value filename) {
-    Image *skeleton = memory_malloc(sizeof(Image));
-    skeleton -> path = filename;
-    Value result = resource_get(environment, VALUE_IMAGE(skeleton));
-    if (result.type == IMAGE) {
-        return result.val.image_val -> texture;
-    } else {
-        return NULL;
-    }
-}
-
 Value resource_get(Environment *environment, Value skeleton) {
+    /* Resource might be eq to skeleton, might not */
     Value resource;
 
     lock_read_lock(resource_cache_lock);
@@ -58,8 +49,9 @@ Value resource_get(Environment *environment, Value skeleton) {
     /* Ensure the resource has not been created by a simultaneous thread */
     found = hash_get(resource_cache, skeleton, &resource);
     if (!found) {
-        resource = resource_create(environment, skeleton);
-        if (resource.type != ERROR) {
+        found = resource_create(environment, skeleton);
+        if (found) {
+            resource = skeleton;
             hash_set(resource_cache, skeleton, resource);
             list_push_back(resource_scores, resource);
         }
@@ -69,41 +61,23 @@ Value resource_get(Environment *environment, Value skeleton) {
     return resource;
 }
 
-Value resource_create(Environment *environment, Value skeleton) {
-    debug("hej");
+Bool resource_create(Environment *environment, Value resource) {
     Unt initial_score = 1;
 
-    switch (skeleton.type) {
-    case IMAGE: {
-        Image *image = skeleton.val.image_val;
-        z_assert(image -> path.type == STRING);
-        char *filename = image -> path.val.string_val -> text;
-        SDL_Surface *surface = SDL_LoadBMP(filename);
-        if (!surface) {
-            SDL_FreeSurface(surface);
-            log_error("Unable to find file %s", filename);
-            return VALUE_ERROR;
-        } else {
-            SDL_Texture *texture;
-            texture = SDL_CreateTextureFromSurface(environment -> renderer,
-                                                   surface);
-            image -> refcount = 0;
-            image -> score = initial_score;
-            image -> texture = texture;
-            SDL_FreeSurface(surface);
-
-            Int w, h;
-            SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-            image -> size = sizeof(Int) * w * h; /* Approximate size of texture */
-            resource_total_size += image -> size;
-
-            return VALUE_IMAGE(image);
-        }
-    }
+    Bool found;
+    Unt size = 0;
+    switch (resource.type) {
+    case IMAGE:
+        found = image_create(environment, resource, initial_score, &size);
+        break;
+    case PDF:
+        found = pdf_create(environment, resource, initial_score, &size);
+        break;
     default:
         z_assert(false);
     }
-    return VALUE_ERROR;
+    resource_total_size += size;
+    return found;
 }
 
 Unt resource_flush_cache(void) {
