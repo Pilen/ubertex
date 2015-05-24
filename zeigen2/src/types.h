@@ -34,6 +34,7 @@ typedef enum {
 
     /* Resources: */
     IMAGE,
+    PDF,
 } Type;
 
 /* TODO: ensure this is a perfectly legal/good way of defining structs with unions
@@ -53,6 +54,7 @@ typedef enum {
 #define VALUE_VECTOR4I(val) ((Value) {VECTOR4I, {.vector4i_val = val}})
 #define VALUE_VECTOR4F(val) ((Value) {VECTOR4F, {.vector4f_val = val}})
 #define VALUE_IMAGE(val) ((Value) {IMAGE, {.image_val = val}})
+#define VALUE_PDF(val) ((Value) {PDF, {.pdf_val = val}})
 
 
 /* Actual datatype declarations */
@@ -61,6 +63,7 @@ typedef struct String_s String;
 typedef struct Hash_s Hash;
 typedef struct Function_s Function;
 typedef struct Image_s Image;
+typedef struct Pdf_s Pdf;
 
 /* Definition of lisp values */
 typedef struct {
@@ -76,6 +79,7 @@ typedef struct {
         Int *vector4i_val;
         Double *vector4f_val;
         Image *image_val;
+        Pdf *pdf_val;
     } val;
 } Value;
 
