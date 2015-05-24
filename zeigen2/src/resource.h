@@ -13,7 +13,7 @@ typedef enum {
 struct Image_s {
     Unt refcount;
     float score;
-    Value path;
+    Value path; /* A Value so we can allow different sources than files */
     Unt size; /* approximate */
     SDL_Texture *texture;
 };
