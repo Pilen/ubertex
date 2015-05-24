@@ -1,4 +1,5 @@
 
+#include <SDL2/SDL_image.h>
 #include "image.h"
 #include "assert.h"
 #include "string.h"
@@ -22,7 +23,7 @@ Bool image_create(Environment *environment, Value skeleton, Unt initial_score, U
 
     z_assert(image -> path.type == STRING);
     char *filename = image -> path.val.string_val -> text;
-    SDL_Surface *surface = SDL_LoadBMP(filename);
+    SDL_Surface *surface = IMG_Load(filename);
     if (!surface) {
         log_error("Unable to find file %s", filename);
         return false;

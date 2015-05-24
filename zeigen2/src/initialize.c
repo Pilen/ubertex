@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include "options.h"
 #include "debug.h"
@@ -34,6 +35,9 @@ void initialize_SDL(Environment *environment) {
         log_fatal("Unable to initialize SDL: %s", SDL_GetError());
     }
     atexit(SDL_Quit);
+
+    IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
+    atexit(IMG_Quit);
 
     SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME,
                                           0,0,400,400,0

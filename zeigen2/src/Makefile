@@ -52,9 +52,11 @@ CFLAGS=-std=c99 -ggdb -DDEBUG
 CFLAGS += -D_POSIX_C_SOURCE=200809L
 CFLAGS += -Wall -Werror -pedantic -Wno-unused-result -Wuninitialized -Wmaybe-uninitialized -Winit-self -Wunused-result -Wunused
 CFLAGS += -MD -MP
+CFLAGS += `sdl2-config --cflags`
 CFLAGS += `pkg-config --cflags cairo`
 CFLAGS += `pkg-config --cflags --libs poppler-glib`
-LFLAGS=-lreadline -lSDL2 -lSDL2_net -lgc -lcairo
+LFLAGS=-lreadline -lSDL2_net -lSDL2_image -lgc -lcairo
+LFLAGS += `sdl2-config --libs`
 LFLAGS += `pkg-config --libs poppler-glib`
 
 SRC = $(wildcard *.c)
