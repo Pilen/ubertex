@@ -6,7 +6,7 @@
 #include "options.h"
 
 #if OPTION_DEBUG
-#define assert(v)                                                       \
+#define z_assert(v)                                                       \
     do {                                                                \
         Int Z_ASSERT_assert = !!(v);                                    \
         if (!Z_ASSERT_assert) {                                         \
@@ -20,10 +20,10 @@
     } while (0);
 
 #else
-#define assert(v)                               \
+#define z_assert(v)                               \
     do {                                        \
         (void) sizeof((v));                     \
     } while (0);
-#define assert_build(v) assert(v)
+#define assert_build(v) z_assert(v)
 #endif
 #endif

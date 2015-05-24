@@ -76,7 +76,7 @@ Value resource_create(Environment *environment, Value skeleton) {
     switch (skeleton.type) {
     case IMAGE: {
         Image *image = skeleton.val.image_val;
-        assert(image -> path.type == STRING);
+        z_assert(image -> path.type == STRING);
         char *filename = image -> path.val.string_val -> text;
         SDL_Surface *surface = SDL_LoadBMP(filename);
         if (!surface) {
@@ -101,7 +101,7 @@ Value resource_create(Environment *environment, Value skeleton) {
         }
     }
     default:
-        assert(false);
+        z_assert(false);
     }
     return VALUE_ERROR;
 }
@@ -113,7 +113,7 @@ Unt resource_flush_cache(void) {
        Else we need some kind of threadsafe metric of this resource being in use right now and probably a lock pr. resource.
     */
 
-    /* assert(environment -> call_stack -> length == 0); */
+    /* z_assert(environment -> call_stack -> length == 0); */
     lock_write_lock(resource_cache_lock);
 
     /* Only flush if enough memory has been consumed */
@@ -122,7 +122,7 @@ Unt resource_flush_cache(void) {
         return 0;
     }
 
-    assert(resource_scores -> start == 0);
+    z_assert(resource_scores -> start == 0);
     qsort(resource_scores -> data,
           resource_scores -> length,
           sizeof(Value),
@@ -137,7 +137,7 @@ Unt resource_flush_cache(void) {
             SDL_DestroyTexture(value.val.image_val -> texture);
             break;
         default:
-            assert(false);
+            z_assert(false);
         }
     }
     lock_write_unlock(resource_cache_lock);
@@ -157,7 +157,7 @@ Int resource_comparison(const void *a, const void *b) {
         a_score = av -> val.image_val -> score;
         break;
     default:
-        assert(false);
+        z_assert(false);
     }
 
     switch (bv -> type) {
@@ -165,7 +165,7 @@ Int resource_comparison(const void *a, const void *b) {
         b_score = bv -> val.image_val -> score;
         break;
     default:
-        assert(false);
+        z_assert(false);
     }
 
     if (a_score == b_score) {

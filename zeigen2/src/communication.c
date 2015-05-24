@@ -28,7 +28,7 @@ void communication_initialize(Unt port) {
     Unt *port_heap = memory_malloc(sizeof(Unt));
     *port_heap = port;
     SDL_Thread *thread = SDL_CreateThread(communication_loop, "communication", port_heap);
-    assert(thread);
+    z_assert(thread);
 }
 
 
@@ -38,7 +38,7 @@ Int communication_loop(void *data) {
 
     memory_register_thread();
 
-    assert(data);
+    z_assert(data);
     Unt port = *((Unt *) data);
     memory_free(data);
 
@@ -53,9 +53,9 @@ Int communication_loop(void *data) {
     }
 
     SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
-    assert(set);
+    z_assert(set);
     error = SDLNet_TCP_AddSocket(set, server);
-    assert(error != -1);
+    z_assert(error != -1);
 
 
     while (true) {
@@ -123,7 +123,7 @@ void communication_receive(TCPsocket socket) {
         communication_receive_lisp(socket, size, frame);
     } else if (strcmp(command, "ready?")) {
         log_error("ready? command not yet implemented");
-        assert(false);
+        z_assert(false);
     } else if (strcmp(command, "unfreeze")) {
         worker_unfreeze = true;
     } else {

@@ -44,7 +44,7 @@ void worker_loop(Environment *environment) {
         }
 
         worker_update(environment);
-        assert(environment -> call_stack -> length == 0);
+        z_assert(environment -> call_stack -> length == 0);
 
         SDL_RenderPresent(environment -> renderer);
         memory_update();

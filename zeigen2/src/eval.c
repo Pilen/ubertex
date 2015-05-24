@@ -42,7 +42,7 @@ Value eval(Value expression, Environment *environment) {
 }
 
 Value eval_list(Value expression, Environment *environment) {
-    assert(expression.type == LIST);
+    z_assert(expression.type == LIST);
     /* NOTE: Is this necesary? It should already be handled in the parser.
        But it might be needed due to eval */
     List *list = expression.val.list_val;
