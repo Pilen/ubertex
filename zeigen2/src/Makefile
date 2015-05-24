@@ -47,9 +47,15 @@
 
 # .PHONY: all clean
 
-CFLAGS=-std=c99 -Wall -Werror -pedantic -Wno-unused-result -ggdb -DDEBUG -Wuninitialized -Wmaybe-uninitialized -Winit-self -Wunused-result -Wunused
+CFLAGS=-std=c99 -ggdb -DDEBUG
+# CFLAGS += -D_GNU_SOURCE
+CFLAGS += -D_POSIX_C_SOURCE=200809L
+CFLAGS += -Wall -Werror -pedantic -Wno-unused-result -Wuninitialized -Wmaybe-uninitialized -Winit-self -Wunused-result -Wunused
 CFLAGS += -MD -MP
-LFLAGS=-lreadline -lSDL2 -lSDL2_net -lgc
+CFLAGS += `pkg-config --cflags cairo`
+CFLAGS += `pkg-config --cflags --libs poppler-glib`
+LFLAGS=-lreadline -lSDL2 -lSDL2_net -lgc -lcairo
+LFLAGS += `pkg-config --libs poppler-glib`
 
 SRC = $(wildcard *.c)
 SRC += $(wildcard lisp/*.c)

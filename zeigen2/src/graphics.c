@@ -1,5 +1,5 @@
 #include <SDL2/SDL.h>
-#include <cairo/cairo.h>
+#include <cairo.h>
 #include "graphics.h"
 
 void graphics_render_at(Environment *environment, SDL_Texture *texture, Int x, Int y) {
@@ -27,7 +27,7 @@ void graphics_cairo_test(Environment *environment) {
     cairo_t *cairo = cairo_create(cairo_surface);
     cairo_select_font_face(cairo, "serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
     cairo_set_font_size(cairo, 32.0);
-    cairo_set_source_rgb(cairo, 0.0, 0.0, 1.0);
+    cairo_set_source_rgb(cairo, 0.0, 1.0, 1.0);
     cairo_move_to(cairo, 10.0, 50.0);
     cairo_show_text(cairo, "Hello, World!");
 
