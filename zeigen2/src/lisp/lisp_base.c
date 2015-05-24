@@ -347,13 +347,3 @@ LISP_BUILTIN(print, "") {
     print(value);
     return value;
 }
-
-LISP_BUILTIN(allocate_useless, "") {
-    size_t size = 10000;
-    Unt *mem = memory_malloc(sizeof(Unt) * size);
-    Unt i;
-    for (i = 0; i < size; i++) {
-        mem[i] = i;
-    }
-    return VALUE_INTEGER(i);
-}

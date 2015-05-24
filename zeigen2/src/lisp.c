@@ -18,7 +18,6 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(and, and, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(or, or, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(print, print, true, environment);
-    LISP_REGISTER_BUILTIN_FROM_RAW(allocate_useless, allocate_useless, true, environment);
 
     LISP_REGISTER_BUILTIN_FROM_RAW(set, set, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(setq, setq, false, environment);
@@ -53,6 +52,8 @@ void lisp_initialize(Environment *environment) {
 
     LISP_REGISTER_BUILTIN_FROM_RAW(next-update, next_update, true, environment);
 
+    LISP_REGISTER_BUILTIN_FROM_RAW(allocate_useless, allocate_useless, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(render_test, render_test, true, environment);
 }
 
 void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, String *docstring, Environment *environment) {
