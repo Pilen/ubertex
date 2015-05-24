@@ -18,6 +18,8 @@ void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame);
 
 void communication_initialize(Unt port) {
     /* TODO: initialize logging */
+    z_assert(SDL_WasInit(0));
+
     SDLNet_Init();
     atexit(SDLNet_Quit);
 
