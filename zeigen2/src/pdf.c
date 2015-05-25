@@ -30,10 +30,10 @@ SDL_Texture *pdf_get_slide(Environment *environment, Value filename, Int slide) 
 
 Bool pdf_create(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
     debug("fisk");
+    cairo_status_t status;
     z_assert(skeleton.type == PDF);
     Pdf *pdf = skeleton.val.pdf_val;
-    z_assert(skeleton.val.pdf_val -> path.type == STRING);
-    cairo_status_t status;
+    z_assert(pdf -> path.type == STRING);
 
     char *filename = skeleton.val.pdf_val -> path.val.string_val -> text;
     /* poppler depends on glib's uri implementation instead of a char *filename */
