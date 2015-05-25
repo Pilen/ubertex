@@ -13,6 +13,7 @@
 #include "graphics.h"
 #include "memory.h"
 #include "resource.h"
+#include "file.h"
 
 SDL_Texture *pdf_get_slide(Environment *environment, Value filename, Int slide) {
     Pdf *skeleton = memory_malloc(sizeof(Pdf));
@@ -35,28 +36,42 @@ Bool pdf_create(Environment *environment, Value skeleton, Unt initial_score, Unt
     Pdf *pdf = skeleton.val.pdf_val;
     z_assert(pdf -> path.type == STRING);
 
-    char *filename = skeleton.val.pdf_val -> path.val.string_val -> text;
+    char *filename = pdf -> path.val.string_val -> text;
     /* poppler depends on glib's uri implementation instead of a char *filename */
     /* Uris are absolute urls with "file://" prepended */
     /* TODO: decide how much of glib we should depend on, or if we should just accept it and use it all over? */
-    gchar *absolute, *uri;
-    if (g_path_is_absolute(filename)) {
-        absolute = g_strdup(filename);
-    } else {
-        gchar *dir = g_get_current_dir();
-        absolute = g_build_filename(dir, filename, NULL);
-        free(dir);
-    }
-    uri = g_filename_to_uri(absolute, NULL, NULL);
-    free(absolute);
-    if (!uri) {
-        log_error("Not a filename: %s", absolute);
+    /* gchar *absolute, *uri; */
+    /* if (g_path_is_absolute(filename)) { */
+    /*     absolute = g_strdup(filename); */
+    /* } else { */
+    /*     gchar *dir = g_get_current_dir(); */
+    /*     absolute = g_build_filename(dir, filename, NULL); */
+    /*     free(dir); */
+    /* } */
+    /* uri = g_filename_to_uri(absolute, NULL, NULL); */
+    /* free(absolute); */
+    /* if (!uri) { */
+    /*     log_error("Not a filename: %s", absolute); */
+    /*     return false; */
+    /* } */
+    char *password = "";
+    /* PopplerDocument *document = poppler_document_new_from_file(uri, password, NULL); */
+    /* if (!document) { */
+    /*     log_error("Could not open file %s", uri); */
+    /*     return false; */
+    /* } */
+
+    char *buffer;
+    size_t buffer_size;
+    Bool found = file_read_raw(filename, &buffer, &buffer_size);
+    if (!found) {
+        log_error("Could not open file %s", filename);
         return false;
     }
-    char *password = "";
-    PopplerDocument *document = poppler_document_new_from_file(uri, password, NULL);
+
+    PopplerDocument *document = poppler_document_new_from_data(buffer, buffer_size, password, NULL);
     if (!document) {
-        log_error("Could not open file %s", uri);
+        log_error("Not a valid pdf file %s", filename);
         return false;
     }
 
