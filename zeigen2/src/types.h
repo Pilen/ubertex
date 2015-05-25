@@ -35,6 +35,8 @@ typedef enum {
     /* Resources: */
     IMAGE,
     PDF,
+    SOUNDSAMPLE,
+    SOUND,
 } Type;
 
 /* TODO: ensure this is a perfectly legal/good way of defining structs with unions
@@ -55,6 +57,8 @@ typedef enum {
 #define VALUE_VECTOR4F(val) ((Value) {VECTOR4F, {.vector4f_val = val}})
 #define VALUE_IMAGE(val) ((Value) {IMAGE, {.image_val = val}})
 #define VALUE_PDF(val) ((Value) {PDF, {.pdf_val = val}})
+#define VALUE_SOUNDSAMPLE(val) ((Value) {SOUNDSAMPLE, {.soundsample_val = val}})
+#define VALUE_SOUND(val) ((Value) {SOUND, {.sound_val = val}})
 
 
 /* Actual datatype declarations */
@@ -64,6 +68,8 @@ typedef struct Hash_s Hash;
 typedef struct Function_s Function;
 typedef struct Image_s Image;
 typedef struct Pdf_s Pdf;
+typedef struct Soundsample_s Soundsample;
+typedef struct Sound_s Sound;
 
 /* Definition of lisp values */
 typedef struct {
@@ -80,6 +86,8 @@ typedef struct {
         Double *vector4f_val;
         Image *image_val;
         Pdf *pdf_val;
+        Soundsample *soundsample_val;
+        Sound *sound_val;
     } val;
 } Value;
 

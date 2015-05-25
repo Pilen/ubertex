@@ -50,6 +50,9 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(image, image, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(pdf, pdf, true, environment);
 
+    LISP_REGISTER_BUILTIN_FROM_RAW(sound, sound, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(sound-stop, sound_stop, true, environment);
+
 
     LISP_REGISTER_BUILTIN_FROM_RAW(next-update, next_update, true, environment);
 

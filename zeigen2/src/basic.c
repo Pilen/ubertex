@@ -6,6 +6,7 @@
 #include "assert.h"
 #include "image.h"
 #include "pdf.h"
+#include "sound.h"
 
 Bool equal(Value a, Value b) {
     /* TODO: find out how to handle comparison of 2.0 and 2 */
@@ -74,6 +75,8 @@ Bool equal(Value a, Value b) {
         return equal(a.val.image_val -> path, b.val.image_val -> path);
     case PDF:
         return equal(a.val.pdf_val -> path, b.val.pdf_val -> path);
+    case SOUNDSAMPLE:
+        return equal(a.val.soundsample_val -> path, b.val.soundsample_val -> path);
     default:
         z_assert(false)
     }

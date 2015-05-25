@@ -4,5 +4,5 @@
 #include "types.h"
 
 Unt round_up_to_power_of_2(Unt n);
-
+#define MIN(x, y) (((x) <= (y)) ? (x) : (y))
 #endif
