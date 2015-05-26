@@ -147,7 +147,7 @@ Then it will load it"
               (file-name-as-directory (read-string "Default directory on workers: " (concat "~/" name)))
               "\")\n"
               "(setq revy-worker-default-installation \""
-              (file-name-as-directory (read-string "Default installation directory on workers: " (concat "~/ubertex")))
+              (file-name-as-directory (read-string "Default installation directory on workers: " revy-worker-default-installation))
               "\")\n"
               "\n")
 
@@ -167,8 +167,8 @@ Then it will load it"
               (setq name (read-string "Please give a unique name: ")))
             (when (not (yes-or-no-p "Is the worker virtual?"))
               (setq location (read-string "Location: " (concat "revy@" name)))
-              (setq port (read-string "Port: " "9999"))
-              (setq display (read-string "Display: " ":0"))
+              (setq port (read-string "Port: " revy-worker-default-port))
+              (setq display (read-string "Display: " revy-worker-default-display))
               (when (not (yes-or-no-p "Use default directory on worker?"))
                 (setq dir (read-string "Dir: ")))
               (when (not (yes-or-no-p "Use default installation directory on worker?"))
@@ -217,9 +217,7 @@ Then it will load it"
 
 If current buffer is a revy, load it.
 Else ask if the latest created revy should be used.
-Else try to find it somewhere
-
-"
+Else try to find it somewhere."
   (interactive)
 
   (let* ((local (concat (file-name-as-directory revy-ubertex-dir) "local"))
