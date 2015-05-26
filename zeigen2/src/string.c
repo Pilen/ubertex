@@ -11,24 +11,24 @@
 /* Strings are based on incomplete structs
    as described in http://www.informit.com/guides/content.aspx?g=cplusplus&seqNum=288 */
 
-String *string_create_from_substr(char* str, Unt size) {
+String *string_create_from_substr(char* str, Unt bytes) {
     /* TODO: As this only works with ASCII now, it holds that length == size.
        This is not true for unicode?!. */
-    String *string = memory_cmalloc(sizeof(String) + sizeof(char) * size + 1);
+    String *string = memory_cmalloc(sizeof(String) + sizeof(char) * (bytes + 1));
     /* Add 1 for null char when allocating
        Cleared by calloc */
     /* char *text = memory_cmalloc(sizeof(char) * (length + 1)); */
 
     string -> refcount = 0;
     /* string -> length = length; */
-    string -> size = size;
+    string -> size = bytes + 1;
     /* string -> text = text; */
 
-    for (Unt i = 0, j = 0; i < size && str[i] != '\0'; i++, j++) {
+    for (Unt i = 0, j = 0; i < bytes && str[i] != '\0'; i++, j++) {
         if (str[i] == '\\') {
             debug("\\ incomming");
             i++;
-            if (i >= size ) {
+            if (i >= bytes ) {
                 /* TODO: log error */
                 /* No character is inserted when the final is '\' */
                 break;
