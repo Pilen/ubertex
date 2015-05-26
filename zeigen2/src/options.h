@@ -21,7 +21,8 @@
 
 #define OPTION_RESOURCE_INITIAL_SCORE 1
 
-#define OPTION_SOUND_FREQUENCY 44100
+/* 44100 or 22050 */
+#define OPTION_SOUND_FREQUENCY 22050
 #define OPTION_SOUND_FORMAT MIX_DEFAULT_FORMAT
 /* Sound output channels, not mixing channels! */
 /* 2 for stereo, 1 for mono */
