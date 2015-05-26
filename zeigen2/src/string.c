@@ -49,6 +49,32 @@ String *string_create_from_str(char *str) {
     return string_create_from_substr(str, strlen(str));
 }
 
+String *string_duplicate(String *string) {
+    String *new_string = memory_cmalloc(sizeof(String) + sizeof(char) * string -> size);
+    new_string -> refcount = 0;
+    new_string -> size = string -> size;
+    for (Unt i = 0; i < string -> size; i++) {
+        new_string -> text[i] = string -> text[i];
+    }
+    return new_string;
+}
+
+String *string_concatenate(String *a, String *b) {
+    /* Only one nullbyte */
+    Unt size = a -> size - 1 + b -> size;
+    String *string = memory_cmalloc(sizeof(String) + sizeof(char) * size);
+    string -> refcount = 0;
+    string -> size = size;
+    Unt i = 0;
+    for (Unt j = 0; j < a -> size - 1; i++, j++) {
+        string -> text[i] = a -> text[j];
+    }
+    for (Unt k = 0; k < b -> size; i++, k++) {
+        string -> text[i] = b -> text[k];
+    }
+    return string;
+}
+
 Bool string_compare(String *a, String *b) {
     return strcmp(a -> text, b -> text);
 }
