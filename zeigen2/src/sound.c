@@ -1,4 +1,5 @@
 #include <string.h>
+#include <sys/stat.h>
 
 #include "sound.h"
 #include "memory.h"
@@ -18,7 +19,7 @@ Int sound_playing;
 Int sound_first_free; /* Might not actually be free, but we know nothing is free below */
 
 void sound_finished(Int channel);
-
+char *sound_convert_mp3(String *mp3);
 
 void sound_initialize(void) {
     /* Sound and mixer must already be initialized */
@@ -124,11 +125,14 @@ Bool soundsample_create(Environment *environment, Value skeleton, Unt initial_sc
     z_assert(soundsample -> path.type == STRING);
     char *filename = soundsample -> path.val.string_val -> text;
     if (strcmp(file_get_extension_str(filename), "mp3") == 0) {
-        log_error("conversion from .mp3 to .ogg not yet supported");
+        filename = sound_convert_mp3(soundsample -> path.val.string_val);
+        if (!filename) {
+            return false;
+        }
     }
     Mix_Chunk *chunk = Mix_LoadWAV(filename);
     if (!chunk) {
-        log_error("Could not open file %s. %s", filename, Mix_GetError());
+        log_error("Could not open file %s.", filename);
         return false;
     }
     soundsample -> refcount = 0;
@@ -137,4 +141,42 @@ Bool soundsample_create(Environment *environment, Value skeleton, Unt initial_sc
     soundsample -> chunk = chunk;
     *size = soundsample -> size;
     return true;
+}
+
+char *sound_convert_mp3(String *mp3) {
+    z_assert(strcmp(file_get_extension_str(mp3 -> text), "mp3") == 0);
+    String *ogg = string_concatenate(mp3, string_create_from_str(".ogg"));
+
+    /* Determine if the ogg is newer than the mp3, if so no need to convert */
+    struct stat mp3_stat;
+    struct stat ogg_stat;
+    Int found;
+    found = stat(mp3 -> text, &mp3_stat);
+    if (found != 0) {
+        log_error("Could not find file %s", mp3 -> text);
+        return NULL;
+    }
+    long mp3_time = mp3_stat.st_mtime;
+
+    found = stat(ogg -> text, &ogg_stat);
+    if (found == 0) {
+        long ogg_time = ogg_stat.st_mtime;
+        if (ogg_time > mp3_time) {
+            return ogg -> text;
+        }
+    }
+
+    char *raw_command = "ffmpeg -loglevel quiet -i \"%s\" -c:a libvorbis -q:a 7 -vn -y \"%s\"";
+    Unt size = strlen(raw_command) + mp3 -> size - 1 + ogg -> size - 2 * 2 * sizeof(char);
+    char *command = memory_cmalloc(sizeof(char) * size);
+    Int actual_size = sprintf(command, raw_command, mp3 -> text, ogg -> text);
+    z_assert(size == actual_size + 1);
+    log_info("Converting %s to .ogg", mp3 -> text);
+    Int result = system(command);
+    if (result == 0) {
+        return ogg -> text;
+    } else {
+        log_error("Could not convert mp3 to ogg, Failed execution of: %s", command);
+        return NULL;
+    }
 }
