@@ -3,6 +3,7 @@
 #include <string.h>
 #include <getopt.h>
 #include <signal.h>
+#include <unistd.h>
 
 #include "debug.h"
 
@@ -34,7 +35,7 @@ int main(int argc, char **argv) {
 
     Bool finished = false;
     while (!finished) {
-        Int option = getopt(argc, argv, "e:h:il:p:r:t");
+        Int option = getopt(argc, argv, "d:e:h:il:p:r:t");
         switch (option) {
         case 'e':
             {
@@ -42,6 +43,9 @@ int main(int argc, char **argv) {
                 list_push_back(statements, statement);
                 break;
             }
+        case 'd':
+            chdir(optarg);
+            break;
         case 'h':
             host = optarg;
             break;
