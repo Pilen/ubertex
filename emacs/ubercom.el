@@ -19,13 +19,14 @@
          (padding-size (- revy-header-size (string-bytes header)))
          (padding (if (< padding-size 0)
                       (error "Header too big")
-                    (make-string padding-size ? )))
+                    (make-string padding-size 0)))
          (message (concat header padding lisp)))
     (revy--send-message worker message)))
 
 (defun revy-send-command (worker command &optional options)
   "Send the commands to the current worker.
 To send lisp code use `revy-send-lisp' instead."
+  (setq options (or options ""))
   (setq worker (or worker revy-current-worker))
   (let* ((time "0")
          (options (or options ""))
@@ -33,8 +34,9 @@ To send lisp code use `revy-send-lisp' instead."
          (padding-size (- revy-header-size (string-bytes header)))
          (padding (if (< padding-size 0)
                       (error "Header too big")
-                    (make-string padding-size 0))))
-    (revy--send-message worker header)))
+                    (make-string padding-size 0)))
+         (message (concat header padding)))
+    (revy--send-message worker message)))
 
 (defun revy--send-message (worker message)
   "Send a message to the current worker"
