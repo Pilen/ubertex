@@ -89,10 +89,12 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
     }
     environment -> renderer = renderer;
 
+    if (fullscreen) {
+        SDL_ShowCursor(0);
+    }
 
     /* NOTE: Is it wrong to present the window already? */
     SDL_SetRenderDrawColor(environment -> renderer, 0, 0, 0, 255);
     SDL_RenderClear(environment -> renderer);
     SDL_RenderPresent(environment -> renderer);
-
 }
