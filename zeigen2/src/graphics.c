@@ -144,6 +144,28 @@ void graphics_fill(Environment *environment, Int red, Int green, Int blue, Int a
     SDL_RenderFillRect(environment -> renderer, NULL);
 }
 
+void graphics_calibrate(Environment *environment) {
+    SDL_Rect rect;
+    rect.x = 312;
+    rect.y = 250;
+    rect.w = 400;
+    rect.h = 220;
+    SDL_SetRenderDrawColor(environment -> renderer, 255, 0, 255, 255);
+    SDL_RenderFillRect(environment -> renderer, NULL);
+
+    SDL_SetRenderDrawColor(environment -> renderer, 255, 255, 255, 255);
+    SDL_RenderFillRect(environment -> renderer, &rect);
+    SDL_SetRenderDrawColor(environment -> renderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(environment -> renderer, &rect);
+
+    Int width;
+    Int height;
+    SDL_GetWindowSize(environment -> window, &width, &height);
+
+    SDL_RenderDrawLine(environment -> renderer, 0, 0, width, height);
+    SDL_RenderDrawLine(environment -> renderer, 0, height, width, 0);
+}
+
 void graphics_cairo_test(Environment *environment) {
     Int width = 100;
     Int height = 100;

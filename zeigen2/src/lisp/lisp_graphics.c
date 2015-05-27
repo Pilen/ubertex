@@ -149,3 +149,8 @@ LISP_BUILTIN(pdf, "") {
     graphics_render_at(environment, texture, 10, 15);
     return symbols_t;
 }
+
+LISP_BUILTIN(calibrate, "") {
+    graphics_calibrate(environment);
+    return VALUE_NIL;
+}
