@@ -6,48 +6,48 @@
 ;; Handle communication
 (provide 'revy-ubercom)
 
-(defvar revy--leiter nil "Variable storing the leiter process")
+(defconst revy-header-size 512
+  "The fixed size of headers for zeigen")
 
-(defun revy-send-message (&rest args)
-  "Send a message.
-If the first argument is a worker, that one is chosen, else the current-one is chosen."
-  (let* ((worker (if (revy-workerp (car args))
-                     (pop args)
-                   revy-current-worker))
-         (time (cond ((integerp (car args))
-                      (int-to-string (pop args)))
-                     ((string-equal "" (car args))
-                      (pop args))
-                     ((string-equal "now" (car args))
-                      (pop args))
-                     (t
-                      "now")))
+(defun revy-send-lisp (worker &rest expressions)
+  "Execute the expressions on the current worker."
+  (setq worker (or worker revy-current-worker))
+  (let* ((lisp (mapconcat 'prin1-to-string expressions " "))
+         (size (int-to-string (string-bytes lisp)))
+         (time "0")
+         (header (format "%s;%s;lisp;%s" worker time size))
+         (padding-size (- revy-header-size (string-bytes header)))
+         (padding (if (< padding-size 0)
+                      (error "Header too big")
+                    (make-string padding-size ? )))
+         (message (concat header padding lisp)))
+    (revy--send-message worker message)))
 
-         (list (cons (revy-worker-get-name worker) (cons time args)))
-         (message (mapconcat (lambda (x) (if (integerp x) (int-to-string x) x))
-                             list ";"))
-         (quoted (concat (replace-regexp-in-string "\n" "\\\\n" message) "\n")))
+(defun revy-send-command (worker command &optional options)
+  "Send the commands to the current worker.
+To send lisp code use `revy-send-lisp' instead."
+  (setq worker (or worker revy-current-worker))
+  (let* ((time "0")
+         (options (or options ""))
+         (header (format "%s;%s;%s;%s" worker time command options))
+         (padding-size (- revy-header-size (string-bytes header)))
+         (padding (if (< padding-size 0)
+                      (error "Header too big")
+                    (make-string padding-size 0))))
+    (revy--send-message worker header)))
 
-    (message quoted)
-    ;;do something with the above
-
-    ;; When leiter is not running start it
-    (when (or (not (processp revy--leiter))
-              (not (process-live-p revy--leiter)))
-      (revy-start-leiter))
-    (process-send-string revy--leiter quoted)))
-
-(defun revy-start-leiter ()
-  "Start leiter.
-If leiter is allready running, kill it first, and restart it."
-  (when (not (null revy--leiter))
-    (delete-process revy--leiter))
-  (let ((process-connection-type nil)) ;; Use pipes
-    (setq revy--leiter
-          (start-process "leiter" "*leiter*"
-                         (concat (file-name-as-directory revy-ubertex-dir)
-                                 "tools/leiter.py")))))
-
+(defun revy--send-message (worker message)
+  "Send a message to the current worker"
+  (let ((workers (revy-get-workers worker)))
+    (dolist (worker workers)
+      (let ((channel (aref worker revy-worker-channel-index)))
+        (unless (process-live-p channel)
+          (setq channel (open-network-stream "revy-worker-channel" nil
+                                             (aref worker revy-worker-location-index)
+                                             (aref worker revy-worker-port-index)))
+          (aset worker revy-worker-channel-index channel))
+        (with-demoted-errors "Error could not send message to worker: %S"
+          (process-send-string channel message))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -59,14 +59,16 @@ If leiter is allready running, kill it first, and restart it."
   "Evaluate shell command on a given worker asynchronously.
 If no worker is given/worker is nil,
 the command will be executed on revy-current-worker."
+  ;; Save excursion to avoid the output buffer coming up
   (save-window-excursion
     (when (null worker)
       (setq worker revy-current-worker))
-    (start-process "revy-shell" "*revy-shell*"
-                   "ssh" (revy-worker-get-location worker)
-                   (concat "export DISPLAY=" (revy-worker-get-display worker) ";\n"
-                           "cd " (revy-worker-get-dir worker) ";\n"
-                           command))))
+    (dolist (worker (revy-get-workers worker))
+      (start-process "revy-shell" "*revy-shell*"
+                     "ssh" (aref worker revy-worker-location-index)
+                     (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
+                             "cd " (aref worker revy-worker-dir-index) ";\n"
+                             command)))))
 
 (defun revy-shell-sync (command &optional worker)
   ;; Todo, does not seem to work with current worker?!
@@ -74,22 +76,24 @@ the command will be executed on revy-current-worker."
 If no worker is given/worker is nil,
 the command will be executed on revy-current-worker."
   (save-window-excursion
+    (when (null worker)
+      (setq worker revy-current-worker))
+    ;; Unlike `start-process', `call-process' inserts at point in buffer, not at end
     (with-current-buffer (get-buffer-create "*revy-shell*")
       (goto-char (point-max))
-      (when (null worker)
-        (setq worker revy-current-worker))
-      (call-process "ssh" nil "*revy-shell*" t
-                    (revy-worker-get-location worker)
-                    (concat "export DISPLAY=" (revy-worker-get-display worker) ";\n"
-                            "cd " (revy-worker-get-dir worker) ";\n"
-                            command)))))
+      (dolist (worker (revy-get-workers worker))
+        (call-process "ssh" nil "*revy-shell*" t
+                      (aref worker revy-worker-location-index)
+                      (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
+                            "cd " (aref worker revy-worker-dir-index) ";\n"
+                            command))))))
 
 (defun revy-shell-local (command)
   "Evaluate shell command on this machine asynchronously."
   (save-window-excursion
     (start-process-shell-command "revy-shell" "*revy-shell*" command)))
 
-(defun revy-shell-sync-local (command)
+(defun revy-shell-local-sync (command)
   "Evaluate shell command on this machine synchronously."
   (save-window-excursion
     (with-current-buffer (get-buffer-create "*revy-shell*")
@@ -100,12 +104,13 @@ the command will be executed on revy-current-worker."
 (defun revy-scp-file (filename subdir)
   "Copy a file to a worker using scp"
   (when revy-scp-mode
-    (revy-shell
-     (concat "scp "
-             filename
-             " " (revy-worker-get-location revy-current-worker)
-             ":" (revy-worker-get-dir revy-current-worker)
-             (file-name-as-directory subdir) (file-name-nondirectory filename)))))
+    (dolist (worker (revy-get-workers revy-current-worker))
+      (revy-shell
+       (concat "scp "
+               filename
+               " " (aref worker revy-worker-location-index)
+               ":" (aref worker revy-worker-dir-index)
+               (file-name-as-directory subdir) (file-name-nondirectory filename))))))
 
 (defun revy-elisp (start &optional end)
   "Evaluates elisp code.
@@ -122,10 +127,10 @@ But it will also accept a string with end being ignored in that case."
 ;π Uploading files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar revy--syncing-files 0
+(defvar revy--uploading-files 0
   "Number off machines being synced to currently")
 
-(defun revy-upload-files (&rest workers)
+(defun revy-upload-files (worker)
   ;; Todo fix dokumentation
   "Upload files to workers.
 If no workers are specified, the files will be uploaded to all workers.
@@ -135,41 +140,40 @@ Uses rsync to upload the files, based on the timestamp"
   (interactive)
   ;; TODO: if rsync fails we might want to use scp (check exit code).
 
-  (when (> revy--syncing-files 0)
+  (when (> revy--uploading-files 0)
     (error "Syncing already in progress"))
 
   ;; (revy-send-message "syncfiles")
-  (unless workers
-    (setq workers (revy-worker-get-all-workers)))
+  (unless worker
+    (setq worker 'all))
 
-  (dolist (worker workers)
-    ;; Only sync nonvirtual workers
-    (when (revy-worker-get-location worker)
-      (lexical-let* ((name (revy-worker-get-name  worker))
+  (dolist (worker (revy-get-workers worker))
+    (when (aref worker revy-worker-location-index)
+      (lexical-let* ((name worker)
                      (process (start-process (concat "revy-rsync-" name)
                                              (concat "*revy-rsync-" name "*")
                                              "rsync"
                                              "-r" "-u" "-t" "-P" "-e" "ssh"
                                              (file-name-as-directory revy-dir)
-                                             (concat (revy-worker-get-location worker)
+                                             (concat (aref worker revy-worker-location-index)
                                                      ":"
-                                                     (revy-worker-get-dir worker)))))
-        (incf revy--syncing-files)
+                                                     (aref worker revy-worker-dir-index)))))
+        (incf revy--uploading-files)
         (message "Syncing: %s" name)
         (set-process-sentinel process
                               (lambda (process event)
-                                (decf revy--syncing-files)
+                                (decf revy--uploading-files)
                                 (if (string= event "finished\n")
-                                    (if (< 0 revy--syncing-files)
-                                        (message "Sync with %s completed [%d left]" name revy--syncing-files)
+                                    (if (> revy--uploading-files 0)
+                                        (message "Sync with %s completed [%d left]" name revy--uploading-files)
                                       (message "Syncing done"))
                                   (message "Sync with %s failed with exit code %i [%d left]"
-                                           name (process-exit-status process) revy--syncing-files)))))))
+                                           name (process-exit-status process) revy--uploading-files)))))))
   nil)
 
 (defun revy-upload-files-sync (&rest workers)
   ("Sync files as `revy-upload-files', but blocking.
 Wont return untill all workers has been synced."
   (revy-upload-files workers)
-  (while (< 0 revy--syncing-files)
+  (while (> revy--uploading-files 0)
     (sleep 0 200))))

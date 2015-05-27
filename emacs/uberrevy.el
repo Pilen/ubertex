@@ -65,19 +65,23 @@ nil means nothing is done.
 ;π Workers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar revy-worker-default-dir (file-name-as-directory (concat "~/revy" (format-time-string "%Y")))
-  "The default directory to store files for the revy on workers")
+;; Remember to recreate all workers when any of these are changed
+(defvar revy-worker-default-port "9999"
+  "The default port for new workers")
 
-(defvar revy-worker-default-installation (file-name-as-directory (concat "~/revy" (format-time-string "%Y")))
-  "The default directory to store files for the revy on workers")
+(defvar revy-worker-default-display ":0"
+  "The default display for new workers")
+
+(defvar revy-worker-default-dir (file-name-as-directory (concat "~/revy" (format-time-string "%Y")))
+  "The default directory to store files for the revy on new workers")
+
+(defvar revy-worker-default-installation "~/ubertex/"
+  "The default directory to store files for the revy on new workers")
 
 (defvar revy-current-worker nil
   "The current worker.
 Use `setq-default' to set the default worker when none is chosen explicitly.")
 (make-variable-buffer-local 'revy-current-worker)
-
-(defconst revy-worker-all (revy-create-worker "all")
-  "Default virtual worker for all workers.")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

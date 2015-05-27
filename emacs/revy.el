@@ -152,60 +152,66 @@ Then it will load it"
               "\n")
 
       ;; Workers
-      (let ((workers '()))
-        (insert "(setq revy-worker-all (revy-create-worker \"all\"))\n")
+      (let ((workers nil))
+        (insert "(revy-create-workers\n")
         (while (yes-or-no-p "Do you want to create a worker?")
           (let ((name "")
-                (port "")
-                (location "")
-                (display "")
-                (dir nil)
-                (installation nil)) ;; Should be default dir
+                first-name
+                names
+                port
+                location
+                display
+                dir
+                installation)
 
-            (setq name (read-string "Name: "))
-            (while (member (concat "revy-worker-" name) workers)
-              (setq name (read-string "Please give a unique name: ")))
-            (when (not (yes-or-no-p "Is the worker virtual?"))
-              (setq location (read-string "Location: " (concat "revy@" name)))
-              (setq port (read-string "Port: " revy-worker-default-port))
-              (setq display (read-string "Display: " revy-worker-default-display))
-              (when (not (yes-or-no-p "Use default directory on worker?"))
-                (setq dir (read-string "Dir: ")))
-              (when (not (yes-or-no-p "Use default installation directory on worker?"))
-                (setq installation (read-string "Installation: "))))
-            (insert "(setq revy-worker-" name " (revy-create-worker"
-                    " \"" name "\""
-                    " \"" location "\""
-                    " \"" port "\""
-                    " \"" display "\""
-                    (if (null dir)
-                        " revy-worker-default-dir"
-                      (concat " \"" dir "\""))
-                    (if (null installation)
-                        " revy-worker-default-installation"
-                      (concat " \"" installation "\""))
-                    "))\n")
-            (push (concat "revy-worker-" name) workers)))
-        (push "revy-worker-all" workers)
+            ;; Names
+            ;; TODO: Ensure all names are valid symbols
+            (while (string= name "")
+              (setq name (read-string "Name: ")))
+            (setq first-name name)
+            (setq names (list name))
+            (push name workers)
+            (while (not (string= name ""))
+              (setq name (read-string "Additional name? (leave blank to continue): " nil 'workers))
+              (unless (string= name "")
+                (add-to-list 'names name t)
+                (push name workers)))
+            (setq location (read-string "Location: " (concat "revy@" first-name)))
+            (setq port (read-string "Port: " revy-worker-default-port))
+            (setq display (read-string "Display: " revy-worker-default-display))
+            (when (not (yes-or-no-p "Use default directory on worker?"))
+              (setq dir (read-string "Dir: ")))
+            (when (not (yes-or-no-p "Use default installation directory on worker?"))
+              (setq installation (read-string "Installation: ")))
 
-        ;; Default worker
-        (insert "\n"
-                "(setq-default revy-current-worker "
-                (ido-completing-read "Default worker: " (reverse workers) nil t)
-                ")\n")))
+            (insert " (list "
+                    "'(" (mapconcat 'identity names " ") ") "
+                    "\"" location "\" "
+                    (if port (concat "\"" port "\" ") "")
+                    (if display (concat "\"" display "\" ") "")
+                    (if dir (concat "\"" dir "\" ") "")
+                    (if installation (concat "\"" installation"\" ") ""))
+            (delete-backward-char 1)
+            (insert ")\n")))
+        (delete-backward-char 1)
+        (insert ")\n\n")
 
+            ;; Default worker
+            (insert "(setq-default revy-current-worker '"
+                    (ido-completing-read "Default worker: " (reverse workers) nil t)
+                    ")\n")))
 
-    ;; Store revy in file containing latest revy.
-    (let* ((local (concat (file-name-as-directory revy-ubertex-dir) "local"))
-           (latest-revy (concat (file-name-as-directory local) "latest-revy")))
-      (when (not (file-exists-p local))
-        (make-directory local))
-      (with-temp-file latest-revy
-        (insert name "\n"
-                ubersicht "\n")))
+        ;; Store revy in file containing latest revy.
+        (let* ((local (concat (file-name-as-directory revy-ubertex-dir) "local"))
+               (latest-revy (concat (file-name-as-directory local) "latest-revy")))
+          (when (not (file-exists-p local))
+            (make-directory local))
+          (with-temp-file latest-revy
+            (insert name "\n"
+                    ubersicht "\n")))
 
-    (message "%s has been created" name)
-    (revy-load ubersicht)))
+        (message "%s has been created" name)
+        (revy-load ubersicht)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
