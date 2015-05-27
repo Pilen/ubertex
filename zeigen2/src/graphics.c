@@ -119,6 +119,12 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
     return true;
 }
 
+
+void graphics_fill(Environment *environment, Int red, Int green, Int blue, Int alpha) {
+    SDL_SetRenderDrawColor(environment -> renderer, red, green, blue, alpha);
+    SDL_RenderFillRect(environment -> renderer, NULL);
+}
+
 void graphics_cairo_test(Environment *environment) {
     Int width = 100;
     Int height = 100;

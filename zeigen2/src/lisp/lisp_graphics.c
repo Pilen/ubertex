@@ -99,6 +99,19 @@ LISP_BUILTIN(clear, "") {
     return VALUE_NIL;
 }
 
+LISP_BUILTIN(fill, "") {
+    if (args -> length != 2) {
+        return VALUE_ERROR;
+    }
+    Value color = LIST_GET_UNSAFE(args, 1);
+    if (color.type != VECTOR4I) {
+        return VALUE_ERROR;
+    }
+    Int *vector = color.val.vector4i_val;
+    graphics_fill(environment, vector[0], vector[1], vector[2], vector[3]);
+    return VALUE_NIL;
+}
+
 LISP_BUILTIN(image, "") {
     if (args -> length != 3) {
         return VALUE_ERROR;
