@@ -101,11 +101,11 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
         }
     } else if (first.type == INTEGER && list -> length == 2) {
         Value second = LIST_GET_UNSAFE(list, 1);
-        if (second.type != INTEGER) {
-            return false;
+        if (second.type == INTEGER) {
+            image.x = first.val.integer_val;
+            image.y = second.val.integer_val;
+            goto RENDER;
         }
-        image.x = first.val.integer_val;
-        image.y = second.val.integer_val;
     }
     return false;
 
