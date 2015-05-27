@@ -115,7 +115,7 @@ LISP_BUILTIN(image, "") {
     if (result) {
         return symbols_t;
     } else {
-        return VALUE_NIL;
+        return VALUE_ERROR;
     }
 }
 
