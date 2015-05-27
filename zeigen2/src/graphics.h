@@ -5,6 +5,6 @@
 #include "environment.h"
 
 void graphics_render_at(Environment *environment, SDL_Texture *texture, Int x, Int y);
-void graphics_render_at_position(Environment *environment, SDL_Texture *texture, Value position);
+Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture, Value position);
 
 #endif

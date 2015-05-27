@@ -14,7 +14,7 @@ void graphics_render_at(Environment *environment, SDL_Texture *texture, Int x, I
     SDL_RenderCopy(environment -> renderer, texture, NULL, &dest);
 }
 
-void graphics_render_at_position(Environment *environment, SDL_Texture *texture, Value position) {
+Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture, Value position) {
     SDL_Rect image;
     image.x = 0;
     image.y = 0;
