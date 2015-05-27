@@ -75,32 +75,51 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
                 Value size_xv = LIST_GET_UNSAFE(list, 3);
                 Value size_yv = LIST_GET_UNSAFE(list, 4);
 
-                if (offset_xv.type == INTEGER && offset_yv.type == INTEGER) {
-                    Int offset_x = offset_xv.val.integer_val;
-                    Int offset_y = offset_yv.val.integer_val;
-
-                    Float width;
-                    Float height;
-                    if (size_xv.type == INTEGER && size_yv.type == INTEGER) {
-                        width = size_xv.val.integer_val;
-                        height = size_yv.val.integer_val;
-                    } else if (size_xv.type == FLOAT && size_yv.type == FLOAT) {
-                        width = window_w * size_xv.val.float_val;
-                        height = window_h * size_yv.val.float_val;
-                    } else {
-                        return false;
-                    }
-                    Float ratio_w = width / image.w;
-                    Float ratio_h = height / image.h;
-                    if (ratio_w <= ratio_h) {
-                        image.h = width * ((Float) image.h / (Float) image.w);
-                    } else {
-                        image.w = height * ((Float) image.w / (Float) image.h);
-                    }
-                    image.x = (width - image.w) / 2 + offset_x;
-                    image.y = (height - image.h) / 2 + offset_y;
-                    goto RENDER;
+                Float width;
+                Float height;
+                if (size_xv.type == INTEGER && size_yv.type == INTEGER) {
+                    width = size_xv.val.integer_val;
+                    height = size_yv.val.integer_val;
+                } else if (size_xv.type == FLOAT && size_yv.type == FLOAT) {
+                    width = window_w * size_xv.val.float_val;
+                    height = window_h * size_yv.val.float_val;
+                } else {
+                    return false;
                 }
+                Float ratio_w = width / image.w;
+                Float ratio_h = height / image.h;
+                if (ratio_w <= ratio_h) {
+                    image.h = width * ((Float) image.h / (Float) image.w);
+                    image.w = width;
+                    image.y = (window_h - image.h) / 2;
+                } else {
+                    image.w = height * ((Float) image.w / (Float) image.h);
+                    image.h = height;
+                    image.x = (window_w - image.w) / 2;
+                }
+
+                if (offset_xv.type == INTEGER && offset_yv.type == INTEGER) {
+                    /* debugi((window_w - image.w) / 2); */
+                    /* debugi((window_h - image.h) / 2); */
+                    /* image.x = (window_w - image.w) / 2 + offset_xv.val.integer_val; */
+                    /* image.y = (window_h - image.h) / 2 + offset_yv.val.integer_val; */
+                    image.x += offset_xv.val.integer_val;
+                    image.y += offset_yv.val.integer_val;
+                } else if (offset_xv.type == FLOAT && offset_yv.type == FLOAT) {
+                    /* image.x = window_w * offset_xv.val.float_val; */
+                    /* image.y = window_h * offset_yv.val.float_val; */
+                    /* image.x = (window_w - image.w) / 2 + (window_w * offset_xv.val.float_val); */
+                    /* image.y = (window_h - image.h) / 2 + (window_h * offset_yv.val.float_val); */
+                    image.x = (window_w - image.w) / 2 + ((window_w - image.w)/2 * offset_xv.val.float_val);
+                    image.y = (window_h - image.h) / 2 + ((window_h - image.h)/2 * offset_yv.val.float_val);
+                    /* image.x = (window_w - image.w) * offset_xv.val.float_val; */
+                    /* image.y = (window_h - image.h) * offset_yv.val.float_val; */
+
+
+                    /* image.x = (width - image.w) / 2 + offset_xv.val.float_val; */
+                    /* image.y = (height - image.h) / 2 + offset_yv.val.float_val; */
+                }
+                goto RENDER;
             }
 
         }
