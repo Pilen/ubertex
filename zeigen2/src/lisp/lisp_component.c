@@ -24,7 +24,9 @@ LISP_BUILTIN(next_update, "") {
         Value arg = LIST_GET_UNSAFE(args, i);
         list_push_back(update_args, arg);
     }
-    /* debug_value(VALUE_LIST(update_args)); */
+    if (function.type == ERROR) {
+        return VALUE_ERROR;
+    }
     environment -> component_next_update_args = update_args;
     return VALUE_NIL;
 }
