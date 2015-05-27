@@ -44,6 +44,8 @@ To send lisp code use `revy-send-lisp' instead."
     (dolist (worker workers)
       (let ((channel (aref worker revy-worker-channel-index)))
         (unless (process-live-p channel)
+          ;; TODO: Try to start server on failure to connect
+          ;; TODO: Better error logging
           (setq channel (open-network-stream "revy-worker-channel" nil
                                              (aref worker revy-worker-location-index)
                                              (aref worker revy-worker-port-index)))
@@ -67,7 +69,7 @@ the command will be executed on revy-current-worker."
       (setq worker revy-current-worker))
     (dolist (worker (revy-get-workers worker))
       (start-process "revy-shell" "*revy-shell*"
-                     "ssh" (aref worker revy-worker-location-index)
+                     "ssh" (concat (aref worker revy-worker-location-index) "@" (aref worker revy-worker-location-index))
                      (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
                              "cd " (aref worker revy-worker-dir-index) ";\n"
                              command)))))
@@ -85,7 +87,7 @@ the command will be executed on revy-current-worker."
       (goto-char (point-max))
       (dolist (worker (revy-get-workers worker))
         (call-process "ssh" nil "*revy-shell*" t
-                      (aref worker revy-worker-location-index)
+                      (concat (aref worker revy-worker-location-index) "@" (aref worker revy-worker-location-index))
                       (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
                             "cd " (aref worker revy-worker-dir-index) ";\n"
                             command))))))
@@ -110,7 +112,7 @@ the command will be executed on revy-current-worker."
       (revy-shell
        (concat "scp "
                filename
-               " " (aref worker revy-worker-location-index)
+               " " (concat (aref worker revy-worker-location-index) "@" (aref worker revy-worker-location-index))
                ":" (aref worker revy-worker-dir-index)
                (file-name-as-directory subdir) (file-name-nondirectory filename))))))
 
@@ -150,27 +152,26 @@ Uses rsync to upload the files, based on the timestamp"
     (setq worker 'all))
 
   (dolist (worker (revy-get-workers worker))
-    (when (aref worker revy-worker-location-index)
-      (lexical-let* ((name worker)
-                     (process (start-process (concat "revy-rsync-" name)
-                                             (concat "*revy-rsync-" name "*")
-                                             "rsync"
-                                             "-r" "-u" "-t" "-P" "-e" "ssh"
-                                             (file-name-as-directory revy-dir)
-                                             (concat (aref worker revy-worker-location-index)
-                                                     ":"
-                                                     (aref worker revy-worker-dir-index)))))
-        (incf revy--uploading-files)
-        (message "Syncing: %s" name)
-        (set-process-sentinel process
-                              (lambda (process event)
-                                (decf revy--uploading-files)
-                                (if (string= event "finished\n")
-                                    (if (> revy--uploading-files 0)
-                                        (message "Sync with %s completed [%d left]" name revy--uploading-files)
-                                      (message "Syncing done"))
-                                  (message "Sync with %s failed with exit code %i [%d left]"
-                                           name (process-exit-status process) revy--uploading-files)))))))
+    (lexical-let* ((name worker)
+                   (process (start-process (concat "revy-rsync-" name)
+                                           (concat "*revy-rsync-" name "*")
+                                           "rsync"
+                                           "-r" "-u" "-t" "-P" "-e" "ssh"
+                                           (file-name-as-directory revy-dir)
+                                           (concat (concat (aref worker revy-worker-location-index) "@" (aref worker revy-worker-location-index))
+                                                   ":"
+                                                   (aref worker revy-worker-dir-index)))))
+      (incf revy--uploading-files)
+      (message "Syncing: %s" name)
+      (set-process-sentinel process
+                            (lambda (process event)
+                              (decf revy--uploading-files)
+                              (if (string= event "finished\n")
+                                  (if (> revy--uploading-files 0)
+                                      (message "Sync with %s completed [%d left]" name revy--uploading-files)
+                                    (message "Syncing done"))
+                                (message "Sync with %s failed with exit code %i [%d left]"
+                                         name (process-exit-status process) revy--uploading-files))))))
   nil)
 
 (defun revy-upload-files-sync (&rest workers)

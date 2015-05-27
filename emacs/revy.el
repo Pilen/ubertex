@@ -159,7 +159,9 @@ Then it will load it"
                 first-name
                 names
                 port
+                location-pair
                 location
+                user
                 display
                 dir
                 installation)
@@ -176,7 +178,14 @@ Then it will load it"
               (unless (string= name "")
                 (add-to-list 'names name t)
                 (push name workers)))
-            (setq location (read-string "Location: " (concat "revy@" first-name)))
+            (setq location-pair (split-string
+                                 (read-string "Location: " (concat "revy@" first-name))
+                                 "@"))
+            (if (= (length location-pair) 2)
+                (progn (setq user (car location-pair))
+                       (setq location (cadr location-pair)))
+              (setq location (car location-pair))
+              (setq user (read-string "User at location: ")))
             (setq port (read-string "Port: " revy-worker-default-port))
             (setq display (read-string "Display: " revy-worker-default-display))
             (when (not (yes-or-no-p "Use default directory on worker?"))
@@ -186,12 +195,12 @@ Then it will load it"
 
             (insert " (list "
                     "'(" (mapconcat 'identity names " ") ") "
+                    "\"" user "\" "
                     "\"" location "\" "
-                    (if port (concat "\"" port "\" ") "")
-                    (if display (concat "\"" display "\" ") "")
-                    (if dir (concat "\"" dir "\" ") "")
-                    (if installation (concat "\"" installation"\" ") ""))
-            (delete-backward-char 1)
+                    (if port (concat "\"" port "\"") "nil") " "
+                    (if display (concat "\"" display "\"") "nil") " "
+                    (if dir (concat "\"" dir "\"") "nil") " "
+                    (if installation (concat "\"" installation"\"") "nil"))
             (insert ")\n")))
         (delete-backward-char 1)
         (insert ")\n\n")

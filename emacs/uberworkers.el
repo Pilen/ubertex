@@ -6,14 +6,15 @@
 (provide 'revy-uberworkers)
 
 ;; internal format of workers:
-;; [revy-worker location port display dir installation channel]
+;; [revy-worker location port user display dir installation channel]
 ;; Where revy-worker is a constant atom and the others are variables
-(defconst revy-worker-location-index 1)
-(defconst revy-worker-port-index 2)
-(defconst revy-worker-display-index 3)
-(defconst revy-worker-dir-index 4)
-(defconst revy-worker-installation-index 5)
-(defconst revy-worker-channel-index 6)
+(defconst revy-worker-user-index 1)
+(defconst revy-worker-location-index 2)
+(defconst revy-worker-port-index 3)
+(defconst revy-worker-display-index 4)
+(defconst revy-worker-dir-index 5)
+(defconst revy-worker-installation-index 6)
+(defconst revy-worker-channel-index 7)
 
 
 (defun revy-create-workers (&rest workers)
@@ -25,9 +26,10 @@ Each worker is a list
   (dolist (worker workers)
     (apply 'revy--create-worker worker)))
 
-(defun revy--create-worker (names location &optional port display dir installation)
+(defun revy--create-worker (names user location &optional port display dir installation)
   "Create a worker
 `names' is a list of symbols, the names of the worker.
+`user' is the user on the location.
 `location' is the location on the network including username and IP or hostname eg. revy@192.168.0.123 or revy@brok.
 `port' is the listening port of zeigen on the worker. nil means the default is used.
 `display' is the display the worker should display at, most likely :0 if it has only one display. nil means the default is used.
@@ -46,7 +48,7 @@ The workers are stored in an internal datastructure, for use in elisp simply use
   (setq dir (or dir revy-worker-default-dir))
   (setq installation (or installation revy-worker-default-installation))
 
-  (let ((worker (vector 'revy-worker location port display dir installation nil)))
+  (let ((worker (vector 'revy-worker user location port display dir installation nil)))
     (dolist (name names)
       (let ((worker-list (gethash name revy-workers)))
         (if worker-list
