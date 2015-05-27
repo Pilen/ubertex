@@ -100,24 +100,23 @@ LISP_BUILTIN(clear, "") {
 }
 
 LISP_BUILTIN(image, "") {
-    if (args -> length != 4) {
+    if (args -> length != 3) {
         return VALUE_ERROR;
     }
 
     Value file = LIST_GET_UNSAFE(args, 1);
-    Value x_value = LIST_GET_UNSAFE(args, 2);
-    Value y_value = LIST_GET_UNSAFE(args, 3);
-    if (x_value.type != INTEGER || y_value.type != INTEGER) {
-        return VALUE_ERROR;
-    }
-    Int x = x_value.val.integer_val;
-    Int y = y_value.val.integer_val;
+    Value position = LIST_GET_UNSAFE(args, 2);
+
     SDL_Texture *texture = image_get_texture_from_file(environment, file);
     if (!texture) {
         return VALUE_ERROR;
     }
-    graphics_render_at(environment, texture, x, y);
-    return symbols_t;
+    Bool result = graphics_render_at_position(environment, texture, position);
+    if (result) {
+        return symbols_t;
+    } else {
+        return VALUE_NIL;
+    }
 }
 
 LISP_BUILTIN(pdf, "") {
