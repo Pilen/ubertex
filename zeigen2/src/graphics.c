@@ -34,6 +34,7 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
     Value first = LIST_GET_UNSAFE(list, 0);
     if (first.type == SYMBOL) {
         if (equal(first, symbols_plain)) {
+            /* Render at coords, unscaled */
             if (list -> length == 3) {
                 Value x = LIST_GET_UNSAFE(list, 1);
                 Value y = LIST_GET_UNSAFE(list, 2);
@@ -44,6 +45,7 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
                 }
             }
         } else if (equal(first, symbols_full)) {
+            /* Stretch image to fill entire screen */
             if (list -> length == 1) {
                 image.w = window_w;
                 image.h = window_h;
@@ -51,6 +53,7 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
             }
         } else if (equal(first, symbols_centered)) {
             if (list -> length == 3) {
+                /* Render offset from center */
                 Value x = LIST_GET_UNSAFE(list, 1);
                 Value y = LIST_GET_UNSAFE(list, 2);
                 if (x.type == INTEGER && y.type == INTEGER) {
@@ -59,11 +62,13 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
                     goto RENDER;
                 }
             } else if (list -> length == 1) {
+                /* Render at center */
                 image.x = (window_w - image.w) / 2;
                 image.y = (window_h - image.h) / 2;
                 goto RENDER;
             }
         } else if (equal(first, symbols_sized)) {
+            /* Render scaled but keep aspect ratio */
             if (list -> length == 5) {
                 Value offset_xv = LIST_GET_UNSAFE(list, 1);
                 Value offset_yv = LIST_GET_UNSAFE(list, 2);
