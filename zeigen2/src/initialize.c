@@ -33,7 +33,7 @@ Environment *initialize(void) {
     return environment;
 }
 
-void initialize_SDL(Environment *environment) {
+void initialize_SDL(Environment *environment, Bool fullscreen) {
     Int flags;
     Int result;
     flags = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
@@ -64,13 +64,20 @@ void initialize_SDL(Environment *environment) {
     atexit(Mix_CloseAudio);
 
 
-    SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME,
-                                          0,0,400,400,0
-                                          /* SDL_WINDOWPOS_UNDEFINED, */
-                                          /* SDL_WINDOWPOS_UNDEFINED, */
-                                          /* 0, 0, */
-                                          /* SDL_WINDOW_FULLSCREEN_DESKTOP */
-                                          );
+    Int x = SDL_WINDOWPOS_UNDEFINED;
+    Int y = SDL_WINDOWPOS_UNDEFINED;
+    Int w = 0;
+    int h = 0;
+    flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+
+    if (!fullscreen) {
+        x = 0;
+        y = 0;
+        w = 400;
+        h = 400;
+        flags = 0;
+    }
+    SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME, x, y, w, h, flags);
     if (!window) {
         log_fatal("Unable to create a window: %s", SDL_GetError());
     }

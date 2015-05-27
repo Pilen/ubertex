@@ -32,10 +32,11 @@ int main(int argc, char **argv) {
     int log_level_execution = OPTION_LOG_LEVEL_EXECUTION;
     char *host = NULL;
     Int port = OPTION_DEFAULT_PORT;
+    Bool fullscreen = true;
 
     Bool finished = false;
     while (!finished) {
-        Int option = getopt(argc, argv, "d:e:h:il:p:r:t");
+        Int option = getopt(argc, argv, "d:e:h:il:p:r:tw");
         switch (option) {
         case 'e':
             {
@@ -44,6 +45,7 @@ int main(int argc, char **argv) {
                 break;
             }
         case 'd':
+            /* TODO: Should create the directory if not found */
             chdir(optarg);
             break;
         case 'h':
@@ -69,6 +71,9 @@ int main(int argc, char **argv) {
         case 't':
             test_only = true;
             break;
+        case 'w':
+            fullscreen = false;
+            break;
         case -1:
             finished = true;
             break;
@@ -85,7 +90,7 @@ int main(int argc, char **argv) {
     }
 
     if (!test_only) {
-        initialize_SDL(environment);
+        initialize_SDL(environment, fullscreen);
     }
     /* Must be done after initialize_SDL as SDL registers its own function */
     /* It is not very pretty that cleanup is not performed, as the atexit functions are not called */
