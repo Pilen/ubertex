@@ -46,7 +46,7 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
         } else if (equal(first, symbols_full)) {
             if (list -> length == 1) {
                 image.w = window_w;
-                image.h = window_w;
+                image.h = window_h;
                 goto RENDER;
             }
         } else if (equal(first, symbols_centered)) {
