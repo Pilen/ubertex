@@ -80,6 +80,7 @@ Int communication_loop(void *data) {
     return 0;
 }
 void communication_receive(TCPsocket socket) {
+    /* TODO: this ir really dangerous, will stall if the client does not send second package */
     /* TODO: Start a thread to handle this */
     char header[OPTION_HEADER_SIZE + 1];
     header[OPTION_HEADER_SIZE] = '\0';
@@ -103,8 +104,8 @@ void communication_receive(TCPsocket socket) {
     char *command = strtok(NULL, ";");
     char *options = strtok(NULL, ";");
 
-    if (!names || !time || !command || !options) {
-        log_error("Header misformed");
+    if (!names || !time || !command) {
+        log_error("Header malformed");
         return;
     }
 
@@ -116,6 +117,10 @@ void communication_receive(TCPsocket socket) {
     }
 
     if (strcmp(command, "lisp") == 0) {
+        if (!options) {
+            log_error("Header malformed, missing options");
+            return;
+        }
         Unt size;
         Int scanned = sscanf(options, "%u", &size);
         if (scanned != 1) {
@@ -123,10 +128,11 @@ void communication_receive(TCPsocket socket) {
         }
 
         communication_receive_lisp(socket, size, frame);
-    } else if (strcmp(command, "ready?")) {
+    } else if (strcmp(command, "ready?") == 0) {
         log_error("ready? command not yet implemented");
         z_assert(false);
-    } else if (strcmp(command, "unfreeze")) {
+    } else if (strcmp(command, "unfreeze") == 0) {
+        log_info("Unfreeze");
         worker_unfreeze = true;
     } else {
         log_error("Header command not defined: %s", command);
