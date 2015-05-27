@@ -16,19 +16,28 @@ void symbol_initialize() {
     symbol_next_id = 0;
 
     symbols_t = symbol_get(VALUE_STRING(string_create_from_str("t")));
-    symbols_progn = symbol_get(VALUE_STRING(string_create_from_str("progn")));
     symbols_quote = symbol_get(VALUE_STRING(string_create_from_str("quote")));
+    symbols_progn = symbol_get(VALUE_STRING(string_create_from_str("progn")));
     symbols_lambda = symbol_get(VALUE_STRING(string_create_from_str("lambda")));
     symbols_clojure = symbol_get(VALUE_STRING(string_create_from_str("clojure")));
     symbols_ampersand_optional = symbol_get(VALUE_STRING(string_create_from_str("&optional")));
     symbols_ampersand_rest = symbol_get(VALUE_STRING(string_create_from_str("&rest")));
 
+    /* Symbols for types
+       remember that error and nil are not true types, but symbols */
     symbols_symbol = symbol_get(VALUE_STRING(string_create_from_str("symbol")));
     symbols_integer = symbol_get(VALUE_STRING(string_create_from_str("integer")));
     symbols_float = symbol_get(VALUE_STRING(string_create_from_str("float")));
     symbols_string = symbol_get(VALUE_STRING(string_create_from_str("string")));
     symbols_list = symbol_get(VALUE_STRING(string_create_from_str("list")));
     symbols_hash = symbol_get(VALUE_STRING(string_create_from_str("hash")));
+
+
+    symbols_plain = symbol_get(VALUE_STRING(string_create_from_str("plain")));
+    symbols_full = symbol_get(VALUE_STRING(string_create_from_str("full")));
+    symbols_centered = symbol_get(VALUE_STRING(string_create_from_str("centered")));
+    symbols_sized = symbol_get(VALUE_STRING(string_create_from_str("sized")));
+
 }
 
 Value symbol_get(Value name) {

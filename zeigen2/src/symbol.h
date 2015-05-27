@@ -24,4 +24,11 @@ Value symbols_float;
 Value symbols_string;
 Value symbols_list;
 Value symbols_hash;
+
+
+Value symbols_plain;
+Value symbols_full;
+Value symbols_centered;
+Value symbols_sized;
+
 #endif
