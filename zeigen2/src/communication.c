@@ -44,16 +44,10 @@ Int communication_loop(void *data) {
     Unt port = *((Unt *) data);
     memory_free(data);
 
-    debugi(ip.host);
-    debugi(ip.port);
-    debugi(port);
     error = SDLNet_ResolveHost(&ip, INADDR_ANY, port);
     if (error == -1) {
         log_fatal("Unable to resolve host: %s", SDLNet_GetError());
     }
-    debugi(ip.host);
-    debugi(ip.port);
-    debugi(port);
 
     TCPsocket server = SDLNet_TCP_Open(&ip);
     if (!server) {
