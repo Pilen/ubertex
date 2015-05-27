@@ -23,13 +23,13 @@
   ;; It is!
   )
 
-(defun revy-open (filename &optional screen)
+(defun revy-open (filename &optional worker)
   "Open a new uberscript or ubertex file and start it
 The file must either be an absolute path or relative to the revy-dir."
   (push (current-buffer) revy-stack)
   (find-file-other-window (revy-absolute-data-path filename))
-  (when screen
-    (setq revy-default-screen screen))
+  (when worker
+    (setq revy-current-worker worker))
   (if (string= (downcase (file-name-extension filename)) "tex")
       (progn (revy-manus-mode t) ;; Should this be activated?
              (revy-ubertex-mode))
