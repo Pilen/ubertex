@@ -46,7 +46,9 @@ int main(int argc, char **argv) {
             }
         case 'd':
             /* TODO: Should create the directory if not found */
-            chdir(optarg);
+            if (chdir(optarg) != 0) {
+                log_fatal("Could not enter directory %s", optarg);
+            }
             break;
         case 'h':
             host = optarg;
