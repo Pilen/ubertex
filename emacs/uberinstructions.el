@@ -35,6 +35,7 @@ The file must either be an absolute path or relative to the revy-dir."
              (revy-ubertex-mode))
     (revy-ubersicht-mode)))
 
+;; TODO: make this a macro
 (defun revy-nop (&optional &rest _)
   "Do nothing
 Ignores all arguments")
