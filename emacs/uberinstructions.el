@@ -40,7 +40,7 @@ The file must either be an absolute path or relative to the revy-dir."
   "Do nothing
 Ignores all arguments")
 
-(defun revy-quit ()
+(defun revy-end-sketch ()
   "Finish the current sketch and return to the one opening it
 This function will also call revy-abort-all "
   (interactive)

@@ -39,7 +39,7 @@ the functions can be called on their own."
   % slut
 \\end{overtex}
 \\begin{overtex}
-  \\elisp{(revy-quit)}
+  \\elisp{(revy-end-sketch)}
 \\end{overtex}
 \\end{document}
 ")
