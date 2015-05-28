@@ -133,7 +133,7 @@ LISP_BUILTIN(image, "") {
 }
 
 LISP_BUILTIN(pdf, "") {
-    if (args -> length != 3) {
+    if (args -> length != 3 || args -> length != 4) {
         return VALUE_ERROR;
     }
 
@@ -145,11 +145,17 @@ LISP_BUILTIN(pdf, "") {
     if (slide.type != INTEGER) {
         return VALUE_ERROR;
     }
+
+    Value position = VALUE_NIL;
+    if (args -> length == 4) {
+        position = LIST_GET_UNSAFE(args, 3);
+    }
+
     SDL_Texture *texture = pdf_get_slide(environment, file, slide.val.integer_val);
     if (!texture) {
         return VALUE_ERROR;
     }
-    graphics_render_at(environment, texture, 10, 15);
+    graphics_render_at_position(environment, texture, position);
     return symbols_t;
 }
 
