@@ -131,9 +131,9 @@ void communication_receive(TCPsocket socket) {
     } else if (strcmp(command, "ready?") == 0) {
         log_error("ready? command not yet implemented");
         z_assert(false);
-    } else if (strcmp(command, "unfreeze") == 0) {
-        log_info("Unfreeze");
-        worker_unfreeze = true;
+    } else if (strcmp(command, "abort") == 0) {
+        log_info("Abort");
+        worker_abort = true;
     } else {
         log_error("Header command not defined: %s", command);
     }

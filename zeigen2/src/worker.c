@@ -10,12 +10,18 @@
 #include "communication.h"
 #include "memory.h"
 #include "resource.h"
+#include "sound.h"
 
 void worker_update(Environment *environment);
 
 void worker_loop(Environment *environment) {
     while (true) {
-        worker_unfreeze = false;
+        if (worker_abort) {
+            environment -> component_next_update = VALUE_NIL;
+            environment -> component_next_update_args = list_create_empty();
+            sound_stop_all();
+        }
+        worker_abort = false;
         SDL_SetRenderDrawColor(environment -> renderer,
                                environment -> setting_clear_red,
                                environment -> setting_clear_green,

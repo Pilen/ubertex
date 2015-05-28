@@ -112,7 +112,7 @@ Value eval_list(Value expression, Environment *environment) {
 }
 
 Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment) {
-    if (worker_unfreeze) {
+    if (worker_abort) {
         return VALUE_ERROR;
     }
     if (function -> c_code) {

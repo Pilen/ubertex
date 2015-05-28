@@ -128,7 +128,7 @@ LISP_BUILTIN(while, "") {
 
     Value condition = LIST_GET_UNSAFE(args, 1);
     while (true) {
-        if (worker_unfreeze) {
+        if (worker_abort) {
             return VALUE_ERROR;
         }
         Value result = eval(condition, environment);

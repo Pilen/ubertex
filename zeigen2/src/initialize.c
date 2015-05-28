@@ -14,6 +14,7 @@
 #include "memory.h"
 #include "assert.h"
 #include "sound.h"
+#include "worker.h"
 
 Environment *initialize(void) {
     /* static Bool initialized = false; */
@@ -29,6 +30,7 @@ Environment *initialize(void) {
     Environment *environment = environment_create();
     lisp_initialize(environment);
     resource_initialize();
+    worker_abort = false;
     log_section("====INITIALIZE-END====")
     return environment;
 }
