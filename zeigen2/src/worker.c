@@ -43,6 +43,7 @@ void worker_loop(Environment *environment) {
             if (communication_parsed_queue -> length > 0){
                 Value expression = list_pop_front(communication_parsed_queue);
                 mutex_unlock(communication_parsed_queue_lock);
+                worker_blank = false;
                 print(expression); printf("\n");
                 Value result = eval(expression, environment);
                 print(result); printf("\n");
@@ -55,6 +56,15 @@ void worker_loop(Environment *environment) {
         worker_update(environment, environment -> component_next_post, environment -> component_next_post_args);
         z_assert(environment -> call_stack -> length == 0);
 
+        if (worker_blank) {
+            /* TODO: clean this up */
+            SDL_SetRenderDrawColor(environment -> renderer,
+                                   environment -> setting_clear_red,
+                                   environment -> setting_clear_green,
+                                   environment -> setting_clear_blue,
+                                   environment -> setting_clear_alpha);
+            SDL_RenderClear(environment -> renderer);
+        }
         SDL_RenderPresent(environment -> renderer);
         memory_update();
         resource_flush_cache();

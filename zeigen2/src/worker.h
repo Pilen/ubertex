@@ -7,5 +7,6 @@
 void worker_loop(Environment *environment);
 /* TODO: decide if this should be placed somewhere else */
 Bool worker_abort;
+Bool worker_blank;
 
 #endif

@@ -140,6 +140,9 @@ void communication_receive(TCPsocket socket) {
         mutex_unlock(communication_parsed_queue_lock);
         log_info("Abort");
         worker_abort = true;
+    } else if (strcmp(command, "blank") == 0) {
+        log_info("Blank");
+        worker_blank = true;
     } else {
         log_error("Header command not defined: %s", command);
     }

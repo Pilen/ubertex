@@ -31,6 +31,8 @@ Environment *initialize(void) {
     lisp_initialize(environment);
     resource_initialize();
     worker_abort = false;
+    worker_blank = false;
+
     log_section("====INITIALIZE-END====")
     return environment;
 }
