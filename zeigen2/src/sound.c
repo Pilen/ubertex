@@ -19,7 +19,7 @@ Int sound_playing;
 Int sound_first_free; /* Might not actually be free, but we know nothing is free below */
 
 void sound_finished(Int channel);
-char *sound_convert_mp3(String *mp3);
+char *sound_convert_to_ogg(String *mp3);
 
 void sound_initialize(void) {
     /* Sound and mixer must already be initialized */
@@ -54,6 +54,8 @@ void sound_finished(Int channel) {
 }
 
 Value sound_play(Environment *environment, Value filename) {
+    debug("start");
+    Unt start = SDL_GetTicks();
     Soundsample *skeleton = memory_malloc(sizeof(Soundsample));
     skeleton -> path = filename;
     Value result = resource_get(environment, VALUE_SOUNDSAMPLE(skeleton));
@@ -84,6 +86,9 @@ Value sound_play(Environment *environment, Value filename) {
     sound -> sample = soundsample;
     sound_table[channel] = sound;
     mutex_unlock(sound_lock);
+    Unt done = SDL_GetTicks();
+    debugi(done-start);
+    debug("done");
     return VALUE_SOUND(sound);
 }
 
@@ -129,15 +134,30 @@ Bool soundsample_create(Environment *environment, Value skeleton, Unt initial_sc
     z_assert(soundsample -> path.type == STRING);
     char *filename = soundsample -> path.val.string_val -> text;
     if (strcmp(file_get_extension_str(filename), "mp3") == 0) {
-        filename = sound_convert_mp3(soundsample -> path.val.string_val);
+        filename = sound_convert_to_ogg(soundsample -> path.val.string_val);
         if (!filename) {
             return false;
         }
     }
     Mix_Chunk *chunk = Mix_LoadWAV(filename);
     if (!chunk) {
-        log_error("Could not open file %s.", filename);
-        return false;
+        struct stat file_stat;
+        Bool found = stat(filename, &file_stat);
+        if (found == 0) {
+            log_error("Found %s but could not read it", filename);
+            filename = sound_convert_to_ogg(soundsample -> path.val.string_val);
+            if (!filename) {
+                return false;
+            }
+            chunk = Mix_LoadWAV(filename);
+            if (!chunk) {
+                log_error("Could not open converted file %s", filename);
+                return false;
+            }
+        } else {
+            log_error("Could not find file %s", filename);
+            return false;
+        }
     }
     soundsample -> refcount = 0;
     soundsample -> score = initial_score;
@@ -147,8 +167,7 @@ Bool soundsample_create(Environment *environment, Value skeleton, Unt initial_sc
     return true;
 }
 
-char *sound_convert_mp3(String *mp3) {
-    z_assert(strcmp(file_get_extension_str(mp3 -> text), "mp3") == 0);
+char *sound_convert_to_ogg(String *mp3) {
     String *ogg = string_concatenate(mp3, string_create_from_str(".ogg"));
 
     /* Determine if the ogg is newer than the mp3, if so no need to convert */
