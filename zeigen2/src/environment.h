@@ -11,6 +11,9 @@ typedef struct {
     Value component_next_update;
     List *component_next_update_args;
 
+    Value component_next_post;
+    List *component_next_post_args;
+
     /* TODO: decide color type */
     uint8_t setting_clear_red;
     uint8_t setting_clear_green;

@@ -12,13 +12,15 @@
 #include "resource.h"
 #include "sound.h"
 
-void worker_update(Environment *environment);
+void worker_update(Environment *environment, Value update_symbol, List *args);
 
 void worker_loop(Environment *environment) {
     while (true) {
         if (worker_abort) {
             environment -> component_next_update = VALUE_NIL;
             environment -> component_next_update_args = list_create_empty();
+            environment -> component_next_post = VALUE_NIL;
+            environment -> component_next_post_args = list_create_empty();
             sound_stop_all();
         }
         worker_abort = false;
@@ -49,7 +51,8 @@ void worker_loop(Environment *environment) {
             }
         }
 
-        worker_update(environment);
+        worker_update(environment, environment -> component_next_update, environment -> component_next_update_args);
+        worker_update(environment, environment -> component_next_post, environment -> component_next_post_args);
         z_assert(environment -> call_stack -> length == 0);
 
         SDL_RenderPresent(environment -> renderer);
@@ -59,18 +62,16 @@ void worker_loop(Environment *environment) {
     }
 }
 
-void worker_update(Environment *environment) {
+void worker_update(Environment *environment, Value update_symbol, List *args) {
     /* Lookup must be done every frame as the body can be redefined. */
-    Value next_update_symbol = environment -> component_next_update;
     /* TODO: or a lambda! */
-    if (next_update_symbol.type == SYMBOL) {
+    if (update_symbol.type == SYMBOL) {
         Value function_value;
-        Bool found = hash_get(environment -> functions, next_update_symbol, &function_value);
+        Bool found = hash_get(environment -> functions, update_symbol, &function_value);
         if (found) {
             Function *update_function = function_value.val.function_val;
             /* Is evaled when the update function is set, not now */
-            List *args = environment -> component_next_update_args;
-            eval_apply(next_update_symbol, update_function, args, environment);
+            eval_apply(update_symbol, update_function, args, environment);
         } else {
             /* TODO: log error better*/
             log_error("Error when updating, no such function");

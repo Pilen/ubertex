@@ -12,6 +12,8 @@ Environment *environment_create(void) {
 
     environment -> component_next_update = VALUE_NIL;
     environment -> component_next_update_args = list_create_empty();
+    environment -> component_next_post = VALUE_NIL;
+    environment -> component_next_post_args = list_create_empty();
 
     environment -> setting_clear_red = 0;
     environment -> setting_clear_green = 0;
