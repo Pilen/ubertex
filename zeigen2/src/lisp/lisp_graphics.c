@@ -138,6 +138,9 @@ LISP_BUILTIN(pdf, "") {
     }
 
     Value file = LIST_GET_UNSAFE(args, 1);
+    if (file.type != STRING) {
+        return VALUE_ERROR;
+    }
     Value slide = LIST_GET_UNSAFE(args, 2);
     if (slide.type != INTEGER) {
         return VALUE_ERROR;
