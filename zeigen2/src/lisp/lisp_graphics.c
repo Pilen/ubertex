@@ -133,7 +133,7 @@ LISP_BUILTIN(image, "") {
 }
 
 LISP_BUILTIN(pdf, "") {
-    if (args -> length != 3 || args -> length != 4) {
+    if (args -> length != 3 && args -> length != 4) {
         return VALUE_ERROR;
     }
 
