@@ -61,6 +61,13 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
                     image.y = (window_h - image.h) / 2 + y.val.integer_val;
                     goto RENDER;
                 }
+                if (x.type == FLOAT && y.type == FLOAT) {
+                    /* As in sized */
+                    image.x = (window_w - image.w) / 2 + ((window_w - image.w)/2 * x.val.float_val);
+                    image.y = (window_h - image.h) / 2 + ((window_h - image.h)/2 * y.val.float_val);
+                    goto RENDER;
+                }
+
             } else if (list -> length == 1) {
                 /* Render at center */
                 image.x = (window_w - image.w) / 2;
