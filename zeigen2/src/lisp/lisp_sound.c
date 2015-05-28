@@ -40,3 +40,11 @@ LISP_BUILTIN(sound_stop, "") {
     }
 
 }
+
+LISP_BUILTIN(sound_stop_all, "") {
+    if (args -> length != 1) {
+        return VALUE_ERROR;
+    }
+    sound_stop_all();
+    return VALUE_NIL;
+}

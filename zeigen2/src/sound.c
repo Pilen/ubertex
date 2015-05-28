@@ -119,6 +119,10 @@ Int sound_stop_file(Environment *environment, Value filename) {
     return 0;
 }
 
+void sound_stop_all(void) {
+    Mix_HaltChannel(-1);
+}
+
 Bool soundsample_create(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
     z_assert(skeleton.type == SOUNDSAMPLE);
     Soundsample *soundsample = skeleton.val.soundsample_val;

@@ -54,6 +54,7 @@ void lisp_initialize(Environment *environment) {
 
     LISP_REGISTER_BUILTIN_FROM_RAW(sound, sound, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(sound-stop, sound_stop, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(sound-stop-all, sound_stop_all, true, environment);
 
 
     LISP_REGISTER_BUILTIN_FROM_RAW(next-update, next_update, true, environment);
