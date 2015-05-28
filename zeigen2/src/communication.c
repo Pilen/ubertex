@@ -132,6 +132,12 @@ void communication_receive(TCPsocket socket) {
         log_error("ready? command not yet implemented");
         z_assert(false);
     } else if (strcmp(command, "abort") == 0) {
+        mutex_lock(communication_parsed_queue_lock);
+        /* list_clear(communication_parsed_queue); */
+        while (communication_parsed_queue -> length > 0) {
+            (void) list_pop_back(communication_parsed_queue);
+        }
+        mutex_unlock(communication_parsed_queue_lock);
         log_info("Abort");
         worker_abort = true;
     } else {
