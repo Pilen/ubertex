@@ -10,7 +10,7 @@
 #include "../sound.h"
 
 LISP_BUILTIN(sound, "") {
-    if (args -> length != 2) {
+    if (args -> length > 3 || args -> length < 2) {
         return VALUE_ERROR;
     }
 
@@ -18,7 +18,21 @@ LISP_BUILTIN(sound, "") {
     if (file.type != STRING) {
         return VALUE_ERROR;
     }
-    return sound_play(environment, file);
+
+    Int volume = -1;
+    if (args -> length > 2) {
+        Value volume_v = LIST_GET_UNSAFE(args, 2);
+        switch (volume_v.type) {
+        case INTEGER:
+            volume = volume_v.val.integer_val;
+            break;
+        case NIL:
+            volume = -1;
+        default:
+            return VALUE_ERROR;
+        }
+    }
+    return sound_play(environment, file, volume, 0);
 }
 
 LISP_BUILTIN(sound_stop, "") {

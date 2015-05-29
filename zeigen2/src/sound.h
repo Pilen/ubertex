@@ -20,7 +20,7 @@ struct Sound_s {
 };
 
 void sound_initialize(void);
-Value sound_play(Environment *environment, Value filename);
+Value sound_play(Environment *environment, Value filename, Int Volume, Int loops);
 
 Bool sound_stop(Environment *environment, Sound *sound);
 Int sound_stop_file(Environment *environment, Value filename);

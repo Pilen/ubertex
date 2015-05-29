@@ -53,7 +53,7 @@ void sound_finished(Int channel) {
     mutex_unlock(sound_lock);
 }
 
-Value sound_play(Environment *environment, Value filename) {
+Value sound_play(Environment *environment, Value filename, Int volume, Int loops) {
     debug("start");
     Unt start = SDL_GetTicks();
     Soundsample *skeleton = memory_malloc(sizeof(Soundsample));
@@ -77,7 +77,12 @@ Value sound_play(Environment *environment, Value filename) {
     z_assert(channel < sound_channels);
     sound_first_free = channel;
 
-    Int actual_channel = Mix_PlayChannel(channel, soundsample -> chunk, 0);
+    if (volume < 0) {
+        volume = MIX_MAX_VOLUME;
+    }
+    Mix_Volume(channel, volume);
+
+    Int actual_channel = Mix_PlayChannel(channel, soundsample -> chunk, loops);
     z_assert(actual_channel == channel);
 
     Sound *sound = memory_malloc(sizeof(Sound));
