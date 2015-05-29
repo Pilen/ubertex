@@ -21,6 +21,7 @@
                       (error "Header too big")
                     (make-string padding-size 0)))
          (message (concat header padding lisp)))
+    (message "%s" lisp)
     (revy--send-message worker message)))
 
 (defun revy-send-command (worker command &optional options)
@@ -43,7 +44,7 @@ To send lisp code use `revy-send-lisp' instead."
   (let ((workers (revy-get-workers worker)))
     (dolist (worker workers)
       (let ((channel (aref worker revy-worker-channel-index)))
-        (unless (process-live-p channel)
+        (unless (and (process-live-p channel) nil)
           ;; TODO: Try to start server on failure to connect
           ;; TODO: Better error logging
           (setq channel (open-network-stream "revy-worker-channel" nil
@@ -69,7 +70,7 @@ the command will be executed on revy-current-worker."
       (setq worker revy-current-worker))
     (dolist (worker (revy-get-workers worker))
       (start-process "revy-shell" "*revy-shell*"
-                     "ssh" (concat (aref worker revy-worker-location-index) "@" (aref worker revy-worker-location-index))
+                     "ssh" (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
                      (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
                              "cd " (aref worker revy-worker-dir-index) ";\n"
                              command)))))
@@ -87,7 +88,7 @@ the command will be executed on revy-current-worker."
       (goto-char (point-max))
       (dolist (worker (revy-get-workers worker))
         (call-process "ssh" nil "*revy-shell*" t
-                      (concat (aref worker revy-worker-location-index) "@" (aref worker revy-worker-location-index))
+                      (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
                       (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
                             "cd " (aref worker revy-worker-dir-index) ";\n"
                             command))))))
@@ -112,7 +113,7 @@ the command will be executed on revy-current-worker."
       (revy-shell
        (concat "scp "
                filename
-               " " (concat (aref worker revy-worker-location-index) "@" (aref worker revy-worker-location-index))
+               " " (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
                ":" (aref worker revy-worker-dir-index)
                (file-name-as-directory subdir) (file-name-nondirectory filename))))))
 
@@ -134,7 +135,7 @@ But it will also accept a string with end being ignored in that case."
 (defvar revy--uploading-files 0
   "Number off machines being synced to currently")
 
-(defun revy-upload-files (worker)
+(defun revy-upload-files (&optional worker)
   ;; Todo fix dokumentation
   "Upload files to workers.
 If no workers are specified, the files will be uploaded to all workers.
@@ -151,16 +152,17 @@ Uses rsync to upload the files, based on the timestamp"
   (unless worker
     (setq worker 'all))
 
-  (dolist (worker (revy-get-workers worker))
+  (dolist (worker_v (revy-get-workers worker))
     (lexical-let* ((name worker)
-                   (process (start-process (concat "revy-rsync-" name)
-                                           (concat "*revy-rsync-" name "*")
+                   ;; TODO: name is not unique and is thus not the best indicator, not an error though
+                   (process (start-process (format "revy-rsync-%s" name)
+                                           (format "*revy-rsync-%s*" name)
                                            "rsync"
                                            "-r" "-u" "-t" "-P" "-e" "ssh"
                                            (file-name-as-directory revy-dir)
-                                           (concat (concat (aref worker revy-worker-location-index) "@" (aref worker revy-worker-location-index))
+                                           (concat (concat (aref worker_v revy-worker-user-index) "@" (aref worker_v revy-worker-location-index))
                                                    ":"
-                                                   (aref worker revy-worker-dir-index)))))
+                                                   (aref worker_v revy-worker-dir-index)))))
       (incf revy--uploading-files)
       (message "Syncing: %s" name)
       (set-process-sentinel process
