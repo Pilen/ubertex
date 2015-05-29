@@ -72,11 +72,12 @@ This function will also call revy-abort-all "
 (defun revy-blank ()
   "Show blank screen temporarily"
   (interactive)
-  (revy-send-message "blank"))
+  (revy-send-command nil "blank"))
 
 (defun revy-blank-all ()
   "Show blank screen temporarily on all workers"
-  (revy-blank))
+  (interactive)
+  (revy-send-command 'all "blank"))
 
 (defun revy-unblank-all ()
   "Continue showing what was previously shown"
@@ -85,11 +86,11 @@ This function will also call revy-abort-all "
 
 (defun revy-abort ()
   (interactive)
-  (revy-send-message "abort"))
+  (revy-send-command nil "abort"))
 
 (defun revy-abort-all ()
   (interactive)
-  (revy-send-message revy-worker-all "abort")
+  (revy-send-command 'all "abort")
   ;; todo fix:
   (revy-kill-mplayer))
 
@@ -103,15 +104,27 @@ This function will also call revy-abort-all "
   (interactive)
   (revy-send-message revy-worker-all "start" "Test"))
 
+(defun revy-calibrate ()
+  (interactive)
+  (revy-send-lisp 'all '(next-update 'calibrate)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Image
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun revy-image-open (file &optional dimensions)
+(defun revy-image (file &optional position)
   "Open one or more images, and show the first."
-  (unless dimensions
-    (setq dimensions "sized"))
-  (revy-send-message "start" "Image" dimensions file))
+  ;; (unless dimensions
+  ;;   (setq dimensions "sized"))
+  ;; (revy-send-message "start" "Image" dimensions file))
+  (setq position (or position ''(sized 0.0 0.0 1.0 1.0)))
+  (setq position (or position ''(full)))
+  (revy-send-lisp nil
+                  `(setq image-file ,file)
+                  `(setq image-position ,position)
+                  '(defun image-viewer ()
+                     (image image-file image-position))
+                  '(next-update 'image-viewer)))
 
 (defun revy-image-preload (&rest files)
   "Open one or more images, and show the first."
@@ -124,7 +137,13 @@ This function will also call revy-abort-all "
 
 (defun revy-pdf-open (file)
   "Open a PDF file"
-  (revy-send-message "start" "PDF" "sized/0,70,90p,90p" file))
+  ;; (revy-send-message "start" "PDF" "sized/0,70,90p,90p" file))
+  (revy-send-lisp nil
+                  `(setq pdf-file ,file)
+                  '(setq pdf-slide 0)
+                  '(defun pdf-slideshow ()
+                     (pdf pdf-file pdf-slide '(centered 0.1 0.2)))
+                  `(next-update 'pdf-slideshow)))
 
 (defun revy-pdf-reload ()
   "Reload current pdf"
@@ -132,25 +151,28 @@ This function will also call revy-abort-all "
 
 (defun revy-pdf-goto-slide (slide)
   "Goto pdf slide."
-  (revy-send-message "module" "PDF" "goto" slide))
+  ;; (revy-send-message "module" "PDF" "goto" slide))
+  (revy-send-lisp nil `(setq pdf-slide ,slide)))
 
 (defun revy-pdf-next ()
   "Goto next slide"
-  (revy-send-message "module" "next"))
+  ;; (revy-send-message "module" "next"))
+  (revy-send-lisp nil '(setq pdf-slide (+ pdf-slide 1))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Sound
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun revy-play-sound (file)
+(defun revy-sound (file &optional volume)
   "Play a sound overlay"
-  (revy-send-message "playsound" file))
+  ;; (revy-send-message "playsound" file))
+  (revy-send-lisp nil `(sound ,file ,volume)))
 
 (defun revy-stop-sounds ()
   "Stop all overlay sounds"
   (interactive)
-  (revy-send-message "stopsounds"))
+  (revy-send-lisp nil "sound-stop-all"))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
