@@ -28,6 +28,7 @@ LISP_BUILTIN(sound, "") {
             break;
         case NIL:
             volume = -1;
+            break;
         default:
             return VALUE_ERROR;
         }
