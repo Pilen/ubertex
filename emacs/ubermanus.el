@@ -45,6 +45,8 @@ the functions can be called on their own."
 ")
 
 (defun revy-manus-prepare ()
+  ;; TODO: (query-replace-regexp "^%%.*$" "") alternatively (query-replace-regexp "^%%.*\n" "")
+
   (interactive)
   (let ((melody nil))
     (goto-char (point-min))
@@ -84,6 +86,9 @@ the functions can be called on their own."
 
     (indent-region (point-min) (point-max))
     (goto-char (point-min))
+    (query-replace-regexp "^\\\\act{[^}]*}\n" "")
+    (goto-char (point-min))
+    (query-replace-regexp "\\\\act{[^}]*}" "")
     ))
 
 
