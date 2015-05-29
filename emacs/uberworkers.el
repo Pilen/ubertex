@@ -43,6 +43,7 @@ The workers are stored in an internal datastructure, for use in elisp simply use
   (when dir
     (setq dir (file-name-as-directory dir)))
 
+  (setq names (cons 'all names))
   (setq port (or port revy-worker-default-port))
   (setq display (or display revy-worker-default-display))
   (setq dir (or dir revy-worker-default-dir))
