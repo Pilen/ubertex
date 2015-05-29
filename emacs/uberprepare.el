@@ -16,6 +16,7 @@
   "Build all .tex files"
   (interactive)
   (save-some-buffers)
+  (setq revy--compile-processes nil)
   (let ((directories (list revy-dir))
         (dir nil)
         (failed nil))
@@ -28,7 +29,9 @@
             (push file directories)
           (when (and (file-name-extension file)
                      (string= "tex" (file-name-extension file)))
-            (push (revy-compile-tex file) revy--compile-processes)))))
+            (let ((process (revy-compile-tex file)))
+              (when process
+                (push process revy--compile-processes)))))))
 
     (dolist (process revy--compile-processes)
       ;; Busy wait for process to finish
@@ -63,7 +66,8 @@ Returns the process used to compile the tex file"
 
     (when (file-newer-than-file-p tex pdf)
       (setq buffer (generate-new-buffer (concat "*revy-compile-" short "*")))
-      (let* ((sty (concat "TEXINPUTS=" revy-ubertex-dir ":" "$TEXINPUTS" ":" ".//" ":"))
+      ;; (let* ((sty (concat "TEXINPUTS=" revy-ubertex-dir ":" "$TEXINPUTS" ":" ".//" ":"))
+      (let* ((sty (concat "TEXINPUTS=" revy-ubertex-dir ":" ".//" ":"))
              (process-environment (cons sty process-environment)))
         (setq process (start-process (concat "revy-compile-" short)
                                      buffer
@@ -98,12 +102,13 @@ Returns the process used to compile the tex file"
                                     (message "An error ocurred during compilation of %s: %s" short error-message)))
 
                                 ;; (print buffer)
-                                (when buffer
-                                  (kill-buffer buffer))
+                                ;; (when buffer
+                                  ;; (kill-buffer buffer))
 
                                 ;; Delete auxiliary files
                                 (dolist (ext '("aux" "log" "nav" "out" "snm" "toc"))
                                   (let ((file (revy-replace-extension tex ext)))
                                     (when (file-exists-p file)
-                                      (delete-file file)))))))
+                                      (delete-file file)))))
+                              (message "done")))
       process)))
