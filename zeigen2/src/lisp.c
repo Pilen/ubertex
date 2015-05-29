@@ -37,11 +37,6 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(+, plus, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(-, minus, true, environment);
 
-    LISP_REGISTER_BUILTIN_FROM_RAW(-, update, true, environment);
-    LISP_REGISTER_BUILTIN_FROM_RAW(-, event, true, environment);
-    LISP_REGISTER_BUILTIN_FROM_RAW(-, draw, true, environment);
-
-
 
 
     LISP_REGISTER_BUILTIN_FROM_RAW(color, color, true, environment);
