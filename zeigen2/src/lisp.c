@@ -58,6 +58,7 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(allocate_useless, allocate_useless, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(render_test, render_test, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(pdf_test, pdf_test, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(sdl_internals, sdl_internals, true, environment);
 }
 
 void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, String *docstring, Environment *environment) {

@@ -33,3 +33,18 @@ LISP_BUILTIN(pdf_test, "") {
     /* pdf_create(environment, VALUE_PDF(&pdf), 1); */
     return VALUE_NIL;
 }
+
+LISP_BUILTIN(sdl_internals, "") {
+    if (!environment -> renderer) {
+        log_info("No renderer!");
+    }
+    if (!environment -> window) {
+        log_info("No window");
+    }
+    Int width;
+    Int height;
+    SDL_GetWindowSize(environment -> window, &width, &height);
+    log_info("Window: %dx%d", width, height);
+
+    return VALUE_NIL;
+}
