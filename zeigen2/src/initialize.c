@@ -120,14 +120,14 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         printf("SDL_Init Error: %s\n", SDL_GetError());
-        return 1;
+        return;
     }
 
     SDL_Window *window = SDL_CreateWindow("Hello, World!", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (!window) {
         printf("SDL_CraeteWindow Error: %s\n", SDL_GetError());
         SDL_Quit();
-        return 1;
+        return;
     }
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -135,7 +135,7 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
         SDL_DestroyWindow(window);
         printf("SDL_CreateRenderer Error: %s\n", SDL_GetError());
         SDL_Quit();
-        return 1;
+        return;
     }
 
 
@@ -145,7 +145,7 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
         SDL_DestroyWindow(window);
         printf("SDL_SetRenderDrawColor Error: %s\n", SDL_GetError());
         SDL_Quit();
-        return 1;
+        return;
     }
 
     error = SDL_RenderFillRect(renderer, NULL);
@@ -153,7 +153,7 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
         SDL_DestroyWindow(window);
         printf("SDL_RenderFillRect Error: %s\n", SDL_GetError());
         SDL_Quit();
-        return 1;
+        return;
     }
 
     SDL_RenderPresent(renderer);
@@ -166,5 +166,5 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
     SDL_DestroyWindow(window);
     SDL_Quit();
 
-    return 0;
+    return;
 }
