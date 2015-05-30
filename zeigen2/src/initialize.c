@@ -158,6 +158,7 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
     /*     flags = 0; */
     /* } */
 
+    flags = SDL_WINDOW_FULLSCREEN;
     debugi(flags);
     SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME, x, y, w, h, flags);
     if (!window) {
