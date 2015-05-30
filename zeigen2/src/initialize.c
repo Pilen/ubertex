@@ -101,4 +101,6 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
     SDL_SetRenderDrawColor(environment -> renderer, 0, 0, 0, 255);
     SDL_RenderClear(environment -> renderer);
     SDL_RenderPresent(environment -> renderer);
+
+    debug("Hej");
 }
