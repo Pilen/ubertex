@@ -150,13 +150,13 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
     int h = 0;
     flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-    if (!fullscreen) {
-        x = 0;
-        y = 0;
-        w = 400;
-        h = 400;
-        flags = 0;
-    }
+    /* if (!fullscreen) { */
+    /*     x = 0; */
+    /*     y = 0; */
+    /*     w = 400; */
+    /*     h = 400; */
+    /*     flags = 0; */
+    /* } */
 
     SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME, x, y, w, h, flags);
     if (!window) {
