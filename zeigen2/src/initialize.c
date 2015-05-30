@@ -115,13 +115,17 @@ void initialize_SDL2(Environment *environment, Bool fullscreen) {
 }
 
 void initialize_SDL(Environment *environment, Bool fullscreen) {
+    Int flags;
+    Int result;
+    flags = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
+    result = SDL_Init(flags);
+    if (result != 0) {
+        log_fatal("Unable to initialize SDL: %s", SDL_GetError());
+    }
+    atexit(SDL_Quit);
+
     const int SCREEN_WIDTH = 800;
     const int SCREEN_HEIGHT = 600;
-
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-        printf("SDL_Init Error: %s\n", SDL_GetError());
-        return;
-    }
 
     SDL_Window *window = SDL_CreateWindow("Hello, World!", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (!window) {
