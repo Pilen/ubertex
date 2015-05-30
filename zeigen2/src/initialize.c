@@ -37,7 +37,7 @@ Environment *initialize(void) {
     return environment;
 }
 
-void initialize_SDL2(Environment *environment, Bool fullscreen) {
+void initialize_SDL(Environment *environment, Bool fullscreen) {
     Int flags;
     Int result;
     flags = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
@@ -77,8 +77,8 @@ void initialize_SDL2(Environment *environment, Bool fullscreen) {
     if (!fullscreen) {
         x = 0;
         y = 0;
-        w = 400;
-        h = 400;
+        w = 1024;
+        h = 768;
         flags = 0;
     }
     SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME, x, y, w, h, flags);
@@ -114,7 +114,7 @@ void initialize_SDL2(Environment *environment, Bool fullscreen) {
     SDL_RenderPresent(environment -> renderer);
 }
 
-void initialize_SDL(Environment *environment, Bool fullscreen) {
+void initialize_SDL2(Environment *environment, Bool fullscreen) {
     Int flags;
     Int result;
     flags = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
@@ -158,6 +158,7 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
         flags = 0;
     }
 
+    debugi(SDL_WINDOWPOS_UNDEFINED);
     debugi(flags);
     SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME, x, y, w, h, flags);
     if (!window) {
