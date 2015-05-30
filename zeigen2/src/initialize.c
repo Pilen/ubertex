@@ -144,16 +144,35 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
     }
     atexit(Mix_CloseAudio);
 
+    Int x = SDL_WINDOWPOS_UNDEFINED;
+    Int y = SDL_WINDOWPOS_UNDEFINED;
+    Int w = 0;
+    int h = 0;
+    flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-    const int SCREEN_WIDTH = 800;
-    const int SCREEN_HEIGHT = 600;
-
-    SDL_Window *window = SDL_CreateWindow("Hello, World!", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if (!window) {
-        printf("SDL_CraeteWindow Error: %s\n", SDL_GetError());
-        SDL_Quit();
-        return;
+    if (!fullscreen) {
+        x = 0;
+        y = 0;
+        w = 400;
+        h = 400;
+        flags = 0;
     }
+
+    SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME, x, y, w, h, flags);
+    if (!window) {
+        log_fatal("Unable to create a window: %s", SDL_GetError());
+    }
+    environment -> window = window;
+
+    /* const int SCREEN_WIDTH = 800; */
+    /* const int SCREEN_HEIGHT = 600; */
+
+    /* SDL_Window *window = SDL_CreateWindow("Hello, World!", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN); */
+    /* if (!window) { */
+    /*     printf("SDL_CraeteWindow Error: %s\n", SDL_GetError()); */
+    /*     SDL_Quit(); */
+    /*     return; */
+    /* } */
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!renderer) {
