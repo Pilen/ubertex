@@ -97,16 +97,6 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
         SDL_ShowCursor(0);
     }
 
-    debug("rendering test");
-    int error;
-    error = SDL_SetRenderDrawColor(renderer, 255, 12, 40, 255);
-    z_assert(!error);
-    error = SDL_RenderFillRect(renderer, NULL);
-    z_assert(!error);
-    SDL_RenderPresent(renderer);
-    SDL_Delay(3000);
-    debug("rendering done");
-
 
     /* NOTE: Is it wrong to present the window already? */
     SDL_SetRenderDrawColor(environment -> renderer, 0, 0, 0, 255);
