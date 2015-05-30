@@ -124,6 +124,27 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
     }
     atexit(SDL_Quit);
 
+    flags = IMG_INIT_JPG | IMG_INIT_PNG;
+    if (IMG_Init(flags) != flags) {
+        log_fatal("Unable to initialize SDL_image: %s", IMG_GetError());
+    }
+    atexit(IMG_Quit);
+
+    flags = MIX_INIT_MP3 | MIX_INIT_OGG;
+    if (Mix_Init(flags) != flags) {
+        log_fatal("Unable to initialize SDL_mixer: %s", Mix_GetError());
+    }
+    atexit(Mix_Quit);
+    sound_initialize();
+
+    result = Mix_OpenAudio(OPTION_SOUND_FREQUENCY, OPTION_SOUND_FORMAT,
+                           OPTION_SOUND_OUTPUT_CHANNELS, OPTION_SOUND_CHUNKSIZE);
+    if (result != 0) {
+        log_fatal("Unable to initialize sound: %s", Mix_GetError());
+    }
+    atexit(Mix_CloseAudio);
+
+
     const int SCREEN_WIDTH = 800;
     const int SCREEN_HEIGHT = 600;
 
