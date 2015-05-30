@@ -99,9 +99,9 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
 
     int error;
     error = SDL_SetRenderDrawColor(renderer, 255, 12, 40, 255);
-    assert(!error);
+    z_assert(!error);
     error = SDL_RenderFillRect(renderer, NULL);
-    assert(!error);
+    z_assert(!error);
     SDL_RenderPresent(renderer);
     SDL_Delay(3000);
 
