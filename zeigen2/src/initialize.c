@@ -118,7 +118,7 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
     const int SCREEN_WIDTH = 800;
     const int SCREEN_HEIGHT = 600;
 
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO;) != 0) {
         printf("SDL_Init Error: %s\n", SDL_GetError());
         return;
     }
