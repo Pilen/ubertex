@@ -146,8 +146,8 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
 
     Int x = 0; /* SDL_WINDOWPOS_UNDEFINED; */
     Int y = 0; /* SDL_WINDOWPOS_UNDEFINED; */
-    Int w = 0;
-    int h = 0;
+    Int w = 1024;
+    int h = 768;
     flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
 
     /* if (!fullscreen) { */
