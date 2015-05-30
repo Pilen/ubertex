@@ -144,8 +144,8 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
     }
     atexit(Mix_CloseAudio);
 
-    Int x = SDL_WINDOWPOS_UNDEFINED;
-    Int y = SDL_WINDOWPOS_UNDEFINED;
+    Int x = 0; /* SDL_WINDOWPOS_UNDEFINED; */
+    Int y = 0; /* SDL_WINDOWPOS_UNDEFINED; */
     Int w = 0;
     int h = 0;
     flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
