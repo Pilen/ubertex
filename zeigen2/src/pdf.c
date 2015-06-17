@@ -104,6 +104,7 @@ Bool pdf_create(Environment *environment, Value skeleton, Unt initial_score, Unt
 
         cairo_destroy(cairo);
         cairo_surface_destroy(cairo_surface);
+        SDL_FreeSurface(sdl_surface);
 
         size_sum += sizeof(Unt) * width * height; /* Approximate size of texture */
     }
