@@ -75,10 +75,10 @@ String *string_concatenate(String *a, String *b) {
     return string;
 }
 
-Bool string_compare(String *a, String *b) {
+Int string_compare(String *a, String *b) {
     return strcmp(a -> text, b -> text);
 }
 
-Bool string_compare_str(String *a, char* b) {
+Int string_compare_str(String *a, char* b) {
     return strcmp(a -> text, b);
 }
