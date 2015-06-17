@@ -15,6 +15,12 @@ void graphics_render_at(Environment *environment, SDL_Texture *texture, Int x, I
 }
 
 Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture, Value position) {
+    /* TODO: really needs to be cleaned up!!! */
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
+    Float angle = 0;
+    /* SDL_Point pivot_actual; */
+    SDL_Point *pivot = NULL;
+
     SDL_Rect image;
     image.x = 0;
     image.y = 0;
@@ -25,15 +31,18 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
     SDL_GetWindowSize(environment -> window, &window_w, &window_h);
 
     if (position.type != LIST) {
+        log_error_in;
         return false;
     }
     List *list = position.val.list_val;
     if (list -> length <= 0) {
+        log_error_in;
         return false;
     }
     Value first = LIST_GET_UNSAFE(list, 0);
     if (first.type == SYMBOL) {
         if (equal(first, symbols_plain)) {
+            /* plain */
             /* Render at coords, unscaled */
             if (list -> length == 3) {
                 Value x = LIST_GET_UNSAFE(list, 1);
@@ -42,9 +51,14 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
                     image.x = x.val.integer_val;
                     image.y = y.val.integer_val;
                     goto RENDER;
+                } else if (x.type == FLOAT && y.type == FLOAT) {
+                    image.x = (Int) x.val.float_val;
+                    image.y = (Int) y.val.float_val;
+                    goto RENDER;
                 }
             }
         } else if (equal(first, symbols_full)) {
+            /* full */
             /* Stretch image to fill entire screen */
             if (list -> length == 1) {
                 image.w = window_w;
@@ -52,6 +66,7 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
                 goto RENDER;
             }
         } else if (equal(first, symbols_centered)) {
+            /* centered */
             if (list -> length == 3) {
                 /* Render offset from center */
                 Value x = LIST_GET_UNSAFE(list, 1);
@@ -74,7 +89,62 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
                 image.y = (window_h - image.h) / 2;
                 goto RENDER;
             }
+        } else if (equal(first, symbols_scaled)) {
+            /* scaled */
+            if (list -> length < 3) {
+                log_error_in;
+                return false;
+            }
+            Value x = LIST_GET_UNSAFE(list, 1);
+            Value y = LIST_GET_UNSAFE(list, 2);
+            switch (x.type) {
+            case INTEGER:
+                image.x = x.val.integer_val;
+                break;
+            case FLOAT:
+                image.x = (Int) x.val.float_val;
+                break;
+            default:
+                log_error_in;
+                return false;
+            }
+            switch (y.type) {
+            case INTEGER:
+                image.y = y.val.integer_val;
+                break;
+            case FLOAT:
+                image.y = (Int) y.val.float_val;
+                break;
+            default:
+                log_error_in;
+                return false;
+            }
+            Value x_scale;
+            Value y_scale;
+            if (list -> length == 4) {
+                x_scale = LIST_GET_UNSAFE(list, 3);
+                y_scale = x_scale;
+            } else if (list -> length == 5) {
+                x_scale = LIST_GET_UNSAFE(list, 3);
+                y_scale = LIST_GET_UNSAFE(list, 4);
+            } else {
+                log_error_in;
+                return false;
+            }
+
+            if (x_scale.type == INTEGER && y_scale.type == INTEGER) {
+                image.w = x_scale.val.integer_val;
+                image.h = y_scale.val.integer_val;
+            } else if (x_scale.type == FLOAT && y_scale.type == FLOAT) {
+                image.w *= x_scale.val.float_val;
+                image.h *= y_scale.val.float_val;
+            } else {
+                log_error_in;
+                return false;
+            }
+            goto RENDER;
         } else if (equal(first, symbols_sized)) {
+            /* sized */
             /* Render scaled but keep aspect ratio */
             if (list -> length == 5) {
                 Value offset_xv = LIST_GET_UNSAFE(list, 1);
@@ -91,6 +161,7 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
                     width = window_w * size_xv.val.float_val;
                     height = window_h * size_yv.val.float_val;
                 } else {
+                    log_error_in;
                     return false;
                 }
                 Float ratio_w = width / image.w;
@@ -98,11 +169,11 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
                 if (ratio_w <= ratio_h) {
                     image.h = width * ((Float) image.h / (Float) image.w);
                     image.w = width;
-                    image.y = (window_h - image.h) / 2;
+                    /* image.y = (window_h - image.h) / 2; */
                 } else {
                     image.w = height * ((Float) image.w / (Float) image.h);
                     image.h = height;
-                    image.x = (window_w - image.w) / 2;
+                    /* image.x = (window_w - image.w) / 2; */
                 }
 
                 if (offset_xv.type == INTEGER && offset_yv.type == INTEGER) {
@@ -125,9 +196,84 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
 
                     /* image.x = (width - image.w) / 2 + offset_xv.val.float_val; */
                     /* image.y = (height - image.h) / 2 + offset_yv.val.float_val; */
+                } else {
+                    log_error_in;
+                    return false;
                 }
                 goto RENDER;
             }
+        } else if (equal(first, symbols_rotated)) {
+            if (list -> length < 4) {
+                log_error_in;
+                return false;
+            }
+            Value angle_v = LIST_GET_UNSAFE(list, 1);
+            switch (angle_v.type) {
+            case INTEGER:
+                angle = (Float) angle_v.val.integer_val;
+                break;
+            case FLOAT:
+                angle = angle_v.val.float_val;
+                break;
+            default:
+                log_error_in;
+                return false;
+            }
+            Value x = LIST_GET_UNSAFE(list, 2);
+            Value y = LIST_GET_UNSAFE(list, 3);
+            switch (x.type) {
+            case INTEGER:
+                image.x = x.val.integer_val;
+                break;
+            case FLOAT:
+                image.x = (Int) x.val.float_val;
+                break;
+            default:
+                log_error_in;
+                return false;
+            }
+            switch (y.type) {
+            case INTEGER:
+                image.y = y.val.integer_val;
+                break;
+            case FLOAT:
+                image.y = (Int) y.val.float_val;
+                break;
+            default:
+                log_error_in;
+                return false;
+            }
+            Value x_scale;
+            Value y_scale;
+            if (list -> length == 5) {
+                x_scale = LIST_GET_UNSAFE(list, 4);
+                y_scale = x_scale;
+            } else if (list -> length == 6) {
+                x_scale = LIST_GET_UNSAFE(list, 4);
+                y_scale = LIST_GET_UNSAFE(list, 5);
+            } else {
+                log_error_in;
+                return false;
+            }
+
+            if (x_scale.type == INTEGER && y_scale.type == INTEGER) {
+                image.w = x_scale.val.integer_val;
+                image.h = y_scale.val.integer_val;
+            } else if (x_scale.type == FLOAT && y_scale.type == FLOAT) {
+                image.w *= x_scale.val.float_val;
+                image.h *= y_scale.val.float_val;
+            } else {
+                log_error_in;
+                return false;
+            }
+
+            pivot = NULL;
+
+            goto RENDER_EX;
+
+
+
+
 
         }
     } else if (first.type == INTEGER && list -> length == 2) {
@@ -138,11 +284,16 @@ Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture,
             goto RENDER;
         }
     }
+    log_error_in;
     return false;
 
  RENDER:
     SDL_RenderCopy(environment -> renderer, texture, NULL, &image);
     return true;
+ RENDER_EX:
+    SDL_RenderCopyEx(environment -> renderer, texture, NULL, &image, angle, pivot, flip);
+    return true;
+
 }
 
 
