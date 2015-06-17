@@ -1,7 +1,6 @@
 #ifndef Z_PDF_H
 #define Z_PDF_H
 
-#include <mupdf/fitz.h>
 #include "types.h"
 #include "environment.h"
 
