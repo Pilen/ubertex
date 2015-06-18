@@ -11,6 +11,7 @@
 #include "../image.h"
 #include "../graphics.h"
 #include "../pdf.h"
+#include "../text.h"
 
 LISP_BUILTIN(color, "") {
     Int *colors = memory_malloc(sizeof(Int) * 4);
@@ -157,6 +158,44 @@ LISP_BUILTIN(pdf, "") {
     }
     graphics_render_at_position(environment, texture, position);
     return symbols_t;
+}
+
+LISP_BUILTIN(text, "") {
+    /* TODO: The arguments should be interpreted better */
+    Int fontsize = 24;
+    Value position = VALUE_NIL;
+    Bool center = false;
+
+    if (args -> length >= 3) {
+        Value fontsize_v = LIST_GET_UNSAFE(args, 2);
+        if (fontsize_v.type == INTEGER) {
+            fontsize = fontsize_v.val.integer_val;
+        } else {
+            return VALUE_ERROR;
+        }
+    }
+    if (args -> length >= 4) {
+        Value center_v = LIST_GET_UNSAFE(args, 3);
+        center = center_v.type != NIL;
+    }
+    if (args -> length == 5) {
+        position = LIST_GET_UNSAFE(args, 4);
+    }
+    if (args -> length < 2 || args -> length > 5) {
+        return VALUE_ERROR;
+    }
+
+    Value string = LIST_GET_UNSAFE(args, 1);
+    if (string.type != STRING) {
+        return VALUE_ERROR;
+    }
+
+    SDL_Texture *texture = text(environment, string.val.string_val, fontsize, center);
+    if (!texture) {
+        return VALUE_ERROR;
+    }
+    graphics_render_at_position(environment, texture, position);
+    return VALUE_NIL;
 }
 
 LISP_BUILTIN(calibrate, "") {

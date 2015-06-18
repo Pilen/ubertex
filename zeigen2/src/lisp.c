@@ -36,6 +36,9 @@ void lisp_initialize(Environment *environment) {
 
     LISP_REGISTER_BUILTIN_FROM_RAW(+, plus, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(-, minus, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(*, times, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(>, greater_than, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(sin, sin, true, environment);
 
 
 
@@ -45,6 +48,7 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(fill, fill, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(image, image, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(pdf, pdf, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(text, text, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(calibrate, calibrate, true, environment);
 
     LISP_REGISTER_BUILTIN_FROM_RAW(sound, sound, true, environment);

@@ -7,6 +7,7 @@
 #include "image.h"
 #include "pdf.h"
 #include "sound.h"
+#include "text.h"
 
 Bool equal(Value a, Value b) {
     /* TODO: find out how to handle comparison of 2.0 and 2 */
@@ -77,6 +78,12 @@ Bool equal(Value a, Value b) {
         return equal(a.val.pdf_val -> path, b.val.pdf_val -> path);
     case SOUNDSAMPLE:
         return equal(a.val.soundsample_val -> path, b.val.soundsample_val -> path);
+    case TEXT:
+        {
+            Bool string_equal = string_compare(a.val.text_val -> text, b.val.text_val -> text) == 0;
+            Bool fontsize_equal = a.val.text_val -> fontsize == b.val.text_val -> fontsize;
+            return string_equal && fontsize_equal;
+        }
     default:
         z_assert(false)
     }

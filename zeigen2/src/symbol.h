@@ -29,6 +29,8 @@ Value symbols_hash;
 Value symbols_plain;
 Value symbols_full;
 Value symbols_centered;
+Value symbols_scaled;
 Value symbols_sized;
+Value symbols_rotated;
 
 #endif

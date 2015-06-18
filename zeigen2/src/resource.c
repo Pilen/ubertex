@@ -13,6 +13,7 @@
 #include "image.h"
 #include "pdf.h"
 #include "sound.h"
+#include "text.h"
 
 Bool resource_create(Environment *environment, Value skeleton);
 Int resource_comparison(const void *a, const void *b);
@@ -76,6 +77,9 @@ Bool resource_create(Environment *environment, Value resource) {
         break;
     case SOUNDSAMPLE:
         found = soundsample_create(environment, resource, initial_score, &size);
+        break;
+    case TEXT:
+        found = text_create(environment, resource, initial_score, &size);
         break;
     default:
         z_assert(false);

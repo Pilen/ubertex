@@ -36,7 +36,9 @@ void symbol_initialize() {
     symbols_plain = symbol_get(VALUE_STRING(string_create_from_str("plain")));
     symbols_full = symbol_get(VALUE_STRING(string_create_from_str("full")));
     symbols_centered = symbol_get(VALUE_STRING(string_create_from_str("centered")));
+    symbols_scaled = symbol_get(VALUE_STRING(string_create_from_str("scaled")));
     symbols_sized = symbol_get(VALUE_STRING(string_create_from_str("sized")));
+    symbols_rotated = symbol_get(VALUE_STRING(string_create_from_str("rotated")));
 
 }
 
