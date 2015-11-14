@@ -8,46 +8,50 @@
 #include "symbol.h"
 
 void print(Value value) {
+    print_on(stdin, value);
+}
+
+void print_on(FILE *stream, Value value) {
     switch (value.type) {
     case ERROR:
-        printf("error");
+        fprintf(stream, "error");
         break;
     case NIL:
-        printf("nil");
+        fprintf(stream, "nil");
         break;
     case SYMBOL:
         {
             Value name = symbol_name(value);
             String *string = name.val.string_val;
-            printf(string -> text);
+            fprintf(stream, string -> text);
         }
         break;
     case INTEGER:
-        printf("%d", value.val.integer_val);
+        fprintf(stream, "%d", value.val.integer_val);
         break;
     case FLOAT:
-        printf("%lf", value.val.float_val);
+        fprintf(stream, "%lf", value.val.float_val);
         break;
     case STRING:
-        printf("\"%s\"", value.val.string_val -> text);
+        fprintf(stream, "\"%s\"", value.val.string_val -> text);
         break;
     case LIST:
-        printf("(");
+        fprintf(stream, "(");
         if (value.val.list_val -> length >= 1) {
-            print(LIST_GET_UNSAFE(value.val.list_val, 0));
+            print_on(stream, LIST_GET_UNSAFE(value.val.list_val, 0));
         }
         for (Unt i = 1; i < value.val.list_val -> length; i++) {
-            printf(" ");
-            print(LIST_GET_UNSAFE(value.val.list_val, i));
+            fprintf(stream, " ");
+            print_on(stream, LIST_GET_UNSAFE(value.val.list_val, i));
         }
-        printf(")");
+        fprintf(stream, ")");
         break;
     case HASH:
-        printf("some hash value");
+        fprintf(stream, "some hash value");
         break;
     default:
-        printf("Illegal type: %d", value.type);
+        fprintf(stream, "Illegal type: %d", value.type);
         break;
     }
-    fflush(stdout);
+    fflush(stream);
 }

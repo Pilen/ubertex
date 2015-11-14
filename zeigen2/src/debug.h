@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include "print.h"
 
-#define debug_value(v) do{fprintf(stderr, "DEBUG: %s:%d: %s: print: ", __FILE__, __LINE__, __func__); print((v)); fprintf(stderr, "\n");} while (0);
+#define debug_value(v) do{fprintf(stderr, "DEBUG: %s:%d: %s: print: ", __FILE__, __LINE__, __func__); print_on(stderr, (v)); fprintf(stderr, "\n");} while (0);
 #define debugr(M) do{fprintf(stderr, "DEBUG: %s:%d: %s: " #M "\n", __FILE__, __LINE__, __func__);} while (0);
 #define debugi(v) do{fprintf(stderr, "DEBUG: %s:%d: %s: "#v" = %d\n", __FILE__, __LINE__, __func__, v);} while (0);
 #define debug(...) do{fprintf(stderr, "DEBUG: %s:%d: %s: ", __FILE__, __LINE__, __func__); fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n");} while (0);
