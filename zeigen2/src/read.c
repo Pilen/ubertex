@@ -30,16 +30,6 @@ Value read_value(Value value) {
         return VALUE_ERROR;
     }
     return read_from_str(value.val.string_val -> text);
-    /* char *code = value.val.string_val -> text; */
-    /* char *end = code + strlen(code); */
-    /* Unt linenumber = 0; */
-    /* Value result; */
-    /* Bool found = read_script(&code, end, &linenumber, &result); */
-    /* if (found && code == end) { */
-    /*     return result; */
-    /* } */
-    /* /\* TODO: log error *\/ */
-    /* return VALUE_ERROR; */
 }
 
 Value read_from_str(char *str) {

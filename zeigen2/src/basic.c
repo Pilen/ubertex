@@ -118,6 +118,7 @@ Bool eq(Value a, Value b) {
 }
 
 Value copy_deep(Value value) {
+    //TODO: implement
     switch (value.type) {
     case LIST:
         {

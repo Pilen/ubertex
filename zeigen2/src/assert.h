@@ -19,6 +19,7 @@
         (void) sizeof(char[1 - 2*!!!(v)]);      \
     } while (0);
 
+
 #else
 #define z_assert(v)                             \
     do {                                        \
