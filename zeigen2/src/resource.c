@@ -89,7 +89,7 @@ Bool resource_create(Environment *environment, Value resource) {
     return found;
 }
 
-Unt resource_flush_cache(void) {
+Unt resource_shrink_cache(void) {
     /* WARNING: SHOULD ONLY EVER BE CALLED WHILE
        NO REFERENCES TO THE ACTUAL RESOURCES ARE HELD!
        Aka, don't call it during a frame update as the actual resources pointed at could become invalid.

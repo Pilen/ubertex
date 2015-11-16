@@ -67,7 +67,7 @@ void worker_loop(Environment *environment) {
         }
         SDL_RenderPresent(environment -> renderer);
         memory_update();
-        resource_flush_cache();
+        resource_shrink_cache();
         SDL_Delay(1000/30);
     }
 }

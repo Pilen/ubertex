@@ -161,8 +161,6 @@ void communication_receive(TCPsocket socket) {
         log_error("Header command not defined: %s", command);
     }
     return;
-
-
 }
 
 void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
