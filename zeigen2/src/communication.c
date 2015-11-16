@@ -26,6 +26,7 @@ void communication_initialize(Unt port) {
     communication_parsed_queue = list_create_empty();
     communication_parsed_queue_lock = mutex_create();
 
+    IPaddress ip;
     Int error;
     error = SDLNet_ResolveHost(&ip, INADDR_ANY, port);
     if (error == -1) {
@@ -37,24 +38,23 @@ void communication_initialize(Unt port) {
         log_fatal("Unable to open socket: %s", SDLNet_GetError());
     }
 
-    SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
-    z_assert(set);
-    error = SDLNet_TCP_AddSocket(set, server);
-    z_assert(error != -1);
-
     SDL_Thread *thread = SDL_CreateThread(communication_loop, "communication", server);
     z_assert(thread);
 }
 
 
 Int communication_loop(void *data) {
-    IPaddress ip;
     Int error;
 
     memory_register_thread();
 
     z_assert(data);
     TCPsocket server = (TCPsocket) data;
+
+    SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
+    z_assert(set);
+    error = SDLNet_TCP_AddSocket(set, server);
+    z_assert(error != -1);
 
     while (true) {
         Int ready = SDLNet_CheckSockets(set, -1);
@@ -77,6 +77,7 @@ Int communication_loop(void *data) {
 void communication_receive(TCPsocket socket) {
     /* TODO: This can still delay other messages while waiting for timeout,
        maybe use threads or a common socketset */
+    Int error;
     SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
     z_assert(set);
     error = SDLNet_TCP_AddSocket(set, socket);
@@ -165,6 +166,7 @@ void communication_receive(TCPsocket socket) {
 }
 
 void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
+    Int error;
     SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
     z_assert(set);
     error = SDLNet_TCP_AddSocket(set, socket);
