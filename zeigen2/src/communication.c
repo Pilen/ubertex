@@ -26,26 +26,7 @@ void communication_initialize(Unt port) {
     communication_parsed_queue = list_create_empty();
     communication_parsed_queue_lock = mutex_create();
 
-    /* Ensure the port is located on the heap, not the stack as it can change
-       Is free'd when communication_loop is actually called
-     */
-    Unt *port_heap = memory_malloc(sizeof(Unt));
-    *port_heap = port;
-    SDL_Thread *thread = SDL_CreateThread(communication_loop, "communication", port_heap);
-    z_assert(thread);
-}
-
-
-Int communication_loop(void *data) {
-    IPaddress ip;
     Int error;
-
-    memory_register_thread();
-
-    z_assert(data);
-    Unt port = *((Unt *) data);
-    memory_free(data);
-
     error = SDLNet_ResolveHost(&ip, INADDR_ANY, port);
     if (error == -1) {
         log_fatal("Unable to resolve host: %s", SDLNet_GetError());
@@ -61,6 +42,19 @@ Int communication_loop(void *data) {
     error = SDLNet_TCP_AddSocket(set, server);
     z_assert(error != -1);
 
+    SDL_Thread *thread = SDL_CreateThread(communication_loop, "communication", server);
+    z_assert(thread);
+}
+
+
+Int communication_loop(void *data) {
+    IPaddress ip;
+    Int error;
+
+    memory_register_thread();
+
+    z_assert(data);
+    TCPsocket server = (TCPsocket) data;
 
     while (true) {
         Int ready = SDLNet_CheckSockets(set, -1);
@@ -68,8 +62,7 @@ Int communication_loop(void *data) {
         if (ready == -1) {
             perror("CheckSockets"); /* Only prints on stderr */
             log_fatal("CheckSockets returned -1: %s", SDLNet_GetError());
-        }
-        if (ready > 0) {
+        } else if (ready > 0) {
             if (SDLNet_SocketReady(server)) {
                 TCPsocket client = SDLNet_TCP_Accept(server);
                 if (client) {
@@ -84,6 +77,25 @@ Int communication_loop(void *data) {
 void communication_receive(TCPsocket socket) {
     /* TODO: this is really dangerous, will stall if the client does not send second package */
     /* TODO: Start a thread to handle this */
+    /* TODO: Or use a new socketset */
+    SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
+    z_assert(set);
+    error = SDLNet_TCP_AddSocket(set, socket);
+    z_assert(error != -1);
+
+    int ready = SDLNet_CheckSockets(set, OPTION_BODY_TIMEOUT);
+    if (ready < 0) {
+        perror("CheckSockets");
+        return;
+    } else if (ready == 0) {
+        log_error("Connection timed out before sending body");
+        return;
+    }
+    if (!SDLNet_SocketReady(socket)) {
+        log_error("Connection timed out before sending body");
+        return;
+    }
+
     char header[OPTION_HEADER_SIZE + 1];
     header[OPTION_HEADER_SIZE] = '\0';
     Int result = SDLNet_TCP_Recv(socket, header, OPTION_HEADER_SIZE);
