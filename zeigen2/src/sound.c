@@ -36,6 +36,7 @@ void sound_table_expand(void) {
     /* Mutexes are reentrant */
     mutex_lock(sound_lock);
     Unt new_channels = sound_channels * 2;
+    /* TODO: Use realloc instead? */
     Sound **new_table = memory_cmalloc(sizeof(Sound *) * new_channels);
     for (Unt i = 0; i < sound_channels; i++) {
         new_table[i] = sound_table[i];
