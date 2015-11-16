@@ -75,31 +75,30 @@ Int communication_loop(void *data) {
     return 0;
 }
 void communication_receive(TCPsocket socket) {
-    /* TODO: this is really dangerous, will stall if the client does not send second package */
-    /* TODO: Start a thread to handle this */
-    /* TODO: Or use a new socketset */
+    /* TODO: This can still delay other messages while waiting for timeout,
+       maybe use threads or a common socketset */
     SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
     z_assert(set);
     error = SDLNet_TCP_AddSocket(set, socket);
     z_assert(error != -1);
 
-    int ready = SDLNet_CheckSockets(set, OPTION_BODY_TIMEOUT);
+    int ready = SDLNet_CheckSockets(set, OPTION_HEADER_TIMEOUT);
+    SDLNet_FreeSocketSet(set);
     if (ready < 0) {
         perror("CheckSockets");
         return;
     } else if (ready == 0) {
-        log_error("Connection timed out before sending body");
-        return;
-    }
-    if (!SDLNet_SocketReady(socket)) {
-        log_error("Connection timed out before sending body");
+        SDLNet_FreeSocketSet(set);
+        log_error("Connection timed out before recieving header");
         return;
     }
 
     char header[OPTION_HEADER_SIZE + 1];
     header[OPTION_HEADER_SIZE] = '\0';
     Int result = SDLNet_TCP_Recv(socket, header, OPTION_HEADER_SIZE);
-    if (result != OPTION_HEADER_SIZE) {
+    if (result <= 0) {
+        log_error("Connection failed before receiving header");
+    } else if (result != OPTION_HEADER_SIZE) {
         log_error("Received header with wrong length, %d bytes received, %d bytes expected", result, OPTION_HEADER_SIZE);
         return;
     }
@@ -166,10 +165,28 @@ void communication_receive(TCPsocket socket) {
 }
 
 void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
+    SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
+    z_assert(set);
+    error = SDLNet_TCP_AddSocket(set, socket);
+    z_assert(error != -1);
+
+    int ready = SDLNet_CheckSockets(set, OPTION_BODY_TIMEOUT);
+    SDLNet_FreeSocketSet(set);
+    if (ready < 0) {
+        perror("CheckSockets");
+        return;
+    } else if (ready == 0) {
+        SDLNet_FreeSocketSet(set);
+        log_error("Connection timed out before recieving body");
+        return;
+    }
+
     char body[size + 1];
     body[size] = '\0';
     Int result = SDLNet_TCP_Recv(socket, body, size);
-    if (result != size) {
+    if (result <= 0) {
+        log_error("Connection failed before receiving body");
+    } else if (result != size) {
         log_error("Received body with wrong length, %d bytes received, %d bytes expected from header", result, size);
         return;
     }
