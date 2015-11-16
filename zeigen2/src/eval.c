@@ -18,6 +18,7 @@ Value eval_clojure(Value function_symbol, List *args, Environment *environment);
 
 Value eval(Value expression, Environment *environment) {
     switch (expression.type) {
+        /* Self evaluating */
     case ERROR:
     case NIL:
     case INTEGER:
@@ -33,6 +34,7 @@ Value eval(Value expression, Environment *environment) {
             return result;
         } else {
             /* TODO: log error */
+            /* TODO: "Did you mean?" */
             return VALUE_ERROR;
         }
     }
@@ -52,6 +54,7 @@ Value eval_list(Value expression, Environment *environment) {
 
     Value function_symbol = LIST_GET_UNSAFE(list, 0);
 
+    /* Lambda function */
     if (function_symbol.type == LIST &&
         function_symbol.val.list_val -> length >= 1) {
         Value head = LIST_GET_UNSAFE(function_symbol.val.list_val, 0);
@@ -84,9 +87,11 @@ Value eval_list(Value expression, Environment *environment) {
     Bool found = hash_get(environment -> functions, function_symbol, &function_value);
     if (!found) {
         /* TODO: log error */
+        /* TODO: "Did you mean?" */
         log_error("symbol XXX not found");
         return VALUE_ERROR;
     }
+    z_assert(function_value.type == FUNCTION);
     Function *function = function_value.val.function_val;
 
     List *args;
