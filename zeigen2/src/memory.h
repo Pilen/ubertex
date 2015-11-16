@@ -18,8 +18,8 @@
 #define memory_malloc(size) (log_malloc(size), memory_malloc_actual(size))
 #define memory_cmalloc(size) (log_malloc(size), memory_cmalloc_actual(size))
 #else
-#define memory_malloc(size) memory_malloc_actual(size)
-#define memory_cmalloc(size) memory_cmalloc_actual(size)
+#define memory_malloc(size) (memory_malloc_actual(size))
+#define memory_cmalloc(size) (memory_cmalloc_actual(size))
 #endif
 
 void memory_initialize(void);
