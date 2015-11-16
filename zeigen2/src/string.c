@@ -12,6 +12,10 @@
    as described in http://www.informit.com/guides/content.aspx?g=cplusplus&seqNum=288 */
 
 String *string_create_from_substr(char* str, Unt bytes) {
+    /**
+     * Copy Bytes number of bytes from str.
+     * Use without the nullbyte
+     */
     /* TODO: As this only works with ASCII now, it holds that length == size.
        This is not true for unicode?!. */
     String *string = memory_cmalloc(sizeof(String) + sizeof(char) * (bytes + 1));
