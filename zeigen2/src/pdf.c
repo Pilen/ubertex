@@ -29,7 +29,7 @@ SDL_Texture *pdf_get_slide(Environment *environment, Value filename, Int slide) 
     return NULL;
 }
 
-Bool pdf_create(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
+Bool resource_create_pdf(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
     debug("fisk");
     cairo_status_t status;
     z_assert(skeleton.type == PDF);

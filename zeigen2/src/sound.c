@@ -133,7 +133,7 @@ void sound_stop_all(void) {
     Mix_HaltChannel(-1);
 }
 
-Bool soundsample_create(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
+Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
     z_assert(skeleton.type == SOUNDSAMPLE);
     Soundsample *soundsample = skeleton.val.soundsample_val;
     z_assert(soundsample -> path.type == STRING);

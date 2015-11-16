@@ -17,6 +17,6 @@ struct Pdf_s {
 
 SDL_Texture *pdf_get_slide(Environment *environment, Value filename, Int slide);
 
-Bool pdf_create(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
+Bool resource_create_pdf(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
 
 #endif

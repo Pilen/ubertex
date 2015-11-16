@@ -17,7 +17,7 @@ SDL_Texture *image_get_texture_from_file(Environment *environment, Value filenam
     }
 }
 
-Bool image_create(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
+Bool resource_create_image(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
     z_assert(skeleton.type == IMAGE);
     Image *image = skeleton.val.image_val;
 

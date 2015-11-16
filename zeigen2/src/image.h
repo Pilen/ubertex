@@ -15,6 +15,6 @@ struct Image_s {
 
 SDL_Texture *image_get_texture_from_file(Environment *environment, Value filename);
 
-Bool image_create(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
+Bool resource_create_image(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
 
 #endif

@@ -70,16 +70,16 @@ Bool resource_create(Environment *environment, Value resource) {
     Unt size = 0;
     switch (resource.type) {
     case IMAGE:
-        found = image_create(environment, resource, initial_score, &size);
+        found = resource_create_image(environment, resource, initial_score, &size);
         break;
     case PDF:
-        found = pdf_create(environment, resource, initial_score, &size);
+        found = resource_create_pdf(environment, resource, initial_score, &size);
         break;
     case SOUNDSAMPLE:
-        found = soundsample_create(environment, resource, initial_score, &size);
+        found = resource_create_soundsample(environment, resource, initial_score, &size);
         break;
     case TEXT:
-        found = text_create(environment, resource, initial_score, &size);
+        found = resource_create_text(environment, resource, initial_score, &size);
         break;
     default:
         z_assert(false);

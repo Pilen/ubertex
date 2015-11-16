@@ -26,5 +26,5 @@ Bool sound_stop(Environment *environment, Sound *sound);
 Int sound_stop_file(Environment *environment, Value filename);
 void sound_stop_all(void);
 
-Bool soundsample_create(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
+Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
 #endif

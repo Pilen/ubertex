@@ -22,7 +22,7 @@ SDL_Texture *text(Environment *environment, String *text, Int fontsize, Bool cen
     }
 }
 
-Bool text_create(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
+Bool resource_create_text(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
     /* cairo_status_t status; */
     Int width;
     Int height;
