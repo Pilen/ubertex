@@ -120,13 +120,26 @@ Unt resource_shrink_cache(void) {
             SDL_DestroyTexture(value.val.image_val -> texture);
             break;
         default:
+            /* Catch missing destructors */
             z_assert(false);
         }
     }
     lock_write_unlock(resource_cache_lock);
 
     return cleared;
+}
 
+Unt resource_dump_entire_cache(void) {
+    size_t old_resource_size_threshold = resource_size_threshold;
+    resource_size_threshold = 0;
+    Unt cleared = resource_shrink_cache();
+    resource_size_threshold = old_resource_size_threshold;
+    return cleared;
+}
+
+Unt resource_dump_dirty_cache(void) {
+    /* TODO: implement! */
+    return resource_dump_entire_cache();
 }
 
 Int resource_comparison(const void *a, const void *b) {

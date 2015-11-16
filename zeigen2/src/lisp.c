@@ -40,8 +40,6 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(>, greater_than, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(sin, sin, true, environment);
 
-
-
     LISP_REGISTER_BUILTIN_FROM_RAW(color, color, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(setting-clear-color, setting_clear_color, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(clear, clear, true, environment);
@@ -63,6 +61,9 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(render_test, render_test, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(pdf_test, pdf_test, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(sdl_internals, sdl_internals, true, environment);
+
+    LISP_REGISTER_BUILTIN_FROM_RAW(flush-entire-cache, flush_entire_cache, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(flush-dirty-cache, flush_dirty_cache, true, environment);
 }
 
 void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, String *docstring, Environment *environment) {
