@@ -26,7 +26,9 @@ void communication_initialize(Unt port) {
     communication_parsed_queue = list_create_empty();
     communication_parsed_queue_lock = mutex_create();
 
-    /* Ensure the port is located on the heap, not the stack as it can change */
+    /* Ensure the port is located on the heap, not the stack as it can change
+       Is free'd when communication_loop is actually called
+     */
     Unt *port_heap = memory_malloc(sizeof(Unt));
     *port_heap = port;
     SDL_Thread *thread = SDL_CreateThread(communication_loop, "communication", port_heap);
@@ -80,7 +82,7 @@ Int communication_loop(void *data) {
     return 0;
 }
 void communication_receive(TCPsocket socket) {
-    /* TODO: this ir really dangerous, will stall if the client does not send second package */
+    /* TODO: this is really dangerous, will stall if the client does not send second package */
     /* TODO: Start a thread to handle this */
     char header[OPTION_HEADER_SIZE + 1];
     header[OPTION_HEADER_SIZE] = '\0';
