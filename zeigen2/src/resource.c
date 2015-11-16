@@ -38,6 +38,7 @@ Value resource_get(Environment *environment, Value skeleton) {
     Value resource;
 
     lock_read_lock(resource_cache_lock);
+    /* Hashes are based on their creation data, eg. file path */
     Bool found = hash_get(resource_cache, skeleton, &resource);
     lock_read_unlock(resource_cache_lock);
 
