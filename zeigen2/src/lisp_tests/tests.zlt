@@ -161,14 +161,10 @@ y ;=> ((10 2 3) 4 5)
 
 
 ;;;;LATEX caption=eval-fun, label=test:eval-fun1
-(setq x '(+ (setf (caddr x) 30) 3))
+(setq x '(+ (setf (caddr x) 30) 3)) ;=> (+ (setf (caddr x) 30) 3)
 (caddr x) ;=> 3
 (eval x) ;=> 60
-
-x: (+ (setf (caddr x) 30) 3)
-x: (+ (setf (caddr x) 30) 30)
-(+ 30 30)
-
+x ;=> (+ (setf (caddr x) 30) 30)
 
 ;;;;LATEX caption=eval-fun2, label=test:eval-fun2
 (setq x '(list 1 2 (setf (nthcdr (length x) x) (cons (nth (- (length x) 1) x) nil))))
