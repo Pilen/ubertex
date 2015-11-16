@@ -118,7 +118,6 @@ int main(int argc, char **argv) {
             if (strcmp(line, "(quit)") == 0 || strcmp(line, "(exit)") == 0) {
                 break;
             }
-            read_from_str("abc");
             Value statement = read_from_str(line);
             free(line);
             Value result = eval(statement, environment);
