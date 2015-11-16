@@ -30,7 +30,7 @@ void resource_initialize(void) {
     resource_scores = list_create_empty();
     resource_total_size = 0;
     size_t available = memory_estimate_available();
-    resource_size_threshold = available / 100 * OPTION_RESOURCE_PERCENTAGE;
+    resource_size_threshold = available * (OPTION_RESOURCE_PERCENTAGE / 100.0);
 }
 
 Value resource_get(Environment *environment, Value skeleton) {
