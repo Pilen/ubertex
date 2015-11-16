@@ -86,6 +86,8 @@ void worker_update(Environment *environment, Value update_symbol, List *args) {
             /* TODO: log error better*/
             log_error("Error when updating, no such function");
         }
+    } else if (update_symbol.type == NIL) {
+        /* Do nothing */
     } else {
         log_error("Error when updating, not a function");
     }
