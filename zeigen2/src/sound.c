@@ -16,7 +16,7 @@ Mutex *sound_lock;
 Sound **sound_table;
 Int sound_channels;
 Int sound_playing;
-Int sound_first_free; /* Might not actually be free, but we know nothing is free below */
+Int sound_first_free; /* Might not actually be free, but we know nothing is free before */
 
 void sound_finished(Int channel);
 char *sound_convert_to_ogg(String *mp3);
@@ -140,6 +140,7 @@ Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt i
     char *filename = soundsample -> path.val.string_val -> text;
     if (strcmp(file_get_extension_str(filename), "mp3") == 0) {
         filename = sound_convert_to_ogg(soundsample -> path.val.string_val);
+        log_error("Could not convert %s to ogg file", filename);
         if (!filename) {
             return false;
         }
@@ -152,6 +153,7 @@ Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt i
             log_error("Found %s but could not read it", filename);
             filename = sound_convert_to_ogg(soundsample -> path.val.string_val);
             if (!filename) {
+                log_error("Could not convert %s to ogg file", filename);
                 return false;
             }
             chunk = Mix_LoadWAV(filename);
