@@ -194,7 +194,13 @@ LISP_BUILTIN(text, "") {
     if (!texture) {
         return VALUE_ERROR;
     }
-    graphics_render_at_position(environment, texture, position);
+
+    (void) position;
+    SDL_Rect image;
+    image.x = 0;
+    image.y = 0;
+    SDL_RenderCopy(environment -> renderer, texture, NULL, &image);
+    /* graphics_render_at_position(environment, texture, position); */
     return VALUE_NIL;
 }
 
