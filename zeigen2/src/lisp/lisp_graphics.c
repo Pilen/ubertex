@@ -201,6 +201,7 @@ LISP_BUILTIN(text, "") {
     image.y = 0;
     debug("rendering text:")
     SDL_RenderCopy(environment -> renderer, texture, NULL, &image);
+    SDL_SetRenderDrawColor(environment -> renderer, 255, 255, 255, 255);
     SDL_RenderDrawLine(environment -> renderer, 0, 0, 100, 100);
     /* graphics_render_at_position(environment, texture, position); */
     return VALUE_NIL;
