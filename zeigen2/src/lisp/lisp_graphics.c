@@ -204,6 +204,7 @@ LISP_BUILTIN(text, "") {
     SDL_SetRenderDrawColor(environment -> renderer, 255, 255, 255, 255);
     SDL_RenderCopy(environment -> renderer, texture, NULL, &image);
     SDL_RenderDrawLine(environment -> renderer, 0, 0, 100, 100);
+    SDL_RenderDrawLine(environment -> renderer, 0, 0, 200, 100);
     SDL_RenderDrawLine(environment -> renderer, 1024-1-100, 768-1-100, 1024-1, 768-1);
 
     /* graphics_render_at_position(environment, texture, position); */
