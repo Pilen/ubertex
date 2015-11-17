@@ -35,6 +35,10 @@ void worker_loop(Environment *environment) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 exit(EXIT_SUCCESS);
+            } else if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    exit(EXIT_SUCCESS);
+                }
             }
         }
 
