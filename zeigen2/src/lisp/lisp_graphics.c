@@ -196,18 +196,8 @@ LISP_BUILTIN(text, "") {
         return VALUE_ERROR;
     }
 
-    (void) position;
-    SDL_Rect image;
-    image.x = 0;
-    image.y = 0;
-    debug("rendering text:");
-    SDL_SetRenderDrawColor(environment -> renderer, 255, 255, 255, 255);
-    SDL_RenderCopy(environment -> renderer, texture, NULL, &image);
-    SDL_RenderDrawLine(environment -> renderer, 0, 0, 100, 100);
-    SDL_RenderDrawLine(environment -> renderer, 0, 0, 200, 100);
-    SDL_RenderDrawLine(environment -> renderer, 1024-1-100, 768-1-100, 1024-1, 768-1);
-
-    /* graphics_render_at_position(environment, texture, position); */
+    debug("rendering text");
+    graphics_render_at_position(environment, texture, position);
     return VALUE_NIL;
 }
 
