@@ -331,8 +331,11 @@ void graphics_calibrate(Environment *environment) {
 }
 
 void graphics_cairo_test(Environment *environment) {
-    Int width = 100;
-    Int height = 100;
+    Int width;
+    Int height;
+    SDL_GetWindowSize(environment -> window, &width, &height);
+
+
     SDL_Surface *sdl_surface = SDL_CreateRGBSurface(0, width, height, 32,
                                                     0x00FF0000,
                                                     0x0000FF00,
@@ -341,8 +344,8 @@ void graphics_cairo_test(Environment *environment) {
 
     cairo_surface_t *cairo_surface = cairo_image_surface_create_for_data(sdl_surface -> pixels,
                                                                          CAIRO_FORMAT_RGB24,
-                                                                         sdl_surface -> w,
-                                                                         sdl_surface -> h,
+                                                                         width,
+                                                                         height,
                                                                          sdl_surface -> pitch);
     cairo_t *cairo = cairo_create(cairo_surface);
     cairo_select_font_face(cairo, "serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
