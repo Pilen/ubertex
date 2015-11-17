@@ -194,6 +194,7 @@ LISP_BUILTIN(text, "") {
     if (!texture) {
         return VALUE_ERROR;
     }
+    debug("rendering text");
     graphics_render_at_position(environment, texture, position);
     return VALUE_NIL;
 }
