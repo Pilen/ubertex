@@ -199,6 +199,7 @@ LISP_BUILTIN(text, "") {
     SDL_Rect image;
     image.x = 0;
     image.y = 0;
+    debug("rendering text:")
     SDL_RenderCopy(environment -> renderer, texture, NULL, &image);
     /* graphics_render_at_position(environment, texture, position); */
     return VALUE_NIL;
