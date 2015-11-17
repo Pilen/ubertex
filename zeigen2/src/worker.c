@@ -56,9 +56,11 @@ void worker_loop(Environment *environment) {
             }
         }
 
+        lock_read_lock(resource_cache_lock);
         worker_update(environment, environment -> component_next_update, environment -> component_next_update_args);
         worker_update(environment, environment -> component_next_post, environment -> component_next_post_args);
         z_assert(environment -> call_stack -> length == 0);
+        lock_read_unlock(resource_cache_lock);
 
         if (worker_blank) {
             /* TODO: clean this up */
@@ -69,9 +71,16 @@ void worker_loop(Environment *environment) {
                                    environment -> setting_clear_alpha);
             SDL_RenderClear(environment -> renderer);
         }
+
         SDL_RenderPresent(environment -> renderer);
         memory_update();
+
+
         resource_shrink_cache();
+        if (flush_dirty_cache) {
+            resource_flush_dirty_cache();
+            flush_dirty_cache = false;
+        }
         SDL_Delay(1000/30);
     }
 }

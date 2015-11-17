@@ -32,6 +32,7 @@ Environment *initialize(void) {
     resource_initialize();
     worker_abort = false;
     worker_blank = false;
+    flush_dirty_cache = false;
 
     log_section("====INITIALIZE-END====")
     return environment;

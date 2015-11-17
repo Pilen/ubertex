@@ -20,15 +20,10 @@ Bool resource_create(Environment *environment, Value skeleton);
 Int resource_comparison(const void *a, const void *b);
 
 
-Hash *resource_cache;
-Lock_RW *resource_cache_lock;
-List *resource_scores; /* The resource_cache_lock must be held while using this */
-size_t resource_total_size;
-
 void resource_initialize(void) {
     resource_cache = hash_create();
     resource_cache_lock = lock_rw_create();
-    resource_scores = list_create_empty();
+    resource_list = list_create_empty();
     resource_total_size = 0;
     size_t available = memory_estimate_available();
     resource_size_threshold = available * (OPTION_RESOURCE_PERCENTAGE / 100.0);
@@ -57,7 +52,7 @@ Value resource_get(Environment *environment, Value skeleton) {
         if (found) {
             resource = skeleton;
             hash_set(resource_cache, skeleton, resource);
-            list_push_back(resource_scores, resource);
+            list_push_back(resource_list, resource);
         }
     }
     lock_write_unlock(resource_cache_lock);
@@ -106,14 +101,14 @@ Unt resource_shrink_cache(void) {
         return 0;
     }
 
-    z_assert(resource_scores -> start == 0);
-    qsort(resource_scores -> data,
-          resource_scores -> length,
+    z_assert(resource_list -> start == 0);
+    qsort(resource_list -> data,
+          resource_list -> length,
           sizeof(Value),
           resource_comparison);
     Unt cleared = 0;
-    while (resource_scores -> length > 0 && resource_total_size >= resource_size_threshold) {
-        Value resource = list_pop_back(resource_scores);
+    while (resource_list -> length > 0 && resource_total_size >= resource_size_threshold) {
+        Value resource = list_pop_back(resource_list);
         hash_delete(resource_cache, resource);
         switch (resource.type) {
         case IMAGE:
@@ -130,7 +125,7 @@ Unt resource_shrink_cache(void) {
     return cleared;
 }
 
-Unt resource_dump_entire_cache(void) {
+Unt resource_flush_entire_cache(void) {
     size_t old_resource_size_threshold = resource_size_threshold;
     resource_size_threshold = 0;
     Unt cleared = resource_shrink_cache();
@@ -138,19 +133,22 @@ Unt resource_dump_entire_cache(void) {
     return cleared;
 }
 
-Unt resource_dump_dirty_cache(void) {
+Unt resource_flush_dirty_cache(void) {
     /* Reloading dirty files should not be done here,
      * the resources might not be needed now (or ever again) incurring a bigger cost for this function.
      * Instead a seperate thread might do this.
     */
-    List *old_resource_scores = resource_scores;
-    resource_scores = list_create_empty();
+    lock_write_lock(resource_cache_lock);
+
+    Unt cleared = 0;
+    List *old_resource_list = resource_list;
+    resource_list = list_create_empty();
     int64_t unixtime = (uint64_t) time(NULL);
     Unt current_time = SDL_GetTicks();
     int64_t started = unixtime - (current_time / 1000);
-    while (old_resource_scores -> length > 0) {
+    while (old_resource_list -> length > 0) {
         struct stat file_stat;
-        Value resource = list_pop_front(old_resource_scores);
+        Value resource = list_pop_front(old_resource_list);
         Int found;
         int64_t modified;
         char *filename;
@@ -162,25 +160,27 @@ Unt resource_dump_dirty_cache(void) {
             if (found != 0) {
                 log_error("File is gone");
                 /* Keep the current */
-                list_push_back(resource_scores, resource);
+                list_push_back(resource_list, resource);
                 break;
             }
             modified = file_stat.st_mtime;
             if (modified + OPTION_RESOURCE_MODIFICATION_BLEED > started + resource.val.image_val -> created) {
                 /* Resource is dirty */
+                cleared += resource.val.image_val -> size;
                 hash_delete(resource_cache, resource);
                 resource_total_size -= resource.val.image_val -> size;
                 SDL_DestroyTexture(resource.val.image_val -> texture);
             } else {
-                list_push_back(resource_scores, resource);
+                list_push_back(resource_list, resource);
             }
-
         default:
             /* Catch missing */
             z_assert(false);
         }
     }
-    return resource_dump_entire_cache();
+    lock_write_unlock(resource_cache_lock);
+
+    return cleared;
 }
 
 Int resource_comparison(const void *a, const void *b) {
