@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <poppler/glib/poppler.h>
@@ -114,6 +113,7 @@ Bool resource_create_pdf(Environment *environment, Value skeleton, Unt initial_s
     pdf -> refcount = 0;
     pdf -> score = initial_score;
     pdf -> size = size_sum;
+    pdf -> created = SDL_GetTicks();
     pdf -> pagecount = pagecount;
     pdf -> pages = pages;
 

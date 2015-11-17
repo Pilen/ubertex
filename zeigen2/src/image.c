@@ -1,5 +1,6 @@
 
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_timer.h>
 #include "image.h"
 #include "assert.h"
 #include "string.h"
@@ -33,6 +34,7 @@ Bool resource_create_image(Environment *environment, Value skeleton, Unt initial
                                            surface);
     image -> refcount = 0;
     image -> score = initial_score;
+    image -> created = SDL_GetTicks();
     image -> texture = texture;
     SDL_FreeSurface(surface);
 

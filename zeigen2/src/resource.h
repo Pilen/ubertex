@@ -13,4 +13,12 @@ Unt resource_dump_entire_cache(void);
 Unt resource_dump_dirty_cache(void);
 
 
+/**
+ * Resources are
+ * Image
+ * PDF
+ * Soundsample
+ * Text
+ */
+
 #endif

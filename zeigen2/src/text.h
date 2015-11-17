@@ -7,10 +7,11 @@
 struct Text_s {
     Unt refcount;
     float score;
+    Unt size;
+    Unt created;
     String *text;
     Int fontsize;
     Bool center;
-    Unt size;
     SDL_Texture *texture;
 };
 

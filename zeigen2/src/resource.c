@@ -1,3 +1,4 @@
+#include <sys/stat.h>
 #include <SDL2/SDL.h>
 
 #include "types.h"
@@ -112,12 +113,12 @@ Unt resource_shrink_cache(void) {
           resource_comparison);
     Unt cleared = 0;
     while (resource_scores -> length > 0 && resource_total_size >= resource_size_threshold) {
-        Value value = list_pop_back(resource_scores);
-        hash_delete(resource_cache, value);
-        switch (value.type) {
+        Value resource = list_pop_back(resource_scores);
+        hash_delete(resource_cache, resource);
+        switch (resource.type) {
         case IMAGE:
-            resource_total_size -= value.val.image_val -> size;
-            SDL_DestroyTexture(value.val.image_val -> texture);
+            resource_total_size -= resource.val.image_val -> size;
+            SDL_DestroyTexture(resource.val.image_val -> texture);
             break;
         default:
             /* Catch missing destructors */
@@ -138,7 +139,47 @@ Unt resource_dump_entire_cache(void) {
 }
 
 Unt resource_dump_dirty_cache(void) {
-    /* TODO: implement! */
+    /* Reloading dirty files should not be done here,
+     * the resources might not be needed now (or ever again) incurring a bigger cost for this function.
+     * Instead a seperate thread might do this.
+    */
+    List *old_resource_scores = resource_scores;
+    resource_scores = list_create_empty();
+    int64_t unixtime = (uint64_t) time(NULL);
+    Unt current_time = SDL_GetTicks();
+    int64_t started = unixtime - (current_time / 1000);
+    while (old_resource_scores -> length > 0) {
+        struct stat file_stat;
+        Value resource = list_pop_front(old_resource_scores);
+        Int found;
+        int64_t modified;
+        char *filename;
+        switch (resource.type) {
+        case IMAGE:
+            z_assert(resource.val.image_val -> path.type == STRING);
+            filename = resource.val.image_val -> path.val.string_val -> text;
+            found = stat(filename, &file_stat);
+            if (found != 0) {
+                log_error("File is gone");
+                /* Keep the current */
+                list_push_back(resource_scores, resource);
+                break;
+            }
+            modified = file_stat.st_mtime;
+            if (modified + OPTION_RESOURCE_MODIFICATION_BLEED > started + resource.val.image_val -> created) {
+                /* Resource is dirty */
+                hash_delete(resource_cache, resource);
+                resource_total_size -= resource.val.image_val -> size;
+                SDL_DestroyTexture(resource.val.image_val -> texture);
+            } else {
+                list_push_back(resource_scores, resource);
+            }
+
+        default:
+            /* Catch missing */
+            z_assert(false);
+        }
+    }
     return resource_dump_entire_cache();
 }
 

@@ -10,6 +10,7 @@ struct Image_s {
     float score;
     Value path; /* A Value so we can allow different sources than files */
     Unt size; /* approximate */
+    Unt created;
     SDL_Texture *texture;
 };
 

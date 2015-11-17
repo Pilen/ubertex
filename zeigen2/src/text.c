@@ -88,6 +88,7 @@ Bool resource_create_text(Environment *environment, Value skeleton, Unt initial_
 
     text -> refcount = 0;
     text -> score = initial_score;
+    text -> created = SDL_GetTicks();
     text -> texture = texture;
 
     text -> size = sizeof(Unt) * width * height; /* Approximate size of texture */

@@ -11,6 +11,7 @@ struct Pdf_s {
     float score;
     Value path;
     Unt size;
+    Unt created;
     Int pagecount;
     SDL_Texture **pages;
 };

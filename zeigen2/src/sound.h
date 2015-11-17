@@ -10,6 +10,7 @@ struct Soundsample_s {
     float score;
     Value path;
     Unt size;
+    Unt created;
     Mix_Chunk *chunk;
 };
 

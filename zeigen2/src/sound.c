@@ -149,7 +149,7 @@ Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt i
     Mix_Chunk *chunk = Mix_LoadWAV(filename);
     if (!chunk) {
         struct stat file_stat;
-        Bool found = stat(filename, &file_stat);
+        int found = stat(filename, &file_stat);
         if (found == 0) {
             log_error("Found %s but could not read it", filename);
             filename = sound_convert_to_ogg(soundsample -> path.val.string_val);
@@ -170,6 +170,7 @@ Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt i
     soundsample -> refcount = 0;
     soundsample -> score = initial_score;
     soundsample -> size = chunk -> alen;
+    soundsample -> created = SDL_GetTicks();
     soundsample -> chunk = chunk;
     *size = soundsample -> size;
     return true;
