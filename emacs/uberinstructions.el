@@ -111,7 +111,7 @@ This function will also call revy-abort-all "
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Image
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(const revy-image-default-position ''(full)
+(defconst revy-image-default-position ''(full)
        "The default postion to render images")
 
 (defun revy-image (file &optional position)
