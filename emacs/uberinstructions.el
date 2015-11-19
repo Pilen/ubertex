@@ -111,14 +111,16 @@ This function will also call revy-abort-all "
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Image
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(const revy-image-default-position ''(full)
+       "The default postion to render images")
 
 (defun revy-image (file &optional position)
   "Open one or more images, and show the first."
   ;; (unless dimensions
   ;;   (setq dimensions "sized"))
   ;; (revy-send-message "start" "Image" dimensions file))
-  (setq position (or position ''(sized 0.0 0.0 1.0 1.0)))
-  (setq position (or position ''(full)))
+  ;; (setq position (or position ''(sized 0.0 0.0 1.0 1.0)))
+  (setq position (or position revy-image-default-position))
   (revy-send-lisp nil
                   `(setq image-file ,file)
                   `(setq image-position ,position)
