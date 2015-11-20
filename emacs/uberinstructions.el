@@ -144,7 +144,8 @@ This function will also call revy-abort-all "
                   `(setq pdf-file ,file)
                   '(setq pdf-slide 0)
                   '(defun pdf-slideshow ()
-                     (pdf pdf-file pdf-slide '(centered 0.1 0.2)))
+                     ;; (pdf pdf-file pdf-slide '(centered 0.1 0.2)))
+                     (pdf pdf-file pdf-slide '(sized 0.0 0.0 0.8 0.8)))
                   `(next-update 'pdf-slideshow)))
 
 (defun revy-pdf-reload ()
@@ -189,7 +190,7 @@ This function will also call revy-abort-all "
   (revy-kill-mplayer)
   ;; (revy-shell (concat "mplayer -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 500 -geometry 49%:40% \"" file "\"")))
   ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 400 -geometry 55%:45% \"" file "\"")))
-  (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 620 -geometry 55%:50% \"" file "\"")))
+  (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 620 -geometry 55%:50% \"" file "\"")))
 
 (defun revy-kill-mplayer ()
   "Killall instances of mplayer on worker"
