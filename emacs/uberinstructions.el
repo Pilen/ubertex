@@ -174,7 +174,9 @@ This function will also call revy-abort-all "
 (defun revy-stop-sounds ()
   "Stop all overlay sounds"
   (interactive)
-  (revy-send-lisp nil "sound-stop-all"))
+  (revy-send-lisp nil '(sound-stop-all))
+  ;;TODO: why do i have to do this
+  (sleep-for 0 20))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
