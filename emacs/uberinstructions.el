@@ -189,7 +189,7 @@ This function will also call revy-abort-all "
   (revy-kill-mplayer)
   ;; (revy-shell (concat "mplayer -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 500 -geometry 49%:40% \"" file "\"")))
   ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 400 -geometry 55%:45% \"" file "\"")))
-  (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 550 -geometry 60%:60% \"" file "\"")))
+  (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 620 -geometry 55%:50% \"" file "\"")))
 
 (defun revy-kill-mplayer ()
   "Killall instances of mplayer on worker"
