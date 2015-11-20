@@ -76,10 +76,17 @@ void initialize_SDL(Environment *environment, Bool fullscreen) {
     flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
 
     if (!fullscreen) {
+        /* TODO: Get the display as an argument */
+        Int index = 0;
+        SDL_DisplayMode display;
+        SDL_GetDesktopDisplayMode(index, &display);
+
         x = 0;
         y = 0;
-        w = 1024;
-        h = 768;
+        w = display.w;
+        h = display.h;
+        debugi(w);
+        debugi(h);
         flags = 0;
     }
     SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME, x, y, w, h, flags);
