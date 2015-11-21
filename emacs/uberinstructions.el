@@ -209,4 +209,4 @@ This function will also call revy-abort-all "
   (interactive)
   (unless text
     (setq text (read-from-minibuffer "Text: " nil nil nil 'revy--show-text-history)))
-  (revy-send-lisp nil `(next-update 'text `text)))
+  (revy-send-lisp nil `(next-update 'text ,text)))
