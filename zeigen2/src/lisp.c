@@ -39,6 +39,9 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(*, times, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(>, greater_than, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(sin, sin, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(cos, cos, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(randint, randint, true, environment);
+
 
     LISP_REGISTER_BUILTIN_FROM_RAW(color, color, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(setting-clear-color, setting_clear_color, true, environment);
