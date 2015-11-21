@@ -22,8 +22,18 @@ LISP_BUILTIN(allocate_useless, "") {
 }
 
 LISP_BUILTIN(render_test, "") {
-    void graphics_cairo_test(Environment *environment);
-    graphics_cairo_test(environment);
+    SDL_SetRenderDrawColor(environment -> renderer, 255, 50, 128, 255);
+    SDL_RenderClear(environment -> renderer);
+
+    SDL_SetRenderDrawColor(environment -> renderer, 255, 255, 255, 255);
+    SDL_RenderDrawLine(environment -> renderer, 1024/2 - 300, 768/2, 1024/2+300, 768/2);
+    SDL_RenderDrawLine(environment -> renderer, 1024/2, 768/2 - 300, 1024/2, 768/2 + 300);
+    SDL_Texture *text_test2(Environment *environment);
+    SDL_Texture *texture = text_test2(environment);
+    graphics_render_centered_at(environment, texture, 1024/2, 768/2);
+    SDL_RenderPresent(environment -> renderer);
+    SDL_Delay(10000000);
+
     return VALUE_NIL;
 }
 
