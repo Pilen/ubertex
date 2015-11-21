@@ -162,9 +162,9 @@ LISP_BUILTIN(pdf, "") {
 
 LISP_BUILTIN(text, "") {
     /* TODO: The arguments should be interpreted better */
-    Int fontsize = 24;
+    Int fontsize = 34;
     Value position = VALUE_NIL;
-    Bool center = false;
+    Bool center = true;
 
     if (args -> length >= 3) {
         Value fontsize_v = LIST_GET_UNSAFE(args, 2);
@@ -190,14 +190,21 @@ LISP_BUILTIN(text, "") {
         return VALUE_ERROR;
     }
 
-    SDL_SetRenderDrawColor(environment -> renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(environment -> renderer, 255, 125, 255, 255);
     SDL_Texture *texture = text(environment, string.val.string_val, fontsize, center);
     if (!texture) {
         return VALUE_ERROR;
     }
 
-    debug("rendering text");
-    graphics_render_at_position(environment, texture, position);
+    if (position.type == NIL) {
+        Int width;
+        Int height;
+        SDL_GetWindowSize(environment -> window, &width, &height);
+
+        graphics_render_centered_at(environment, texture, width/2, height/2);
+    } else {
+        graphics_render_at_position(environment, texture, position);
+    }
     return VALUE_NIL;
 }
 
