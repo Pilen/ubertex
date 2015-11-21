@@ -34,6 +34,8 @@ Environment *initialize(void) {
     worker_blank = false;
     flush_dirty_cache = false;
 
+    srand(0);
+
     log_section("====INITIALIZE-END====")
     return environment;
 }

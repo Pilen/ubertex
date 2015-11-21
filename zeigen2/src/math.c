@@ -1,4 +1,5 @@
 
+#include <stdlib.h>
 #include "math.h"
 
 Unt round_up_to_power_of_2(Unt n) {
@@ -12,4 +13,14 @@ Unt round_up_to_power_of_2(Unt n) {
         }
         return power;
     }
+}
+
+Double random_int(Int lower, Int upper) {
+    Int limit = upper - lower;
+    long long int divisor = RAND_MAX / limit;
+    int retval;
+    do {
+        retval = rand() / divisor;
+    } while (retval > limit);
+    return retval + lower;
 }

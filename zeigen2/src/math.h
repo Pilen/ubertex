@@ -12,4 +12,6 @@
 
 Unt round_up_to_power_of_2(Unt n);
 #define MIN(x, y) (((x) <= (y)) ? (x) : (y))
+
+Double random_int(Int lower, Int upper);
 #endif

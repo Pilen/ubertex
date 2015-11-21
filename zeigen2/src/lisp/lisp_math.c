@@ -1,4 +1,3 @@
-
 #include "../math.h"
 #include "../debug.h"
 #include "../types.h"
@@ -189,4 +188,51 @@ LISP_BUILTIN(sin, "") {
     }
     Double result = RAD_TO_DEG(sin(DEG_TO_RAD(angle)));
     return VALUE_FLOAT(result);
+}
+
+LISP_BUILTIN(cos, "") {
+    if (args -> length != 2) {
+        return VALUE_ERROR;
+    }
+
+    Value angle_v = LIST_GET_UNSAFE(args, 1);
+    Double angle;
+    switch (angle_v.type) {
+    case INTEGER:
+        angle = angle_v.val.integer_val;
+        break;
+    case FLOAT:
+        angle = angle_v.val.float_val;
+        break;
+    default:
+        return VALUE_ERROR;
+    }
+    Double result = RAD_TO_DEG(cos(DEG_TO_RAD(angle)));
+    return VALUE_FLOAT(result);
+}
+
+LISP_BUILTIN(randint, "") {
+    Int lower;
+    Int upper;
+
+    if (args -> length == 3) {
+        Value lower_value = LIST_GET_UNSAFE(args, 1);
+        Value upper_value = LIST_GET_UNSAFE(args, 2);
+        if (lower_value.type != INTEGER || upper_value.type != INTEGER) {
+            return VALUE_ERROR;
+        }
+        lower = lower_value.val.integer_val;
+        upper = upper_value.val.integer_val;
+    } else if (args -> length == 2) {
+        Value upper_value = LIST_GET_UNSAFE(args, 2);
+        if (upper_value.type != INTEGER) {
+            return VALUE_ERROR;
+        }
+        lower = 0;
+        upper = upper_value.val.integer_val;
+    } else {
+        return VALUE_ERROR;
+    }
+
+    return VALUE_INTEGER(random_int(lower, upper));
 }
