@@ -60,6 +60,7 @@ LFLAGS += `pkg-config --libs cairo poppler-glib pangocairo`
 
 SRC = $(wildcard *.c)
 SRC += $(wildcard lisp/*.c)
+SRC += $(wildcard libs/*/*.c)
 TESTS_SRC = $(filter-out repl.c, $(SRC) $(wildcard tests_src/*.c))
 
 
