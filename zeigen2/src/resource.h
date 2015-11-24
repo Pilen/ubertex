@@ -18,6 +18,7 @@ Unt resource_shrink_cache(void);
 Unt resource_flush_entire_cache(void);
 Unt resource_flush_dirty_cache(void);
 
+void resource_destroy(Value resource);
 
 /**
  * Resources are

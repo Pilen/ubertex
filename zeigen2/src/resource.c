@@ -85,6 +85,34 @@ Bool resource_create(Environment *environment, Value resource) {
     return found;
 }
 
+void resource_destroy(Value resource) {
+    /* z_assert(resource not in resource_list); */
+    hash_delete(resource_cache, resource);
+    switch (resource.type) {
+    case IMAGE:
+        resource_total_size -= resource.val.image_val -> size;
+        SDL_DestroyTexture(resource.val.image_val -> texture);
+        break;
+    case PDF:
+        resource_total_size -= resource.val.pdf_val -> size;
+        for (Int i = 0; i < resource.val.pdf_val -> pagecount; i++) {
+            SDL_DestroyTexture(resource.val.pdf_val -> pages[i]);
+        }
+        break;
+    case SOUNDSAMPLE:
+        /* Assumes no sounds in sound_table are playing the soundsample */
+        Mix_FreeChunk(resource.val.soundsample_val -> chunk);
+        break;
+    case TEXT:
+        resource_total_size -= resource.val.text_val -> size;
+        SDL_DestroyTexture(resource.val.text_val -> texture);
+        break;
+    default:
+        /* Catch missing destructors */
+        z_assert(false);
+    }
+}
+
 Unt resource_shrink_cache(void) {
     /* WARNING: SHOULD ONLY EVER BE CALLED WHILE
        NO REFERENCES TO THE ACTUAL RESOURCES ARE HELD!
