@@ -10,6 +10,25 @@
 #include "../graphics.h"
 #include "../string.h"
 #include "../pdf.h"
+#include "../resource.h"
+#include "../sound.h"
+
+LISP_BUILTIN(resource_cache_size, "") {
+    lock_read_lock(resource_cache_lock);
+    Unt size = resource_total_size;
+    lock_read_unlock(resource_cache_lock);
+    return VALUE_INTEGER(size);
+}
+
+LISP_BUILTIN(sounds_playing, "") {
+    extern Int sound_playing;
+    extern Mutex *sound_lock;
+
+    mutex_lock(sound_lock);
+    Int playing = sound_playing;
+    mutex_unlock(sound_lock);
+    return VALUE_INTEGER(playing);
+}
 
 LISP_BUILTIN(allocate_useless, "") {
     size_t size = 10000;
