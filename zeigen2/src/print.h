@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include "types.h"
 
+FILE *output;
+
 void print(Value value);
 void print_on(FILE *stream, Value value);
 

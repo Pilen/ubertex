@@ -8,7 +8,7 @@
 #include "symbol.h"
 
 void print(Value value) {
-    print_on(stdout, value);
+    print_on(output, value);
 }
 
 void print_on(FILE *stream, Value value) {
