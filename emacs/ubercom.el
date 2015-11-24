@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;π Ubercom
+                                        ;π Ubercom
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handle communication
@@ -56,7 +56,7 @@ To send lisp code use `revy-send-lisp' instead."
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π Simple work
+                                        ;π Simple work
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Should concat by itself
@@ -90,8 +90,8 @@ the command will be executed on revy-current-worker."
         (call-process "ssh" nil "*revy-shell*" t
                       (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
                       (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
-                            "cd " (aref worker revy-worker-dir-index) ";\n"
-                            command))))))
+                              "cd " (aref worker revy-worker-dir-index) ";\n"
+                              command))))))
 
 (defun revy-shell-local (command)
   "Evaluate shell command on this machine asynchronously."
@@ -129,7 +129,7 @@ But it will also accept a string with end being ignored in that case."
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;π Uploading files
+                                        ;π Uploading files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defvar revy--uploading-files 0
@@ -183,6 +183,40 @@ Uses rsync to upload the files, based on the timestamp"
 (defun revy-upload-files-sync (&rest workers)
   ("Sync files as `revy-upload-files', but blocking.
 Wont return untill all workers has been synced."
-  (revy-upload-files workers)
-  (while (> revy--uploading-files 0)
-    (sleep 0 200))))
+   (revy-upload-files workers)
+   (while (> revy--uploading-files 0)
+     (sleep 0 200))))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                        ;π Starting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun revy-start-workers ()
+  "Start all the workers not already online"
+  (dolist (worker (revy-get-workers 'all))
+    (let ((worker (elt (revy-get-workers 'all) 0)))
+      (with-temp-buffer
+        (erase-buffer)
+        (let ((channel (condition-case nil
+                           (open-network-stream
+                            "revy-worker-start"
+                            (current-buffer)
+                            (aref worker revy-worker-location-index)
+                            (aref worker revy-worker-port-index))
+                         (error nil))))
+          (if channel
+              (progn
+                (process-send-string channel "hej")
+                (accept-process-output channel 1)
+                (goto-char (point-min))
+                (if (search-forward "Got it., Bye" nil t)
+                    t
+                  (error "Process returned nonsens. Is the host/port correct and the software updated?")))
+            ;; Is there a connection to the host?
+            (if (= 0 (revy-shell-local-sync (concat "ping -c 1 -W 1 " (aref worker revy-worker-location-index))))
+                (progn (revy-shell-sync (message (concat "cd " (aref worker revy-worker-installation-index) "zeigen2/src/" "; "
+                                                         "./repl -b -w -d " (aref worker revy-worker-dir-index))))
+                       'q)
+              (error "No connection to host %s" (aref worker revy-worker-location-index)))))))))

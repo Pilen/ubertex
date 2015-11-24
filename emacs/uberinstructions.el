@@ -21,7 +21,15 @@
   ;; Ensure we are in correct mode, most likely unnecessary most of the time
   ;; (revy-ubersicht-mode)
   ;; It is!
-  )
+
+  ;; Start any workers not online
+  (revy-start-workers))
+
+(defun revy-quit ()
+  "Quit all workers"
+  (when (yes-or-no-p "Quit the revy closing all workers?")
+    (when (yes-or-no-p "Are you sure you want to close all workers?")
+      (revy-shell "killall -9 repl" 'all))))
 
 (defun revy-open (filename &optional worker)
   "Open a new uberscript or ubertex file and start it
