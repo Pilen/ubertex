@@ -137,15 +137,10 @@ Unt resource_shrink_cache(void) {
     Unt cleared = 0;
     while (resource_list -> length > 0 && resource_total_size >= resource_size_threshold) {
         Value resource = list_pop_back(resource_list);
-        hash_delete(resource_cache, resource);
-        switch (resource.type) {
-        case IMAGE:
-            resource_total_size -= resource.val.image_val -> size;
-            SDL_DestroyTexture(resource.val.image_val -> texture);
-            break;
-        default:
-            /* Catch missing destructors */
-            z_assert(false);
+        if (resource.type == SOUNDSAMPLE) {
+            sound_mark_dirty(resource.val.soundsample_val -> path);
+        } else {
+            resource_destroy(resource);
         }
     }
     lock_write_unlock(resource_cache_lock);
@@ -166,6 +161,8 @@ Unt resource_flush_dirty_cache(void) {
      * the resources might not be needed now (or ever again) incurring a bigger cost for this function.
      * Instead a seperate thread might do this.
     */
+    debug("Flushing dirty cache");
+
     lock_write_lock(resource_cache_lock);
 
     Unt cleared = 0;
