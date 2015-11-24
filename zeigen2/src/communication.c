@@ -67,7 +67,7 @@ Int communication_loop(void *data) {
                 TCPsocket client = SDLNet_TCP_Accept(server);
                 if (client) {
                     communication_receive(client);
-                    char *response = "Got it., Bye\n";
+                    char *response = "Got it. Bye\n";
                     int length = strlen(response) + 1;
                     SDLNet_TCP_Send(client, response, length);
                 }
