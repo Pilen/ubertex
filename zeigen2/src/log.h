@@ -18,9 +18,10 @@ FILE *log_output;
         }                                                           \
     } while (0);
 
-#define log_section(...) LOG(SECTION, 10, __VA_ARGS__)
-#define log_calloc(amount, size) (9 <= log_level? fprintf(log_output, "CALLOC: %s:%d: \t%s \t%d * %s = %d * %zd\n", __FILE__, __LINE__, __func__, amount, #size, amount, (size_t) (size)) : 0)
-#define log_malloc(size) (8 <= log_level ? fprintf(log_output, "MALLOC: %s:%d: \t%s \t%s = %zd\n", __FILE__, __LINE__, __func__, #size, (size_t) (size)) : 0)
+#define log_section(...) LOG(SECTION, 11, __VA_ARGS__)
+#define log_calloc(amount, size) (10 <= log_level? fprintf(log_output, "CALLOC: %s:%d: \t%s \t%d * %s = %d * %zd\n", __FILE__, __LINE__, __func__, amount, #size, amount, (size_t) (size)) : 0)
+#define log_malloc(size) (9 <= log_level ? fprintf(log_output, "MALLOC: %s:%d: \t%s \t%s = %zd\n", __FILE__, __LINE__, __func__, #size, (size_t) (size)) : 0)
+#define log_resource(TYPE, size) (8  <= log_level ? fprintf(log_output, "RESOURCE: %s size %d", #TYPE, size) : 0)
 #define log_error_in (7 <= log_level ? fprintf(log_output, "ERROR-IN: %s:%d: %s\n", __FILE__, __LINE__, __func__): 0)
 #define log_info(...) LOG(INFO, 6, __VA_ARGS__)
 #define log_warning(...) LOG(WARNING, 5, __VA_ARGS__)
