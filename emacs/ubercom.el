@@ -171,7 +171,11 @@ Uses rsync to upload the files, based on the timestamp"
                               (if (string= event "finished\n")
                                   (if (> revy--uploading-files 0)
                                       (message "Sync with %s completed [%d left]" name revy--uploading-files)
-                                    (message "Syncing done"))
+                                    (progn
+                                      (message "Syncing done")
+                                      ;; Ensure workers reload files
+                                      (revy-send-command 'all "flush_dirty_cache")
+                                      ))
                                 (message "Sync with %s failed with exit code %i [%d left]"
                                          name (process-exit-status process) revy--uploading-files))))))
   nil)
