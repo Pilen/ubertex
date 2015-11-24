@@ -81,36 +81,43 @@ Bool resource_create(Environment *environment, Value resource) {
     default:
         z_assert(false);
     }
+    log_resource(resource.type, size);
     resource_total_size += size;
     return found;
 }
 
-void resource_destroy(Value resource) {
+Unt resource_destroy(Value resource) {
+    Unt size;
     /* z_assert(resource not in resource_list); */
+    lock_write_lock(resource_cache_lock);
     hash_delete(resource_cache, resource);
     switch (resource.type) {
     case IMAGE:
-        resource_total_size -= resource.val.image_val -> size;
+        size = resource.val.image_val -> size;
         SDL_DestroyTexture(resource.val.image_val -> texture);
         break;
     case PDF:
-        resource_total_size -= resource.val.pdf_val -> size;
+        size = resource.val.pdf_val -> size;
         for (Int i = 0; i < resource.val.pdf_val -> pagecount; i++) {
             SDL_DestroyTexture(resource.val.pdf_val -> pages[i]);
         }
         break;
     case SOUNDSAMPLE:
         /* Assumes no sounds in sound_table are playing the soundsample */
+        size = resource.val.soundsample_val -> size;
         Mix_FreeChunk(resource.val.soundsample_val -> chunk);
         break;
     case TEXT:
-        resource_total_size -= resource.val.text_val -> size;
+        size = resource.val.text_val -> size;
         SDL_DestroyTexture(resource.val.text_val -> texture);
         break;
     default:
         /* Catch missing destructors */
         z_assert(false);
     }
+    resource_total_size -= size;
+    lock_write_unlock(resource_cache_lock);
+    return size;
 }
 
 Unt resource_shrink_cache(void) {
@@ -138,9 +145,15 @@ Unt resource_shrink_cache(void) {
     while (resource_list -> length > 0 && resource_total_size >= resource_size_threshold) {
         Value resource = list_pop_back(resource_list);
         if (resource.type == SOUNDSAMPLE) {
-            sound_mark_dirty(resource.val.soundsample_val -> path);
+            if (resource.val.soundsample_val -> current == 0) {
+                cleared += resource_destroy(resource);
+            } else {
+                /* Sound is being played currently */
+                /* Size not counted among stuff cleared now */
+                sound_mark_dirty(resource.val.soundsample_val -> path);
+            }
         } else {
-            resource_destroy(resource);
+            cleared += resource_destroy(resource);
         }
     }
     lock_write_unlock(resource_cache_lock);
@@ -209,7 +222,6 @@ Unt resource_flush_dirty_cache(void) {
 }
 
 Int resource_comparison(const void *a, const void *b) {
-    /* Remember, dirty resources are not equal to anything */
     Value *av = (Value *) a;
     Value *bv = (Value *) b;
     Unt a_score;
@@ -219,6 +231,14 @@ Int resource_comparison(const void *a, const void *b) {
     case IMAGE:
         a_score = av -> val.image_val -> score;
         break;
+    case PDF:
+        a_score = av -> val.pdf_val -> score;
+        break;
+    case SOUNDSAMPLE:
+        a_score = av -> val.soundsample_val -> score;
+        break;
+    case TEXT:
+        a_score = av -> val.soundsample_val -> score;
     default:
         z_assert(false);
     }
@@ -227,6 +247,14 @@ Int resource_comparison(const void *a, const void *b) {
     case IMAGE:
         b_score = bv -> val.image_val -> score;
         break;
+    case PDF:
+        b_score = bv -> val.pdf_val -> score;
+        break;
+    case SOUNDSAMPLE:
+        b_score = bv -> val.soundsample_val -> score;
+        break;
+    case TEXT:
+        b_score = bv -> val.soundsample_val -> score;
     default:
         z_assert(false);
     }

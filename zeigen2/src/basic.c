@@ -77,7 +77,8 @@ Bool equal(Value a, Value b) {
     case PDF:
         return equal(a.val.pdf_val -> path, b.val.pdf_val -> path);
     case SOUNDSAMPLE:
-        return equal(a.val.soundsample_val -> path, b.val.soundsample_val -> path);
+        return ((a.val.soundsample_val -> dirty || b.val.soundsample_val -> dirty)
+                || equal(a.val.soundsample_val -> path, b.val.soundsample_val -> path));
     case TEXT:
         {
             Bool string_equal = string_compare(a.val.text_val -> text, b.val.text_val -> text) == 0;
