@@ -209,6 +209,7 @@ Unt resource_flush_dirty_cache(void) {
 }
 
 Int resource_comparison(const void *a, const void *b) {
+    /* Remember, dirty resources are not equal to anything */
     Value *av = (Value *) a;
     Value *bv = (Value *) b;
     Unt a_score;
