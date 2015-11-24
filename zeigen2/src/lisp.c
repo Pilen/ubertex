@@ -60,6 +60,8 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(next-update, next_update, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(next-post, next_post, true, environment);
 
+    LISP_REGISTER_BUILTIN_FROM_RAW(resource_cache_size, resource_cache_size, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(sounds_playing, resource_cache_size, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(allocate_useless, allocate_useless, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(render_test, render_test, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(pdf_test, pdf_test, true, environment);
