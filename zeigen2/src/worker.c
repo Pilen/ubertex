@@ -48,9 +48,9 @@ void worker_loop(Environment *environment) {
                 Value expression = list_pop_front(communication_parsed_queue);
                 mutex_unlock(communication_parsed_queue_lock);
                 worker_blank = false;
-                print(expression); printf("\n");
+                print_on(log_output, expression); printf("\n");
                 Value result = eval(expression, environment);
-                print(result); printf("\n");
+                print_on(log_output, result); printf("\n");
             } else {
                 mutex_unlock(communication_parsed_queue_lock);
             }
@@ -81,6 +81,10 @@ void worker_loop(Environment *environment) {
             resource_flush_dirty_cache();
             flush_dirty_cache = false;
         }
+
+        fflush(log_output);
+        fflush(output);
+
         SDL_Delay(1000/30);
     }
 }
