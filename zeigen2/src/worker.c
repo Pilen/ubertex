@@ -16,6 +16,7 @@ void worker_update(Environment *environment, Value update_symbol, List *args);
 
 void worker_loop(Environment *environment) {
     while (true) {
+        log_section("====LOOP====");
         if (worker_abort) {
             environment -> component_next_update = VALUE_NIL;
             environment -> component_next_update_args = list_create_empty();
@@ -76,19 +77,26 @@ void worker_loop(Environment *environment) {
         memory_update();
 
 
-        resource_shrink_cache();
+        Unt cleared = 0;
+        cleared += resource_shrink_cache();
         if (flush_dirty_cache) {
-            resource_flush_dirty_cache();
+            cleared += resource_flush_dirty_cache();
             flush_dirty_cache = false;
         }
         if (flush_entire_cache) {
-            resource_flush_entire_cache();
+            cleared += resource_flush_entire_cache();
             flush_entire_cache = false;
+        }
+        if (cleared > 0) {
+            lock_read_lock(resource_cache_lock);
+            log_info("Flushed %d, %zd still in cache", cleared, resource_total_size);
+            lock_read_unlock(resource_cache_lock);
         }
 
         fflush(log_output);
         fflush(output);
 
+        log_section("====LOOP-END====");
         SDL_Delay(1000/30);
     }
 }

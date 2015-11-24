@@ -156,5 +156,6 @@ int main(int argc, char **argv) {
         communication_initialize(port);
         worker_loop(environment);
     }
+    fflush(log_output);
     return EXIT_SUCCESS;
 }
