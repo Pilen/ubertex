@@ -24,7 +24,7 @@ Environment *initialize(void) {
     /* initialized = true; */
     log_level = OPTION_LOG_LEVEL_INITIALIZATION;
     log_output = stderr;
-    output = stdin;
+    output = stdout;
 
     log_section("====INITIALIZE====");
     memory_initialize();
