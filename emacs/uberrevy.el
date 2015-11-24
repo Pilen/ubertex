@@ -57,6 +57,12 @@ nil means nothing is done.
 (defvar revy-dir nil
   "The directory the current revy is stored in")
 
+(defvar revy-file nil
+  "The current .revy file")
+
+(defvar revy-buffer nil
+  "The Buffer for the current .revy file")
+
 (defvar revy-workers nil
   "All workers in the revy")
 

@@ -125,9 +125,14 @@
 (defun revy-simple-setup-windows ()
   "Setup windows in a sane order"
   (interactive)
-  (delete-other-windows)
-  (split-window-horizontally)
-  (previous-buffer))
+  (let ((previous (current-buffer)))
+    (delete-other-windows)
+    (split-window-horizontally)
+    (if (buffer-live-p revy-buffer)
+        (switch-to-buffer revy-buffer)
+      (error "No .revy file is open"))
+    (other-window 1)
+    (switch-to-buffer previous)))
 
 (require 'revy)
 (require 'revy-ubermenu "ubermenu.el")

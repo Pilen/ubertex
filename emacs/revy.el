@@ -274,6 +274,8 @@ Else try to find it somewhere."
     ;; Open and load stuff
     (require 'revy-uberrevy "uberrevy.el")
     (find-file destination)
+    (setq revy-file destination)
+    (setq revy-buffer (current-buffer))
     (revy-ubersicht-mode)
 
     (global-revy-mode)
