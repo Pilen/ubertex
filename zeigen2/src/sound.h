@@ -11,6 +11,8 @@ struct Soundsample_s {
     Value path;
     Unt size;
     Unt created;
+    Bool dirty;
+    Unt current;
     Mix_Chunk *chunk;
 };
 
@@ -26,6 +28,8 @@ Value sound_play(Environment *environment, Value filename, Int Volume, Int loops
 Bool sound_stop(Environment *environment, Sound *sound);
 Int sound_stop_file(Environment *environment, Value filename);
 void sound_stop_all(void);
+
+void sound_mark_dirty(Value filename);
 
 Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
 #endif

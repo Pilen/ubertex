@@ -48,6 +48,11 @@ void sound_table_expand(void) {
 
 void sound_finished(Int channel) {
     mutex_lock(sound_lock);
+    Soundsample *soundsample = sound_table[channel] -> sample;
+    soundsample -> current--;
+    if (soundsample -> dirty && soundsample -> current == 0) {
+        resource_destroy(VALUE_SOUNDSAMPLE(soundsample));
+    }
     sound_table[channel] = NULL;
     sound_playing--;
     sound_first_free = MIN(sound_first_free, channel);
@@ -64,7 +69,6 @@ Value sound_play(Environment *environment, Value filename, Int volume, Int loops
         return VALUE_ERROR;
     }
     Soundsample *soundsample = result.val.soundsample_val;
-
 
     mutex_lock(sound_lock);
     if (sound_playing >= sound_channels) {
@@ -90,6 +94,7 @@ Value sound_play(Environment *environment, Value filename, Int volume, Int loops
     sound -> playing = true;
     sound -> channel = channel;
     sound -> sample = soundsample;
+    soundsample -> current++;
     sound_table[channel] = sound;
     mutex_unlock(sound_lock);
     Unt done = SDL_GetTicks();
@@ -134,6 +139,20 @@ void sound_stop_all(void) {
     Mix_HaltChannel(-1);
 }
 
+void sound_mark_dirty(Value filename) {
+    mutex_lock(sound_lock);
+    for (Int i = 0; i < sound_channels; i++) {
+        Sound *sound = sound_table[i];
+        if (!sound) {
+            continue;
+        }
+        Value path = sound -> sample -> path;
+        if (equal(path, filename)) {
+            sound -> sample -> dirty = true;
+        }
+    }
+    mutex_unlock(sound_lock);
+}
 Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
     z_assert(skeleton.type == SOUNDSAMPLE);
     Soundsample *soundsample = skeleton.val.soundsample_val;
@@ -172,6 +191,8 @@ Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt i
     soundsample -> size = chunk -> alen;
     soundsample -> created = SDL_GetTicks();
     soundsample -> chunk = chunk;
+    soundsample -> dirty = false;
+    soundsample -> current = 0;
     *size = soundsample -> size;
     return true;
 }
