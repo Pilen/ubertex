@@ -174,7 +174,7 @@ Uses rsync to upload the files, based on the timestamp"
                                     (progn
                                       (message "Syncing done")
                                       ;; Ensure workers reload files
-                                      (revy-send-command 'all "flush_dirty_cache")
+                                      (revy-send-command 'all "flush_entire_cache")
                                       ))
                                 (message "Sync with %s failed with exit code %i [%d left]"
                                          name (process-exit-status process) revy--uploading-files))))))
