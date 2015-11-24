@@ -10,5 +10,6 @@ void worker_loop(Environment *environment);
 Bool worker_abort;
 Bool worker_blank;
 Bool flush_dirty_cache;
+Bool flush_entire_cache;
 
 #endif

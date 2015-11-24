@@ -81,6 +81,10 @@ void worker_loop(Environment *environment) {
             resource_flush_dirty_cache();
             flush_dirty_cache = false;
         }
+        if (flush_entire_cache) {
+            resource_flush_entire_cache();
+            flush_entire_cache = false;
+        }
 
         fflush(log_output);
         fflush(output);

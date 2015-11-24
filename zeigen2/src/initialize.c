@@ -35,6 +35,7 @@ Environment *initialize(void) {
     worker_abort = false;
     worker_blank = false;
     flush_dirty_cache = false;
+    flush_entire_cache = false;
 
     srand(0);
 

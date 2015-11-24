@@ -159,7 +159,10 @@ void communication_receive(TCPsocket socket) {
         worker_blank = true;
     } else if (strcmp(command, "flush_dirty_cache") == 0) {
         log_info("Flush dirty cache");
-    flush_dirty_cache = true;
+        flush_dirty_cache = true;
+    } else if (strcmp(command, "flush_entire_cache") == 0) {
+        log_info("Flush entire cache");
+        flush_entire_cache = true;
     } else {
         log_error("Header command not defined: %s", command);
     }
