@@ -33,23 +33,27 @@ int main(int argc, char **argv) {
     char *host = NULL;
     Int port = OPTION_DEFAULT_PORT;
     Bool fullscreen = true;
+    Bool background = false;
 
     Bool finished = false;
     while (!finished) {
-        Int option = getopt(argc, argv, "d:e:h:il:p:r:tw");
+        Int option = getopt(argc, argv, "bd:e:h:il:p:r:tw");
         switch (option) {
-        case 'e':
-            {
-                Value statement = VALUE_STRING(string_create_from_str(optarg));
-                list_push_back(statements, statement);
-                break;
-            }
+        case 'b':
+            background = true;
+            break;
         case 'd':
             /* TODO: Should create the directory if not found */
             if (chdir(optarg) != 0) {
                 log_fatal("Could not enter directory %s", optarg);
             }
             break;
+        case 'e':
+            {
+                Value statement = VALUE_STRING(string_create_from_str(optarg));
+                list_push_back(statements, statement);
+                break;
+            }
         case 'h':
             host = optarg;
             break;
@@ -83,6 +87,28 @@ int main(int argc, char **argv) {
             log_fatal("Illegal option");
             break;
         }
+    }
+
+    if (background) {
+        pid_t process_id = fork();
+        if (process_id < 0) {
+            log_fatal("Could not fork process!");
+        }
+        if (process_id > 0) {
+            /* Parrent process */
+            exit(0);
+        }
+        pid_t sid = setsid();
+        if (sid < 0) {
+            /* log_fatal("Could not set sid!"); */
+        }
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
+        log_output = fopen("log.txt", "w");
+        output = log_output;
+        fprintf(log_output, "Hej");
+        fflush(log_output);
     }
 
     if (!host) {
