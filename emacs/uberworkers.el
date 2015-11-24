@@ -57,6 +57,6 @@ The workers are stored in an internal datastructure, for use in elisp simply use
           (puthash name (list worker) revy-workers))))))
 
 (defun revy-get-workers (name)
-  "Return the worker with name, or nil if no such worker exists.
+  "Return the workers with name, or nil if no such worker exists.
 Does not ensure the worker is actually live."
   (gethash name revy-workers))
