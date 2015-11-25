@@ -28,6 +28,8 @@ Value sound_play(Environment *environment, Value filename, Int Volume, Int loops
 Bool sound_stop(Environment *environment, Sound *sound);
 Int sound_stop_file(Environment *environment, Value filename);
 void sound_stop_all(void);
+void sound_fade_out_all(Int duration);
+
 
 void sound_mark_dirty(Value filename);
 

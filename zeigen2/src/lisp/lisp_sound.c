@@ -63,3 +63,22 @@ LISP_BUILTIN(sound_stop_all, "") {
     sound_stop_all();
     return VALUE_NIL;
 }
+
+LISP_BUILTIN(sound_fade_all, "") {
+    if (args -> length > 2) {
+        return VALUE_ERROR;
+    }
+
+    Int duration = 4 * 1000;
+    if (args -> length == 2) {
+        Value value = LIST_GET_UNSAFE(args, 1);
+        if (value.type == INTEGER) {
+            duration = value.val.integer_val * 1000;
+        } else if (value.type == FLOAT) {
+            duration = (Int) value.val.float_val * 1000.0;
+        }
+    }
+
+    sound_fade_out_all(duration);
+    return VALUE_NIL;
+}

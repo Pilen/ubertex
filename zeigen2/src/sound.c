@@ -139,6 +139,10 @@ void sound_stop_all(void) {
     Mix_HaltChannel(-1);
 }
 
+void sound_fade_out_all(Int duration) {
+    Mix_FadeOutChannel(-1, duration);
+}
+
 void sound_mark_dirty(Value filename) {
     mutex_lock(sound_lock);
     for (Int i = 0; i < sound_channels; i++) {
