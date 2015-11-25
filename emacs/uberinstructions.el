@@ -187,6 +187,15 @@ This function will also call revy-abort-all "
   ;;TODO: why do i have to do this
   (sleep-for 0 20))
 
+(defun revy-fade-sounds (&optional duration)
+  "Stop all overlay sounds"
+  (interactive)
+  (when (and (called-interactively-p 'any) (null duration))
+    (setq duration (read-string "Duration: ")))
+  (if (or (null duration) (string= duration ""))
+      (revy-send-lisp nil '(sound-fade-all))
+    (revy-send-lisp nil `(sound-fade-all ,duration))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Mplayer
