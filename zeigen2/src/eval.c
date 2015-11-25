@@ -35,6 +35,7 @@ Value eval(Value expression, Environment *environment) {
         } else {
             /* TODO: log error */
             /* TODO: "Did you mean?" */
+            log_error("Variable XXX not found");
             return VALUE_ERROR;
         }
     }
@@ -88,7 +89,7 @@ Value eval_list(Value expression, Environment *environment) {
     if (!found) {
         /* TODO: log error */
         /* TODO: "Did you mean?" */
-        log_error("symbol XXX not found");
+        log_error("Function XXX not found");
         return VALUE_ERROR;
     }
     z_assert(function_value.type == FUNCTION);
