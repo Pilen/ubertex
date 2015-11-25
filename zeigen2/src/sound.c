@@ -26,6 +26,7 @@ void sound_initialize(void) {
 
     sound_lock = mutex_create();
     sound_channels = OPTION_SOUND_MIXING_CHANNELS;
+    Mix_AllocateChannels(sound_channels);
     sound_table = memory_cmalloc(sizeof(Sound *) * sound_channels);
     sound_playing = 0;
     sound_first_free = 0;
@@ -36,6 +37,7 @@ void sound_table_expand(void) {
     /* Mutexes are reentrant */
     mutex_lock(sound_lock);
     Unt new_channels = sound_channels * 2;
+    Mix_AllocateChannels(sound_channels);
     /* TODO: Use realloc instead? */
     Sound **new_table = memory_cmalloc(sizeof(Sound *) * new_channels);
     for (Unt i = 0; i < sound_channels; i++) {
