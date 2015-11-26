@@ -225,7 +225,9 @@ Wont return untill all workers has been synced."
                                       "./repl -b -w -d " (aref worker revy-worker-dir-index)))
                 (message "Starting %s" (aref worker revy-worker-location-index))
                 t)
-            (error "No connection to host %s" (aref worker revy-worker-location-index))))))))
+            (error "No connection to host %s" (aref worker revy-worker-location-index)))))))
+  (message "Starting done")
+  t)
 
 ;; (defun revy-update-software ()
 ;;   "Update the software on all workers and the current machine"
