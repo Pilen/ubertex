@@ -4,6 +4,7 @@
 #include <getopt.h>
 #include <signal.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 #include "debug.h"
 
@@ -42,18 +43,22 @@ int main(int argc, char **argv) {
         case 'b':
             background = true;
             break;
-        case 'd':
-            /* TODO: Should create the directory if not found */
+        case 'd': {
+            struct stat dir_stat;
+            if (stat(optarg, &dir_stat) == -1) {
+                log_info("Created dir: %s", optarg);
+                mkdir(optarg, 0777);
+            }
             if (chdir(optarg) != 0) {
                 log_fatal("Could not enter directory %s", optarg);
             }
             break;
-        case 'e':
-            {
-                Value statement = VALUE_STRING(string_create_from_str(optarg));
-                list_push_back(statements, statement);
-                break;
-            }
+        }
+        case 'e': {
+            Value statement = VALUE_STRING(string_create_from_str(optarg));
+            list_push_back(statements, statement);
+            break;
+        }
         case 'h':
             host = optarg;
             break;
