@@ -27,6 +27,7 @@
 
 (defun revy-quit ()
   "Quit all workers"
+  (interactive)
   (when (yes-or-no-p "Quit the revy closing all workers?")
     (when (yes-or-no-p "Are you sure you want to close all workers?")
       (revy-shell "killall -9 repl" 'all))))
