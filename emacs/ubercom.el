@@ -196,32 +196,44 @@ Wont return untill all workers has been synced."
 (defun revy-start-workers ()
   "Start all the workers not already online"
   (dolist (worker (revy-get-workers 'all))
-    (let ((worker (elt (revy-get-workers 'all) 0)))
-      (with-temp-buffer
-        (erase-buffer)
-        (let ((channel (condition-case nil
-                           (open-network-stream
-                            "revy-worker-start"
-                            (current-buffer)
-                            (aref worker revy-worker-location-index)
-                            (aref worker revy-worker-port-index))
-                         (error nil))))
-          (if channel
-              (progn
-                (process-send-string channel "hej")
-                (accept-process-output channel 1)
-                (goto-char (point-min))
-                (if (search-forward "Got it., Bye" nil t)
-                    t
-                  (error "Process returned nonsens. Is the host/port correct and the software updated?")))
-            ;; Is there a connection to the host?
-            (if (= 0 (revy-shell-local-sync (concat "ping -c 1 -W 1 " (aref worker revy-worker-location-index))))
-                (progn ;; (revy-shell-sync (message (concat "cd " (aref worker revy-worker-installation-index) "zeigen2/src/" "; "
-                       ;;                                   "./repl -b -w -d " (aref worker revy-worker-dir-index))))
-                  ;; We want to run this command on the worker, and for revy-shell-sync we need the worker name which is not stored in the worker structure
-                  (call-process "ssh" nil "*revy-shell*" t
-                                (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
-                                (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
-                                        "cd " (aref worker revy-worker-installation-index) "zeigen2/src/" "; "
-                                        "./repl -b -w -d " (aref worker revy-worker-dir-index))))
-              (error "No connection to host %s" (aref worker revy-worker-location-index)))))))))
+    (with-temp-buffer
+      (erase-buffer)
+      (let ((channel (condition-case nil
+                         (open-network-stream
+                          "revy-worker-start"
+                          (current-buffer)
+                          (aref worker revy-worker-location-index)
+                          (aref worker revy-worker-port-index))
+                       (error nil))))
+        (if channel
+            (progn
+              (process-send-string channel "hej")
+              (accept-process-output channel 1)
+              (goto-char (point-min))
+              (if (search-forward "Got it., Bye" nil t)
+                  (progn (message "%s already up" (aref worker revy-worker-location-index)) t)
+                (error "Process returned nonsens. Is the host/port correct and the software updated?")))
+          ;; Is there a connection to the host?
+          (if (= 0 (revy-shell-local-sync (concat "ping -c 1 -W 1 " (aref worker revy-worker-location-index))))
+              (progn ;; (revy-shell-sync (message (concat "cd " (aref worker revy-worker-installation-index) "zeigen2/src/" "; "
+                ;;                                   "./repl -b -w -d " (aref worker revy-worker-dir-index))))
+                ;; We want to run this command on the worker, and for revy-shell-sync we need the worker name which is not stored in the worker structure
+                (call-process "ssh" nil "*revy-shell*" t
+                              (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
+                              (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
+                                      "cd " (aref worker revy-worker-installation-index) "zeigen2/src/" "; "
+                                      "./repl -b -w -d " (aref worker revy-worker-dir-index)))
+                (message "Starting %s" (aref worker revy-worker-location-index))
+                t)
+            (error "No connection to host %s" (aref worker revy-worker-location-index))))))))
+
+;; (defun revy-update-software ()
+;;   "Update the software on all workers and the current machine"
+;;   (interactive)
+;;   (revy-shell-local-sync (concat "cd " revy-ubertex-dir ";"
+;;                                  "git pull") )
+;;   (dolist (worker (revy-get-workers 'all))
+;;     (revy-shell-sync (concat "cd " (aref worker revy-worker-installation-index) "zeigen2/src/" "; "
+;;                              ;; Not handling hwclock out of date
+;;                              "git pull ")
+;;                      )))
