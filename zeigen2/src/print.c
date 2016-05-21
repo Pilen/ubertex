@@ -55,3 +55,27 @@ void print_on(FILE *stream, Value value) {
     }
     fflush(stream);
 }
+
+
+/* String to_String(Value value) { */
+/*     Value value; */
+/*     switch (value.type) { */
+/*     case ERROR: */
+/*         return symbols_error; */
+/*     case NIL:s */
+/*         return symbols_nil; */
+/*     case SYMBOL: */
+/*         value = symbol_name(value); */
+/*         z_assert(value.type == STRING); */
+/*         return value.val.string_val; */
+/*     case INTEGER: */
+/*         Int number = value.val.integer_val; */
+/*         Unt length = ((Unt) floor(log10(number))) + 1 + (number < 0 ? 1 : 0); */
+/*         char *buffer[length + 1]; */
+
+/*     case HASH: */
+/*     default: */
+/*         z_assert(false) */
+/*     } */
+
+/* } */
