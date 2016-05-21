@@ -40,6 +40,9 @@ void symbol_initialize() {
     symbols_sized = symbol_get(VALUE_STRING(string_create_from_str("sized")));
     symbols_rotated = symbol_get(VALUE_STRING(string_create_from_str("rotated")));
 
+
+    symbols_error = string_create_from_str("error");
+    symbols_nil = string_create_from_str("nil");
 }
 
 Value symbol_get(Value name) {

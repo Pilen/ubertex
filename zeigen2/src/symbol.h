@@ -33,4 +33,10 @@ Value symbols_scaled;
 Value symbols_sized;
 Value symbols_rotated;
 
+
+
+/* Not used for anything other than printing */
+String *symbols_error;
+String *symbols_nil;
+
 #endif
