@@ -210,7 +210,7 @@ Wont return untill all workers has been synced."
               (process-send-string channel "hej")
               (accept-process-output channel 1)
               (goto-char (point-min))
-              (if (search-forward "Got it., Bye" nil t)
+              (if (search-forward "Got it. Bye" nil t)
                   (progn (message "%s already up" (aref worker revy-worker-location-index)) t)
                 (error "Process returned nonsens. Is the host/port correct and the software updated?")))
           ;; Is there a connection to the host?
