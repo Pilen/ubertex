@@ -137,6 +137,7 @@ But it will also accept a string with end being ignored in that case."
 
 (defun revy-upload-files (&optional worker)
   ;; Todo fix dokumentation
+  ;; Todo fix name of completing syncing machine
   "Upload files to workers.
 If no workers are specified, the files will be uploaded to all workers.
 Remember only nonvirtual workers are updated
@@ -159,7 +160,7 @@ Uses rsync to upload the files, based on the timestamp"
                                            (format "*revy-rsync-%s*" name)
                                            "rsync"
                                            "-r" "-u" "-t" "-P" "-e" "ssh"
-                                           (file-name-as-directory revy-dir)
+                                           (file-name-as-directory (expand-file-name revy-dir))
                                            (concat (concat (aref worker_v revy-worker-user-index) "@" (aref worker_v revy-worker-location-index))
                                                    ":"
                                                    (aref worker_v revy-worker-dir-index)))))

@@ -17,7 +17,7 @@
   (interactive)
   (save-some-buffers)
   (setq revy--compile-processes nil)
-  (let ((directories (list revy-dir))
+  (let ((directories (list (expand-file-name revy-dir)))
         (dir nil)
         (failed nil))
 
