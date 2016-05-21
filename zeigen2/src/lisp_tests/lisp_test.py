@@ -94,6 +94,8 @@ def lisp(file, linenumber, statements, expected_values):
     output_list = output.strip().split("\n")
     if len(output_list) != len(expected_values):
         print("TEST-failed: {}:{}: \t\toutput length is different than expected".format(file, linenumber))
+        print("Got:", output_list)
+        print("Expected:", expected_values)
         return False
 
     for output, expected in zip(output_list, expected_values):
