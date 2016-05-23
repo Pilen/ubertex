@@ -87,10 +87,13 @@ Returns the process used to compile the tex file"
                                     (with-current-buffer buffer
                                       (goto-char (point-max))
                                       (when (search-backward-regexp "^.*==> Fatal error" nil t)
-                                        (search-backward-regexp
-                                         (concat tex (rx ":" (group (+ digit)) ":" (* whitespace) (group (+ (not (any "."))) "."))))
-                                        (setq error-line (string-to-int (match-string 1))
-                                              error-message (replace-regexp-in-string "\n" "" (match-string 2))))
+                                        (if  (search-backward-regexp
+                                              (concat tex (rx ":" (group (+ digit)) ":" (* whitespace) (group (+ (not (any "."))) ".")))
+                                              nil t)
+                                            (setq error-line (string-to-int (match-string 1))
+                                                  error-message (replace-regexp-in-string "\n" "" (match-string 2))))
+                                        (setq error-line 0
+                                              error-message "Some error occured"))
                                       (when (search-backward-regexp "! LaTeX Error: \\(.*\\)\\.\n" nil t)
                                         (setq error-line 0)
                                         (setq error-message (match-string 1))))
