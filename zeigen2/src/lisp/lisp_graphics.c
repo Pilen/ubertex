@@ -161,6 +161,8 @@ LISP_BUILTIN(pdf, "") {
 }
 
 LISP_BUILTIN(text, "") {
+    /* (text string &optional fontsize centered position) */
+
     /* TODO: The arguments should be interpreted better */
     Int fontsize = 34;
     Value position = VALUE_NIL;
