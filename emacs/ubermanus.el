@@ -54,7 +54,7 @@ the functions can be called on their own."
       (setq melody (match-string 1)))
 
     (goto-char (point-min))
-    ;; Fix mellemrum
+    ;; TODO:? Fix mellemrum
     (while (search-forward-regexp "\\\\sings{\\|\\\\scene{" nil t)
       (backward-delete-char 7)
       (insert "%% ")
@@ -67,8 +67,12 @@ the functions can be called on their own."
         (insert "\n")))
 
     (goto-char (point-min))
+    (replace-regexp "\n\n+\\\\end{document}" "\n")
+    (goto-char (point-min))
     (search-forward "\\begin{song}")
     (delete-region (point-min) (point))
+    (replace-regexp "^\s+" "")
+    (goto-char (point-min))
     (insert revy-overtex-preamble)
     (save-excursion
       ;; (search-forward "\\end{song}")
@@ -84,7 +88,7 @@ the functions can be called on their own."
               (replace-regexp-in-string "\n[[:space:]]*%*" "\n%% " melody)
               "\n\n"))
 
-    (indent-region (point-min) (point-max))
+    ;; (indent-region (point-min) (point-max))
     (goto-char (point-min))
     (query-replace-regexp "^\\\\act{[^}]*}\n" "")
     (goto-char (point-min))
