@@ -4,6 +4,6 @@
 #include "environment.h"
 
 Environment *initialize(void);
-void initialize_SDL(Environment *environment, Bool fullscreen);
+void initialize_graphics(Environment *environment, Bool fullscreen);
 
 #endif

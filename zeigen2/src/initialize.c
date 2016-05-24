@@ -43,7 +43,7 @@ Environment *initialize(void) {
     return environment;
 }
 
-void initialize_SDL(Environment *environment, Bool fullscreen) {
+void initialize_graphics(Environment *environment, Bool fullscreen) {
     Int flags;
     Int result;
     flags = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
