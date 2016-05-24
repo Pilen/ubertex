@@ -124,7 +124,8 @@ int main(int argc, char **argv) {
 
     if (!test_only) {
         initialize_graphics(environment, fullscreen);
-    }
+        communication_initialize(port);
+     }
     /* Must be done after initialize_graphics as SDL registers its own function */
     /* It is not very pretty that cleanup is not performed, as the atexit functions are not called */
     signal(SIGINT, SIG_DFL);
@@ -158,7 +159,6 @@ int main(int argc, char **argv) {
     }
 
     if (!test_only) {
-        communication_initialize(port);
         worker_loop(environment);
     }
     fflush(log_output);
