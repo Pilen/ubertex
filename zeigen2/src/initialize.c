@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
+#include <cairo.h>
 
 #include "options.h"
 #include "debug.h"
@@ -100,6 +101,17 @@ void initialize_graphics(Environment *environment, Bool fullscreen) {
     }
     environment -> window = window;
 
+    Int width;
+    Int height;
+    SDL_GetWindowSize(window, &width, &height);
+    /* environment -> width = width; */
+    /* environment -> height = height; */
+    SDL_Rect rect;
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = width;
+    rect.h = height;
+
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     if (!renderer) {
         log_fatal("Unable to create a renderer: %s", SDL_GetError());
@@ -111,8 +123,29 @@ void initialize_graphics(Environment *environment, Bool fullscreen) {
     }
 
 
-    /* NOTE: Is it wrong to present the window already? */
-    SDL_SetRenderDrawColor(environment -> renderer, 0, 0, 0, 255);
-    SDL_RenderClear(environment -> renderer);
-    SDL_RenderPresent(environment -> renderer);
+    SDL_Texture *texture = SDL_CreateTexture(renderer,
+                                             SDL_PIXELFORMAT_ARGB8888,
+                                             SDL_TEXTUREACCESS_STREAMING,
+                                             width, height);
+    environment -> base_texture = texture;
+    void *pixels;
+    int pitch;
+    SDL_LockTexture(environment -> base_texture, NULL, &pixels, &pitch);
+    cairo_surface_t *surface = cairo_image_surface_create_for_data(pixels,
+                                                                   CAIRO_FORMAT_ARGB32,
+                                                                   width, height, pitch);
+    if (cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {
+        log_fatal("Unable to create cairo surface from SDL2 texture");
+    }
+    environment -> cairo_surface = surface;
+    cairo_t *cairo = cairo_create(surface);
+    environment -> cairo = cairo;
+
+    cairo_set_source_rgb(cairo, 1, 0, 0);
+    cairo_paint(cairo);
+    cairo_surface_flush(surface);
+    SDL_UnlockTexture(texture);
+
+    SDL_RenderCopy(renderer, texture, &rect, &rect);
+    SDL_RenderPresent(renderer);
 }

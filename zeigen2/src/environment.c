@@ -9,6 +9,9 @@ Environment *environment_create(void) {
     Environment *environment = memory_malloc(sizeof(Environment));
     environment -> window = NULL;
     environment -> renderer = NULL;
+    environment -> base_texture = NULL;
+    environment -> cairo_surface = NULL;
+    environment -> cairo = NULL;
 
     environment -> component_next_update = VALUE_NIL;
     environment -> component_next_update_args = list_create_empty();

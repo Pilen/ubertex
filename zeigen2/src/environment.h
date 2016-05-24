@@ -2,11 +2,15 @@
 #define Z_ENVIRONMENT_H
 
 #include <SDL2/SDL.h>
+#include <cairo.h>
 #include "hash.h"
 
 typedef struct {
     SDL_Window *window;
     SDL_Renderer *renderer;
+    SDL_Texture *base_texture;
+    cairo_surface_t *cairo_surface;
+    cairo_t *cairo;
 
     Value component_next_update;
     List *component_next_update_args;
