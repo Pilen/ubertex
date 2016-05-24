@@ -40,10 +40,10 @@ int main(int argc, char **argv) {
     while (!finished) {
         Int option = getopt(argc, argv, "bd:e:h:il:p:r:tw");
         switch (option) {
-        case 'b':
+        case 'b': // Background process (like a server/daemon)
             background = true;
             break;
-        case 'd': {
+        case 'd': { // Directory to work in
             struct stat dir_stat;
             if (stat(optarg, &dir_stat) == -1) {
                 log_info("Created dir: %s", optarg);
@@ -54,35 +54,35 @@ int main(int argc, char **argv) {
             }
             break;
         }
-        case 'e': {
+        case 'e': { // Eval expression
             Value statement = VALUE_STRING(string_create_from_str(optarg));
             list_push_back(statements, statement);
             break;
         }
-        case 'h':
+        case 'h': // Hostname
             host = optarg;
             break;
-        case 'i':
+        case 'i': // Interactive
             interactive = true;
             test_only = true;
             break;
-        case 'l':
+        case 'l': // Log level
             if (strcmp(optarg, "max") == 0) {
                 log_level_execution = LOG_LEVEL_MAX;
             } else {
                 sscanf(optarg, "%d", &log_level_execution);
             }
             break;
-        case 'p':
+        case 'p': // Port
             sscanf(optarg, "%d", &port);
             break;
-        case 'r':
+        case 'r': // Resource threshold (approximate memory usage)
             sscanf(optarg, "%zud", &resource_size_threshold);
             break;
-        case 't':
+        case 't': // Test only, don't start the loop
             test_only = true;
             break;
-        case 'w':
+        case 'w': // Windowed mode
             fullscreen = false;
             break;
         case -1:
