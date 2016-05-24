@@ -11,6 +11,7 @@
 #include "memory.h"
 #include "resource.h"
 #include "sound.h"
+#include "graphics.h"
 
 void worker_update(Environment *environment, Value update_symbol, List *args);
 
@@ -25,12 +26,8 @@ void worker_loop(Environment *environment) {
             sound_stop_all();
         }
         worker_abort = false;
-        SDL_SetRenderDrawColor(environment -> renderer,
-                               environment -> setting_clear_red,
-                               environment -> setting_clear_green,
-                               environment -> setting_clear_blue,
-                               environment -> setting_clear_alpha);
-        SDL_RenderClear(environment -> renderer);
+
+        graphics_clear(environment);
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -64,16 +61,11 @@ void worker_loop(Environment *environment) {
         lock_read_unlock(resource_cache_lock);
 
         if (worker_blank) {
-            /* TODO: clean this up */
-            SDL_SetRenderDrawColor(environment -> renderer,
-                                   environment -> setting_clear_red,
-                                   environment -> setting_clear_green,
-                                   environment -> setting_clear_blue,
-                                   environment -> setting_clear_alpha);
-            SDL_RenderClear(environment -> renderer);
+            graphics_clear(environment);
         }
 
-        SDL_RenderPresent(environment -> renderer);
+        graphics_present(environment);
+
         memory_update();
 
 

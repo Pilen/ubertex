@@ -13,15 +13,18 @@ Environment *environment_create(void) {
     environment -> cairo_surface = NULL;
     environment -> cairo = NULL;
 
+    environment -> width = 0;
+    environment -> height = 0;
+
     environment -> component_next_update = VALUE_NIL;
     environment -> component_next_update_args = list_create_empty();
     environment -> component_next_post = VALUE_NIL;
     environment -> component_next_post_args = list_create_empty();
 
-    environment -> setting_clear_red = 0;
-    environment -> setting_clear_green = 0;
-    environment -> setting_clear_blue = 0;
-    environment -> setting_clear_alpha = 255;
+    environment -> setting_clear_red = 0.0;
+    environment -> setting_clear_green = 0.0;
+    environment -> setting_clear_blue = 0.0;
+    environment -> setting_clear_alpha = 1.0;
 
     environment -> variables = hash_create();
     environment -> functions = hash_create();

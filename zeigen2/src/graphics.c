@@ -7,6 +7,30 @@
 #include "debug.h"
 #include "basic.h"
 
+void graphics_clear(Environment *environment) {
+    cairo_set_source_rgba(environment -> cairo,
+                          environment -> setting_clear_red,
+                          environment -> setting_clear_green,
+                          environment -> setting_clear_blue,
+                          environment -> setting_clear_alpha);
+    cairo_paint(environment -> cairo);
+}
+void graphics_present(Environment *environment) {
+    void *pixels;
+    int pitch;
+    SDL_Rect rect;
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = environment -> width;
+    rect.h = environment -> height;
+
+    cairo_surface_flush(environment -> cairo_surface);
+    SDL_UnlockTexture(environment -> base_texture);
+    SDL_RenderCopy(environment -> renderer, environment -> base_texture, &rect, &rect);
+    SDL_RenderPresent(environment -> renderer);
+    SDL_LockTexture(environment -> base_texture, NULL, &pixels, &pitch);
+
+}
 void graphics_render_at(Environment *environment, SDL_Texture *texture, Int x, Int y) {
     SDL_Rect dest;
     dest.x = x;

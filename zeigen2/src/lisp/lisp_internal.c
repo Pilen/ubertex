@@ -50,7 +50,7 @@ LISP_BUILTIN(render_test, "") {
     SDL_Texture *text_test2(Environment *environment);
     SDL_Texture *texture = text_test2(environment);
     graphics_render_centered_at(environment, texture, 1024/2, 768/2);
-    SDL_RenderPresent(environment -> renderer);
+    graphics_present(environment);
     SDL_Delay(10000000);
 
     return VALUE_NIL;

@@ -88,15 +88,7 @@ LISP_BUILTIN(setting_clear_color, "") {
 
 LISP_BUILTIN(clear, "") {
     /* TODO: if called with a color, clear with that color without setting normal clear color */
-
-    SDL_SetRenderDrawColor(environment -> renderer,
-                           environment -> setting_clear_red,
-                           environment -> setting_clear_green,
-                           environment -> setting_clear_blue,
-                           environment -> setting_clear_alpha);
-    SDL_RenderClear(environment -> renderer);
-    /* TODO: reset rendering color */
-
+    graphics_clear(environment);
     return VALUE_NIL;
 }
 

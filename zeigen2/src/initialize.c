@@ -15,6 +15,7 @@
 #include "memory.h"
 #include "assert.h"
 #include "sound.h"
+#include "graphics.h"
 #include "worker.h"
 
 Environment *initialize(void) {
@@ -104,13 +105,8 @@ void initialize_graphics(Environment *environment, Bool fullscreen) {
     Int width;
     Int height;
     SDL_GetWindowSize(window, &width, &height);
-    /* environment -> width = width; */
-    /* environment -> height = height; */
-    SDL_Rect rect;
-    rect.x = 0;
-    rect.y = 0;
-    rect.w = width;
-    rect.h = height;
+    environment -> width = width;
+    environment -> height = height;
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     if (!renderer) {
@@ -141,11 +137,6 @@ void initialize_graphics(Environment *environment, Bool fullscreen) {
     cairo_t *cairo = cairo_create(surface);
     environment -> cairo = cairo;
 
-    cairo_set_source_rgb(cairo, 1, 0, 0);
-    cairo_paint(cairo);
-    cairo_surface_flush(surface);
-    SDL_UnlockTexture(texture);
-
-    SDL_RenderCopy(renderer, texture, &rect, &rect);
-    SDL_RenderPresent(renderer);
+    graphics_clear(environment);
+    graphics_present(environment);
 }

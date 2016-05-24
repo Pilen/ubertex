@@ -12,21 +12,19 @@ typedef struct {
     cairo_surface_t *cairo_surface;
     cairo_t *cairo;
 
+    Int width;
+    Int height;
+
     Value component_next_update;
     List *component_next_update_args;
 
     Value component_next_post;
     List *component_next_post_args;
 
-    /* TODO: decide color type */
-    uint8_t setting_clear_red;
-    uint8_t setting_clear_green;
-    uint8_t setting_clear_blue;
-    uint8_t setting_clear_alpha;
-
-    Hash *other_settings;
-    Int setting_screen_width; /* ??? */
-    Int setting_screen_height; /* ??? */
+    Double setting_clear_red;
+    Double setting_clear_green;
+    Double setting_clear_blue;
+    Double setting_clear_alpha;
 
     Hash *variables;
     Hash *functions;
