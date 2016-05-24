@@ -62,13 +62,13 @@ LISP_BUILTIN(color, "") {
     return VALUE_VECTOR4I(colors);
 }
 
-LISP_BUILTIN(setting_clear_color, "") {
+LISP_BUILTIN(clear_color, "") {
     if (args -> length == 1) {
         Int *colors = memory_malloc(sizeof(Int) * 4);
-        colors[0] = environment -> setting_clear_red;
-        colors[1] = environment -> setting_clear_green;
-        colors[2] = environment -> setting_clear_blue;
-        colors[3] = environment -> setting_clear_alpha;
+        colors[0] = environment -> clear_red;
+        colors[1] = environment -> clear_green;
+        colors[2] = environment -> clear_blue;
+        colors[3] = environment -> clear_alpha;
         return VALUE_VECTOR4I(colors);
     } else if (args -> length == 2) {
         Value vector = LIST_GET_UNSAFE(args, 1);
@@ -76,10 +76,10 @@ LISP_BUILTIN(setting_clear_color, "") {
             return VALUE_ERROR;
         }
         Int *colors = vector.val.vector4i_val;
-        environment -> setting_clear_red = colors[0];
-        environment -> setting_clear_green = colors[1];
-        environment -> setting_clear_blue = colors[2];
-        environment -> setting_clear_alpha = colors[3];
+        environment -> clear_red = colors[0];
+        environment -> clear_green = colors[1];
+        environment -> clear_blue = colors[2];
+        environment -> clear_alpha = colors[3];
 
         return vector;
     }

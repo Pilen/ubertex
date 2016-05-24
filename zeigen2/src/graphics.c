@@ -9,10 +9,10 @@
 
 void graphics_clear(Environment *environment) {
     cairo_set_source_rgba(environment -> cairo,
-                          environment -> setting_clear_red,
-                          environment -> setting_clear_green,
-                          environment -> setting_clear_blue,
-                          environment -> setting_clear_alpha);
+                          environment -> clear_red,
+                          environment -> clear_green,
+                          environment -> clear_blue,
+                          environment -> clear_alpha);
     cairo_paint(environment -> cairo);
 }
 void graphics_present(Environment *environment) {

@@ -21,10 +21,10 @@ typedef struct {
     Value component_next_post;
     List *component_next_post_args;
 
-    Double setting_clear_red;
-    Double setting_clear_green;
-    Double setting_clear_blue;
-    Double setting_clear_alpha;
+    Double clear_red;
+    Double clear_green;
+    Double clear_blue;
+    Double clear_alpha;
 
     Hash *variables;
     Hash *functions;
