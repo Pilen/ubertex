@@ -31,24 +31,16 @@ void graphics_present(Environment *environment) {
     SDL_LockTexture(environment -> base_texture, NULL, &pixels, &pitch);
 
 }
-void graphics_render_at(Environment *environment, cairo_surface_t *surface, Int x, Int y) {
-    return;
-    /* SDL_Rect dest; */
-    /* dest.x = x; */
-    /* dest.y = y; */
-    /* SDL_QueryTexture(texture, NULL, NULL, &dest.w, &dest.h); */
-    /* SDL_RenderCopy(environment -> renderer, texture, NULL, &dest); */
+void graphics_render_at(Environment *environment, cairo_surface_t *surface, Double x, Double y) {
+    cairo_set_source_surface(environment -> cairo, surface, x, y);
+    cairo_paint(environment -> cairo);
 }
 
-void graphics_render_centered_at(Environment *environment, cairo_surface_t *surface, Int x, Int y) {
-    return;
-    /* SDL_Rect dest; */
-    /* dest.x = x; */
-    /* dest.y = y; */
-    /* SDL_QueryTexture(texture, NULL, NULL, &dest.w, &dest.h); */
-    /* dest.x -= dest.w/2; */
-    /* dest.y -= dest.h/2; */
-    /* SDL_RenderCopy(environment -> renderer, texture, NULL, &dest); */
+void graphics_render_centered_at(Environment *environment, cairo_surface_t *surface, Double x, Double y) {
+    Int width = cairo_image_surface_get_width(surface);
+    Int height = cairo_image_surface_get_height(surface);
+    cairo_set_source_surface(environment -> cairo, surface, x - width/2, y - height/2);
+    cairo_paint(environment -> cairo);
 }
 
 Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surface, Value position) {
@@ -334,9 +326,9 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
 }
 
 
-void graphics_fill(Environment *environment, Int red, Int green, Int blue, Int alpha) {
-    SDL_SetRenderDrawColor(environment -> renderer, red, green, blue, alpha);
-    SDL_RenderFillRect(environment -> renderer, NULL);
+void graphics_fill(Environment *environment, Double red, Double green, Double blue, Double alpha) {
+    cairo_set_source_rgba(environment -> cairo, red, green, blue, alpha);
+    cairo_paint(environment -> cairo);
 }
 
 void graphics_calibrate(Environment *environment) {

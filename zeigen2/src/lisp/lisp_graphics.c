@@ -100,7 +100,7 @@ LISP_BUILTIN(fill, "") {
     if (color.type != VECTOR4I) {
         return VALUE_ERROR;
     }
-    Int *vector = color.val.vector4i_val;
+    Double *vector = color.val.vector4f_val;
     graphics_fill(environment, vector[0], vector[1], vector[2], vector[3]);
     return VALUE_NIL;
 }
