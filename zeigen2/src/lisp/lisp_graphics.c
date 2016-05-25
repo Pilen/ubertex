@@ -113,11 +113,11 @@ LISP_BUILTIN(image, "") {
     Value file = LIST_GET_UNSAFE(args, 1);
     Value position = LIST_GET_UNSAFE(args, 2);
 
-    SDL_Texture *texture = image_get_texture_from_file(environment, file);
-    if (!texture) {
+    cairo_surface_t *surface = image_get_surface_from_file(environment, file);
+    if (!surface) {
         return VALUE_ERROR;
     }
-    Bool result = graphics_render_at_position(environment, texture, position);
+    Bool result = graphics_render_at_position(environment, surface, position);
     if (result) {
         return symbols_t;
     } else {

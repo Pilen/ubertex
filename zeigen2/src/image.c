@@ -1,18 +1,21 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
+#include "types.h"
+#include "debug.h"
 #include "image.h"
 #include "assert.h"
 #include "string.h"
 #include "memory.h"
 #include "resource.h"
+#include "file.h"
 
-SDL_Texture *image_get_texture_from_file(Environment *environment, Value filename) {
+cairo_surface_t *image_get_surface_from_file(Environment *environment, Value filename) {
     Image *skeleton = memory_malloc(sizeof(Image));
     skeleton -> path = filename;
     Value result = resource_get(environment, VALUE_IMAGE(skeleton));
     if (result.type == IMAGE) {
-        return result.val.image_val -> texture;
+        return result.val.image_val -> surface;
     } else {
         return NULL;
     }
@@ -21,27 +24,57 @@ SDL_Texture *image_get_texture_from_file(Environment *environment, Value filenam
 Bool resource_create_image(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
     z_assert(skeleton.type == IMAGE);
     Image *image = skeleton.val.image_val;
-
     z_assert(image -> path.type == STRING);
-    char *filename = image -> path.val.string_val -> text;
-    SDL_Surface *surface = IMG_Load(filename);
-    if (!surface) {
-        log_error("Unable to find file %s", filename);
-        return false;
-    }
-    SDL_Texture *texture;
-    texture = SDL_CreateTextureFromSurface(environment -> renderer,
-                                           surface);
+
     image -> refcount = 0;
     image -> score = initial_score;
     image -> created = SDL_GetTicks();
-    image -> texture = texture;
-    SDL_FreeSurface(surface);
 
-    Int width, height;
-    SDL_QueryTexture(texture, NULL, NULL, &width, &height);
-    image -> size = sizeof(Unt) * width * height; /* Approximate size of texture */
+    char *filename = image -> path.val.string_val -> text;
+    if (strcmp(file_get_extension_str(filename), "png") == 0 ||
+        strcmp(file_get_extension_str(filename), "PNG") == 0) {
+        // Open pngs with Cairo
+        // This is a simple way to ensure correct handling of transparency
+        cairo_surface_t *surface = cairo_image_surface_create_from_png(filename);
+        if (cairo_surface_status(surface) == CAIRO_STATUS_SUCCESS) {
+            Unt width = cairo_image_surface_get_width(surface);
+            Unt height = cairo_image_surface_get_height(surface);
+            image -> base = NULL;
+            image -> surface = surface;
+            image -> size = (sizeof(Image) + sizeof(Unt) * width * height); /* Approximate size of image */
+            *size = image -> size;
+            debug("surface %s has a reference count of %d", filename, cairo_surface_get_reference_count(surface));
+            return true;
+        }
+    } // If we cant use cairo, try SDL_image
+    SDL_Surface *loaded = IMG_Load(filename);
+    if (!loaded) {
+        log_error("Unable to find file %s", filename);
+        return false;
+    }
+    SDL_Surface *base = SDL_CreateRGBSurface(0, loaded -> w, loaded -> h, 32,
+                                             0x00FF0000,
+                                             0x0000FF00,
+                                             0x000000FF,
+                                             0xFF000000);
+    SDL_BlitSurface(loaded, NULL, base, NULL);
+    SDL_FreeSurface(loaded);
+    // TODO: Fix missing premultiplication
+    // WARNING: COLORS MIGHT NOT BE ACCURATE IF THE SURFACE CONTAINS TRANSPARENT PIXELS!!!
+    cairo_surface_t *surface = cairo_image_surface_create_for_data(base -> pixels,
+                                                                   CAIRO_FORMAT_ARGB32,
+                                                                   base -> w,
+                                                                   base -> h,
+                                                                   base -> pitch);
+
+    if (cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS) {
+        SDL_FreeSurface(base);
+        log_error("Could not convert sdl surface to a cairo surface: %s", cairo_status_to_string(cairo_surface_status(surface)));
+    }
+    image -> base = base;
+    image -> surface = surface;
+    image -> size = (sizeof(Image) + sizeof(SDL_Surface) +
+                     sizeof(Unt) * base -> w * base -> h); /* Approximate size of image */
     *size = image -> size;
-
     return true;
 }

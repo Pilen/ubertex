@@ -95,7 +95,8 @@ Unt resource_destroy(Value resource) {
     switch (resource.type) {
     case IMAGE:
         size = resource.val.image_val -> size;
-        SDL_DestroyTexture(resource.val.image_val -> texture);
+        cairo_surface_destroy(resource.val.image_val -> surface);
+        SDL_FreeSurface(resource.val.image_val -> base);
         break;
     case PDF:
         size = resource.val.pdf_val -> size;
@@ -205,10 +206,9 @@ Unt resource_flush_dirty_cache(void) {
             modified = file_stat.st_mtime;
             if (modified + OPTION_RESOURCE_MODIFICATION_BLEED > started + resource.val.image_val -> created) {
                 /* Resource is dirty */
-                cleared += resource.val.image_val -> size;
+                /* Dont push into new resource_list */
                 hash_delete(resource_cache, resource);
-                resource_total_size -= resource.val.image_val -> size;
-                SDL_DestroyTexture(resource.val.image_val -> texture);
+                cleared += resource_destroy(resource);
             } else {
                 list_push_back(resource_list, resource);
             }
