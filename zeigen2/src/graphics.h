@@ -6,9 +6,9 @@
 
 void graphics_clear(Environment *environment);
 void graphics_present(Environment *environment);
-void graphics_render_at(Environment *environment, SDL_Texture *texture, Int x, Int y);
-void graphics_render_centered_at(Environment *environment, SDL_Texture *texture, Int x, Int y);
-Bool graphics_render_at_position(Environment *environment, SDL_Texture *texture, Value position);
+void graphics_render_at(Environment *environment, cairo_surface_t *surface, Int x, Int y);
+void graphics_render_centered_at(Environment *environment, cairo_surface_t *surface, Int x, Int y);
+Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surface, Value position);
 void graphics_fill(Environment *environment, Int red, Int green, Int blue, Int alpha);
 void graphics_calibrate(Environment *environment);
 
