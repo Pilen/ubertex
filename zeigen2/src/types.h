@@ -31,12 +31,12 @@ typedef enum {
     FUNCTION,
     VECTOR4I,
     VECTOR4F,
+    SOUND,
 
     /* Resources: */
     IMAGE,
     PDF,
     SOUNDSAMPLE,
-    SOUND,
     TEXT,
 } Type;
 
@@ -87,10 +87,10 @@ typedef struct {
         Function *function_val;
         Int *vector4i_val;
         Double *vector4f_val;
+        Sound *sound_val;
         Image *image_val;
         Pdf *pdf_val;
         Soundsample *soundsample_val;
-        Sound *sound_val;
         Text *text_val;
     } val;
 } Value;
