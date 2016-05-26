@@ -13,7 +13,6 @@ struct Pdf_s {
     Value path;
     Unt size;
     Unt created;
-    Double zoom;
     Int pagecount;
     cairo_surface_t **pages;
 };

@@ -12,6 +12,10 @@
 #include "../pdf.h"
 #include "../resource.h"
 #include "../sound.h"
+#include "../image.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+/* #include "../libs/cairosdl/cairosdl.h" */
 
 LISP_BUILTIN(resource_cache_size, "") {
     lock_read_lock(resource_cache_lock);
@@ -41,20 +45,108 @@ LISP_BUILTIN(allocate_useless, "") {
 }
 
 LISP_BUILTIN(render_test, "") {
-    SDL_SetRenderDrawColor(environment -> renderer, 255, 50, 128, 255);
-    SDL_RenderClear(environment -> renderer);
+/*     /\* SDL_SetRenderDrawColor(environment -> renderer, 255, 50, 128, 255); *\/ */
+/*     /\* SDL_RenderClear(environment -> renderer); *\/ */
 
-    SDL_SetRenderDrawColor(environment -> renderer, 255, 255, 255, 255);
-    SDL_RenderDrawLine(environment -> renderer, 1024/2 - 300, 768/2, 1024/2+300, 768/2);
-    SDL_RenderDrawLine(environment -> renderer, 1024/2, 768/2 - 300, 1024/2, 768/2 + 300);
-    SDL_Texture *text_test2(Environment *environment);
-    SDL_Texture *texture = text_test2(environment);
-    graphics_render_centered_at(environment, texture, 1024/2, 768/2);
-    graphics_present(environment);
-    SDL_Delay(10000000);
+/*     /\* SDL_SetRenderDrawColor(environment -> renderer, 255, 255, 255, 255); *\/ */
+/*     /\* SDL_RenderDrawLine(environment -> renderer, 1024/2 - 300, 768/2, 1024/2+300, 768/2); *\/ */
+/*     /\* SDL_RenderDrawLine(environment -> renderer, 1024/2, 768/2 - 300, 1024/2, 768/2 + 300); *\/ */
+/*     /\* SDL_Texture *text_test2(Environment *environment); *\/ */
+/*     /\* SDL_Texture *texture = text_test2(environment); *\/ */
+/*     /\* graphics_render_centered_at(environment, texture, 1024/2, 768/2); *\/ */
+/*     /\* graphics_present(environment); *\/ */
+/*     /\* SDL_Delay(10000000); *\/ */
 
+
+/*     cairo_set_source_rgb(environment -> cairo, 1.0, 0.1, 0.0); */
+/*     cairo_paint(environment -> cairo); */
+
+/*     /\* SDL_Surface *surface = IMG_Load("/home/pilen/bachelor2/forsvar/test.bmp"); *\/ */
+/*     SDL_Surface *orig = IMG_Load("/home/pilen/av/2016/billeder/placeholder.png"); */
+/*     if (!orig) log_fatal("orig"); */
+/*     SDL_Surface *surface = SDL_CreateRGBSurface(0, orig -> w, orig -> h, 32, */
+/*                                                 0x00FF0000, */
+/*                                                 0x0000FF00, */
+/*                                                 0x000000FF, */
+/*                                                 0xFF000000); */
+/*     if (!surface) log_fatal("surface"); */
+/*     SDL_BlitSurface(orig, NULL, surface, NULL); */
+
+/*     cairo_surface_t *cairo_surface = cairo_image_surface_create_for_data(surface -> pixels, */
+/*                                                                          CAIRO_FORMAT_ARGB32, */
+/*                                                                          surface -> w, */
+/*                                                                          surface -> h, */
+/*                                                                          surface -> pitch); */
+/*     /\* cairo_surface_t *cairo_surface = cairosdl_surface_create(surface); *\\/ *\/ */
+/*     /\* cairo_surface_t *cairo_surface = cairo_image_surface_create_from_png("/home/pilen/av/2016/billeder/placeholder.png"); *\/ */
+/*     if (cairo_surface_status(cairo_surface) != CAIRO_STATUS_SUCCESS) log_fatal("cairo_surface: %s", cairo_status_to_string(cairo_surface_status(cairo_surface))); */
+/*     /\* cairo_set_source_surface(environment -> cairo, cairo_surface, 0, 0); *\/ */
+/*     /\* cairo_paint(environment -> cairo); *\/ */
+/*     /\* graphics_present(environment); *\/ */
+/*     /\* SDL_Delay(1000*4); *\/ */
+
+
+/* /\* WHY DOES THIS WORK?!?! *\/ */
+/*     SDL_Surface *surface2 = SDL_CreateRGBSurface(0, 600, 600, 32, */
+/*                                                 0x00FF0000, */
+/*                                                 0x0000FF00, */
+/*                                                 0x000000FF, */
+/*                                                 0xFF000000); */
+/*     cairo_surface_t *cairo_surface2 = cairo_image_surface_create_for_data(surface2 -> pixels, */
+/*                                                                           CAIRO_FORMAT_ARGB32, */
+/*                                                                           surface2 -> w, */
+/*                                                                           surface2 -> h, */
+/*                                                                           surface2 -> pitch); */
+/*     SDL_Window *window = SDL_CreateWindow("fisk", 0, 0, 600, 600, 0); */
+/*     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC); */
+/*     cairo_t *cairo = cairo_create(cairo_surface2); */
+/*     cairo_set_line_width(cairo, 9); */
+/*     cairo_set_source_rgba(cairo, 1.0, 0.0, 0.0, .5); */
+/*     cairo_rectangle(cairo,10, 10, 70, 70); */
+/*     cairo_stroke(cairo); */
+/*     cairo_surface_flush(cairo_surface2); */
+/*     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface2); */
+/*     SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255); */
+/*     SDL_RenderClear(renderer); */
+/*     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 128); */
+/*     SDL_Rect rect = {20, 24, 80, 20}; */
+/*     SDL_RenderFillRect(renderer, &rect); */
+/*     SDL_Rect rect2 = {30, 5, 10, 60}; */
+/*     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 128); */
+/*     SDL_RenderFillRect(renderer, &rect2); */
+
+
+/*     SDL_RenderCopy(renderer, texture, NULL, NULL); */
+/*     SDL_RenderPresent(renderer); */
+/*     debug("fisk"); */
+/*     return VALUE_NIL; */
+
+    cairo_surface_t *surface = image_get_surface_from_file(environment, VALUE_STRING(string_create_from_str("/home/pilen/av/2016/billeder/test-square.png")));
+    Int width = cairo_image_surface_get_width(surface);
+    Int height = cairo_image_surface_get_height(surface);
+
+    double x = 0;
+    double y = 0;
+    double scale = 2.0;
+    double angle = (2.0*M_PI)/8.0;
+    cairo_save(environment -> cairo);
+    /* cairo_translate(environment -> cairo, width/2, height/2); */
+    /* cairo_scale(environment -> cairo, scale, scale); */
+    /* cairo_rotate(environment -> cairo, angle); */
+    /* cairo_translate(environment -> cairo, -width/2, -height/2); */
+    /* /\* cairo_translate(environment -> cairo, -200, -200); *\/ */
+    cairo_translate(environment -> cairo, 200, 200);
+    cairo_set_source_surface(environment -> cairo, surface, x, y);
+    cairo_paint(environment -> cairo);
+    cairo_restore(environment -> cairo);
+    cairo_set_source_surface(environment -> cairo, surface, x, y);
+    cairo_paint(environment -> cairo);
+    /* graphics_present(environment); */
+    /* SDL_Delay(1000*2); */
+    /* exit(EXIT_SUCCESS); */
     return VALUE_NIL;
 }
+
 
 LISP_BUILTIN(pdf_test, "") {
     /* Pdf pdf; */
