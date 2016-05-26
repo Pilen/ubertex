@@ -298,23 +298,25 @@ void graphics_fill(Environment *environment, Double red, Double green, Double bl
 }
 
 void graphics_calibrate(Environment *environment) {
-    SDL_Rect rect;
-    rect.x = 312;
-    rect.y = 250;
-    rect.w = 400;
-    rect.h = 220;
-    SDL_SetRenderDrawColor(environment -> renderer, 255, 0, 255, 255);
-    SDL_RenderFillRect(environment -> renderer, NULL);
+    cairo_set_source_rgb(environment -> cairo, 255, 0, 255);
+    cairo_paint(environment -> cairo);
 
-    SDL_SetRenderDrawColor(environment -> renderer, 255, 255, 255, 255);
-    SDL_RenderFillRect(environment -> renderer, &rect);
-    SDL_SetRenderDrawColor(environment -> renderer, 0, 0, 0, 255);
-    SDL_RenderDrawRect(environment -> renderer, &rect);
+    cairo_set_line_width(environment -> cairo, 1);
 
-    Int width;
-    Int height;
-    SDL_GetWindowSize(environment -> window, &width, &height);
+    Double x = 312;
+    Double y = 250;
+    Double width = 400;
+    Double height = 220;
+    cairo_rectangle(environment -> cairo,
+                    x, y, width, height);
+    cairo_set_source_rgb(environment -> cairo, 255, 255, 255);
+    cairo_fill_preserve(environment -> cairo);
+    cairo_set_source_rgb(environment -> cairo, 0, 0, 0);
+    cairo_stroke(environment -> cairo);
 
-    SDL_RenderDrawLine(environment -> renderer, 0, 0, width, height);
-    SDL_RenderDrawLine(environment -> renderer, 0, height, width, 0);
+    cairo_move_to(environment -> cairo, 0, 0);
+    cairo_line_to(environment -> cairo, environment -> width, environment -> height);
+    cairo_move_to(environment -> cairo, 0, environment -> height);
+    cairo_line_to(environment -> cairo, environment -> width, 0);
+    cairo_stroke(environment -> cairo);
 }
