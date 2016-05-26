@@ -61,10 +61,10 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
     Double x;
     Double y;
 
-    Int img_width = cairo_image_surface_get_width(surface);
-    Int img_height = cairo_image_surface_get_height(surface);
-    Int screen_width = environment -> width;
-    Int screen_height = environment -> height;
+    Double img_width = cairo_image_surface_get_width(surface);
+    Double img_height = cairo_image_surface_get_height(surface);
+    Double screen_width = environment -> width;
+    Double screen_height = environment -> height;
 
     if (position.type != LIST) {
         log_error_in;
