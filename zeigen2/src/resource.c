@@ -101,7 +101,7 @@ Unt resource_destroy(Value resource) {
     case PDF:
         size = resource.val.pdf_val -> size;
         for (Int i = 0; i < resource.val.pdf_val -> pagecount; i++) {
-            SDL_DestroyTexture(resource.val.pdf_val -> pages[i]);
+            cairo_surface_destroy(resource.val.pdf_val -> pages[i]);
         }
         break;
     case SOUNDSAMPLE:
