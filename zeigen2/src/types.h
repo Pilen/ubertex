@@ -62,6 +62,8 @@ typedef enum {
 #define VALUE_SOUND(val) ((Value) {SOUND, {.sound_val = val}})
 #define VALUE_TEXT(val) ((Value) {TEXT, {.text_val = val}})
 
+#define IS_NUMERIC(val) ((val).type == INTEGER || (val).type == FLOAT)
+#define NUM_VAL(v) ((Double) (((v).type == INTEGER) ? (v).val.integer_val : ((v).type == FLOAT) ? (v).val.float_val : NAN))
 
 /* Actual datatype declarations */
 typedef struct List_s List;

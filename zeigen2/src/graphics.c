@@ -43,286 +43,252 @@ void graphics_render_centered_at(Environment *environment, cairo_surface_t *surf
     cairo_paint(environment -> cairo);
 }
 
+/**
+ * position must be a list
+ * If the list consists of two numbers (x y) the surface will be rendered at location x,y
+ * the same is true for (plain x y)
+ * (x y)
+ * (plain x y) x,y = numbers, rendered with top left corner at x,y with scale=1
+ * (full) fullscreen
+ * (centered)
+ * (scaled)
+ * (sized)
+ * (rotated)
+
+ * (windowed)
+ */
 Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surface, Value position) {
+    Double x;
+    Double y;
+
+    Int img_width = cairo_image_surface_get_width(surface);
+    Int img_height = cairo_image_surface_get_height(surface);
+    Int screen_width = environment -> width;
+    Int screen_height = environment -> height;
+
+    if (position.type != LIST) {
+        log_error_in;
+        return false;
+    }
+    List *list = position.val.list_val;
+    if (list -> length <= 0) {
+        log_error_in;
+        return false;
+    }
+    Value first = LIST_GET_UNSAFE(list, 0);
+
+    cairo_save(environment -> cairo);
+
+    if (first.type == SYMBOL) {
+        if (equal(first, symbols_plain)) {
+            /**** plain ****/
+            /* Render at coords, unscaled */
+            if (list -> length == 3) {
+                Value x = LIST_GET_UNSAFE(list, 1);
+                Value y = LIST_GET_UNSAFE(list, 2);
+                if (IS_NUMERIC(x) && IS_NUMERIC(y)) {
+                    cairo_translate(environment -> cairo, NUM_VAL(x), NUM_VAL(y));
+                    goto RENDER;
+                } /* Return a specific error? */
+            }
+        } else if (equal(first, symbols_full)) {
+            /**** full ****/
+            /* Stretch image to fill entire screen */
+            if (list -> length == 1) {
+                cairo_scale(environment -> cairo, screen_width/img_width, screen_height/img_height);
+                goto RENDER;
+            }
+        } else if (equal(first, symbols_centered)) {
+            /**** centered ****/
+            if (list -> length == 3) {
+                Value x = LIST_GET_UNSAFE(list, 1);
+                Value y = LIST_GET_UNSAFE(list, 2);
+                if (x.type == INTEGER && y.type == INTEGER) {
+                    /* Render offset from center */
+                    Double dx = (screen_width - img_width) / 2 + NUM_VAL(x);
+                    Double dy = (screen_height - img_height) / 2 + NUM_VAL(y);
+                    cairo_translate(environment -> cairo, dx, dy);
+                    goto RENDER;
+                }
+                if (x.type == FLOAT && y.type == FLOAT) {
+                    /* As in sized */
+                    Double dx = (screen_width - img_width) / 2 + ((screen_width - img_width)/2 * NUM_VAL(x));
+                    Double dy = (screen_height - img_height) / 2 + ((screen_height - img_height)/2 * NUM_VAL(y));
+                    cairo_translate(environment -> cairo, dx, dy);
+                    goto RENDER;
+                }
+            } else if (list -> length == 1) {
+                Double dx = (screen_width - img_width) / 2;
+                Double dy = (screen_height - img_height) / 2;
+                cairo_translate(environment -> cairo, dx, dy);
+            }
+        } else if (equal(first, symbols_scaled)) {
+            /**** scaled ****/
+            /* TODO: make it work with relative float positions */
+            if (list -> length < 3) {
+                log_error_in;
+                goto ERROR;
+            }
+            Value a = LIST_GET_UNSAFE(list, 1);
+            Value b = LIST_GET_UNSAFE(list, 2);
+            if (!IS_NUMERIC(a) || !IS_NUMERIC(b)) {
+                log_error_in;
+                goto ERROR;
+            }
+            Double x = NUM_VAL(a);
+            Double y = NUM_VAL(b);
+
+            Value x_scale;
+            Value y_scale;
+            if (list -> length == 4) {
+                x_scale = LIST_GET_UNSAFE(list, 3);
+                y_scale = x_scale;
+            } else if (list -> length == 5) {
+                x_scale = LIST_GET_UNSAFE(list, 3);
+                y_scale = LIST_GET_UNSAFE(list, 4);
+            } else {
+                log_error_in;
+                goto ERROR;
+            }
+            cairo_translate(environment -> cairo, x, y);
+            if (x_scale.type == INTEGER && y_scale.type == INTEGER) {
+                /* scale to absolute size (set size) */
+                cairo_scale(environment -> cairo, NUM_VAL(x_scale)/img_width, NUM_VAL(y_scale)/img_height);
+            } else if (x_scale.type == FLOAT && y_scale.type == FLOAT) {
+                /* scale relative */
+                cairo_scale(environment -> cairo, NUM_VAL(x_scale), NUM_VAL(y_scale));
+            } else {
+                log_error_in;
+                goto ERROR;
+            }
+            goto RENDER;
+
+        } else if (equal(first, symbols_sized)) {
+            /* sized */
+            /* Render scaled but keep aspect ratio */
+            if (list -> length != 5) {
+                log_error_in;
+                goto ERROR;
+            }
+            Value offset_xv = LIST_GET_UNSAFE(list, 1);
+            Value offset_yv = LIST_GET_UNSAFE(list, 2);
+            Value size_xv = LIST_GET_UNSAFE(list, 3);
+            Value size_yv = LIST_GET_UNSAFE(list, 4);
+
+            Double width;
+            Double height;
+            if (size_xv.type == INTEGER && size_yv.type == INTEGER) {
+                width = NUM_VAL(size_xv);
+                height = NUM_VAL(size_yv);
+            } else if (size_xv.type == FLOAT && size_yv.type == FLOAT) {
+                width = screen_width * NUM_VAL(size_xv);
+                height = screen_height * NUM_VAL(size_yv);
+            } else {
+                log_error_in;
+                goto ERROR;
+            }
+
+            Double new_width;
+            Double new_height;
+            Double ratio_w = width / img_width;
+            Double ratio_h = height / img_height;
+            if (ratio_w <= ratio_h) {
+                new_height = width * ((Double) img_height / (Double) img_width);
+                new_width = width;
+            } else {
+                new_width = height * ((Double) img_width / (Double) img_height);
+                new_height = height;
+            }
+
+            Double dx = 0;
+            Double dy = 0;
+            if (offset_xv.type == INTEGER && offset_yv.type == INTEGER) {
+                dx = NUM_VAL(offset_xv);
+                dy = NUM_VAL(offset_yv);
+            } else if (offset_xv.type == FLOAT && offset_yv.type == FLOAT) {
+                dx = (screen_width - new_width) / 2 + ((screen_width - new_width)/2 * NUM_VAL(offset_xv));
+                dy = (screen_height - new_height) / 2 + ((screen_height - new_height)/2 * NUM_VAL(offset_yv));
+            } else {
+                log_error_in;
+                goto ERROR;
+            }
+            cairo_translate(environment -> cairo, dx, dy);
+            cairo_scale(environment -> cairo, new_width/img_width, new_height/img_height);
+            goto RENDER;
+        } else if (equal(first, symbols_rotated)) {
+            /**** Rotated ****/
+            if (list -> length < 4) {
+                log_error_in;
+                goto ERROR;
+            }
+
+            Value angle_v = LIST_GET_UNSAFE(list, 1);
+            if (!IS_NUMERIC(angle_v)) {
+                log_error_in;
+                goto ERROR;
+            }
+            Double angle = NUM_VAL(angle_v);
+
+            Value x = LIST_GET_UNSAFE(list, 2);
+            Value y = LIST_GET_UNSAFE(list, 3);
+            if (!IS_NUMERIC(x) || !IS_NUMERIC(y)) {
+                log_error_in;
+                goto ERROR;
+            }
+            Double dx = NUM_VAL(x);
+            Double dy = NUM_VAL(y);
+
+            Value x_scale;
+            Value y_scale;
+            if (list -> length == 5) {
+                x_scale = LIST_GET_UNSAFE(list, 4);
+                y_scale = x_scale;
+            } else if (list -> length == 6) {
+                x_scale = LIST_GET_UNSAFE(list, 4);
+                y_scale = LIST_GET_UNSAFE(list, 5);
+            } else {
+                log_error_in;
+                goto ERROR;
+            }
+
+            Double sx;
+            Double sy;
+            if (x_scale.type == INTEGER && y_scale.type == INTEGER) {
+                sx = NUM_VAL(x_scale)/img_width;
+                sy = NUM_VAL(y_scale)/img_height;
+            } else if (x_scale.type == FLOAT && y_scale.type == FLOAT) {
+                sx = NUM_VAL(x_scale);
+                sy = NUM_VAL(y_scale);
+            } else {
+                log_error_in;
+                goto ERROR;
+            }
+            cairo_translate(environment -> cairo, dx, dy);
+            cairo_translate(environment -> cairo, sx*img_width/2, sx*img_height/2);
+            cairo_rotate(environment -> cairo, angle);
+            cairo_scale(environment -> cairo, sx, sy);
+            cairo_translate(environment -> cairo, -img_width/2, -img_height/2);
+            goto RENDER;
+        }
+
+    } else if (IS_NUMERIC(first) && list -> length == 2) {/* (x y) */
+        Value second = LIST_GET_UNSAFE(list, 1);
+        if (IS_NUMERIC(second)) {
+            x = NUM_VAL(first);
+            y = NUM_VAL(second);
+            cairo_translate(environment -> cairo, x, y);
+            goto RENDER;
+        }
+    }
+ ERROR:
+    cairo_restore(environment -> cairo);
     return false;
- /*    /\* TODO: really needs to be cleaned up!!! *\/ */
- /*    SDL_RendererFlip flip = SDL_FLIP_NONE; */
- /*    Float angle = 0; */
- /*    /\* SDL_Point pivot_actual; *\/ */
- /*    SDL_Point *pivot = NULL; */
 
- /*    SDL_Rect image; */
- /*    image.x = 0; */
- /*    image.y = 0; */
- /*    SDL_QueryTexture(texture, NULL, NULL, &image.w, &image.h); */
-
- /*    Int window_w; */
- /*    Int window_h; */
- /*    SDL_GetWindowSize(environment -> window, &window_w, &window_h); */
-
- /*    if (position.type != LIST) { */
- /*        log_error_in; */
- /*        return false; */
- /*    } */
- /*    List *list = position.val.list_val; */
- /*    if (list -> length <= 0) { */
- /*        log_error_in; */
- /*        return false; */
- /*    } */
- /*    Value first = LIST_GET_UNSAFE(list, 0); */
- /*    if (first.type == SYMBOL) { */
- /*        if (equal(first, symbols_plain)) { */
- /*            /\* plain *\/ */
- /*            /\* Render at coords, unscaled *\/ */
- /*            if (list -> length == 3) { */
- /*                Value x = LIST_GET_UNSAFE(list, 1); */
- /*                Value y = LIST_GET_UNSAFE(list, 2); */
- /*                if (x.type == INTEGER && y.type == INTEGER) { */
- /*                    image.x = x.val.integer_val; */
- /*                    image.y = y.val.integer_val; */
- /*                    goto RENDER; */
- /*                } else if (x.type == FLOAT && y.type == FLOAT) { */
- /*                    image.x = (Int) x.val.float_val; */
- /*                    image.y = (Int) y.val.float_val; */
- /*                    goto RENDER; */
- /*                } */
- /*            } */
- /*        } else if (equal(first, symbols_full)) { */
- /*            /\* full *\/ */
- /*            /\* Stretch image to fill entire screen *\/ */
- /*            if (list -> length == 1) { */
- /*                image.w = window_w; */
- /*                image.h = window_h; */
- /*                goto RENDER; */
- /*            } */
- /*        } else if (equal(first, symbols_centered)) { */
- /*            /\* centered *\/ */
- /*            if (list -> length == 3) { */
- /*                /\* Render offset from center *\/ */
- /*                Value x = LIST_GET_UNSAFE(list, 1); */
- /*                Value y = LIST_GET_UNSAFE(list, 2); */
- /*                if (x.type == INTEGER && y.type == INTEGER) { */
- /*                    image.x = (window_w - image.w) / 2 + x.val.integer_val; */
- /*                    image.y = (window_h - image.h) / 2 + y.val.integer_val; */
- /*                    goto RENDER; */
- /*                } */
- /*                if (x.type == FLOAT && y.type == FLOAT) { */
- /*                    /\* As in sized *\/ */
- /*                    image.x = (window_w - image.w) / 2 + ((window_w - image.w)/2 * x.val.float_val); */
- /*                    image.y = (window_h - image.h) / 2 + ((window_h - image.h)/2 * y.val.float_val); */
- /*                    goto RENDER; */
- /*                } */
-
- /*            } else if (list -> length == 1) { */
- /*                /\* Render at center *\/ */
- /*                image.x = (window_w - image.w) / 2; */
- /*                image.y = (window_h - image.h) / 2; */
- /*                goto RENDER; */
- /*            } */
- /*        } else if (equal(first, symbols_scaled)) { */
- /*            /\* scaled *\/ */
- /*            if (list -> length < 3) { */
- /*                log_error_in; */
- /*                return false; */
- /*            } */
- /*            Value x = LIST_GET_UNSAFE(list, 1); */
- /*            Value y = LIST_GET_UNSAFE(list, 2); */
- /*            switch (x.type) { */
- /*            case INTEGER: */
- /*                image.x = x.val.integer_val; */
- /*                break; */
- /*            case FLOAT: */
- /*                image.x = (Int) x.val.float_val; */
- /*                break; */
- /*            default: */
- /*                log_error_in; */
- /*                return false; */
- /*            } */
- /*            switch (y.type) { */
- /*            case INTEGER: */
- /*                image.y = y.val.integer_val; */
- /*                break; */
- /*            case FLOAT: */
- /*                image.y = (Int) y.val.float_val; */
- /*                break; */
- /*            default: */
- /*                log_error_in; */
- /*                return false; */
- /*            } */
- /*            Value x_scale; */
- /*            Value y_scale; */
- /*            if (list -> length == 4) { */
- /*                x_scale = LIST_GET_UNSAFE(list, 3); */
- /*                y_scale = x_scale; */
- /*            } else if (list -> length == 5) { */
- /*                x_scale = LIST_GET_UNSAFE(list, 3); */
- /*                y_scale = LIST_GET_UNSAFE(list, 4); */
- /*            } else { */
- /*                log_error_in; */
- /*                return false; */
- /*            } */
-
- /*            if (x_scale.type == INTEGER && y_scale.type == INTEGER) { */
- /*                image.w = x_scale.val.integer_val; */
- /*                image.h = y_scale.val.integer_val; */
- /*            } else if (x_scale.type == FLOAT && y_scale.type == FLOAT) { */
- /*                image.w *= x_scale.val.float_val; */
- /*                image.h *= y_scale.val.float_val; */
- /*            } else { */
- /*                log_error_in; */
- /*                return false; */
- /*            } */
- /*            goto RENDER; */
- /*        } else if (equal(first, symbols_sized)) { */
- /*            /\* sized *\/ */
- /*            /\* Render scaled but keep aspect ratio *\/ */
- /*            if (list -> length == 5) { */
- /*                Value offset_xv = LIST_GET_UNSAFE(list, 1); */
- /*                Value offset_yv = LIST_GET_UNSAFE(list, 2); */
- /*                Value size_xv = LIST_GET_UNSAFE(list, 3); */
- /*                Value size_yv = LIST_GET_UNSAFE(list, 4); */
-
- /*                Float width; */
- /*                Float height; */
- /*                if (size_xv.type == INTEGER && size_yv.type == INTEGER) { */
- /*                    width = size_xv.val.integer_val; */
- /*                    height = size_yv.val.integer_val; */
- /*                } else if (size_xv.type == FLOAT && size_yv.type == FLOAT) { */
- /*                    width = window_w * size_xv.val.float_val; */
- /*                    height = window_h * size_yv.val.float_val; */
- /*                } else { */
- /*                    log_error_in; */
- /*                    return false; */
- /*                } */
- /*                Float ratio_w = width / image.w; */
- /*                Float ratio_h = height / image.h; */
- /*                if (ratio_w <= ratio_h) { */
- /*                    image.h = width * ((Float) image.h / (Float) image.w); */
- /*                    image.w = width; */
- /*                    /\* image.y = (window_h - image.h) / 2; *\/ */
- /*                } else { */
- /*                    image.w = height * ((Float) image.w / (Float) image.h); */
- /*                    image.h = height; */
- /*                    /\* image.x = (window_w - image.w) / 2; *\/ */
- /*                } */
-
- /*                if (offset_xv.type == INTEGER && offset_yv.type == INTEGER) { */
- /*                    /\* debugi((window_w - image.w) / 2); *\/ */
- /*                    /\* debugi((window_h - image.h) / 2); *\/ */
- /*                    /\* image.x = (window_w - image.w) / 2 + offset_xv.val.integer_val; *\/ */
- /*                    /\* image.y = (window_h - image.h) / 2 + offset_yv.val.integer_val; *\/ */
- /*                    image.x += offset_xv.val.integer_val; */
- /*                    image.y += offset_yv.val.integer_val; */
- /*                } else if (offset_xv.type == FLOAT && offset_yv.type == FLOAT) { */
- /*                    /\* image.x = window_w * offset_xv.val.float_val; *\/ */
- /*                    /\* image.y = window_h * offset_yv.val.float_val; *\/ */
- /*                    /\* image.x = (window_w - image.w) / 2 + (window_w * offset_xv.val.float_val); *\/ */
- /*                    /\* image.y = (window_h - image.h) / 2 + (window_h * offset_yv.val.float_val); *\/ */
- /*                    image.x = (window_w - image.w) / 2 + ((window_w - image.w)/2 * offset_xv.val.float_val); */
- /*                    image.y = (window_h - image.h) / 2 + ((window_h - image.h)/2 * offset_yv.val.float_val); */
- /*                    /\* image.x = (window_w - image.w) * offset_xv.val.float_val; *\/ */
- /*                    /\* image.y = (window_h - image.h) * offset_yv.val.float_val; *\/ */
-
-
- /*                    /\* image.x = (width - image.w) / 2 + offset_xv.val.float_val; *\/ */
- /*                    /\* image.y = (height - image.h) / 2 + offset_yv.val.float_val; *\/ */
- /*                } else { */
- /*                    log_error_in; */
- /*                    return false; */
- /*                } */
- /*                goto RENDER; */
- /*            } */
- /*        } else if (equal(first, symbols_rotated)) { */
- /*            if (list -> length < 4) { */
- /*                log_error_in; */
- /*                return false; */
- /*            } */
- /*            Value angle_v = LIST_GET_UNSAFE(list, 1); */
- /*            switch (angle_v.type) { */
- /*            case INTEGER: */
- /*                angle = (Float) angle_v.val.integer_val; */
- /*                break; */
- /*            case FLOAT: */
- /*                angle = angle_v.val.float_val; */
- /*                break; */
- /*            default: */
- /*                log_error_in; */
- /*                return false; */
- /*            } */
- /*            Value x = LIST_GET_UNSAFE(list, 2); */
- /*            Value y = LIST_GET_UNSAFE(list, 3); */
- /*            switch (x.type) { */
- /*            case INTEGER: */
- /*                image.x = x.val.integer_val; */
- /*                break; */
- /*            case FLOAT: */
- /*                image.x = (Int) x.val.float_val; */
- /*                break; */
- /*            default: */
- /*                log_error_in; */
- /*                return false; */
- /*            } */
- /*            switch (y.type) { */
- /*            case INTEGER: */
- /*                image.y = y.val.integer_val; */
- /*                break; */
- /*            case FLOAT: */
- /*                image.y = (Int) y.val.float_val; */
- /*                break; */
- /*            default: */
- /*                log_error_in; */
- /*                return false; */
- /*            } */
- /*            Value x_scale; */
- /*            Value y_scale; */
- /*            if (list -> length == 5) { */
- /*                x_scale = LIST_GET_UNSAFE(list, 4); */
- /*                y_scale = x_scale; */
- /*            } else if (list -> length == 6) { */
- /*                x_scale = LIST_GET_UNSAFE(list, 4); */
- /*                y_scale = LIST_GET_UNSAFE(list, 5); */
- /*            } else { */
- /*                log_error_in; */
- /*                return false; */
- /*            } */
-
- /*            if (x_scale.type == INTEGER && y_scale.type == INTEGER) { */
- /*                image.w = x_scale.val.integer_val; */
- /*                image.h = y_scale.val.integer_val; */
- /*            } else if (x_scale.type == FLOAT && y_scale.type == FLOAT) { */
- /*                image.w *= x_scale.val.float_val; */
- /*                image.h *= y_scale.val.float_val; */
- /*            } else { */
- /*                log_error_in; */
- /*                return false; */
- /*            } */
-
- /*            pivot = NULL; */
-
- /*            goto RENDER_EX; */
-
-
-
-
-
- /*        } */
- /*    } else if (first.type == INTEGER && list -> length == 2) { */
- /*        Value second = LIST_GET_UNSAFE(list, 1); */
- /*        if (second.type == INTEGER) { */
- /*            image.x = first.val.integer_val; */
- /*            image.y = second.val.integer_val; */
- /*            goto RENDER; */
- /*        } */
- /*    } */
- /*    log_error_in; */
- /*    return false; */
-
- /* RENDER: */
- /*    SDL_RenderCopy(environment -> renderer, texture, NULL, &image); */
- /*    return true; */
- /* RENDER_EX: */
- /*    SDL_RenderCopyEx(environment -> renderer, texture, NULL, &image, angle, pivot, flip); */
- /*    return true; */
+ RENDER:
+    cairo_set_source_surface(environment -> cairo, surface, 0, 0);
+    cairo_paint(environment -> cairo);
+    cairo_restore(environment -> cairo);
+    return true;
 }
 
 
