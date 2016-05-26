@@ -121,29 +121,29 @@ LISP_BUILTIN(render_test, "") {
 /*     debug("fisk"); */
 /*     return VALUE_NIL; */
 
-    cairo_surface_t *surface = image_get_surface_from_file(environment, VALUE_STRING(string_create_from_str("/home/pilen/av/2016/billeder/test-square.png")));
-    Int width = cairo_image_surface_get_width(surface);
-    Int height = cairo_image_surface_get_height(surface);
+    /* cairo_surface_t *surface = image_get_surface_from_file(environment, VALUE_STRING(string_create_from_str("/home/pilen/av/2016/billeder/test-square.png"))); */
+    /* Int width = cairo_image_surface_get_width(surface); */
+    /* Int height = cairo_image_surface_get_height(surface); */
 
-    Double x = 0;
-    Double y = 0;
-    Double scale = 2.0;
-    Double angle = (2.0*M_PI)/8.0;
-    cairo_save(environment -> cairo);
-    /* cairo_translate(environment -> cairo, width/2, height/2); */
-    /* cairo_scale(environment -> cairo, scale, scale); */
-    /* cairo_rotate(environment -> cairo, angle); */
-    /* cairo_translate(environment -> cairo, -width/2, -height/2); */
-    /* /\* cairo_translate(environment -> cairo, -200, -200); *\/ */
-    cairo_translate(environment -> cairo, 200, 200);
-    cairo_set_source_surface(environment -> cairo, surface, x, y);
-    cairo_paint(environment -> cairo);
-    cairo_restore(environment -> cairo);
-    cairo_set_source_surface(environment -> cairo, surface, x, y);
-    cairo_paint(environment -> cairo);
-    /* graphics_present(environment); */
-    /* SDL_Delay(1000*2); */
-    /* exit(EXIT_SUCCESS); */
+    /* Double x = 0; */
+    /* Double y = 0; */
+    /* Double scale = 2.0; */
+    /* Double angle = (2.0*M_PI)/8.0; */
+    /* cairo_save(environment -> cairo); */
+    /* /\* cairo_translate(environment -> cairo, width/2, height/2); *\/ */
+    /* /\* cairo_scale(environment -> cairo, scale, scale); *\/ */
+    /* /\* cairo_rotate(environment -> cairo, angle); *\/ */
+    /* /\* cairo_translate(environment -> cairo, -width/2, -height/2); *\/ */
+    /* /\* /\\* cairo_translate(environment -> cairo, -200, -200); *\\/ *\/ */
+    /* cairo_translate(environment -> cairo, 200, 200); */
+    /* cairo_set_source_surface(environment -> cairo, surface, x, y); */
+    /* cairo_paint(environment -> cairo); */
+    /* cairo_restore(environment -> cairo); */
+    /* cairo_set_source_surface(environment -> cairo, surface, x, y); */
+    /* cairo_paint(environment -> cairo); */
+    /* /\* graphics_present(environment); *\/ */
+    /* /\* SDL_Delay(1000*2); *\/ */
+    /* /\* exit(EXIT_SUCCESS); *\/ */
     return VALUE_NIL;
 }
 
