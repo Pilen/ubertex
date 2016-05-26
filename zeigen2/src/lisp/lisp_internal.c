@@ -125,10 +125,10 @@ LISP_BUILTIN(render_test, "") {
     Int width = cairo_image_surface_get_width(surface);
     Int height = cairo_image_surface_get_height(surface);
 
-    double x = 0;
-    double y = 0;
-    double scale = 2.0;
-    double angle = (2.0*M_PI)/8.0;
+    Double x = 0;
+    Double y = 0;
+    Double scale = 2.0;
+    Double angle = (2.0*M_PI)/8.0;
     cairo_save(environment -> cairo);
     /* cairo_translate(environment -> cairo, width/2, height/2); */
     /* cairo_scale(environment -> cairo, scale, scale); */
