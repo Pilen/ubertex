@@ -4,7 +4,8 @@
 #include "types.h"
 #include "environment.h"
 
-#define PDF_DPI 150
+#define PDF_DPI 150.0
+#define PDF_RENDER_DPI 72.0
 
 struct Pdf_s {
     Unt refcount;
@@ -12,11 +13,12 @@ struct Pdf_s {
     Value path;
     Unt size;
     Unt created;
+    Double zoom;
     Int pagecount;
-    SDL_Texture **pages;
+    cairo_surface_t **pages;
 };
 
-SDL_Texture *pdf_get_slide(Environment *environment, Value filename, Int slide);
+cairo_surface_t *pdf_get_slide(Environment *environment, Value filename, Int slide);
 
 Bool resource_create_pdf(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
 

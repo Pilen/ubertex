@@ -126,31 +126,30 @@ LISP_BUILTIN(image, "") {
 }
 
 LISP_BUILTIN(pdf, "") {
-    return VALUE_ERROR;
-    /* if (args -> length != 3 && args -> length != 4) { */
-    /*     return VALUE_ERROR; */
-    /* } */
+    if (args -> length != 3 && args -> length != 4) {
+        return VALUE_ERROR;
+    }
 
-    /* Value file = LIST_GET_UNSAFE(args, 1); */
-    /* if (file.type != STRING) { */
-    /*     return VALUE_ERROR; */
-    /* } */
-    /* Value slide = LIST_GET_UNSAFE(args, 2); */
-    /* if (slide.type != INTEGER) { */
-    /*     return VALUE_ERROR; */
-    /* } */
+    Value file = LIST_GET_UNSAFE(args, 1);
+    if (file.type != STRING) {
+        return VALUE_ERROR;
+    }
+    Value slide = LIST_GET_UNSAFE(args, 2);
+    if (slide.type != INTEGER) {
+        return VALUE_ERROR;
+    }
 
-    /* Value position = VALUE_NIL; */
-    /* if (args -> length == 4) { */
-    /*     position = LIST_GET_UNSAFE(args, 3); */
-    /* } */
+    Value position = VALUE_NIL;
+    if (args -> length == 4) {
+        position = LIST_GET_UNSAFE(args, 3);
+    }
 
-    /* SDL_Texture *texture = pdf_get_slide(environment, file, slide.val.integer_val); */
-    /* if (!texture) { */
-    /*     return VALUE_ERROR; */
-    /* } */
-    /* graphics_render_at_position(environment, texture, position); */
-    /* return symbols_t; */
+    cairo_surface_t *surface = pdf_get_slide(environment, file, slide.val.integer_val);
+    if (!surface) {
+        return VALUE_ERROR;
+    }
+    graphics_render_at_position(environment, surface, position);
+    return symbols_t;
 }
 
 LISP_BUILTIN(text, "") {
