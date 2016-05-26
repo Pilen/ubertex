@@ -171,6 +171,7 @@ Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt i
             return false;
         }
     }
+    /* Mix_LoadWAV can load WAVE, AIFF, RIFF, OGG, and VOC */
     Mix_Chunk *chunk = Mix_LoadWAV(filename);
     if (!chunk) {
         struct stat file_stat;

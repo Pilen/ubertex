@@ -75,7 +75,7 @@ LISP_BUILTIN(sound_fade_all, "") {
         if (value.type == INTEGER) {
             duration = value.val.integer_val * 1000;
         } else if (value.type == FLOAT) {
-            duration = (Int) value.val.float_val * 1000.0;
+            duration = (Int) (value.val.float_val * 1000.0);
         }
     }
 
