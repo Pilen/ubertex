@@ -192,8 +192,9 @@ This function will also call revy-abort-all "
   "Stop all overlay sounds"
   (interactive)
   (when (and (called-interactively-p 'any) (null duration))
-    (setq duration (read-string "Duration: ")))
-  (if (or (null duration) (string= duration ""))
+    (setq duration (read-string "Duration: "))
+    (when (string= duration "") (setq duration nil)))
+  (if (null duration)
       (revy-send-lisp nil '(sound-fade-all))
     (revy-send-lisp nil `(sound-fade-all ,duration))))
 
