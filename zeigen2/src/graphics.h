@@ -12,4 +12,6 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
 void graphics_fill(Environment *environment, Double red, Double green, Double blue, Double alpha);
 void graphics_calibrate(Environment *environment);
 
+Bool graphics_move_to_position(Environment *environment, Double width, Double height, Value position);
+
 #endif

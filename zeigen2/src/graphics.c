@@ -43,6 +43,21 @@ void graphics_render_centered_at(Environment *environment, cairo_surface_t *surf
     cairo_paint(environment -> cairo);
 }
 
+Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surface, Value position) {
+    cairo_save(environment -> cairo);
+    Double width = cairo_image_surface_get_width(surface);
+    Double height = cairo_image_surface_get_height(surface);
+    if (graphics_move_to_position(environment, width, height, position)) {
+        cairo_set_source_surface(environment -> cairo, surface, 0, 0);
+        cairo_paint(environment -> cairo);
+        cairo_restore(environment -> cairo);
+        return true;
+    } else {
+        cairo_restore(environment -> cairo);
+        return false;
+    }
+}
+
 /**
  * position must be a list
  * If the list consists of two numbers (x y) the surface will be rendered at location x,y
@@ -57,12 +72,10 @@ void graphics_render_centered_at(Environment *environment, cairo_surface_t *surf
 
  * (windowed)
  */
-Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surface, Value position) {
+Bool graphics_move_to_position(Environment *environment, Double width, Double height, Value position) {
     Double x;
     Double y;
 
-    Double img_width = cairo_image_surface_get_width(surface);
-    Double img_height = cairo_image_surface_get_height(surface);
     Double screen_width = environment -> width;
     Double screen_height = environment -> height;
 
@@ -88,15 +101,15 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
                 Value y = LIST_GET_UNSAFE(list, 2);
                 if (IS_NUMERIC(x) && IS_NUMERIC(y)) {
                     cairo_translate(environment -> cairo, NUM_VAL(x), NUM_VAL(y));
-                    goto RENDER;
+                    return true;
                 } /* Return a specific error? */
             }
         } else if (equal(first, symbols_full)) {
             /**** full ****/
             /* Stretch image to fill entire screen */
             if (list -> length == 1) {
-                cairo_scale(environment -> cairo, screen_width/img_width, screen_height/img_height);
-                goto RENDER;
+                cairo_scale(environment -> cairo, screen_width/width, screen_height/height);
+                return true;
             }
         } else if (equal(first, symbols_centered)) {
             /**** centered ****/
@@ -105,21 +118,21 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
                 Value y = LIST_GET_UNSAFE(list, 2);
                 if (x.type == INTEGER && y.type == INTEGER) {
                     /* Render offset from center */
-                    Double dx = (screen_width - img_width) / 2 + NUM_VAL(x);
-                    Double dy = (screen_height - img_height) / 2 + NUM_VAL(y);
+                    Double dx = (screen_width - width) / 2 + NUM_VAL(x);
+                    Double dy = (screen_height - height) / 2 + NUM_VAL(y);
                     cairo_translate(environment -> cairo, dx, dy);
-                    goto RENDER;
+                    return true;
                 }
                 if (x.type == FLOAT && y.type == FLOAT) {
                     /* As in sized */
-                    Double dx = (screen_width - img_width) / 2 + ((screen_width - img_width)/2 * NUM_VAL(x));
-                    Double dy = (screen_height - img_height) / 2 + ((screen_height - img_height)/2 * NUM_VAL(y));
+                    Double dx = (screen_width - width) / 2 + ((screen_width - width)/2 * NUM_VAL(x));
+                    Double dy = (screen_height - height) / 2 + ((screen_height - height)/2 * NUM_VAL(y));
                     cairo_translate(environment -> cairo, dx, dy);
-                    goto RENDER;
+                    return true;
                 }
             } else if (list -> length == 1) {
-                Double dx = (screen_width - img_width) / 2;
-                Double dy = (screen_height - img_height) / 2;
+                Double dx = (screen_width - width) / 2;
+                Double dy = (screen_height - height) / 2;
                 cairo_translate(environment -> cairo, dx, dy);
             }
         } else if (equal(first, symbols_scaled)) {
@@ -127,13 +140,13 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
             /* TODO: make it work with relative float positions */
             if (list -> length < 3) {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
             Value a = LIST_GET_UNSAFE(list, 1);
             Value b = LIST_GET_UNSAFE(list, 2);
             if (!IS_NUMERIC(a) || !IS_NUMERIC(b)) {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
             Double x = NUM_VAL(a);
             Double y = NUM_VAL(b);
@@ -148,56 +161,56 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
                 y_scale = LIST_GET_UNSAFE(list, 4);
             } else {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
             cairo_translate(environment -> cairo, x, y);
             if (x_scale.type == INTEGER && y_scale.type == INTEGER) {
                 /* scale to absolute size (set size) */
-                cairo_scale(environment -> cairo, NUM_VAL(x_scale)/img_width, NUM_VAL(y_scale)/img_height);
+                cairo_scale(environment -> cairo, NUM_VAL(x_scale)/width, NUM_VAL(y_scale)/height);
             } else if (x_scale.type == FLOAT && y_scale.type == FLOAT) {
                 /* scale relative */
                 cairo_scale(environment -> cairo, NUM_VAL(x_scale), NUM_VAL(y_scale));
             } else {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
-            goto RENDER;
+            return true;
 
         } else if (equal(first, symbols_sized)) {
             /* sized */
             /* Render scaled but keep aspect ratio */
             if (list -> length != 5) {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
             Value offset_xv = LIST_GET_UNSAFE(list, 1);
             Value offset_yv = LIST_GET_UNSAFE(list, 2);
             Value size_xv = LIST_GET_UNSAFE(list, 3);
             Value size_yv = LIST_GET_UNSAFE(list, 4);
 
-            Double width;
-            Double height;
+            Double desired_width;
+            Double desired_height;
             if (size_xv.type == INTEGER && size_yv.type == INTEGER) {
-                width = NUM_VAL(size_xv);
-                height = NUM_VAL(size_yv);
+                desired_width = NUM_VAL(size_xv);
+                desired_height = NUM_VAL(size_yv);
             } else if (size_xv.type == FLOAT && size_yv.type == FLOAT) {
-                width = screen_width * NUM_VAL(size_xv);
-                height = screen_height * NUM_VAL(size_yv);
+                desired_width = screen_width * NUM_VAL(size_xv);
+                desired_height = screen_height * NUM_VAL(size_yv);
             } else {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
 
             Double new_width;
             Double new_height;
-            Double ratio_w = width / img_width;
-            Double ratio_h = height / img_height;
+            Double ratio_w = desired_width / width;
+            Double ratio_h = desired_height / height;
             if (ratio_w <= ratio_h) {
-                new_height = width * ((Double) img_height / (Double) img_width);
-                new_width = width;
+                new_height = desired_width * ((Double) height / (Double) width);
+                new_width = desired_width;
             } else {
-                new_width = height * ((Double) img_width / (Double) img_height);
-                new_height = height;
+                new_width = desired_height * ((Double) width / (Double) height);
+                new_height = desired_height;
             }
 
             Double dx = 0;
@@ -210,22 +223,22 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
                 dy = (screen_height - new_height) / 2 + ((screen_height - new_height)/2 * NUM_VAL(offset_yv));
             } else {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
             cairo_translate(environment -> cairo, dx, dy);
-            cairo_scale(environment -> cairo, new_width/img_width, new_height/img_height);
-            goto RENDER;
+            cairo_scale(environment -> cairo, new_width/width, new_height/height);
+            return true;
         } else if (equal(first, symbols_rotated)) {
             /**** Rotated ****/
             if (list -> length < 4) {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
 
             Value angle_v = LIST_GET_UNSAFE(list, 1);
             if (!IS_NUMERIC(angle_v)) {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
             Double angle = NUM_VAL(angle_v);
 
@@ -233,7 +246,7 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
             Value y = LIST_GET_UNSAFE(list, 3);
             if (!IS_NUMERIC(x) || !IS_NUMERIC(y)) {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
             Double dx = NUM_VAL(x);
             Double dy = NUM_VAL(y);
@@ -248,27 +261,27 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
                 y_scale = LIST_GET_UNSAFE(list, 5);
             } else {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
 
             Double sx;
             Double sy;
             if (x_scale.type == INTEGER && y_scale.type == INTEGER) {
-                sx = NUM_VAL(x_scale)/img_width;
-                sy = NUM_VAL(y_scale)/img_height;
+                sx = NUM_VAL(x_scale)/width;
+                sy = NUM_VAL(y_scale)/height;
             } else if (x_scale.type == FLOAT && y_scale.type == FLOAT) {
                 sx = NUM_VAL(x_scale);
                 sy = NUM_VAL(y_scale);
             } else {
                 log_error_in;
-                goto ERROR;
+                return false;
             }
             cairo_translate(environment -> cairo, dx, dy);
-            cairo_translate(environment -> cairo, sx*img_width/2, sx*img_height/2);
+            cairo_translate(environment -> cairo, sx*width/2, sx*height/2);
             cairo_rotate(environment -> cairo, angle);
             cairo_scale(environment -> cairo, sx, sy);
-            cairo_translate(environment -> cairo, -img_width/2, -img_height/2);
-            goto RENDER;
+            cairo_translate(environment -> cairo, -width/2, -height/2);
+            return true;
         }
 
     } else if (IS_NUMERIC(first) && list -> length == 2) {/* (x y) */
@@ -277,18 +290,10 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
             x = NUM_VAL(first);
             y = NUM_VAL(second);
             cairo_translate(environment -> cairo, x, y);
-            goto RENDER;
+            return true;
         }
     }
- ERROR:
-    cairo_restore(environment -> cairo);
     return false;
-
- RENDER:
-    cairo_set_source_surface(environment -> cairo, surface, 0, 0);
-    cairo_paint(environment -> cairo);
-    cairo_restore(environment -> cairo);
-    return true;
 }
 
 
