@@ -166,6 +166,12 @@ LISP_BUILTIN(sdl_internals, "") {
     Int height;
     SDL_GetWindowSize(environment -> window, &width, &height);
     log_info("Window: %dx%d", width, height);
+    return VALUE_NIL;
+}
 
+LISP_BUILTIN(resource_usage, "") {
+    lock_read_lock(resource_cache_lock);
+    log_info("Total resource size: %ld", resource_total_size);
+    lock_read_unlock(resource_cache_lock);
     return VALUE_NIL;
 }
