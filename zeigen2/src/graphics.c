@@ -31,31 +31,20 @@ void graphics_present(Environment *environment) {
     SDL_LockTexture(environment -> base_texture, NULL, &pixels, &pitch);
 
 }
-void graphics_render_at(Environment *environment, cairo_surface_t *surface, Double x, Double y) {
-    cairo_set_source_surface(environment -> cairo, surface, x, y);
-    cairo_paint(environment -> cairo);
-}
-
-void graphics_render_centered_at(Environment *environment, cairo_surface_t *surface, Double x, Double y) {
-    Int width = cairo_image_surface_get_width(surface);
-    Int height = cairo_image_surface_get_height(surface);
-    cairo_set_source_surface(environment -> cairo, surface, x - width/2, y - height/2);
-    cairo_paint(environment -> cairo);
-}
-
-Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surface, Value position) {
+void graphics_render_at(Environment *environment, Renderable *renderable, Double x, Double y) {
     cairo_save(environment -> cairo);
-    Double width = cairo_image_surface_get_width(surface);
-    Double height = cairo_image_surface_get_height(surface);
-    if (graphics_move_to_position(environment, width, height, position)) {
-        cairo_set_source_surface(environment -> cairo, surface, 0, 0);
-        cairo_paint(environment -> cairo);
-        cairo_restore(environment -> cairo);
-        return true;
-    } else {
-        cairo_restore(environment -> cairo);
-        return false;
-    }
+    cairo_translate(environment -> cairo, x, y);
+    renderable -> render(environment, renderable -> data);
+    cairo_restore(environment -> cairo);
+}
+
+void graphics_render_centered_at(Environment *environment, Renderable *renderable, Double x, Double y) {
+    cairo_save(environment -> cairo);
+    Double w = renderable -> width;
+    Double h = renderable -> height;
+    cairo_translate(environment -> cairo, x - w/2, y - h/2);
+    renderable -> render(environment, renderable -> data);
+    cairo_restore(environment -> cairo);
 }
 
 /**
@@ -72,25 +61,28 @@ Bool graphics_render_at_position(Environment *environment, cairo_surface_t *surf
 
  * (windowed)
  */
-Bool graphics_move_to_position(Environment *environment, Double width, Double height, Value position) {
+Bool graphics_render_at_position(Environment *environment, Renderable *renderable, Value position) {
     Double x;
     Double y;
 
+    Double width = renderable -> width;
+    Double height = renderable -> height;
     Double screen_width = environment -> width;
     Double screen_height = environment -> height;
 
+    cairo_save(environment -> cairo);
+
     if (position.type != LIST) {
         log_error_in;
-        return false;
+        goto ERROR;
     }
     List *list = position.val.list_val;
     if (list -> length <= 0) {
         log_error_in;
-        return false;
+        goto ERROR;
     }
     Value first = LIST_GET_UNSAFE(list, 0);
 
-    cairo_save(environment -> cairo);
 
     if (first.type == SYMBOL) {
         if (equal(first, symbols_plain)) {
@@ -101,7 +93,7 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
                 Value y = LIST_GET_UNSAFE(list, 2);
                 if (IS_NUMERIC(x) && IS_NUMERIC(y)) {
                     cairo_translate(environment -> cairo, NUM_VAL(x), NUM_VAL(y));
-                    return true;
+                    goto RENDER;
                 } /* Return a specific error? */
             }
         } else if (equal(first, symbols_full)) {
@@ -109,7 +101,7 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
             /* Stretch image to fill entire screen */
             if (list -> length == 1) {
                 cairo_scale(environment -> cairo, screen_width/width, screen_height/height);
-                return true;
+                goto RENDER;
             }
         } else if (equal(first, symbols_centered)) {
             /**** centered ****/
@@ -121,14 +113,14 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
                     Double dx = (screen_width - width) / 2 + NUM_VAL(x);
                     Double dy = (screen_height - height) / 2 + NUM_VAL(y);
                     cairo_translate(environment -> cairo, dx, dy);
-                    return true;
+                    goto RENDER;
                 }
                 if (x.type == FLOAT && y.type == FLOAT) {
                     /* As in sized */
                     Double dx = (screen_width - width) / 2 + ((screen_width - width)/2 * NUM_VAL(x));
                     Double dy = (screen_height - height) / 2 + ((screen_height - height)/2 * NUM_VAL(y));
                     cairo_translate(environment -> cairo, dx, dy);
-                    return true;
+                    goto RENDER;
                 }
             } else if (list -> length == 1) {
                 Double dx = (screen_width - width) / 2;
@@ -140,13 +132,13 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
             /* TODO: make it work with relative float positions */
             if (list -> length < 3) {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
             Value a = LIST_GET_UNSAFE(list, 1);
             Value b = LIST_GET_UNSAFE(list, 2);
             if (!IS_NUMERIC(a) || !IS_NUMERIC(b)) {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
             Double x = NUM_VAL(a);
             Double y = NUM_VAL(b);
@@ -161,7 +153,7 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
                 y_scale = LIST_GET_UNSAFE(list, 4);
             } else {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
             cairo_translate(environment -> cairo, x, y);
             if (x_scale.type == INTEGER && y_scale.type == INTEGER) {
@@ -172,16 +164,16 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
                 cairo_scale(environment -> cairo, NUM_VAL(x_scale), NUM_VAL(y_scale));
             } else {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
-            return true;
+            goto RENDER;
 
         } else if (equal(first, symbols_sized)) {
             /* sized */
             /* Render scaled but keep aspect ratio */
             if (list -> length != 5) {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
             Value offset_xv = LIST_GET_UNSAFE(list, 1);
             Value offset_yv = LIST_GET_UNSAFE(list, 2);
@@ -198,7 +190,7 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
                 desired_height = screen_height * NUM_VAL(size_yv);
             } else {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
 
             Double new_width;
@@ -223,22 +215,22 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
                 dy = (screen_height - new_height) / 2 + ((screen_height - new_height)/2 * NUM_VAL(offset_yv));
             } else {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
             cairo_translate(environment -> cairo, dx, dy);
             cairo_scale(environment -> cairo, new_width/width, new_height/height);
-            return true;
+            goto RENDER;
         } else if (equal(first, symbols_rotated)) {
             /**** Rotated ****/
             if (list -> length < 4) {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
 
             Value angle_v = LIST_GET_UNSAFE(list, 1);
             if (!IS_NUMERIC(angle_v)) {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
             Double angle = NUM_VAL(angle_v);
 
@@ -246,7 +238,7 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
             Value y = LIST_GET_UNSAFE(list, 3);
             if (!IS_NUMERIC(x) || !IS_NUMERIC(y)) {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
             Double dx = NUM_VAL(x);
             Double dy = NUM_VAL(y);
@@ -261,7 +253,7 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
                 y_scale = LIST_GET_UNSAFE(list, 5);
             } else {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
 
             Double sx;
@@ -274,14 +266,14 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
                 sy = NUM_VAL(y_scale);
             } else {
                 log_error_in;
-                return false;
+                goto ERROR;
             }
             cairo_translate(environment -> cairo, dx, dy);
             cairo_translate(environment -> cairo, sx*width/2, sx*height/2);
             cairo_rotate(environment -> cairo, angle);
             cairo_scale(environment -> cairo, sx, sy);
             cairo_translate(environment -> cairo, -width/2, -height/2);
-            return true;
+            goto RENDER;
         }
 
     } else if (IS_NUMERIC(first) && list -> length == 2) {/* (x y) */
@@ -290,12 +282,25 @@ Bool graphics_move_to_position(Environment *environment, Double width, Double he
             x = NUM_VAL(first);
             y = NUM_VAL(second);
             cairo_translate(environment -> cairo, x, y);
-            return true;
+            goto RENDER;
         }
     }
+ ERROR:
+    cairo_restore(environment -> cairo);
     return false;
+ RENDER:
+    renderable -> render(environment, renderable -> data);
+    /* cairo_set_source_surface(environment -> cairo, surface, 0, 0); */
+    /* cairo_paint(environment -> cairo); */
+    cairo_restore(environment -> cairo);
+    return true;
 }
 
+void graphics_show_cairo_surface(Environment *environment, void *data) {
+    cairo_surface_t *surface = (cairo_surface_t *) data;
+    cairo_set_source_surface(environment -> cairo, surface, 0, 0);
+    cairo_paint(environment -> cairo);
+}
 
 void graphics_fill(Environment *environment, Double red, Double green, Double blue, Double alpha) {
     cairo_set_source_rgba(environment -> cairo, red, green, blue, alpha);

@@ -14,7 +14,7 @@
 #include "resource.h"
 #include "file.h"
 
-cairo_surface_t *pdf_get_slide(Environment *environment, Value filename, Int slide) {
+Bool pdf_get_slide(Environment *environment, Value filename, Int slide, Renderable *target) {
     Pdf *skeleton = memory_malloc(sizeof(Pdf));
     skeleton -> path = filename;
     Value result = resource_get(environment, VALUE_PDF(skeleton));
@@ -22,10 +22,15 @@ cairo_surface_t *pdf_get_slide(Environment *environment, Value filename, Int sli
     if (result.type == PDF) {
         Pdf *pdf = result.val.pdf_val;
         if (slide >= 0 && slide < pdf -> pagecount) {
-            return pdf -> pages[slide];
+            cairo_surface_t *surface = pdf -> pages[slide];
+            target -> data = (void *) surface;
+            target -> render = graphics_show_cairo_surface;
+            target -> width = cairo_image_surface_get_width(surface);
+            target -> height = cairo_image_surface_get_height(surface);
+            return true;
         }
     }
-    return NULL;
+    return false;
 }
 
 Bool resource_create_pdf(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {

@@ -2,6 +2,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
 #include "types.h"
+#include "graphics.h"
 #include "debug.h"
 #include "image.h"
 #include "assert.h"
@@ -10,15 +11,20 @@
 #include "resource.h"
 #include "file.h"
 
-cairo_surface_t *image_get_surface_from_file(Environment *environment, Value filename) {
+Bool image_get_renderable_from_file(Environment *environment, Value filename, Renderable *target) {
     Image *skeleton = memory_malloc(sizeof(Image));
     skeleton -> path = filename;
     Value result = resource_get(environment, VALUE_IMAGE(skeleton));
     if (result.type == IMAGE) {
-        return result.val.image_val -> surface;
-    } else {
-        return NULL;
+        cairo_surface_t *surface = result.val.image_val -> surface;
+        target -> data = (void *) surface;
+        target -> render = graphics_show_cairo_surface;
+        target -> width = cairo_image_surface_get_width(surface);
+        target -> height = cairo_image_surface_get_height(surface);
+        return true;
     }
+
+    return false;
 }
 
 Bool resource_create_image(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {

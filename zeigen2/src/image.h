@@ -16,8 +16,7 @@ struct Image_s {
     cairo_surface_t *surface;
 };
 
-
-cairo_surface_t *image_get_surface_from_file(Environment *environment, Value filename);
+Bool image_get_renderable_from_file(Environment *environment, Value filename, Renderable *target);
 Bool resource_create_image(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
 
 #endif

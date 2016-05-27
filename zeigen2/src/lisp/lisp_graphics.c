@@ -113,12 +113,11 @@ LISP_BUILTIN(image, "") {
     Value file = LIST_GET_UNSAFE(args, 1);
     Value position = LIST_GET_UNSAFE(args, 2);
 
-    cairo_surface_t *surface = image_get_surface_from_file(environment, file);
-    if (!surface) {
+    Renderable renderable;
+    if (!image_get_renderable_from_file(environment, file, &renderable)) {
         return VALUE_ERROR;
     }
-    Bool result = graphics_render_at_position(environment, surface, position);
-    if (result) {
+    if (graphics_render_at_position(environment, &renderable, position)) {
         return symbols_t;
     } else {
         return VALUE_ERROR;
@@ -144,11 +143,11 @@ LISP_BUILTIN(pdf, "") {
         position = LIST_GET_UNSAFE(args, 3);
     }
 
-    cairo_surface_t *surface = pdf_get_slide(environment, file, slide.val.integer_val);
-    if (!surface) {
+    Renderable renderable;
+    if (!pdf_get_slide(environment, file, slide.val.integer_val, &renderable)) {
         return VALUE_ERROR;
     }
-    graphics_render_at_position(environment, surface, position);
+    graphics_render_at_position(environment, &renderable, position);
     return symbols_t;
 }
 

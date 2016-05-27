@@ -17,8 +17,7 @@ struct Pdf_s {
     cairo_surface_t **pages;
 };
 
-cairo_surface_t *pdf_get_slide(Environment *environment, Value filename, Int slide);
-
+Bool pdf_get_slide(Environment *environment, Value filename, Int slide, Renderable *target);
 Bool resource_create_pdf(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
 
 #endif
