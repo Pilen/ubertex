@@ -79,12 +79,6 @@ Bool equal(Value a, Value b) {
     case SOUNDSAMPLE:
         return ((a.val.soundsample_val -> dirty || b.val.soundsample_val -> dirty)
                 || equal(a.val.soundsample_val -> path, b.val.soundsample_val -> path));
-    case TEXT:
-        {
-            Bool string_equal = string_compare(a.val.text_val -> text, b.val.text_val -> text) == 0;
-            Bool fontsize_equal = a.val.text_val -> fontsize == b.val.text_val -> fontsize;
-            return string_equal && fontsize_equal;
-        }
     default:
         z_assert(false)
     }

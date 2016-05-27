@@ -25,7 +25,6 @@ Unt resource_destroy(Value resource);
  * Image
  * PDF
  * Soundsample
- * Text
  */
 
 #endif

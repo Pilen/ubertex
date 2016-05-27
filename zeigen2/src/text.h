@@ -15,7 +15,7 @@ struct Text_s {
     SDL_Texture *texture;
 };
 
-SDL_Texture *text(Environment *environment, String *text, Int fontsize, Bool center);
+Bool text(Environment *environment, String *text, Int fontsize, Bool align_center, Renderable *target);
 Bool resource_create_text(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
 
 #endif

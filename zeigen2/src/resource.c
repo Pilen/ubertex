@@ -14,7 +14,6 @@
 #include "image.h"
 #include "pdf.h"
 #include "sound.h"
-#include "text.h"
 
 Bool resource_create(Environment *environment, Value skeleton);
 Int resource_comparison(const void *a, const void *b);
@@ -76,9 +75,6 @@ Bool resource_create(Environment *environment, Value resource) {
     case SOUNDSAMPLE:
         created = resource_create_soundsample(environment, resource, initial_score, &size);
         break;
-    case TEXT:
-        created = resource_create_text(environment, resource, initial_score, &size);
-        break;
     default:
         z_assert(false);
     }
@@ -108,10 +104,6 @@ Unt resource_destroy(Value resource) {
         /* Assumes no sounds in sound_table are playing the soundsample */
         size = resource.val.soundsample_val -> size;
         Mix_FreeChunk(resource.val.soundsample_val -> chunk);
-        break;
-    case TEXT:
-        size = resource.val.text_val -> size;
-        SDL_DestroyTexture(resource.val.text_val -> texture);
         break;
     default:
         /* Catch missing destructors */
@@ -238,8 +230,6 @@ Int resource_comparison(const void *a, const void *b) {
     case SOUNDSAMPLE:
         a_score = av -> val.soundsample_val -> score;
         break;
-    case TEXT:
-        a_score = av -> val.soundsample_val -> score;
     default:
         z_assert(false);
     }
@@ -254,8 +244,6 @@ Int resource_comparison(const void *a, const void *b) {
     case SOUNDSAMPLE:
         b_score = bv -> val.soundsample_val -> score;
         break;
-    case TEXT:
-        b_score = bv -> val.soundsample_val -> score;
     default:
         z_assert(false);
     }

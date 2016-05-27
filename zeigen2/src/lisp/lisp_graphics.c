@@ -152,54 +152,49 @@ LISP_BUILTIN(pdf, "") {
 }
 
 LISP_BUILTIN(text, "") {
-    return VALUE_ERROR;
-    /* /\* (text string &optional fontsize centered position) *\/ */
+    /* (text string &optional fontsize centered position) */
 
-    /* /\* TODO: The arguments should be interpreted better *\/ */
-    /* Int fontsize = 34; */
-    /* Value position = VALUE_NIL; */
-    /* Bool center = true; */
+    /* TODO: The arguments should be interpreted better */
+    Int fontsize = 34;
+    Value position = VALUE_NIL;
+    Bool align_center = true;
 
-    /* if (args -> length >= 3) { */
-    /*     Value fontsize_v = LIST_GET_UNSAFE(args, 2); */
-    /*     if (fontsize_v.type == INTEGER) { */
-    /*         fontsize = fontsize_v.val.integer_val; */
-    /*     } else { */
-    /*         return VALUE_ERROR; */
-    /*     } */
-    /* } */
-    /* if (args -> length >= 4) { */
-    /*     Value center_v = LIST_GET_UNSAFE(args, 3); */
-    /*     center = center_v.type != NIL; */
-    /* } */
-    /* if (args -> length == 5) { */
-    /*     position = LIST_GET_UNSAFE(args, 4); */
-    /* } */
-    /* if (args -> length < 2 || args -> length > 5) { */
-    /*     return VALUE_ERROR; */
-    /* } */
+    if (args -> length >= 3) {
+        Value fontsize_v = LIST_GET_UNSAFE(args, 2);
+        if (fontsize_v.type == INTEGER) {
+            fontsize = fontsize_v.val.integer_val;
+        } else {
+            return VALUE_ERROR;
+        }
+    }
+    if (args -> length >= 4) {
+        Value center_v = LIST_GET_UNSAFE(args, 3);
+        align_center = center_v.type != NIL;
+    }
+    if (args -> length == 5) {
+        position = LIST_GET_UNSAFE(args, 4);
+    }
+    if (args -> length < 2 || args -> length > 5) {
+        return VALUE_ERROR;
+    }
 
-    /* Value string = LIST_GET_UNSAFE(args, 1); */
-    /* if (string.type != STRING) { */
-    /*     return VALUE_ERROR; */
-    /* } */
+    Value string = LIST_GET_UNSAFE(args, 1);
+    if (string.type != STRING) {
+        return VALUE_ERROR;
+    }
 
-    /* SDL_SetRenderDrawColor(environment -> renderer, 255, 125, 255, 255); */
-    /* SDL_Texture *texture = text(environment, string.val.string_val, fontsize, center); */
-    /* if (!texture) { */
-    /*     return VALUE_ERROR; */
-    /* } */
+    cairo_set_source_rgb(environment -> cairo, 1.0, 1.0, 1.0);
+    Renderable renderable;
+    if (!text(environment, string.val.string_val, fontsize, align_center, &renderable)) {
+        return VALUE_ERROR;
+    }
 
-    /* if (position.type == NIL) { */
-    /*     Int width; */
-    /*     Int height; */
-    /*     SDL_GetWindowSize(environment -> window, &width, &height); */
-
-    /*     graphics_render_centered_at(environment, texture, width/2, height/2); */
-    /* } else { */
-    /*     graphics_render_at_position(environment, texture, position); */
-    /* } */
-    /* return VALUE_NIL; */
+    if (position.type == NIL) {
+        graphics_render_centered_at(environment, &renderable, environment -> width/2, environment -> height/2);
+    } else {
+        graphics_render_at_position(environment, &renderable, position);
+    }
+    return VALUE_NIL;
 }
 
 LISP_BUILTIN(calibrate, "") {

@@ -37,7 +37,7 @@ typedef enum {
     IMAGE,
     PDF,
     SOUNDSAMPLE,
-    TEXT,
+    /* TEXT, */
 } Type;
 
 /* TODO: ensure this is a perfectly legal/good way of defining structs with unions
@@ -60,7 +60,7 @@ typedef enum {
 #define VALUE_PDF(val) ((Value) {PDF, {.pdf_val = val}})
 #define VALUE_SOUNDSAMPLE(val) ((Value) {SOUNDSAMPLE, {.soundsample_val = val}})
 #define VALUE_SOUND(val) ((Value) {SOUND, {.sound_val = val}})
-#define VALUE_TEXT(val) ((Value) {TEXT, {.text_val = val}})
+/* #define VALUE_TEXT(val) ((Value) {TEXT, {.text_val = val}}) */
 
 #define IS_NUMERIC(val) ((val).type == INTEGER || (val).type == FLOAT)
 #define NUM_VAL(v) ((Double) (((v).type == INTEGER) ? (v).val.integer_val : ((v).type == FLOAT) ? (v).val.float_val : NAN))
@@ -74,7 +74,8 @@ typedef struct Image_s Image;
 typedef struct Pdf_s Pdf;
 typedef struct Soundsample_s Soundsample;
 typedef struct Sound_s Sound;
-typedef struct Text_s Text;
+/* typedef struct Text_s Text; */
+typedef struct Renderable_s Renderable;
 
 /* Definition of lisp values */
 typedef struct {
@@ -93,7 +94,7 @@ typedef struct {
         Image *image_val;
         Pdf *pdf_val;
         Soundsample *soundsample_val;
-        Text *text_val;
+        /* Text *text_val; */
     } val;
 } Value;
 
