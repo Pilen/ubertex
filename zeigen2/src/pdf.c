@@ -34,7 +34,7 @@ Bool pdf_get_slide(Environment *environment, Value filename, Int slide, Renderab
 }
 
 Bool resource_create_pdf(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
-    debug("fisk");
+    debug("Loading pdf: %s", skeleton.val.pdf_val -> path.val.string_val -> text);
     cairo_status_t status;
     z_assert(skeleton.type == PDF);
     Pdf *pdf = skeleton.val.pdf_val;
@@ -79,8 +79,6 @@ Bool resource_create_pdf(Environment *environment, Value skeleton, Unt initial_s
 
         cairo_surface_t *surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
                                                               width, height);
-        debug("width: %f, height: %f, scale: %f", width, height, scale);
-        debug("%s", cairo_status_to_string(cairo_surface_status(surface)));
         z_assert(!cairo_surface_status(surface));
         cairo_t *cairo = cairo_create(surface);
         z_assert(!cairo_status(cairo));
@@ -106,7 +104,6 @@ Bool resource_create_pdf(Environment *environment, Value skeleton, Unt initial_s
 
         size_sum += sizeof(Unt) * width * height; /* Approximate size of texture */
     }
-    debug("done");
     g_object_unref(document);
 
     pdf -> refcount = 0;
