@@ -19,6 +19,6 @@ struct Pdf_s {
 };
 
 Bool pdf_get_slide(Environment *environment, Value filename, Int slide, Renderable *target);
-Bool resource_create_pdf(Environment *environment, Value skeleton, Unt *size);
+Unt resource_create_pdf(Environment *environment, Value skeleton);
 
 #endif

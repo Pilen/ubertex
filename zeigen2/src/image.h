@@ -18,6 +18,6 @@ struct Image_s {
 };
 
 Bool image_get_renderable_from_file(Environment *environment, Value filename, Renderable *target);
-Bool resource_create_image(Environment *environment, Value skeleton, Unt *size);
+Unt resource_create_image(Environment *environment, Value skeleton);
 
 #endif

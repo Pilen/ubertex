@@ -74,24 +74,23 @@ Value resource_get(Environment *environment, Value skeleton) {
 
 Bool resource_create(Environment *environment, Value resource) {
     /* lock_write_lock(resource_cache_lock); Should be hold by caller */
-    Bool created;
-    Unt size = 0;
+    Unt size;
     switch (resource.type) {
     case IMAGE:
-        created = resource_create_image(environment, resource, &size);
+        size = resource_create_image(environment, resource);
         break;
     case PDF:
-        created = resource_create_pdf(environment, resource, &size);
+        size = resource_create_pdf(environment, resource);
         break;
     case SOUNDSAMPLE:
-        created = resource_create_soundsample(environment, resource, &size);
+        size = resource_create_soundsample(environment, resource);
         break;
     default:
         z_assert(false);
     }
     log_resource(resource.type, size);
     resource_total_size += size;
-    return created;
+    return size > 0;
 }
 
 Unt resource_destroy(Value resource) {

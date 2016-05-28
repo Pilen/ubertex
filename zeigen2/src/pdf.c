@@ -33,7 +33,7 @@ Bool pdf_get_slide(Environment *environment, Value filename, Int slide, Renderab
     return false;
 }
 
-Bool resource_create_pdf(Environment *environment, Value skeleton, Unt *size) {
+Unt resource_create_pdf(Environment *environment, Value skeleton) {
     debug("Loading pdf: %s", skeleton.val.pdf_val -> path.val.string_val -> text);
     cairo_status_t status;
     z_assert(skeleton.type == PDF);
@@ -49,16 +49,16 @@ Bool resource_create_pdf(Environment *environment, Value skeleton, Unt *size) {
     Bool found = file_read_raw(filename, &buffer, &buffer_size);
     if (!found) {
         log_error("Could not open file %s", filename);
-        return false;
+        return 0;
     }
 
     PopplerDocument *document = poppler_document_new_from_data(buffer, buffer_size, password, NULL);
     if (!document) {
         log_error("Not a valid pdf file %s", filename);
-        return false;
+        return 0;
     }
 
-    Unt size_sum = 0;
+    Unt size = 0;
     Int pagecount = poppler_document_get_n_pages(document);
     cairo_surface_t **pages = memory_malloc(sizeof(cairo_surface_t *) * pagecount);
 
@@ -102,18 +102,16 @@ Bool resource_create_pdf(Environment *environment, Value skeleton, Unt *size) {
         cairo_destroy(cairo);
         /* cairo_surface_destroy(cairo_surface); */
 
-        size_sum += sizeof(Unt) * width * height; /* Approximate size of texture */
+        size += sizeof(Unt) * width * height; /* Approximate size of texture */
     }
     g_object_unref(document);
 
     pdf -> refcount = 0;
     pdf -> created = SDL_GetTicks();
     pdf -> last_use = pdf -> created;
-    pdf -> size = size_sum;
+    pdf -> size = size;
     pdf -> pagecount = pagecount;
     pdf -> pages = pages;
 
-    *size = size_sum;
-
-    return pdf;
+    return size;
 }

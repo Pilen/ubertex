@@ -34,5 +34,5 @@ void sound_fade_out_all(Int duration);
 
 void sound_mark_dirty(Value filename);
 
-Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt *size);
+Unt resource_create_soundsample(Environment *environment, Value skeleton);
 #endif

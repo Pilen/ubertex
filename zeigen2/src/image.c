@@ -27,7 +27,7 @@ Bool image_get_renderable_from_file(Environment *environment, Value filename, Re
     return false;
 }
 
-Bool resource_create_image(Environment *environment, Value skeleton, Unt *size) {
+Unt resource_create_image(Environment *environment, Value skeleton) {
     z_assert(skeleton.type == IMAGE);
     Image *image = skeleton.val.image_val;
     z_assert(image -> path.type == STRING);
@@ -48,15 +48,14 @@ Bool resource_create_image(Environment *environment, Value skeleton, Unt *size) 
             image -> base = NULL;
             image -> surface = surface;
             image -> size = (sizeof(Image) + sizeof(Unt) * width * height); /* Approximate size of image */
-            *size = image -> size;
             debug("surface %s has a reference count of %d", filename, cairo_surface_get_reference_count(surface));
-            return true;
+            return image -> size;
         }
     } // If we cant use cairo, try SDL_image
     SDL_Surface *loaded = IMG_Load(filename);
     if (!loaded) {
         log_error("Unable to find file %s", filename);
-        return false;
+        return 0;
     }
     SDL_Surface *base = SDL_CreateRGBSurface(0, loaded -> w, loaded -> h, 32,
                                              0x00FF0000,
@@ -81,6 +80,5 @@ Bool resource_create_image(Environment *environment, Value skeleton, Unt *size) 
     image -> surface = surface;
     image -> size = (sizeof(Image) + sizeof(SDL_Surface) +
                      sizeof(Unt) * base -> w * base -> h); /* Approximate size of image */
-    *size = image -> size;
-    return true;
+    return image -> size;
 }

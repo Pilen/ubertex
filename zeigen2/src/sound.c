@@ -159,7 +159,7 @@ void sound_mark_dirty(Value filename) {
     }
     mutex_unlock(sound_lock);
 }
-Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt *size) {
+Unt resource_create_soundsample(Environment *environment, Value skeleton) {
     z_assert(skeleton.type == SOUNDSAMPLE);
     Soundsample *soundsample = skeleton.val.soundsample_val;
     z_assert(soundsample -> path.type == STRING);
@@ -168,7 +168,7 @@ Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt *
         filename = sound_convert_to_ogg(soundsample -> path.val.string_val);
         log_error("Could not convert %s to ogg file", filename);
         if (!filename) {
-            return false;
+            return 0;
         }
     }
     /* Mix_LoadWAV can load WAVE, AIFF, RIFF, OGG, and VOC */
@@ -181,16 +181,16 @@ Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt *
             filename = sound_convert_to_ogg(soundsample -> path.val.string_val);
             if (!filename) {
                 log_error("Could not convert %s to ogg file", filename);
-                return false;
+                return 0;
             }
             chunk = Mix_LoadWAV(filename);
             if (!chunk) {
                 log_error("Could not open converted file %s", filename);
-                return false;
+                return 0;
             }
         } else {
             log_error("Could not find file %s", filename);
-            return false;
+            return 0;
         }
     }
     soundsample -> refcount = 0;
@@ -200,8 +200,7 @@ Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt *
     soundsample -> chunk = chunk;
     soundsample -> dirty = false;
     soundsample -> current = 0;
-    *size = soundsample -> size;
-    return true;
+    return soundsample -> size;
 }
 
 char *sound_convert_to_ogg(String *mp3) {
