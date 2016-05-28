@@ -39,7 +39,6 @@ Value resource_get(Environment *environment, Value skeleton) {
 
     Unt new_use = SDL_GetTicks();
     if (found) {
-        /* This can be done here as we know resources are never changed, modified or removed during a frame update (flush is never called now) */
         switch (resource.type) {
         case IMAGE:
             resource.val.image_val -> last_use = new_use;
