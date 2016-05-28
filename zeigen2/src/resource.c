@@ -61,19 +61,17 @@ Value resource_get(Environment *environment, Value skeleton) {
 
 Bool resource_create(Environment *environment, Value resource) {
     /* lock_write_lock(resource_cache_lock); Should be hold by caller */
-    Unt initial_score = 1;
-
     Bool created;
     Unt size = 0;
     switch (resource.type) {
     case IMAGE:
-        created = resource_create_image(environment, resource, initial_score, &size);
+        created = resource_create_image(environment, resource, &size);
         break;
     case PDF:
-        created = resource_create_pdf(environment, resource, initial_score, &size);
+        created = resource_create_pdf(environment, resource, &size);
         break;
     case SOUNDSAMPLE:
-        created = resource_create_soundsample(environment, resource, initial_score, &size);
+        created = resource_create_soundsample(environment, resource, &size);
         break;
     default:
         z_assert(false);
@@ -217,18 +215,18 @@ Unt resource_flush_dirty_cache(void) {
 Int resource_comparison(const void *a, const void *b) {
     Value *av = (Value *) a;
     Value *bv = (Value *) b;
-    Unt a_score;
-    Unt b_score;
+    Unt a_created;
+    Unt b_created;
 
     switch (av -> type) {
     case IMAGE:
-        a_score = av -> val.image_val -> score;
+        a_created = av -> val.image_val -> created;
         break;
     case PDF:
-        a_score = av -> val.pdf_val -> score;
+        a_created = av -> val.pdf_val -> created;
         break;
     case SOUNDSAMPLE:
-        a_score = av -> val.soundsample_val -> score;
+        a_created = av -> val.soundsample_val -> created;
         break;
     default:
         z_assert(false);
@@ -236,21 +234,17 @@ Int resource_comparison(const void *a, const void *b) {
 
     switch (bv -> type) {
     case IMAGE:
-        b_score = bv -> val.image_val -> score;
+        b_created = bv -> val.image_val -> created;
         break;
     case PDF:
-        b_score = bv -> val.pdf_val -> score;
+        b_created = bv -> val.pdf_val -> created;
         break;
     case SOUNDSAMPLE:
-        b_score = bv -> val.soundsample_val -> score;
+        b_created = bv -> val.soundsample_val -> created;
         break;
     default:
         z_assert(false);
     }
 
-    if (a_score == b_score) {
-        return 0;
-    } else {
-        return a_score < b_score ? -1 : 1;
-    }
+    return a_created - b_created;
 }

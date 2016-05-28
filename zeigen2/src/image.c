@@ -27,13 +27,12 @@ Bool image_get_renderable_from_file(Environment *environment, Value filename, Re
     return false;
 }
 
-Bool resource_create_image(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
+Bool resource_create_image(Environment *environment, Value skeleton, Unt *size) {
     z_assert(skeleton.type == IMAGE);
     Image *image = skeleton.val.image_val;
     z_assert(image -> path.type == STRING);
 
     image -> refcount = 0;
-    image -> score = initial_score;
     image -> created = SDL_GetTicks();
 
     char *filename = image -> path.val.string_val -> text;

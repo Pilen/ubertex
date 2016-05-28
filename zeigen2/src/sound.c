@@ -159,7 +159,7 @@ void sound_mark_dirty(Value filename) {
     }
     mutex_unlock(sound_lock);
 }
-Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
+Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt *size) {
     z_assert(skeleton.type == SOUNDSAMPLE);
     Soundsample *soundsample = skeleton.val.soundsample_val;
     z_assert(soundsample -> path.type == STRING);
@@ -194,9 +194,8 @@ Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt i
         }
     }
     soundsample -> refcount = 0;
-    soundsample -> score = initial_score;
-    soundsample -> size = chunk -> alen;
     soundsample -> created = SDL_GetTicks();
+    soundsample -> size = chunk -> alen;
     soundsample -> chunk = chunk;
     soundsample -> dirty = false;
     soundsample -> current = 0;

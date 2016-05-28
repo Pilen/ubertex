@@ -187,26 +187,26 @@ LISP_BUILTIN(resource_usage, "") {
         case IMAGE:
             total_size += resource.val.image_val -> size;
             z_assert(resource.val.image_val -> path.type == STRING);
-            log_info("Image %s, score: %f, size: %d",
+            log_info("Image %s, created: %u, size: %u",
                      resource.val.image_val -> path.val.string_val -> text,
-                     resource.val.image_val -> score,
+                     resource.val.image_val -> created,
                      resource.val.image_val -> size);
 
             break;
         case PDF:
             total_size += resource.val.pdf_val -> size;
             z_assert(resource.val.pdf_val -> path.type == STRING);
-            log_info("Pdf %s, score: %f, size: %d",
+            log_info("Pdf %s, created: %u, size: %u",
                      resource.val.pdf_val -> path.val.string_val -> text,
-                     resource.val.pdf_val -> score,
+                     resource.val.pdf_val -> created,
                      resource.val.pdf_val -> size);
             break;
         case SOUNDSAMPLE:
             total_size += resource.val.soundsample_val -> size;
             z_assert(resource.val.soundsample_val -> path.type == STRING);
-            log_info("SoundSample %s, score: %f, size: %d",
+            log_info("SoundSample %s, created: %u, size: %u",
                      resource.val.soundsample_val -> path.val.string_val -> text,
-                     resource.val.soundsample_val -> score,
+                     resource.val.soundsample_val -> created,
                      resource.val.soundsample_val -> size);
             break;
         case ERROR:

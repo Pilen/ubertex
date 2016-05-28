@@ -7,10 +7,9 @@
 
 struct Soundsample_s {
     Unt refcount;
-    float score;
-    Value path;
-    Unt size;
     Unt created;
+    Unt size;
+    Value path;
     Bool dirty;
     Unt current;
     Mix_Chunk *chunk;
@@ -33,5 +32,5 @@ void sound_fade_out_all(Int duration);
 
 void sound_mark_dirty(Value filename);
 
-Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
+Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt *size);
 #endif

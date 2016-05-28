@@ -6,9 +6,8 @@
 
 struct Text_s {
     Unt refcount;
-    float score;
-    Unt size;
     Unt created;
+    Unt size;
     String *text;
     Int fontsize;
     Bool center;
@@ -16,6 +15,5 @@ struct Text_s {
 };
 
 Bool text(Environment *environment, String *text, Int fontsize, Bool align_center, Renderable *target);
-Bool resource_create_text(Environment *environment, Value skeleton, Unt initial_score, Unt *size);
 
 #endif

@@ -33,7 +33,7 @@ Bool pdf_get_slide(Environment *environment, Value filename, Int slide, Renderab
     return false;
 }
 
-Bool resource_create_pdf(Environment *environment, Value skeleton, Unt initial_score, Unt *size) {
+Bool resource_create_pdf(Environment *environment, Value skeleton, Unt *size) {
     debug("Loading pdf: %s", skeleton.val.pdf_val -> path.val.string_val -> text);
     cairo_status_t status;
     z_assert(skeleton.type == PDF);
@@ -107,9 +107,8 @@ Bool resource_create_pdf(Environment *environment, Value skeleton, Unt initial_s
     g_object_unref(document);
 
     pdf -> refcount = 0;
-    pdf -> score = initial_score;
-    pdf -> size = size_sum;
     pdf -> created = SDL_GetTicks();
+    pdf -> size = size_sum;
     pdf -> pagecount = pagecount;
     pdf -> pages = pages;
 
