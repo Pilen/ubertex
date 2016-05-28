@@ -34,7 +34,7 @@ Bool text(Environment *environment, String *text, Int fontsize, Bool align_cente
     pango_font_description_free(font_description);
 
 
-    pango_layout_set_text(layout, text -> text, -1);
+    pango_layout_set_markup(layout, text -> text, -1);
     if (align_center) {
         pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
     }
