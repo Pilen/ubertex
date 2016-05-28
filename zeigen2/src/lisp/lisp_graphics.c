@@ -155,7 +155,7 @@ LISP_BUILTIN(text, "") {
     /* (text string &optional fontsize centered position) */
 
     /* TODO: The arguments should be interpreted better */
-    Int fontsize = 34;
+    Int fontsize = -1;
     Value position = VALUE_NIL;
     Bool align_center = true;
 
