@@ -95,34 +95,29 @@ LISP_BUILTIN(clear, "") {
 }
 
 LISP_BUILTIN(fill, "") {
-    if (args -> length != 2) {
+    Value r = LIST_GET_UNSAFE(args, 1);
+    Value g = LIST_GET_UNSAFE(args, 2);
+    Value b = LIST_GET_UNSAFE(args, 3);
+    Value a = LIST_GET_UNSAFE(args, 4);
+    if (!IS_NUMERIC(r) ||
+        !IS_NUMERIC(g) ||
+        !IS_NUMERIC(b) ||
+        !IS_NUMERIC(a)) {
         return VALUE_ERROR;
     }
-    Value color;
-    Double r, g, b, a;
-    color = LIST_GET_UNSAFE(args, 1);
-    if (!IS_NUMERIC(color)) {
-        return VALUE_ERROR;
-    }
-    r = NUM_VAL(color);
-    color = LIST_GET_UNSAFE(args, 2);
-    if (!IS_NUMERIC(color)) {
-        return VALUE_ERROR;
-    }
-    g = NUM_VAL(color);
-    color = LIST_GET_UNSAFE(args, 3);
-    if (!IS_NUMERIC(color)) {
-        return VALUE_ERROR;
-    }
-    b = NUM_VAL(color);
-    color = LIST_GET_UNSAFE(args, 4);
-    if (!IS_NUMERIC(color)) {
-        return VALUE_ERROR;
-    }
-    a = NUM_VAL(color);
-
-    graphics_fill(environment, r, g, b, a);
+    graphics_fill(environment, NUM_VAL(r), NUM_VAL(g), NUM_VAL(b), NUM_VAL(a));
     return VALUE_NIL;
+
+    /* if (args -> length != 2) { */
+    /*     return VALUE_ERROR; */
+    /* } */
+    /* Value color = LIST_GET_UNSAFE(args, 1); */
+    /* if (color.type != VECTOR4I) { */
+    /*     return VALUE_ERROR; */
+    /* } */
+    /* Double *vector = color.val.vector4f_val; */
+    /* graphics_fill(environment, vector[0], vector[1], vector[2], vector[3]); */
+    /* return VALUE_NIL; */
 }
 
 LISP_BUILTIN(image, "") {

@@ -11,6 +11,13 @@ struct Renderable_s {
     Double height;
 };
 
+struct Color_s {
+    Double r;
+    Double g;
+    Double b;
+    Double a;
+};
+
 void graphics_clear(Environment *environment);
 void graphics_present(Environment *environment);
 void graphics_render_at(Environment *environment, Renderable *renderable, Double x, Double y);

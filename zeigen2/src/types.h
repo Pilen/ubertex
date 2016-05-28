@@ -29,6 +29,7 @@ typedef enum {
     LIST,
     HASH,
     FUNCTION,
+    COLOR,
     SOUND,
 
     /* Resources: */
@@ -43,7 +44,6 @@ typedef enum {
 */
 /* TODO: ensure an error is logged every time this is called */
 #define VALUE_ERROR (log_error_in, (Value) {ERROR, {0}})
-/* #define VALUE_ERROR ((Value) {ERROR, {0}}) */
 #define VALUE_NIL ((Value) {NIL, {0}})
 #define VALUE_SYMBOL(val) ((Value) {SYMBOL, {.symbol_val = val}})
 #define VALUE_INTEGER(val) ((Value) {INTEGER, {.integer_val = val}})
@@ -52,6 +52,7 @@ typedef enum {
 #define VALUE_LIST(val) ((Value) {LIST, {.list_val = val}})
 #define VALUE_HASH(val) ((Value) {HASH, {.hash_val = val}})
 #define VALUE_FUNCTION(val) ((Value) {FUNCTION, {.function_val = val}})
+#define VALUE_COLOR(val) ((Value) {COLOR, {.color_val = val}})
 #define VALUE_IMAGE(val) ((Value) {IMAGE, {.image_val = val}})
 #define VALUE_PDF(val) ((Value) {PDF, {.pdf_val = val}})
 #define VALUE_SOUNDSAMPLE(val) ((Value) {SOUNDSAMPLE, {.soundsample_val = val}})
@@ -66,6 +67,7 @@ typedef struct List_s List;
 typedef struct String_s String;
 typedef struct Hash_s Hash;
 typedef struct Function_s Function;
+typedef struct Color_s Color;
 typedef struct Image_s Image;
 typedef struct Pdf_s Pdf;
 typedef struct Soundsample_s Soundsample;
@@ -84,6 +86,7 @@ typedef struct {
         List *list_val;
         Hash *hash_val;
         Function *function_val;
+        Color *color_val;
         Sound *sound_val;
         Image *image_val;
         Pdf *pdf_val;

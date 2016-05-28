@@ -218,6 +218,7 @@ LISP_BUILTIN(resource_usage, "") {
         case LIST:
         case HASH:
         case FUNCTION:
+        case COLOR:
         case SOUND:
             break;
         }

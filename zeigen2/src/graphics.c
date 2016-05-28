@@ -7,6 +7,11 @@
 #include "debug.h"
 #include "basic.h"
 
+Color graphics_parse_color(Value raw) {
+    /* Should work on a cons cell */
+    log_fatal("Not yet implemented")
+}
+
 void graphics_clear(Environment *environment) {
     cairo_set_source_rgba(environment -> cairo,
                           environment -> clear_red,
