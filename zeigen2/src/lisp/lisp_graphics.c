@@ -14,76 +14,78 @@
 #include "../text.h"
 
 LISP_BUILTIN(color, "") {
-    Int *colors = memory_malloc(sizeof(Int) * 4);
-    if (args -> length == 2) {
-        Value color = LIST_GET_UNSAFE(args, 1);
-        if (color.type == INTEGER) {
-            colors[0] = color.val.integer_val;
-            colors[1] = color.val.integer_val;
-            colors[2] = color.val.integer_val;
-            colors[3] = 255;
-        } else if (color.type == STRING) {
-            /* TODO: parse color string "#aabbcc[dd]" */
-            return VALUE_ERROR;
-        } else {
-            return VALUE_ERROR;
-        }
-    } else if (args -> length == 4) {
-        Value red = LIST_GET_UNSAFE(args, 1);
-        Value green = LIST_GET_UNSAFE(args, 2);
-        Value blue = LIST_GET_UNSAFE(args, 3);
-        if (red.type == INTEGER && green.type == INTEGER &&
-            blue.type == INTEGER) {
-            colors[0] = red.val.integer_val;
-            colors[1] = green.val.integer_val;
-            colors[2] = blue.val.integer_val;
-            colors[3] = 255;
-        } else {
-            return VALUE_ERROR;
-        }
-    } else if (args -> length == 5) {
-        Value red = LIST_GET_UNSAFE(args, 1);
-        Value green = LIST_GET_UNSAFE(args, 2);
-        Value blue = LIST_GET_UNSAFE(args, 3);
-        Value alpha = LIST_GET_UNSAFE(args, 4);
-        if (red.type == INTEGER && green.type == INTEGER &&
-            blue.type ==  INTEGER && alpha.type == INTEGER) {
-            colors[0] = red.val.integer_val;
-            colors[1] = green.val.integer_val;
-            colors[2] = blue.val.integer_val;
-            colors[3] = alpha.val.integer_val;
-        } else {
-            return VALUE_ERROR;
-        }
-    } else {
-        return VALUE_ERROR;
-    }
+    return VALUE_ERROR;
+    /* Int *colors = memory_malloc(sizeof(Int) * 4); */
+    /* if (args -> length == 2) { */
+    /*     Value color = LIST_GET_UNSAFE(args, 1); */
+    /*     if (color.type == INTEGER) { */
+    /*         colors[0] = color.val.integer_val; */
+    /*         colors[1] = color.val.integer_val; */
+    /*         colors[2] = color.val.integer_val; */
+    /*         colors[3] = 255; */
+    /*     } else if (color.type == STRING) { */
+    /*         /\* TODO: parse color string "#aabbcc[dd]" *\/ */
+    /*         return VALUE_ERROR; */
+    /*     } else { */
+    /*         return VALUE_ERROR; */
+    /*     } */
+    /* } else if (args -> length == 4) { */
+    /*     Value red = LIST_GET_UNSAFE(args, 1); */
+    /*     Value green = LIST_GET_UNSAFE(args, 2); */
+    /*     Value blue = LIST_GET_UNSAFE(args, 3); */
+    /*     if (red.type == INTEGER && green.type == INTEGER && */
+    /*         blue.type == INTEGER) { */
+    /*         colors[0] = red.val.integer_val; */
+    /*         colors[1] = green.val.integer_val; */
+    /*         colors[2] = blue.val.integer_val; */
+    /*         colors[3] = 255; */
+    /*     } else { */
+    /*         return VALUE_ERROR; */
+    /*     } */
+    /* } else if (args -> length == 5) { */
+    /*     Value red = LIST_GET_UNSAFE(args, 1); */
+    /*     Value green = LIST_GET_UNSAFE(args, 2); */
+    /*     Value blue = LIST_GET_UNSAFE(args, 3); */
+    /*     Value alpha = LIST_GET_UNSAFE(args, 4); */
+    /*     if (red.type == INTEGER && green.type == INTEGER && */
+    /*         blue.type ==  INTEGER && alpha.type == INTEGER) { */
+    /*         colors[0] = red.val.integer_val; */
+    /*         colors[1] = green.val.integer_val; */
+    /*         colors[2] = blue.val.integer_val; */
+    /*         colors[3] = alpha.val.integer_val; */
+    /*     } else { */
+    /*         return VALUE_ERROR; */
+    /*     } */
+    /* } else { */
+    /*     return VALUE_ERROR; */
+    /* } */
 
-    return VALUE_VECTOR4I(colors);
+    /* return VALUE_VECTOR4I(colors); */
 }
 
 LISP_BUILTIN(clear_color, "") {
-    if (args -> length == 1) {
-        Int *colors = memory_malloc(sizeof(Int) * 4);
-        colors[0] = environment -> clear_red;
-        colors[1] = environment -> clear_green;
-        colors[2] = environment -> clear_blue;
-        colors[3] = environment -> clear_alpha;
-        return VALUE_VECTOR4I(colors);
-    } else if (args -> length == 2) {
-        Value vector = LIST_GET_UNSAFE(args, 1);
-        if (vector.type != VECTOR4I) {
-            return VALUE_ERROR;
-        }
-        Int *colors = vector.val.vector4i_val;
-        environment -> clear_red = colors[0];
-        environment -> clear_green = colors[1];
-        environment -> clear_blue = colors[2];
-        environment -> clear_alpha = colors[3];
-
-        return vector;
-    }
     return VALUE_ERROR;
+    /* if (args -> length == 1) { */
+    /*     Int *colors = memory_malloc(sizeof(Int) * 4); */
+    /*     colors[0] = environment -> clear_red; */
+    /*     colors[1] = environment -> clear_green; */
+    /*     colors[2] = environment -> clear_blue; */
+    /*     colors[3] = environment -> clear_alpha; */
+    /*     return VALUE_VECTOR4I(colors); */
+    /* } else if (args -> length == 2) { */
+    /*     Value vector = LIST_GET_UNSAFE(args, 1); */
+    /*     if (vector.type != VECTOR4I) { */
+    /*         return VALUE_ERROR; */
+    /*     } */
+    /*     Int *colors = vector.val.vector4i_val; */
+    /*     environment -> clear_red = colors[0]; */
+    /*     environment -> clear_green = colors[1]; */
+    /*     environment -> clear_blue = colors[2]; */
+    /*     environment -> clear_alpha = colors[3]; */
+
+    /*     return vector; */
+    /* } */
+    /* return VALUE_ERROR; */
 }
 
 LISP_BUILTIN(clear, "") {
@@ -96,12 +98,30 @@ LISP_BUILTIN(fill, "") {
     if (args -> length != 2) {
         return VALUE_ERROR;
     }
-    Value color = LIST_GET_UNSAFE(args, 1);
-    if (color.type != VECTOR4I) {
+    Value color;
+    Double r, g, b, a;
+    color = LIST_GET_UNSAFE(args, 1);
+    if (!IS_NUMERIC(color)) {
         return VALUE_ERROR;
     }
-    Double *vector = color.val.vector4f_val;
-    graphics_fill(environment, vector[0], vector[1], vector[2], vector[3]);
+    r = NUM_VAL(color);
+    color = LIST_GET_UNSAFE(args, 2);
+    if (!IS_NUMERIC(color)) {
+        return VALUE_ERROR;
+    }
+    g = NUM_VAL(color);
+    color = LIST_GET_UNSAFE(args, 3);
+    if (!IS_NUMERIC(color)) {
+        return VALUE_ERROR;
+    }
+    b = NUM_VAL(color);
+    color = LIST_GET_UNSAFE(args, 4);
+    if (!IS_NUMERIC(color)) {
+        return VALUE_ERROR;
+    }
+    a = NUM_VAL(color);
+
+    graphics_fill(environment, r, g, b, a);
     return VALUE_NIL;
 }
 

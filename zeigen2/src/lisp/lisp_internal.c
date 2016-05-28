@@ -218,8 +218,6 @@ LISP_BUILTIN(resource_usage, "") {
         case LIST:
         case HASH:
         case FUNCTION:
-        case VECTOR4I:
-        case VECTOR4F:
         case SOUND:
             break;
         }
