@@ -37,8 +37,22 @@ Value resource_get(Environment *environment, Value skeleton) {
     Bool found = hash_get(resource_cache, skeleton, &resource);
     lock_read_unlock(resource_cache_lock);
 
+    Unt new_use = SDL_GetTicks();
     if (found) {
         /* This can be done here as we know resources are never changed, modified or removed during a frame update (flush is never called now) */
+        switch (resource.type) {
+        case IMAGE:
+            resource.val.image_val -> last_use = new_use;
+            break;
+        case PDF:
+            resource.val.pdf_val -> last_use = new_use;
+            break;
+        case SOUNDSAMPLE:
+            resource.val.soundsample_val -> last_use = new_use;
+            break;
+        default:
+            z_assert(false);
+        }
         return resource;
     }
 
@@ -215,18 +229,18 @@ Unt resource_flush_dirty_cache(void) {
 Int resource_comparison(const void *a, const void *b) {
     Value *av = (Value *) a;
     Value *bv = (Value *) b;
-    Unt a_created;
-    Unt b_created;
+    Unt a_last_use;
+    Unt b_last_use;
 
     switch (av -> type) {
     case IMAGE:
-        a_created = av -> val.image_val -> created;
+        a_last_use = av -> val.image_val -> last_use;
         break;
     case PDF:
-        a_created = av -> val.pdf_val -> created;
+        a_last_use = av -> val.pdf_val -> last_use;
         break;
     case SOUNDSAMPLE:
-        a_created = av -> val.soundsample_val -> created;
+        a_last_use = av -> val.soundsample_val -> last_use;
         break;
     default:
         z_assert(false);
@@ -234,17 +248,17 @@ Int resource_comparison(const void *a, const void *b) {
 
     switch (bv -> type) {
     case IMAGE:
-        b_created = bv -> val.image_val -> created;
+        b_last_use = bv -> val.image_val -> last_use;
         break;
     case PDF:
-        b_created = bv -> val.pdf_val -> created;
+        b_last_use = bv -> val.pdf_val -> last_use;
         break;
     case SOUNDSAMPLE:
-        b_created = bv -> val.soundsample_val -> created;
+        b_last_use = bv -> val.soundsample_val -> last_use;
         break;
     default:
         z_assert(false);
     }
 
-    return a_created - b_created;
+    return a_last_use - b_last_use;
 }

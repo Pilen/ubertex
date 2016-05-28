@@ -195,6 +195,7 @@ Bool resource_create_soundsample(Environment *environment, Value skeleton, Unt *
     }
     soundsample -> refcount = 0;
     soundsample -> created = SDL_GetTicks();
+    soundsample -> last_use = soundsample -> created;
     soundsample -> size = chunk -> alen;
     soundsample -> chunk = chunk;
     soundsample -> dirty = false;

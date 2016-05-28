@@ -34,6 +34,7 @@ Bool resource_create_image(Environment *environment, Value skeleton, Unt *size) 
 
     image -> refcount = 0;
     image -> created = SDL_GetTicks();
+    image -> last_use = image -> created;
 
     char *filename = image -> path.val.string_val -> text;
     if (strcmp(file_get_extension_str(filename), "png") == 0 ||

@@ -10,7 +10,9 @@
 struct Pdf_s {
     Unt refcount;
     Unt created;
+    Unt last_use;
     Unt size;
+
     Value path;
     Int pagecount;
     cairo_surface_t **pages;

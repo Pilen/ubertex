@@ -8,7 +8,9 @@
 struct Soundsample_s {
     Unt refcount;
     Unt created;
+    Unt last_use;
     Unt size;
+
     Value path;
     Bool dirty;
     Unt current;

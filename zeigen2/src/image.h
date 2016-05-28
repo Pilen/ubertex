@@ -9,7 +9,9 @@
 struct Image_s {
     Unt refcount;
     Unt created;
+    Unt last_use;
     Unt size; /* approximate */
+
     Value path; /* A Value so we can allow different sources than files */
     SDL_Surface *base;
     cairo_surface_t *surface;

@@ -108,6 +108,7 @@ Bool resource_create_pdf(Environment *environment, Value skeleton, Unt *size) {
 
     pdf -> refcount = 0;
     pdf -> created = SDL_GetTicks();
+    pdf -> last_use = pdf -> created;
     pdf -> size = size_sum;
     pdf -> pagecount = pagecount;
     pdf -> pages = pages;
