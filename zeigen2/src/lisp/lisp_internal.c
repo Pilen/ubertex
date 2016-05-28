@@ -1,4 +1,5 @@
 #include "../types.h"
+#include "../assert.h"
 #include "../eval.h"
 #include "../list.h"
 #include "../basic.h"
@@ -172,6 +173,58 @@ LISP_BUILTIN(sdl_internals, "") {
 LISP_BUILTIN(resource_usage, "") {
     lock_read_lock(resource_cache_lock);
     log_info("Total resource size: %ld", resource_total_size);
+
+    Int resource_comparison(const void *a, const void *b);
+    qsort(resource_list -> data,
+          resource_list -> length,
+          sizeof(Value),
+          resource_comparison);
+
+    Unt total_size = 0;
+    for (Int i = 0; i < resource_list -> length; i++) {
+        Value resource = LIST_GET_UNSAFE(resource_list, i);
+        switch (resource.type) {
+        case IMAGE:
+            total_size += resource.val.image_val -> size;
+            z_assert(resource.val.image_val -> path.type == STRING);
+            log_info("Image %s, score: %f, size: %d",
+                     resource.val.image_val -> path.val.string_val -> text,
+                     resource.val.image_val -> score,
+                     resource.val.image_val -> size);
+
+            break;
+        case PDF:
+            total_size += resource.val.pdf_val -> size;
+            z_assert(resource.val.pdf_val -> path.type == STRING);
+            log_info("Pdf %s, score: %f, size: %d",
+                     resource.val.pdf_val -> path.val.string_val -> text,
+                     resource.val.pdf_val -> score,
+                     resource.val.pdf_val -> size);
+            break;
+        case SOUNDSAMPLE:
+            total_size += resource.val.soundsample_val -> size;
+            z_assert(resource.val.soundsample_val -> path.type == STRING);
+            log_info("SoundSample %s, score: %f, size: %d",
+                     resource.val.soundsample_val -> path.val.string_val -> text,
+                     resource.val.soundsample_val -> score,
+                     resource.val.soundsample_val -> size);
+            break;
+        case ERROR:
+        case NIL:
+        case SYMBOL:
+        case INTEGER:
+        case FLOAT:
+        case STRING:
+        case LIST:
+        case HASH:
+        case FUNCTION:
+        case VECTOR4I:
+        case VECTOR4F:
+        case SOUND:
+            break;
+        }
+    }
+    log_info("Total size: %d", total_size);
     lock_read_unlock(resource_cache_lock);
     return VALUE_NIL;
 }
