@@ -148,7 +148,7 @@ Unt resource_shrink_cache(void) {
           resource_comparison);
     Unt cleared = 0;
     while (resource_list -> length > 0 && resource_total_size >= resource_size_threshold) {
-        Value resource = list_pop_back(resource_list);
+        Value resource = list_pop_front(resource_list);
         if (resource.type == SOUNDSAMPLE) {
             if (resource.val.soundsample_val -> current == 0) {
                 cleared += resource_destroy(resource);
