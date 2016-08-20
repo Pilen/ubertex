@@ -12,7 +12,7 @@ test_files =[
     # "tests.zlt"
 ]
 
-repl = "./repl"
+binary = "./worker"
 test_separator = ";;;;TEST;;;;"
 result_separator = ";=>"
 
@@ -85,7 +85,7 @@ def test(file, linenumber, code):
     return lisp(file, linenumber, statements, expected)
 
 def lisp(file, linenumber, statements, expected_values):
-    program = [repl, "-t", "-l", "0"]
+    program = [binary, "-t", "-l", "0"]
     for statement in statements:
         program.append("-e")
         program.append(statement)

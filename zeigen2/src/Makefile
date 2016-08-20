@@ -61,12 +61,12 @@ LFLAGS += `pkg-config --libs cairo poppler-glib pangocairo`
 SRC = $(wildcard *.c)
 SRC += $(wildcard lisp/*.c)
 SRC += $(wildcard libs/*/*.c)
-TESTS_SRC = $(filter-out repl.c, $(SRC) $(wildcard tests_src/*.c))
+TESTS_SRC = $(filter-out main.c, $(SRC) $(wildcard tests_src/*.c))
 
 
-all: repl test Makefile linecount
+all: worker test Makefile linecount
 
-repl: $(SRC:%.c=%.o)
+worker: $(SRC:%.c=%.o)
 	cc $(LFLAGS) -o $@ $^
 
 tests: $(TESTS_SRC:%.c=%.o)
@@ -76,7 +76,7 @@ test: tests
 	timeout 300s ./tests && timeout 30s ./lisp_tests/lisp_test.py
 
 clean:
-	rm -f *.o *.d repl    lisp/*.o lisp/*.d    tests_src/*.o tests_src/*.d tests
+	rm -f *.o *.d worker    lisp/*.o lisp/*.d    tests_src/*.o tests_src/*.d tests
 
 linecount:
 	echo -n "linecount: " && cat *.c *.h */*.c */*.h */*.py */*.zlt | wc -l
