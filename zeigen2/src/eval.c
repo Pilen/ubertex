@@ -8,7 +8,7 @@
 #include "hash.h"
 #include "log.h"
 #include "assert.h"
-#include "worker.h"
+#include "loop.h"
 
 Value eval_list(Value expression, Environment *environment);
 Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment);
@@ -118,7 +118,7 @@ Value eval_list(Value expression, Environment *environment) {
 }
 
 Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment) {
-    if (worker_abort) {
+    if (loop_abort) {
         return VALUE_ERROR;
     }
     if (function -> c_code) {

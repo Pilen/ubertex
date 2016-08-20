@@ -16,7 +16,7 @@
 #include "assert.h"
 #include "sound.h"
 #include "graphics.h"
-#include "worker.h"
+#include "loop.h"
 
 Environment *initialize(void) {
     /* static Bool initialized = false; */
@@ -34,8 +34,8 @@ Environment *initialize(void) {
     Environment *environment = environment_create();
     lisp_initialize(environment);
     resource_initialize();
-    worker_abort = false;
-    worker_blank = false;
+    loop_abort = false;
+    loop_blank = false;
     flush_dirty_cache = false;
     flush_entire_cache = false;
 

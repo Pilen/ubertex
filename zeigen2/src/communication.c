@@ -8,7 +8,7 @@
 #include "read.h"
 #include "debug.h"
 #include "memory.h"
-#include "worker.h"
+#include "loop.h"
 
 Int communication_loop(void *data);
 void communication_receive(TCPsocket socket);
@@ -156,10 +156,10 @@ void communication_receive(TCPsocket socket) {
         }
         mutex_unlock(communication_parsed_queue_lock);
         log_info("Abort");
-        worker_abort = true;
+        loop_abort = true;
     } else if (strcmp(command, "blank") == 0) {
         log_info("Blank");
-        worker_blank = true;
+        loop_blank = true;
     } else if (strcmp(command, "flush_dirty_cache") == 0) {
         log_info("Flush dirty cache");
         flush_dirty_cache = true;

@@ -2,7 +2,7 @@
 #include <SDL2/SDL.h>
 
 #include "environment.h"
-#include "worker.h"
+#include "loop.h"
 #include "debug.h"
 #include "list.h"
 #include "assert.h"
@@ -13,19 +13,19 @@
 #include "sound.h"
 #include "graphics.h"
 
-void worker_update(Environment *environment, Value update_symbol, List *args);
+void loop_update(Environment *environment, Value update_symbol, List *args);
 
-void worker_loop(Environment *environment) {
+void loop_loop(Environment *environment) {
     while (true) {
         log_section("====LOOP====");
-        if (worker_abort) {
+        if (loop_abort) {
             environment -> component_next_update = VALUE_NIL;
             environment -> component_next_update_args = list_create_empty();
             environment -> component_next_post = VALUE_NIL;
             environment -> component_next_post_args = list_create_empty();
             sound_stop_all();
         }
-        worker_abort = false;
+        loop_abort = false;
 
         graphics_clear(environment);
 
@@ -45,7 +45,7 @@ void worker_loop(Environment *environment) {
             if (communication_parsed_queue -> length > 0){
                 Value expression = list_pop_front(communication_parsed_queue);
                 mutex_unlock(communication_parsed_queue_lock);
-                worker_blank = false;
+                loop_blank = false;
                 print_on(log_output, expression); printf("\n");
                 Value result = eval(expression, environment);
                 print_on(log_output, result); printf("\n");
@@ -55,12 +55,12 @@ void worker_loop(Environment *environment) {
         }
 
         lock_read_lock(resource_cache_lock);
-        worker_update(environment, environment -> component_next_update, environment -> component_next_update_args);
-        worker_update(environment, environment -> component_next_post, environment -> component_next_post_args);
+        loop_update(environment, environment -> component_next_update, environment -> component_next_update_args);
+        loop_update(environment, environment -> component_next_post, environment -> component_next_post_args);
         z_assert(environment -> call_stack -> length == 0);
         lock_read_unlock(resource_cache_lock);
 
-        if (worker_blank) {
+        if (loop_blank) {
             graphics_clear(environment);
         }
 
@@ -93,7 +93,7 @@ void worker_loop(Environment *environment) {
     }
 }
 
-void worker_update(Environment *environment, Value update_symbol, List *args) {
+void loop_update(Environment *environment, Value update_symbol, List *args) {
     /* Lookup must be done every frame as the body can be redefined. */
     /* TODO: or a lambda! */
     if (update_symbol.type == SYMBOL) {

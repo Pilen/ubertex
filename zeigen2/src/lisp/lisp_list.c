@@ -7,7 +7,7 @@
 #include "../eval.h"
 #include "../debug.h"
 #include "../memory.h"
-#include "../worker.h"
+#include "../loop.h"
 
 LISP_BUILTIN(list, "") {
     if (args -> length == 1) {

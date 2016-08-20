@@ -18,7 +18,7 @@
 #include "readline.h"
 #include "log.h"
 #include "string.h"
-#include "worker.h"
+#include "loop.h"
 #include "communication.h"
 #include "memory.h"
 #include "resource.h"
@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
     }
 
     if (!test_only) {
-        worker_loop(environment);
+        loop_loop(environment);
     }
     fflush(log_output);
     return EXIT_SUCCESS;

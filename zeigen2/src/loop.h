@@ -1,14 +1,14 @@
-#ifndef Z_WORKER_H
-#define Z_WORKER_H
+#ifndef Z_LOOP_H
+#define Z_LOOP_H
 
 #include "types.h"
 #include "environment.h"
 
-void worker_loop(Environment *environment);
+void loop_loop(Environment *environment);
 /* FLAGS */
 /* TODO: decide if this should be placed somewhere else */
-Bool worker_abort;
-Bool worker_blank;
+Bool loop_abort;
+Bool loop_blank;
 Bool flush_dirty_cache;
 Bool flush_entire_cache;
 

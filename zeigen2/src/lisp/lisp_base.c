@@ -8,7 +8,7 @@
 #include "../eval.h"
 #include "../debug.h"
 #include "../memory.h"
-#include "../worker.h"
+#include "../loop.h"
 
 LISP_BUILTIN(progn, "") {
     Value value = VALUE_NIL;
@@ -115,7 +115,7 @@ LISP_BUILTIN(while, "") {
 
     Value condition = LIST_GET_UNSAFE(args, 1);
     while (true) {
-        if (worker_abort) {
+        if (loop_abort) {
             return VALUE_ERROR;
         }
         Value result = eval(condition, environment);
