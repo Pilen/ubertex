@@ -1,0 +1,120 @@
+* DONE Find time format
+  Right now a simple string is used.
+
+* DONE Task manager
+** DONE remove tasks that has been completed
+** DONE fix TaskManager comparing with the string "now"
+** DONE cpu use
+   let it sleep until tasks been added
+   use a condition variable with the run loop calling wait when there is nothing to be done
+   let addTask call signal
+
+   use await with a timeout
+   when adding you might have to signal
+** DONE Can only handle one task pr time!!!
+
+* Proper error messages
+* DONE PApplet
+** DONE Use final to make methods uninheritable
+
+** DONE decide which sketch to start
+
+** DONE Creation
+   Call super in constructor
+   Store arguments
+
+   setup call zsetup(args) that calls zsetup()
+** DONE exiting
+   call exit()
+   overwrite exitActual so the entire program is not terminated.
+* DONE Clearqueue should clear sketches queues too
+* Exiting sketches should inform their controller
+* Sketches should share taskqueues.
+  Currently they have their own private taskqueues
+  This means that when the sketch exits it closes all further sketch messages
+  Should kill/close then clear the queue?
+* fullscreen
+** starting a sketch in fullscreen is wonky in xmonad
+   Sometimes it starts as a floating window other times its a tiling.
+   Nondeterministic
+   A race-condition?
+   adding a sleep 2000 between creating the sketch and calling it's zStart wont fix it
+   try{Thread.sleep(2000);} catch (Exception e) {}
+
+   This can be circumvented by either not using Xmonad or using Xmonad in fullscreen configuration
+** White flash
+   There is a small white flash when starting applications in fullscreen mode.
+   It is not visible in normal mode.
+* Awaiting should not wait for the same amount of time as next
+  But how long then?
+  Is it a problem?
+* Escape kills the sketch closing the sketch terminates the program.
+  Feature?
+* NOTE ZSketch differences with processing
+  Names
+  color is not a datatype, it's an int!
+  Don't use noLoop() (yet).
+
+
+* IMPORTANT!!! zReceive is not called when noLoop is on
+  We might want to overwrite noLoop in that case.
+  Then the sketch taskmanager should be handled in its own thread
+  Untill loop is called again.
+
+* Start arguments
+  It might be better to let the optional offsets be in the sketchname part instead of following arguments;
+  aka
+  "brok;now;start;Image 10 20;full;255 255 255"
+
+
+* Because of the catch all, sketches wont get warned about checked exceptions.
+
+* DONE Sketches
+** DONE Image
+*** ? Image loading in a separate thread
+    Use requestImage instead.
+    Might not be necessary
+*** DONE start color might be better as a space separated list
+
+* DONE Blank
+  Draws the background color
+  Needs Draw to overwrite the blanked.
+  aka does not "store" the old image.
+  what should happen to stored tasks?
+  what should happen to incomming tasks
+
+  When to wake up?
+  on special signal?
+  on new arrival?
+  on task?
+
+
+* hasName should probably be removed now
+
+* Raceconditions between sketch and controller
+  blank
+  volatile?
+  clearqueue
+
+
+* NOTE sketch messages with blanked
+  If you want to send the message "blanked" to the sketch you need to send it a sign of what to do about blankedness manually.
+  Looks on the first argument to sketch if it is any of XXX it is an order about blankness else it is probably just a part of the message and passed on to zReceive.
+  So if you want to send a message with a word from XXX, you must also specify an option manually.
+
+* Image and PDF has an out ouf bounds in zReceive
+
+* message to non running sketch nullpointerexception
+
+
+* DONE make UTF-8 work!
+  Or use some other encoding!
+* start should be en try catch block.
+* Fix video.jar
+  Should not be distributed.
+* Sketches start slow and then speeds up to normal speed.
+
+
+
+* Ubertex
+  cant have multiple \elisp in slides, even between pauses
