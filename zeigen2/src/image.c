@@ -28,9 +28,9 @@ Bool image_get_renderable_from_file(Environment *environment, Value filename, Re
 }
 
 Unt resource_create_image(Environment *environment, Value skeleton) {
-    z_assert(skeleton.type == IMAGE);
+    w_assert(skeleton.type == IMAGE);
     Image *image = skeleton.val.image_val;
-    z_assert(image -> path.type == STRING);
+    w_assert(image -> path.type == STRING);
 
     image -> refcount = 0;
     image -> created = SDL_GetTicks();

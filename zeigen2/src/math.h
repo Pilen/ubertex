@@ -1,5 +1,5 @@
-#ifndef Z_MATH_H
-#define Z_MATH_H
+#ifndef W_MATH_H
+#define W_MATH_H
 
 #include "types.h"
 #include <math.h>

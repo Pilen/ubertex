@@ -46,16 +46,16 @@ void lock_write_unlock(Lock_RW *lock) {
 
 Mutex *mutex_create() {
     Mutex *mutex = SDL_CreateMutex();
-    z_assert(mutex);
+    w_assert(mutex);
     return mutex;
 }
 void mutex_lock(Mutex *lock) {
     Int error = SDL_LockMutex(lock);
-    z_assert(error == 0);
+    w_assert(error == 0);
 }
 void mutex_unlock(Mutex *lock) {
     Int error = SDL_UnlockMutex(lock);
-    z_assert(error == 0);
+    w_assert(error == 0);
 }
 Bool mutex_trylock(Mutex *lock) {
     Int status = SDL_TryLockMutex(lock);
@@ -64,6 +64,6 @@ Bool mutex_trylock(Mutex *lock) {
     } else if (status == SDL_MUTEX_TIMEDOUT) {
         return false;
     }
-    z_assert(false);
+    w_assert(false);
     return false;
 }

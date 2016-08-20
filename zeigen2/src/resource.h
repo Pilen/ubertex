@@ -1,5 +1,5 @@
-#ifndef Z_RESOURCE_H
-#define Z_RESOURCE_H
+#ifndef W_RESOURCE_H
+#define W_RESOURCE_H
 
 #include "environment.h"
 #include "lock.h"

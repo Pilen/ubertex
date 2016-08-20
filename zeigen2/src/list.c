@@ -215,7 +215,7 @@ void list_sort(List *list, Int (*compare)(Value a, Value b)) {
     /* if (list -> start + list -> length >= list -> size) { */
     /*     /\* TODO: implement *\/ */
     /*     /\* list_normalize(list); *\/ */
-    /*     z_assert(false); */
+    /*     w_assert(false); */
     /* } */
 
     /* qsort(list -> data, list -> length, sizeof(Value), list_sort_comparison, compare); */

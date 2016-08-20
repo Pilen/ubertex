@@ -1,5 +1,5 @@
-#ifndef Z_TYPES_H
-#define Z_TYPES_H
+#ifndef W_TYPES_H
+#define W_TYPES_H
 
 #include <stdint.h>
 #include <stdbool.h>

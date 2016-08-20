@@ -18,7 +18,7 @@ void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame);
 
 void communication_initialize(Unt port) {
     /* TODO: initialize logging */
-    z_assert(SDL_WasInit(0));
+    w_assert(SDL_WasInit(0));
 
     SDLNet_Init();
     atexit(SDLNet_Quit);
@@ -39,7 +39,7 @@ void communication_initialize(Unt port) {
     }
 
     SDL_Thread *thread = SDL_CreateThread(communication_loop, "communication", server);
-    z_assert(thread);
+    w_assert(thread);
 }
 
 
@@ -48,13 +48,13 @@ Int communication_loop(void *data) {
 
     memory_register_thread();
 
-    z_assert(data);
+    w_assert(data);
     TCPsocket server = (TCPsocket) data;
 
     SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
-    z_assert(set);
+    w_assert(set);
     error = SDLNet_TCP_AddSocket(set, server);
-    z_assert(error != -1);
+    w_assert(error != -1);
 
     while (true) {
         Int ready = SDLNet_CheckSockets(set, -1);
@@ -82,9 +82,9 @@ void communication_receive(TCPsocket socket) {
        maybe use threads or a common socketset */
     Int error;
     SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
-    z_assert(set);
+    w_assert(set);
     error = SDLNet_TCP_AddSocket(set, socket);
-    z_assert(error != -1);
+    w_assert(error != -1);
 
     int ready = SDLNet_CheckSockets(set, OPTION_HEADER_TIMEOUT);
     SDLNet_FreeSocketSet(set);
@@ -147,7 +147,7 @@ void communication_receive(TCPsocket socket) {
         communication_receive_lisp(socket, size, frame);
     } else if (strcmp(command, "ready?") == 0) {
         log_error("ready? command not yet implemented");
-        z_assert(false);
+        w_assert(false);
     } else if (strcmp(command, "abort") == 0) {
         mutex_lock(communication_parsed_queue_lock);
         /* list_clear(communication_parsed_queue); */
@@ -175,9 +175,9 @@ void communication_receive(TCPsocket socket) {
 void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
     Int error;
     SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
-    z_assert(set);
+    w_assert(set);
     error = SDLNet_TCP_AddSocket(set, socket);
-    z_assert(error != -1);
+    w_assert(error != -1);
 
     int ready = SDLNet_CheckSockets(set, OPTION_BODY_TIMEOUT);
     SDLNet_FreeSocketSet(set);

@@ -36,9 +36,9 @@ Bool pdf_get_slide(Environment *environment, Value filename, Int slide, Renderab
 Unt resource_create_pdf(Environment *environment, Value skeleton) {
     debug("Loading pdf: %s", skeleton.val.pdf_val -> path.val.string_val -> text);
     cairo_status_t status;
-    z_assert(skeleton.type == PDF);
+    w_assert(skeleton.type == PDF);
     Pdf *pdf = skeleton.val.pdf_val;
-    z_assert(pdf -> path.type == STRING);
+    w_assert(pdf -> path.type == STRING);
 
     char *password = "";
     char *filename = pdf -> path.val.string_val -> text;
@@ -65,7 +65,7 @@ Unt resource_create_pdf(Environment *environment, Value skeleton) {
     /* Load all the pages */
     for (Int pagenumber = 0; pagenumber < pagecount; pagenumber++) {
         PopplerPage *page = poppler_document_get_page(document, pagenumber);
-        z_assert(page);
+        w_assert(page);
 
         Double width, height; /* In pixels, beamer default = 12.8cm * 9.6cm at 72 DPI = 362.835000 * 272.126000 */
         poppler_page_get_size(page, &width, &height);
@@ -79,9 +79,9 @@ Unt resource_create_pdf(Environment *environment, Value skeleton) {
 
         cairo_surface_t *surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
                                                               width, height);
-        z_assert(!cairo_surface_status(surface));
+        w_assert(!cairo_surface_status(surface));
         cairo_t *cairo = cairo_create(surface);
-        z_assert(!cairo_status(cairo));
+        w_assert(!cairo_status(cairo));
         cairo_scale(cairo, scale, scale);
         cairo_save(cairo);
         poppler_page_render(page, cairo); /* Does not fail */

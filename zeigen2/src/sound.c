@@ -81,7 +81,7 @@ Value sound_play(Environment *environment, Value filename, Int volume, Int loops
     while (sound_table[channel] != NULL) {
         channel++;
     }
-    z_assert(channel < sound_channels);
+    w_assert(channel < sound_channels);
     sound_first_free = channel;
 
     if (volume < 0) {
@@ -90,7 +90,7 @@ Value sound_play(Environment *environment, Value filename, Int volume, Int loops
     Mix_Volume(channel, volume);
 
     Int actual_channel = Mix_PlayChannel(channel, soundsample -> chunk, loops);
-    z_assert(actual_channel == channel);
+    w_assert(actual_channel == channel);
 
     Sound *sound = memory_malloc(sizeof(Sound));
     sound -> playing = true;
@@ -106,7 +106,7 @@ Value sound_play(Environment *environment, Value filename, Int volume, Int loops
 }
 
 Bool sound_stop(Environment *environment, Sound *sound) {
-    /* z_assert(soundv.type == SOUND); */
+    /* w_assert(soundv.type == SOUND); */
     /* Sound *sound = soundv.val.sound_val; */
 
     /* Must lock to avoid NULL pointer referencing if the sound stops concurrently */
@@ -160,9 +160,9 @@ void sound_mark_dirty(Value filename) {
     mutex_unlock(sound_lock);
 }
 Unt resource_create_soundsample(Environment *environment, Value skeleton) {
-    z_assert(skeleton.type == SOUNDSAMPLE);
+    w_assert(skeleton.type == SOUNDSAMPLE);
     Soundsample *soundsample = skeleton.val.soundsample_val;
-    z_assert(soundsample -> path.type == STRING);
+    w_assert(soundsample -> path.type == STRING);
     char *filename = soundsample -> path.val.string_val -> text;
     if (strcmp(file_get_extension_str(filename), "mp3") == 0) {
         filename = sound_convert_to_ogg(soundsample -> path.val.string_val);
@@ -229,7 +229,7 @@ char *sound_convert_to_ogg(String *mp3) {
     Unt size = strlen(raw_command) + mp3 -> size - 1 + ogg -> size - 2 * 2 * sizeof(char);
     char *command = memory_cmalloc(sizeof(char) * size);
     Int actual_size = sprintf(command, raw_command, mp3 -> text, ogg -> text);
-    z_assert(size == actual_size + 1);
+    w_assert(size == actual_size + 1);
     log_info("Converting %s to .ogg", mp3 -> text);
     Int result = system(command);
     if (result == 0) {

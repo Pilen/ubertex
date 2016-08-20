@@ -50,7 +50,7 @@ Value resource_get(Environment *environment, Value skeleton) {
             resource.val.soundsample_val -> last_use = new_use;
             break;
         default:
-            z_assert(false);
+            w_assert(false);
         }
         return resource;
     }
@@ -86,7 +86,7 @@ Bool resource_create(Environment *environment, Value resource) {
         size = resource_create_soundsample(environment, resource);
         break;
     default:
-        z_assert(false);
+        w_assert(false);
     }
     log_resource(resource.type, size);
     resource_total_size += size;
@@ -95,7 +95,7 @@ Bool resource_create(Environment *environment, Value resource) {
 
 Unt resource_destroy(Value resource) {
     Unt size;
-    /* z_assert(resource not in resource_list); */
+    /* w_assert(resource not in resource_list); */
     lock_write_lock(resource_cache_lock);
     hash_delete(resource_cache, resource);
     switch (resource.type) {
@@ -117,7 +117,7 @@ Unt resource_destroy(Value resource) {
         break;
     default:
         /* Catch missing destructors */
-        z_assert(false);
+        w_assert(false);
     }
     resource_total_size -= size;
     lock_write_unlock(resource_cache_lock);
@@ -131,7 +131,7 @@ Unt resource_shrink_cache(void) {
        Else we need some kind of threadsafe metric of this resource being in use right now and probably a lock pr. resource.
     */
 
-    /* z_assert(environment -> call_stack -> length == 0); */
+    /* w_assert(environment -> call_stack -> length == 0); */
     lock_write_lock(resource_cache_lock);
 
     /* Only flush if enough memory has been consumed */
@@ -140,7 +140,7 @@ Unt resource_shrink_cache(void) {
         return 0;
     }
 
-    z_assert(resource_list -> start == 0);
+    w_assert(resource_list -> start == 0);
     qsort(resource_list -> data,
           resource_list -> length,
           sizeof(Value),
@@ -196,7 +196,7 @@ Unt resource_flush_dirty_cache(void) {
         char *filename;
         switch (resource.type) {
         case IMAGE:
-            z_assert(resource.val.image_val -> path.type == STRING);
+            w_assert(resource.val.image_val -> path.type == STRING);
             filename = resource.val.image_val -> path.val.string_val -> text;
             found = stat(filename, &file_stat);
             if (found != 0) {
@@ -216,7 +216,7 @@ Unt resource_flush_dirty_cache(void) {
             }
         default:
             /* Catch missing */
-            z_assert(false);
+            w_assert(false);
         }
     }
     lock_write_unlock(resource_cache_lock);
@@ -241,7 +241,7 @@ Int resource_comparison(const void *a, const void *b) {
         a_last_use = av -> val.soundsample_val -> last_use;
         break;
     default:
-        z_assert(false);
+        w_assert(false);
     }
 
     switch (bv -> type) {
@@ -255,7 +255,7 @@ Int resource_comparison(const void *a, const void *b) {
         b_last_use = bv -> val.soundsample_val -> last_use;
         break;
     default:
-        z_assert(false);
+        w_assert(false);
     }
 
     return a_last_use - b_last_use;

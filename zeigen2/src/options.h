@@ -1,5 +1,5 @@
-#ifndef Z_OPTIONS_H
-#define Z_OPTIONS_H
+#ifndef W_OPTIONS_H
+#define W_OPTIONS_H
 
 
 /* MUST BE DEFINED: */

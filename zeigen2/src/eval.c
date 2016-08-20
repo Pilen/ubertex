@@ -45,7 +45,7 @@ Value eval(Value expression, Environment *environment) {
 }
 
 Value eval_list(Value expression, Environment *environment) {
-    z_assert(expression.type == LIST);
+    w_assert(expression.type == LIST);
     /* NOTE: Is this necesary? It should already be handled in the parser.
        But it might be needed due to eval */
     List *list = expression.val.list_val;
@@ -92,7 +92,7 @@ Value eval_list(Value expression, Environment *environment) {
         log_error("Function XXX not found");
         return VALUE_ERROR;
     }
-    z_assert(function_value.type == FUNCTION);
+    w_assert(function_value.type == FUNCTION);
     Function *function = function_value.val.function_val;
 
     List *args;

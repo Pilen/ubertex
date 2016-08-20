@@ -1,5 +1,5 @@
-#ifndef Z_SYMBOL_H
-#define Z_SYMBOL_H
+#ifndef W_SYMBOL_H
+#define W_SYMBOL_H
 
 #include "types.h"
 

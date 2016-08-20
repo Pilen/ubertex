@@ -1,5 +1,5 @@
-#ifndef Z_STRING_H
-#define Z_STRING_H
+#ifndef W_STRING_H
+#define W_STRING_H
 
 #include "types.h"
 

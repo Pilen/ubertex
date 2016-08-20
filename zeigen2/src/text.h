@@ -1,5 +1,5 @@
-#ifndef Z_TEXT_H
-#define Z_TEXT_H
+#ifndef W_TEXT_H
+#define W_TEXT_H
 
 #include "types.h"
 #include "environment.h"

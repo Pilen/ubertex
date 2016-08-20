@@ -1,5 +1,5 @@
-#ifndef Z_IMAGE_H
-#define Z_IMAGE_H
+#ifndef W_IMAGE_H
+#define W_IMAGE_H
 
 #include <SDL2/SDL.h>
 #include <cairo.h>

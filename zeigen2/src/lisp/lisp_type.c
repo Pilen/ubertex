@@ -25,7 +25,7 @@ LISP_BUILTIN(type_of, "") {
     case HASH:
         return symbols_hash;
     default:
-        z_assert(false);
+        w_assert(false);
         return VALUE_ERROR;
     }
 }

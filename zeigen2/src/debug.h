@@ -1,5 +1,5 @@
-#ifndef Z_DEBUG_H
-#define Z_DEBUG_H
+#ifndef W_DEBUG_H
+#define W_DEBUG_H
 
 #include "options.h"
 #if OPTION_DEBUG

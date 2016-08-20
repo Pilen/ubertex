@@ -1,16 +1,16 @@
-#ifndef Z_ASSERT_H
-#define Z_ASSERT_H
+#ifndef W_ASSERT_H
+#define W_ASSERT_H
 
 #include "types.h"
 #include <stdlib.h>
 #include "options.h"
 
 #if OPTION_DEBUG
-#define z_assert(v)                             \
+#define w_assert(v)                             \
     do {                                        \
-        Int Z_ASSERT_assert = !!(v);            \
-        if (!Z_ASSERT_assert) {                 \
-            log_assert(#v, Z_ASSERT_assert);    \
+        Int W_ASSERT_assert = !!(v);            \
+        if (!W_ASSERT_assert) {                 \
+            log_assert(#v, W_ASSERT_assert);    \
             exit(EXIT_FAILURE);                 \
         }                                       \
     } while (0);
@@ -21,10 +21,10 @@
 
 
 #else
-#define z_assert(v)                             \
+#define w_assert(v)                             \
     do {                                        \
         (void) sizeof((v));                     \
     } while (0);
-#define assert_build(v) z_assert(v)
+#define assert_build(v) w_assert(v)
 #endif
 #endif

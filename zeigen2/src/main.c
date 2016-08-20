@@ -146,7 +146,7 @@ int main(int argc, char **argv) {
 
     if (interactive) {
         while (true) {
-            char *line = z_readline("> ");
+            char *line = w_readline("> ");
             if (strcmp(line, "(quit)") == 0 || strcmp(line, "(exit)") == 0) {
                 break;
             }

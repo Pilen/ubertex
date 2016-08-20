@@ -1,5 +1,5 @@
-#ifndef Z_SOUND_H
-#define Z_SOUND_H
+#ifndef W_SOUND_H
+#define W_SOUND_H
 
 #include <SDL2/SDL_mixer.h>
 #include "types.h"

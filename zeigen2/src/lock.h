@@ -1,5 +1,5 @@
-#ifndef Z_LOCK_H
-#define Z_LOCK_H
+#ifndef W_LOCK_H
+#define W_LOCK_H
 
 #include <SDL2/SDL.h>
 #include "types.h"

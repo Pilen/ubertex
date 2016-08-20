@@ -57,7 +57,7 @@ void loop_loop(Environment *environment) {
         lock_read_lock(resource_cache_lock);
         loop_update(environment, environment -> component_next_update, environment -> component_next_update_args);
         loop_update(environment, environment -> component_next_post, environment -> component_next_post_args);
-        z_assert(environment -> call_stack -> length == 0);
+        w_assert(environment -> call_stack -> length == 0);
         lock_read_unlock(resource_cache_lock);
 
         if (loop_blank) {

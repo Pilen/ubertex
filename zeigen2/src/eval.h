@@ -1,5 +1,5 @@
-#ifndef Z_EVAL_H
-#define Z_EVAL_H
+#ifndef W_EVAL_H
+#define W_EVAL_H
 
 #include "types.h"
 #include "hash.h"

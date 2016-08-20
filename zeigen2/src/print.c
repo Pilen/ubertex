@@ -66,7 +66,7 @@ void print_on(FILE *stream, Value value) {
 /*         return symbols_nil; */
 /*     case SYMBOL: */
 /*         value = symbol_name(value); */
-/*         z_assert(value.type == STRING); */
+/*         w_assert(value.type == STRING); */
 /*         return value.val.string_val; */
 /*     case INTEGER: */
 /*         Int number = value.val.integer_val; */
@@ -75,7 +75,7 @@ void print_on(FILE *stream, Value value) {
 
 /*     case HASH: */
 /*     default: */
-/*         z_assert(false) */
+/*         w_assert(false) */
 /*     } */
 
 /* } */

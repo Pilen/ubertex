@@ -9,7 +9,7 @@
 #include <readline/history.h>
 #endif
 
-char *z_readline(const char *prompt) {
+char *w_readline(const char *prompt) {
 #if OPTION_USE_READLINE
     char *line = readline(prompt);
     if (line && *line) {

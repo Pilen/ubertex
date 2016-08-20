@@ -132,7 +132,7 @@ void hash_insert(Hash *hash, Unt h1, Unt h2, Value key, Value data) {
             return;
         }
     }
-    z_assert(false);
+    w_assert(false);
 }
 Unt hash_calculate1(const Value *key) {
     /* TODO: implement properly!! */
@@ -143,7 +143,7 @@ Unt hash_calculate2(const Value *key) {
     return 1;
 }
 Unt hash_index(Unt h1, Unt h2, Unt i, Unt size) {
-    /* TODO: z_assert(h2 != 0); */
+    /* TODO: w_assert(h2 != 0); */
     /* Uses double hashing */
     /* If h2 == 1, then it is equivalent to linear hashing */
     return (h1 + i * h2) % size;

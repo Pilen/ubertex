@@ -1,5 +1,5 @@
-#ifndef Z_ENVIRONMENT_H
-#define Z_ENVIRONMENT_H
+#ifndef W_ENVIRONMENT_H
+#define W_ENVIRONMENT_H
 
 #include <SDL2/SDL.h>
 #include <cairo.h>

@@ -1,5 +1,5 @@
-#ifndef Z_INITIALIZE_H
-#define Z_INITIALIZE_H
+#ifndef W_INITIALIZE_H
+#define W_INITIALIZE_H
 
 #include "environment.h"
 

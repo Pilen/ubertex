@@ -1,5 +1,5 @@
-#ifndef Z_PDF_H
-#define Z_PDF_H
+#ifndef W_PDF_H
+#define W_PDF_H
 
 #include "types.h"
 #include "environment.h"

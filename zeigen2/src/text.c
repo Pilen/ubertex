@@ -69,7 +69,7 @@ Bool text(Environment *environment, String *text, Int fontsize, Bool align_cente
 /*     Int height; */
 /*     SDL_GetWindowSize(environment -> window, &width, &height); */
 
-/*     z_assert(skeleton.type == TEXT); */
+/*     w_assert(skeleton.type == TEXT); */
 /*     Text *text = skeleton.val.text_val; */
 
 /*     SDL_Surface *sdl_surface = SDL_CreateRGBSurface(0, width, height, 32, */
@@ -77,16 +77,16 @@ Bool text(Environment *environment, String *text, Int fontsize, Bool align_cente
 /*                                                     0x0000FF00, */
 /*                                                     0x000000FF, */
 /*                                                     0); */
-/*     z_assert(sdl_surface); */
+/*     w_assert(sdl_surface); */
 /*     cairo_surface_t *cairo_surface; */
 /*     cairo_surface = cairo_image_surface_create_for_data(sdl_surface -> pixels, */
 /*                                                         CAIRO_FORMAT_RGB24, */
 /*                                                         width, */
 /*                                                         height, */
 /*                                                         sdl_surface -> pitch); */
-/*     z_assert(!cairo_surface_status(cairo_surface)); */
+/*     w_assert(!cairo_surface_status(cairo_surface)); */
 /*     cairo_t *cairo = cairo_create(cairo_surface); */
-/*     z_assert(!cairo_status(cairo)); */
+/*     w_assert(!cairo_status(cairo)); */
 /*     PangoLayout *layout = pango_cairo_create_layout(cairo); */
 /*     PangoFontDescription *font = pango_font_description_new(); */
 /*     pango_font_description_set_family(font, "sans"); */
@@ -111,7 +111,7 @@ Bool text(Environment *environment, String *text, Int fontsize, Bool align_cente
 /*     /\* } *\/ */
 
 /*     SDL_Texture *uncropped_texture = SDL_CreateTextureFromSurface(environment -> renderer, sdl_surface); */
-/*     z_assert(uncropped_texture); */
+/*     w_assert(uncropped_texture); */
 
 
 /*     Unt format; */

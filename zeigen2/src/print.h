@@ -1,5 +1,5 @@
-#ifndef Z_PRINTER_H
-#define Z_PRINTER_H
+#ifndef W_PRINTER_H
+#define W_PRINTER_H
 
 #include <stdio.h>
 #include "types.h"

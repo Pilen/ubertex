@@ -1,6 +1,6 @@
-#ifndef Z_READLINE_H
-#define Z_READLINE_H
+#ifndef W_READLINE_H
+#define W_READLINE_H
 
-char *z_readline(const char *prompt);
+char *w_readline(const char *prompt);
 
 #endif

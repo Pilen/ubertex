@@ -70,7 +70,7 @@ Bool equal(Value a, Value b) {
     case HASH:
         /* TODO: implement */
         debug("HASH VALUES CANT BE COMPARED YET!!!!");
-        z_assert(false);
+        w_assert(false);
 
     case IMAGE:
         return equal(a.val.image_val -> path, b.val.image_val -> path);
@@ -80,7 +80,7 @@ Bool equal(Value a, Value b) {
         return ((a.val.soundsample_val -> dirty || b.val.soundsample_val -> dirty)
                 || equal(a.val.soundsample_val -> path, b.val.soundsample_val -> path));
     default:
-        z_assert(false)
+        w_assert(false)
     }
     return false;
 }
@@ -107,7 +107,7 @@ Bool eq(Value a, Value b) {
     case HASH:
         return a.val.hash_val == b.val.hash_val;
     default:
-        z_assert(false);
+        w_assert(false);
     }
     return false;
 }

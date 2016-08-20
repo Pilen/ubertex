@@ -1,5 +1,5 @@
-#ifndef Z_LISP_H
-#define Z_LISP_H
+#ifndef W_LISP_H
+#define W_LISP_H
 
 #include "types.h"
 #include "list.h"

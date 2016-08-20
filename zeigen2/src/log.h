@@ -1,5 +1,5 @@
-#ifndef Z_LOG_H
-#define Z_LOG_H
+#ifndef W_LOG_H
+#define W_LOG_H
 
 #include <stdlib.h>
 #include <stdio.h>

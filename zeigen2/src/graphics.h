@@ -1,5 +1,5 @@
-#ifndef Z_GRAPHICS_H
-#define Z_GRAPHICS_H
+#ifndef W_GRAPHICS_H
+#define W_GRAPHICS_H
 
 #include "types.h"
 #include "environment.h"

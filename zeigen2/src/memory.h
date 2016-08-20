@@ -1,5 +1,5 @@
-#ifndef Z_MEMORY_H
-#define Z_MEMORY_H
+#ifndef W_MEMORY_H
+#define W_MEMORY_H
 
 #include <stdlib.h>
 

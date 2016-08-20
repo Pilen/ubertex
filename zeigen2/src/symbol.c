@@ -60,6 +60,6 @@ Value symbol_get(Value name) {
 Value symbol_name(Value symbol){
     Value name;
     Bool found = hash_get(symbol_names, symbol, &name);
-    z_assert(found);
+    w_assert(found);
     return name;
 }

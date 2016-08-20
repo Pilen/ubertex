@@ -1,5 +1,5 @@
-#ifndef Z_COMMUNICATION_H
-#define Z_COMMUNICATION_H
+#ifndef W_COMMUNICATION_H
+#define W_COMMUNICATION_H
 
 #include "list.h"
 #include "lock.h"

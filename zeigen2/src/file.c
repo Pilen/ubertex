@@ -21,7 +21,7 @@ Bool file_read_raw(char *filename, char **buffer, size_t *size) {
     }
     fseek(file, 0, SEEK_END);
     long file_size = ftell(file);
-    z_assert(file_size > 0);
+    w_assert(file_size > 0);
     rewind(file);
 
     char *allocated = memory_malloc(sizeof(char) * (file_size + 1));
