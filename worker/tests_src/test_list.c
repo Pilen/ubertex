@@ -77,7 +77,47 @@ void test_list_6(void) {
         TEST(val.val.integer_val == (130 - i)*10);
     }
     TEST(list -> size == 1);
+}
 
+void test_list_7(void) {
+    List *list = list_create(6);
+    for (Unt i = 0; i < 6; i++) {
+        list_push_back(list, VALUE_INTEGER(i));
+    }
+
+    TEST_EQ(list_length(list), 6);
+    TEST_EQ(list -> size, 6);
+    list_pop_front(list);
+    list_pop_front(list);
+    TEST_EQ(list_length(list), 4);
+    TEST_EQ(list -> size, 6);
+}
+
+void test_list_8(void) {
+    List *list = list_create(6);
+    for (Unt i = 0; i < 6; i++) {
+        list_push_back(list, VALUE_INTEGER(i));
+    }
+    list_pop_front(list);
+    list_pop_back(list);
+    list_pop_back(list);
+    TEST_EQ(list_length(list), 3);
+    TEST(list_get(list, 0).val.integer_val == 1);
+    TEST(list_get(list, 1).val.integer_val == 2);
+    TEST(list_get(list, 2).val.integer_val == 3);
+    TEST_EQ(list -> start, 1); // Whitebox
+}
+
+void test_list_9(void) {
+    List *list = list_create(6);
+    for (Unt i = 0; i < 3; i++) {
+        list_push_back(list, VALUE_INTEGER(i*10));
+        list_push_front(list, VALUE_INTEGER(i));
+    }
+    list_normalize(list);
+    TEST_EQ(list_length(list), 6);
+    TEST_EQ(list -> size, 6);
+    TEST_EQ(list -> start, 0);
 }
 
 DEFINE_TEST_SUITE(list) {
@@ -87,4 +127,7 @@ DEFINE_TEST_SUITE(list) {
     TEST_ADD(test_list_4());
     TEST_ADD(test_list_5());
     TEST_ADD(test_list_6());
+    TEST_ADD(test_list_7());
+    TEST_ADD(test_list_8());
+    TEST_ADD(test_list_9());
 }

@@ -140,7 +140,7 @@ Unt resource_shrink_cache(void) {
         return 0;
     }
 
-    w_assert(resource_list -> start == 0);
+    list_normalize(resource_list);
     qsort(resource_list -> data,
           resource_list -> length,
           sizeof(Value),

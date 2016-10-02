@@ -10,7 +10,7 @@
 
 struct List_s {
     Unt refcount;
-    Unt size;
+    Unt size; // In number of elements
     Unt start;
     Unt length;
     Value *data;
@@ -29,6 +29,7 @@ Value list_pop_back(List *list);
 /* Value list_pop(List* list, Unt position); */
 Bool list_set(List *list, Unt position, Value value);
 Value list_get(List *list, Unt position);
+void list_normalize(List *list);
 
 /* TODO: ensure that it is actually beneficial to do it like this and not just the same. */
 /* List *list_create_empty(void); */

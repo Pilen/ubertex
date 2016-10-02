@@ -150,6 +150,20 @@ Value list_get(List *list, Unt position) {
     return LIST_GET_UNSAFE(list, position);
 }
 
+void list_normalize(List *list) {
+    if (list -> start + list -> length <= list -> size) {
+        return;
+    }
+    Value *new_data = memory_cmalloc(sizeof(Value) * list -> size);
+    Unt new_start = (list -> size - list -> length) / 2;
+    for (Unt i = 0; i < list -> length; i++) {
+        Unt index = (new_start + i ) % list -> size;
+        new_data[index] = LIST_GET_UNSAFE(list, i);
+    }
+    list -> start = new_start;
+    list -> data = new_data;
+}
+
 /**** Private ****/
 void list_expand(List *list) {
     Unt new_size = list -> size * LIST_EXPANSION_FACTOR;
@@ -157,7 +171,7 @@ void list_expand(List *list) {
     if (new_size == list -> size) {
         new_size++;
     }
-    Value *new_data= memory_cmalloc(sizeof(Value) * new_size);
+    Value *new_data = memory_cmalloc(sizeof(Value) * new_size);
 
     /* TODO: ensure correctenes of castings + roundings
            is start at the correct place when start = 0 and start at end? */
@@ -172,7 +186,6 @@ void list_expand(List *list) {
     for (Unt i = 0; i < list -> length; i++) {
         *new_value = LIST_GET_UNSAFE(list, i);
         new_value = new_data + ((1 + new_value - new_data) % new_size);
-
     }
 
     list -> size = new_size;

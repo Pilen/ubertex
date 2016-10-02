@@ -74,4 +74,12 @@ Bool Z_TEST_UTILS_successful;
         }                                                               \
     } while (0);
 
+#define TEST_EQ(a, b)                           \
+    do {                                                                \
+        if ((a) != (b)) {                                               \
+            Z_TEST_UTILS_successful = false;                            \
+            printf("TEST-FAILED: %s:%d: %s: (%s == %s) gave (%i == %i)\n", __FILE__, __LINE__, __func__, #a, #b, (a), (b)); \
+            return;                                                     \
+        }                                                               \
+    } while (0);
 #endif
