@@ -222,8 +222,8 @@ Wont return untill all workers has been synced."
                 (call-process "ssh" nil "*revy-shell*" t
                               (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
                               (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
-                                      "cd " (aref worker revy-worker-installation-index) "zeigen2/src/" "; "
-                                      "./repl -b -w -d " (aref worker revy-worker-dir-index)))
+                                      "cd " (aref worker revy-worker-installation-index) "worker/" "; "
+                                      "./worker -b -w -d " (aref worker revy-worker-dir-index)))
                 (message "Starting %s" (aref worker revy-worker-location-index))
                 t)
             (error "No connection to host %s" (aref worker revy-worker-location-index)))))))
