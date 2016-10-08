@@ -11,3 +11,10 @@
 
 *.agignore
 .dummy
+
+worker/worker
+worker/tests
+
+worker/GPATH
+worker/GRTAGS
+worker/GTAGS
