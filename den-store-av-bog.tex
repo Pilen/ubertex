@@ -1,7 +1,8 @@
 \documentclass[10pt,a4paper,danish]{article}
 \usepackage[danish]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage[margin=3cm]{geometry}
+% \usepackage[margin=3cm]{geometry}
+\usepackage[margin=4cm]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{listings}
@@ -17,7 +18,28 @@
 \usepackage{subcaption}
 \usepackage{mdframed}
 \usepackage{color}
+\usepackage{marginnote}
+\usepackage{pdfpages}
+\usepackage{shorttoc}
+\usepackage{setspace}
 
+\setlength{\marginparwidth}{1.0in}
+\setlength{\marginparsep}{0.1in}
+\let\oldmarginnote\marginnote
+\renewcommand{\marginnote}[1]{\oldmarginnote{\raggedright{}\footnotesize #1}}
+
+\definecolor{boxygray}{gray}{0.98}
+\mdfdefinestyle{boxy}{%
+  backgroundcolor = boxygray}
+
+\definecolor{notered}{RGB}{255, 180, 180}
+\mdfdefinestyle{note}{%
+  hidealllines = true,
+  backgroundcolor = notered}
+\newcommand{\note}[1]{\begin{mdframed}[style=note]\textbf{Note:}
+    #1\end{mdframed}}
+
+\newcommand{\bad}[1]{\begin{mdframed}[style=note]#1\end{mdframed}}
 
 \definecolor{verbgray}{gray}{0.92}
 \mdfdefinestyle{code}{%
@@ -34,17 +56,21 @@
 % \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\code}[1]{\colorbox{verbgray}{\texttt{#1}}}
 
+\newcommand{\commnt}[1]{}
+
 \pagestyle{fancy}
 \fancyhead{}
 \fancyfoot{}
 \lhead{\nouppercase\leftmark}
-\rhead{Den Store AV-bog}
+\rhead{Den Store AV-Bog}
 \rfoot{\thepage}
-\setlength\parskip{1em}
+% \setlength\parskip{1em}
+\setlength\parskip{0.8em}
 \setlength\parindent{0em}
 
 %% Titel og forfatter
-\title{Den Store AV-bog}
+% \title{{\Huge{}\fontfamily{pzc}\selectfont{}Den Store AV-bog}}
+\title{\Huge{}Den Store AV-Bog}
 \author{Søren Pilgård - DIKUrevyen}
 
 %% Start dokumentet
@@ -53,17 +79,252 @@
 %% Vis titel
 \maketitle
 \newpage
+{\linespread{0.0}
+  \shorttoc{Indhold (kort)}{1}
+}
 
 %% Vis indholdsfortegnelse
 \tableofcontents
 \newpage
 
 \section{Introduktion}
-Dette er en introduktion til DIKUrevyens AV-system.
-Systemet er udviklet af Søren Pilgård.
+\begin{center}
+  {\Huge \textit{ ``Er der en AV-mand tilstede?!?''}}
+\end{center}
+Sådan kunne spørgsmålet lyde. Når du har gjort dig bekendt med denne bog er du
+forhåbentligt istand til at svare \textit{``Ja!''}.
+Denne bog henvender sig til dig der aldrig har lavet AV i en revy før og skal
+have en udførlig introduktion, til dig der har lavet AV før men lige skal have
+lidt hjælp til hvordan det nu var med det hersens AV-system, og til dig der har
+lavet AV i mange år men stadig har behov for at slå op i dokumentationen i ny og
+næ.
 
-Systemet er på skrivende tidspunkt ikke færdigt men kan sagtens bruges til
-normalt AVbrug.
+Dette er en introduktion til DIKUrevyens \textbf{AV-system}.
+Systemet er udviklet af Søren Pilgård, og selv om det startede hos DIKUrevyen
+har det allerede haft bred udbredelse blandt andet i DIKUrevyen,
+SaTyRrevyen, Biorevyen og Matematikrevyen.
+Systemet er af den slags der nok aldrig bliver helt færdigt, der er altid lige
+noget mere der kan tilføjes, laves om og forbedres, det samme gælder denne bog.
+Det bør dog ikke afskrække dig fra at kaste dig ud i det.
+
+\marginnote{At vi kalder det AV-\textit{mand} skal du ikke tage så nøje, der findes super
+  seje og kreative AV-folk af alle køn!}
+Dette kapitel samt kapitel \ref{sec:god-av-mand} forklarer lidt generelt om hvad
+det vil sige at lave revy og hvad AV-manden laver, samt nogle guidelines til
+hvordan man gør det godt som AV-mand.
+
+
+\subsection{Hvordan foregår en revy?}
+Dette er måske din første revy, eller måske bare din første revy på Natfak.
+Her vil vi for god ordens skyld kort gennemgå hvad en revy i denne sammenhæng
+indebærer. De fleste revyer har en nogenlunde ens opbygning dette gælder især
+for revyerne i SaTyRfællesskabet som indefatter DIKURevyen, Fysikrevyen,
+Matematikrevyen, Biorevyen, MBKrevyen, og så selvfølgeligt SaTyRrevyen selv.
+En revy er overordnet delt op i forskellige numre, f.eks. sange eller sketches,
+disse numrer er, som regel, men bestemt ikke altid uafhængige af hinanden uden
+overlap i hverken karakterer, tema eller indhold. Der sker dog ofte undtagelser
+iform af f.eks. følgetoner med fortløbene handling, eller f.eks. sketches der
+naturligt glider over i en sang. Numrene er grupperet i akter af en halv time
+til tre kvarters varighed med en 15-20 minutters pause.
+Der er typisk 2 eller 3 akter efterfulgt af et par ekstranumre.
+
+En klassik revy foregår således at klokken 19.00 åbner dørene til foyeren,
+typisk er de allerede åbne, men det er her folk begynder at stille sig i kø uden
+foran dørene til auditoriet. Kl. 19.15 åbner dørene ind til auditoriet og
+publikum strømmer ind. Når folk har fundet deres pladser sker det ofte at de
+forskellige studieretninger begynder at synge af hinanden. Dette er en god
+gammel tradition hvor nye svarvers dukker op og stemningen bliver sat. Det er
+dårlig stil når revyen går i gang mens folk synger, så man skal sørge for at
+time det før eller efter en sang. Når klokken er 19.30 og backstage er klar
+signalerer en boss eller instruktør til \TeX{}nikken at nu kan vi starte.
+Når der ikke synges sætter lysmanden så revyen i gang ved at dæmpe lyset i
+salen.
+Et øredøvende sus vil da gå igennem auditoriet som hele det feststemte publikum
+fylder med råb, banken og hujen.
+
+Nu er revyen i gang!\\
+
+
+De fleste revyer starter med en bandintro, en video der præsenterer bandet, når
+videoen er færdig sætter bandet sig til rette på bandscenen mens folk brøler
+\textit{``Bandet!, Bandet!...''} nogle revyer har så en velkomst sketch hvor man
+præsenterer revyen på en sjov måde (fysik starter f.eks. altid med at aflyse
+revyen), andre går bare direkte over i en startsang der skal få gang i salen.
+
+\marginnote{Nogle revyer foretrækker at holde 20 minutters pause, men skrive 15}[0cm]
+Herefter følger en masse blandede sange og sketches i form af akt 1.
+Man slutter typisk en akt med en sang med gang i så folk går feststemte til
+pause.
+Det er lysmandens opgave at åbne op for lyset, men AV manden starter typisk med
+at have et pauseskilt/billede/video til at fortælle at nu er der pause først.
+Herefter er der pause i 15-20 minutter mens publikum køber øl og går på
+toilettet.
+(Som AV-mand kan det også være en god ide at benytte toiletterne nede backstage
+og fylde op på vand/drikkevarer nu).
+Lidt før pausen er klar begynder bandet at spille ind, de spiller typisk noget
+musik der passer til deres tema eller som de har brugt mens de øvede sig.
+
+Så starter næste akt (hver opmærksom på at der altid er et par stykker der
+kommer forsent og som konsekvent glemmer at lukke dørene (så hav en løber
+klar)). I en 3 akters forestilling kører andet akt stille og roligt (sådan
+konstruktionsmæsigt), i en 2 akters svarer det til at gå direkte til 3.
+Hver opmærksom på at nogle 2 akters forestillinger kan have en tendens til at
+have lidt længere akter. Sidste akt slutter af med et slutnummer, en god sang
+der får folk op og køre. 3/4 inde i sangen kommer alle skuespillerne ud og der
+siges tak til alle der skal have tak og alle på scenen bukker et par gange.
+Så lunter folk ud af scenen og lyset går ned så der bliver helt mørkt. Imens
+klapper folk ihærdigt og råber \textit{``Ekstra nummer!, Ekstra nummer!...''}
+for det siger traditionen. Det er ofte enten AV eller lys der starter ekstra
+numrene man skal altid trække den lidt, så trække den lidt mere, og så liiiige
+trække den lidt mer', både fordi sådan er det, samt for at de kan nå at skifte
+kostumer/gøre rekvisiter klar. Og så går ekstranumrene i gang.
+Disse består som regel af 3-4 numre, nogle gange en video og slutter af med en
+slut-slutsang. Denne sidste sang er handler ofte om at nu er revyen slut, men
+der er efterfest bagefter og så skal den have fuld gas.
+Så er revyen færdig, man kan smide et skilt op om at der er efterfest. Hvis man
+har flere forestillinger men kun én efterfest kan man smide en henvisning om at
+gå på \textit{Caféen?!} op.
+
+
+Generelt prøver man ofte at holde det intelligente humor i første akt hvor folk
+stadig kan forstå det og ikke ville ``kede'' sig, mens 3 akt er mere plat humor,
+dårlige ordspil og billige punchlines. I takt med at publikum bliver mere og
+mere fulde passer dette også meget fint til hvad de magter.
+Publikum kan være helt fantastiske, men de kan også være larmende, forstyrende
+og ret overvældende. Dette gælder både for dem på scenen, men det kan også være
+skræmmende når \TeX{}nikken laver en fejl og hele auditoriet brøler
+\textit{``TeXnikken sejler''}. Det vigtigste er at holde hovedet koldt i en hver
+situation. Få ro på, tænk igennem hvad der går galt, lad være med at opildne
+publikum, fokuser, og få tingene tilbage på sporet.
+Vi har \textbf{ALLE} været derude hvor det hele gik galt, og bagefter gik det
+hele altsammen, bare husk på ovenstående.
+
+Hvis du er i tvivl om et begræb så tag et kig i kapitel \ref{subsec:hvad-er-hvad}.
+
+\subsection{Hvad laver en AV-mand?}
+
+Hvad er det så AV-manden laver til en revy?
+Jo, ser du, TeXnikken består af 3 dele, der er lyd, de sørger for at bandets
+musik, sangernes sang og skuespillernes grynten\commnt{Too harsh?} kommer ud af højtalerne.
+Lydmanden laver så at sige ikke noget lyd selv, han sørger bare for at alle kan
+høre det og at det lyder godt. Lysmanden sørger for at man kan se noget, det gør
+han med et væld af farvede lamper og spots, med lys og skygge samt en gang
+taktisk røg kan han transformere stemningen og skabe en fest på scenen.
+
+\marginnote{Nogle revyer er også begyndt at have en Epelipsiadvarsel,
+  i starten af revyen og før blinkende numre}
+AV-mandens rolle er mere alsidig, en slags digital rekvisit man kan bruge til
+lidt af hvert. Det kunne f.eks. være at agere powerpoint-show til en
+``fremvisning'', vise billeder til at illustrere forskellige pointer, vise
+videoer, vise pauseskilte, vise hvilke sponsorer der er, afspille digital musik
+til dansenumre, afspille lydeffekter som pistolskud og prutter. En af de
+vigtigste opgaver er dog at lave overtekster. Det kan være utroligt svært at
+lave god lyd i Store UP1, hvis sangerne samtidigt er lidt usikre og der er en
+masse larm i auditoriet kan det være utroligt svært at høre hvad der bliver
+sunget. Samtidigt er der mange sange hvor man gerne vil give publikum mulighed
+for at synge med i omkvædende, derfor har man valgt at indføre overtekster.
+Overtekster er ligesom undertekster på en film, de sungne tekster bliver bare
+vist på et hvidt lærred oppe bag scenen for at alle kan se dem.
+Dette har vist sig at være en stor success.
+
+\marginnote{\textbf{Pas på dig selv!} Det er nemt at brænde sig på et stort
+  projekt.}
+Hvis man er kreativ og har teknisk kunnen kan man også bevæge sig ud i mere
+avancerede ting, animationer af alle mulige slags som passer til hvad der sker
+på scenen. Revy-systemet understøtter en masse seje ting, og der kommer hele
+tiden flere til så hvis man har mod på lidt programmering er det bare at give
+sig i kast med effekterne. Men pas på, lad være med at bide over mere end hvad
+du kan sluge. Alle disse avancerede detaljer er lækkerier der kan oppe
+oplevelsen, men de kan aldrig stå alene og hvis du ser det som en for stor
+opgave skal du ikke være bange for at spørge om hjælp eller sige fra.
+\marginnote{Men når det er sagt: Man kan kun skabe noget nyt ved at prøve nye ting af.}[-1cm]
+
+
+
+\subsection{Hvad er hvad?}
+\label{subsec:hvad-er-hvad}
+Her følger en række gængse termer der kan være praktiske at bruge, og andre
+småting der er værd at huske.
+
+\begin{description}
+  % Revyen generelt
+\item[Scene:] Til hver revy sættes en stor hjemmebygget træscene op i bunden af
+  Store UP1.
+\item[Bandscene:] En lille forhøjet scene til venstre for scenen, hvor bandet
+  sidder og spiller.
+\item[Bagtæppet:] Et tæppe til at aflukke til den bagerste meter af scenen, så
+  man kan stille sig klar uset.
+\item[Trekanten:]
+\item[Højre:] Højre side af scenen set fra TeXnikken og publikum.
+  Den side hvor folk oftest kommer ind fra.
+  (Skuespillere kan ikke finde ud af højre og venstre)
+\item[Venstre:] Venstre  side af scenen set fra TeXnikken og publikum.
+  Den side hvor bandet sidder
+  (Skuespillere kan ikke finde ud af højre og venstre)
+\item[TeXnikken:] Lyd, Lys og AV, samt diverse hjælpere.
+  Kortsagt dem der sidder foran scenen og arbjeder under revyen
+\item[Backstage:] Området bag scenen. Bruges også om dem der arbjeder der. De
+  andre ``skjulte'' roller som dem der laver rekvisiter og kostumer.
+\item[Rekvisitten:] Dem der laver rekvisiterne/stedet de laver dem (backstage)
+\item[Rekvisitkælderen:] Revyernes fælles opbevaringslokale, backstage under bandscenen.
+  (Pas på skimmelsvamp)
+\item[Dyrestalden:] En del af DIKU, gangen der ligger lige når man kommer ud af Store UP1 fra
+  scenen.
+\item[Omklædningen:] Backstage bag de store metaldøre og indtil trædørene står skuespillernes ting
+  under revyen, gør det svært at komme igennem!
+\item[Hyggeområdet:] Området bag skuespillernes omklædning, for foden af den sydlige trappe.
+  Her findes ofte snacks og drikkevarer under revyen (loot det i pauserne)
+\item[Harlem:] Et ``hemmeligt'' lokale i DIKUs kælder som revyerne råder over. Her øver
+  bandet indtil de rykker ind i auditoriet. Her står også det meste af den
+  texnik som revyerne råder over samt kasser med kabler.
+  Sørg for at spørge før du låner størrere ting, husk at ryde op efter dig, husk
+  at tape kabler sammen inden de dumpes. Spørg din revyboss om adgang hertil
+\item[Indre Harlem:] Inde i Harlem findes indre Harlem der bruges til at redigere videoer samt de
+  optagne film fra forestillingen.
+  Her står det udstyr vi passer ekstra godt på.
+  Kun de særligt betroede får adgang hertil og man skal spise en skovsnegl og
+  kysse en datalog for at få lov!
+\item[Adgang:] Husk at snakke med din boss om at få aktiveret dit studiekort så du kan komme
+  ind på DIKU og i Harlem. I TeXnikken kommer og går man ofte på skæve
+  tidspunkter så det er praktisk med adgang.
+\item[Instruktør:] Dette er meget forskelligt fra revy til revy, men typisk en
+  kreativ/kuntnerisk/skuespilsmæsig ansvarlig for de forskellige numre
+\item[Boss:] Ansvarlig for hele revyen (bestemmer)
+\item[Universitetsparken 1:] Stedet der i mange år har huset DIKU (i hvertfald
+  de studerende). Skal forlades i år ....
+\item[Store UP1:] Det store auditorium på Universitetsparken 1, også
+  kendt som store knirke. Det er her alle revyerne på natfak afholder deres revyer.
+\item[Caféen?!:] En af fredagsbarene på Natfak. Mange efterfester holdes her, og
+  ofte sender man publikum til Caféen?! om fredagen efter første
+  forestilling/generalprøven.
+  % AV
+\item[Overtex:] Et stort hvidt område over scenen under loftet hvor AV
+  projekterer det meste af sine ting
+\item[Højtex:] Et fancy begræb for alle de projektioner der er over Overtex på
+  selve loftet
+\item[Lavtex:] Et fancy begræb for alle de projektioner der er under Overtex,
+  altså ned på selve scenen (antagelivis på et lærrede der opstilles undervejs)
+\item[Fisk:] Et fancy ord for en kort film der ligger imellem to numre.
+  Bruges ofte som et sjovt indslag nogen kom på samt til at give lidt ekstra tid
+  til at nå et svært kostume/sceneskift.
+\item[Datamat:] Fysisk implementation af Turings abstrakte maskine, hvad man på
+  Engelsk ville kalde en ``computer''.
+\item[\LaTeX:] Et ``sprog'' til at skrive og opsætte tekst, tænk HTML men til at
+  lave nydelige artikler, formler og pdf'er. Også brugt til at lave overtekster.
+\item[\TeX:] Forgængeren som \LaTeX er bygget på, de to termer bruges oftest
+  synonymt.
+\item[Emacs:] Gammelt tekstredigeringsprogram (Tænk notepad, men mere avanceret
+  end Photoshop). Kan udvides helt utroligt og danner basis for DIKUrevyens AV-system.
+\item[Script:] Et kort program, en sekvens af instruktioner for hvad der skal
+  ske (automatisk) når det bliver kørt.
+\item[Lisp] Et gammelt programmeringssprog. Der findes mange varianter men det
+  er kernen i Emacs og udgør dermed måden man laver scripts på i AV-systemet
+\end{description}
+
+
+\subsection{Forudsætninger}
+\note{TODO: Dårligt afsnit. Find ud af hvor det passer, og omforumler det til
+  det her skal du lære}
 
 Hvad skal man kunne for at bruge DIKUrevyens AV-system?
 
@@ -117,13 +378,22 @@ systemet.
 
 \newpage
 \section{Tanken bag}
-Den grundliggende filosofi bag systemet er at AV skal kunne komplementere en
-revy men aldrig komme i vejen. Der skal dermed kun vises det som publikum skal
-se/høre og intet andet.
-Det virker utroligt amatøragtigt lige så snart publikum ser en cursor, en
-film der maksimeres eller rammerne på et vindue.
+% \begin{center}
+%   {\Huge \textit{ ``Hvad tænkte han dog på?''}}
+% \end{center}
+Den grundliggende filosofi bag systemet er at AV skal kunne komplementere eller understøtte en
+revy uden at komme i vejen. Der skal dermed kun vises det som publikum skal
+se og høre og intet andet.
+Det kan være med til at bryde indlevelsen og virke utroligt amatøragtigt lige så
+snart publikum ser en cursor, en film der maksimeres eller rammerne på et
+vindue. Det er sådanne fejltagelser der hiver folk tilbage til virkeligheden i
+auditoriet fremfor den fiktion man skaber.
+Man skal ikke tænke over at det er AV, men at det er en mega fed revy, folk bør
+således kun lægge mærke til AV når der sker noget ekstraordinært, og
+forhåbentligt ikke på grund af noget der ikke skulle ske.
 
-Det simpleste AVsystem man kan lave er at have en datamat tilkoblet en
+Det simpleste AV-system man kan lave (og som er det de fleste bare ville gøre
+uden at tænke videre) er at have en datamat tilkoblet en
 projektor. Datamaten kan derfra køre et presentationsprogram, f.eks. powerpoint.
 
 \begin{figure}[h!]
@@ -142,10 +412,10 @@ projektor. Datamaten kan derfra køre et presentationsprogram, f.eks. powerpoint
 \end{figure}
 
 Dette er dog ret primitivt.
-Det er utroligt nemt at komme til at lave fejl så som at lige få skubbet
+Det er utroligt nemt at komme til at lave fejl, så som lige at få skubbet
 cursoren hen på et andet desktop eller at filmen spiller på den forkerte skærm.
 Ting der er sket gang på gang til mange revyer, og som hurtigt får publikum til
-at råbe ``TeXniken sejler!''.
+at råbe \textit{``TeXniken sejler!''}.
 
 Derudover har man et problem hvis man skal bruge mere end 1 projektor.
 
@@ -190,18 +460,20 @@ Derudover har man et problem hvis man skal bruge mere end 1 projektor.
 \end{figure}
 
 Man kan enten koble flere projektorer på en datamat, hvilket kræver en datamat
-der er i stand til dette, hvilket ikke særligt mange er.
+der er i stand til dette, hvilket ikke særligt mange er. Og det kan give en
+hovedepine hvis man samtidigt prøver at holde det ``skjult''.
 Alternativt kan man have flere datamater koblet til hver sin projektor.
 Nu skal man så bare navigere rundt mellem en helt masse maskiner eller have en
 AV-mand pr. maskine hvilket heller ikke er særligt praktisk.
 Desuden har vi stadig problemet med at man let kommer til at dumme sig på samme
 måde som i den første opsætning.
 
-Det vi i virkeligheden ønsker os er en abstraktion mellem det at styrre AV og
-det at vise AV. Hvis tingene kører adskilt og har klart definerede ansvars
-områder kommer man ikke lige så let til at lave fejl. Vi ønsker derfor at have
-en central maskine der styrer det hele, denne kommunikerer med andre maskiner
-der sørger for at vise ting via projektorer.
+Det vi i virkeligheden ønsker os er en abstraktion mellem det at \textit{styrre} AV og
+det at \textit{vise} AV. Hvis tingene kører adskilt og har klart definerede
+ansvarsområder kommer man ikke lige så let til at lave fejl.
+Vi ønsker derfor at have en central maskine der styrer det hele, denne
+kommunikerer med andre maskiner der sørger for at vise ting via projektorer.
+
 
 \begin{figure}[h!]
   \centering
@@ -210,8 +482,8 @@ der sørger for at vise ting via projektorer.
       rankdir=TD;
       node [shape=ellipse];
       c [label="Kontrol datamat"];
-      d1 [shape=box, label="Datamat"];
-      d2 [shape=box, label="Datamat"];
+      d1 [shape=box, label="Arbejder Datamat"];
+      d2 [shape=box, label="Arbejder Datamat"];
       p1 [shape=trapezium, label="Projektor"];
       p2 [shape=trapezium, label="Projektor"];
 
@@ -224,27 +496,33 @@ der sørger for at vise ting via projektorer.
   \caption{Central styring, flere arbejdere med hver deres projektor.}
 \end{figure}
 
-Det er dette princip DIKUrevyens AVsystem benytter sig af.\\
+Det er dette princip DIKUrevyens AV-system benytter sig af.
 
-Det første system blev lavet af Troels Henriksen.  Han lavede et
-programmeringssprog \textit{Sindre} i Haskell til at lave grænseflader.  I det
-sprog lavede han et \texttt{dmenu} lignende program kaldet \textit{sinmenu} som
-han brugte som interface. Selve overteksterne bestod af en pdf som han lokalt
-oversatte til rå tekst som blev fodret ind i et script der brugte hans
-grænseflade. Dette script kommunikerede med en server koblet til en projektor
-over en sshforbindelse.  \texttt{Xpdf} kan køres som en server der kan modtage
-kommandoer fra en kommandolinje, på denne måde kunne man derfor styre
-overtekster over ssh.
+\note{Lidt baggrundshistorie for de nørdede.\\
+  Det første hjemmelavede AV-system blev lavet af Troels Henriksen.
+  Han lavede et programmeringssprog \textit{Sindre} i Haskell til at lave
+  grænseflader.  I det sprog lavede han et \texttt{dmenu} lignende program
+  kaldet \textit{sinmenu} som han brugte som interface. Selve overteksterne
+  bestod af en pdf som han lokalt oversatte til rå tekst som blev fodret ind i
+  et script der brugte hans grænseflade. Dette script kommunikerede med en
+  server koblet til en projektor over en sshforbindelse.  \texttt{Xpdf} kan
+  køres som en server der kan modtage kommandoer fra en kommandolinje, på denne
+  måde kunne man derfor styre overtekster over ssh.
 
-Desværre skalerede løsningen ikke særligt godt. Da der begyndte at komme mange
-AVeffekter kunne man ikke både køre overtekster og andet AV alene.
+  Desværre skalerede løsningen ikke særligt godt. Da der begyndte at komme mange
+  AV-effekter kunne man ikke både køre overtekster og andet AV alene.
 
-Dette blev (i hvertfald forsøgt) rettet op på da jeg (Søren Pilgård) efterfølgende begyndte at skrive et nyt
-AVsystem til DIKUrevyen 2012.
-At skrive et AVsystem er dog ikke en nem tjans og det endte med at foregå i en
-løbende process med forbedringer til hver revy.
-
-Det nye AVsystem består af en centralt grænseflade der kan kommunikere med flere
+  Dette blev (i hvertfald forsøgt) rettet op på da jeg (Søren Pilgård) efterfølgende begyndte at skrive et nyt
+  AV-system til DIKUrevyen 2012.
+  At skrive et AV-system er dog ikke en nem tjans og det endte med at foregå i en
+  løbende process med forbedringer til hver revy.
+}
+\newpage
+\note{Herfra skal der skrives om, det er mere en ``se hvad jeg har lavet'' end et
+  ``nødvendigt mindset''
+  \hrule
+}
+DIKUrevyens AV-system består af en central grænseflade der kan kommunikere med flere
 forskellige maskiner der kan vise AV materiale.
 
 Selve grænsefladen er udviklet som en række udvidelser til Emacs.
@@ -285,9 +563,36 @@ at afvikle en revy.
 Dette må være essensen af et godt AV system, når man kun skal tage sig af
 timingen på skuespillerne/sangerne samt disses fejltagelser.
 
-\section{Sådan er man en god AV mand}
+\section{- Guidelines til en AV mand}
+% \label{sec:god-av-mand}
+% \begin{center}
+%   {\Huge \textit{ ``Lyt til mig en gang''}}
+% \end{center}
+
+
 \textit{TODO: Her kommer der til at være en række mere generele råd om hvordan
   man laver god AV}
+
+Det vigtigste man skal huske for at være en god AV-mand, er at have det sjovt!
+Hvis du ikke har det sjovt, bliver det ikke en sjov revy.
+Så lad være med at stresse for meget, ignorerer når de andre sejler og glemmer
+at give dig hvad du skal bruge og hyg dig.
+Hvis du først lader dig blive presset af det hele mister du overblikket og
+kreativiteten, så hellere sige ``Det går nok'' og tage det som det kommer, det
+skal nok blive en revy.
+
+I dette kapitel findes en række råd og guidelines. Hvordan man laver AV er en
+smagssag og afhænger meget af hvad man laver og sammenhængen. AV er således en
+kunst, og selvom det der står her kan lyde som regler, ved enhver kunstner
+hvornår man skal bryde dem. Nogle gange bryder man reglerne for at få tingene
+til at gå op i en højere enhed, andre gange for at lave et helt nyt regelsæt.
+Selvom du måske er anarkist og vil gå din egne veje som AV-mand vil jeg dog
+anbefale dig at læse og forstå hvad der står her.
+
+\note{Husk der er mange måder at lave AV på, det her er nogle af de erfaringer
+  der har virket godt}
+
+\note{Sæt altid højere standarder til dig selv end andre}
 
 \subsection{Om at lave gode overtekster}
 % 6 ord
@@ -310,7 +615,11 @@ timingen på skuespillerne/sangerne samt disses fejltagelser.
 % husk blanke slides
 
 \newpage
-\section{Opsætning af tekniken}
+\section{- Opsætning af tekniken}
+% \begin{center}
+%   {\Huge \textit{ ``Det er faktisk slet ikke så svært''}}
+% \end{center}
+
 Til en standard opsætning ala DIKUrevyens skal du bruge:
 \begin{figure}[h!]
   \centering
@@ -760,8 +1069,43 @@ Man kan se om dpms er slået til ved at kalde \code{xset -q}
 \subsection{Xmonad}
 Windos/super eller alt som modifier knap.
 
-\section{Komandoer}
+\section{- Master}
+% Der sørges automatisk for at det korrekte major mode køres på .tex og .el
+% filer
+\subsection{ubersicht}
+\subsection{ubertex}
+\subsection{Konvertering fra manuskrift til overtekster}
+\section{- Worker}
+\note{Generelt om hvordan en worker virker}
+\section{- Lisp}
+\subsection{Hvordan programmerer man?}
+\subsection{De forskellige lisp dele}
+\section{\LaTeX}
+\section{- Værktøjer}
+\subsection{Schneider}
+\textit{Tysk: Skrædder}
 
+\textbf{Dependencies:}
+\begin{itemize}
+\item Python3
+\item ffmpeg
+\end{itemize}
+
+Schneider er et værktøj til at skære film og billeder op til at kunne blive vist over flere
+projektorer.
+
+Schneider kan på skrivende stund kun dele medier op i flere snit ved siden af
+hinanden og ikke over under. Det burde dog være let at rette til.
+
+\subsection{Zeitherr}
+\textit{Tysk: Timelord}
+Er en bastardiseret udgave af en NTP tidsserver til at holde de forskellige
+maskiner synkroniseret.
+
+\subsection{Zeigen}
+
+
+\note{Externe:}
 \subsection{xpdf}
 Overtekster køres i xpdf der åbnes manuelt med:
 \begin{verbatim}
@@ -789,19 +1133,8 @@ m filnavn
 \subsubsection{Positionering af mplayer}
 \textit{TODO: Noget om positionering af mplayer her}
 
-\section{Konvertering fra manuskrift til overtekster}
-\section{ubertex}
-\section{ubersicht}
-\section{Zeigen}
-Zeigen er et program til at køre andre programmer kaldet ``sketches''.
-\section{Herzog}
 
-\section{furst}
-\section{Hvordan virker koden}
-
-Der sørges automatisk for at det korrekte major mode køres på .tex og .el filer
-
-\section{FAQ}
+\section{- FAQ}
 Ubertex tager ikke højde for pauser i comments, latex gør.
 
 \subsection{\LaTeX{}}
@@ -818,30 +1151,7 @@ filen ligger, sætte shell variablen \texttt{TEXINPUTS} til at indeholde mappen 
 \texttt{overtex.sty} ligger eller kopiere filen ind i
 \texttt{\~{}/texmf/tex/latex/overtex/overtex.sty} hvor den vil være synlig for oversætteren.
 
-\section{Værktøjer}
-\subsection{Schneider}
-\textit{Tysk: Skrædder}
-
-\textbf{Dependencies:}
-\begin{itemize}
-\item Python3
-\item ffmpeg
-\end{itemize}
-
-Schneider er et værktøj til at skære film og billeder op til at kunne blive vist over flere
-projektorer.
-
-Schneider kan på skrivende stund kun dele medier op i flere snit ved siden af
-hinanden og ikke over under. Det burde dog være let at rette til.
-
-\subsection{Zeitherr}
-\textit{Tysk: Timelord}
-Er en bastardiseret udgave af en NTP tidsserver til at holde de forskellige
-maskiner synkroniseret.
-
-\subsection{Zeigen}
-
-\section{Problemer/løsninger}
+\section{- Problemer/løsninger}
 \subsection{Der er lag/forsinkelser}
 Lag er irriterende, det opleves primært som en forsinkelse fra man har trykket
 på knappen til der sker noget på projektoren. Det er et problem når man skal
@@ -876,8 +1186,16 @@ overteksterne og ikke nødvendigvis størrelsen af pdfen.
 Jeg ved ikke helt hvordan dette skal løses.
 Det er en af grundene til at vi vil lave vores egen fremviser (Zeigen).
 
+
+\section{- Eksempler}
+\note{Med screenshots og eksempler, både på brug af program og effekter
+  Se det som hvad jeg ville vise til et AV-føl
+  Videosekvens på skrift/billede
+}
+
 \appendix
 \section{En guide til Linux}
+\label{linux_guide}
 % Sådan bruger du en terminal
 \textbf{cd}
 \textbf{ls}
@@ -888,19 +1206,157 @@ Det er en af grundene til at vi vil lave vores egen fremviser (Zeigen).
 \textbf{ssh}
 \textbf{nano}
 
-\section{Installation af Arch Linux}
+hvad er /dev/sdX og /dev/sdX1,2,3 osv?
+hvordan fungerer IP'er?
+
+xmonad
+nævn
 \begin{verbatim}
-loadkeys colemak
-ip link show
-ip link set enpXsX up
-ip route add default via 192.168.0.XXX
-echo nameserver 8.8.8.8 > /etc/resolv.conf
+xmonad --recompile
+xmonad --restart
+\end{verbatim}
+\newpage
+\section{Installation af Arch Linux}
+Dette appendix gennemgår installationen af Arch Linux fra bunden.
+Arch Linux er en såkaldt ``Rolling release'' distribution af linux, den er ikke
+specielt begynder venlig, men gør hvad man beder den om, hverken mere eller
+mindre.
+
+Dette afsnit er ikke et du skal bruge normalt som AV-mand, men dokumenterer
+processen om at sætte systemet op fra bunden af, normalt vil der forhåbentligt
+være nogle allerede fungerende installationer du kan låne.
+
+Guiden er baseret på
+\url{https://wiki.archlinux.org/index.php/Installation_guide} og\\
+\url{https://wiki.archlinux.org/index.php/Beginners'_guide}, og antager at du
+har styr på linux, se evt. Appendix \ref{linux_guide}.
+\note{\url{http://www.muktware.io/arch-linux-guide-the-always-up-to-date-arch-linux-tutorial/} \url{http://www.dedoimedo.com/computers/grub-2.html}}
+Husk at der er ``auto completion'' på tab-knappen.
+
+\subsection{Live USB}
+Først downloades \texttt{.torrent} filen fra
+\url{https://www.archlinux.org/download/} og åbnes med dit yndlings torrent
+program, f.eks. \texttt{rtorrent}.
+
+Når \texttt{.iso} filen er hentet kan denne brændes til et usbstick.
+\url{https://wiki.archlinux.org/index.php/USB_flash_installation_media}
+
+For at lave en live USB fra et allerede eksisterende linux system sættes USB'en
+i, uden at mounte den (eller unmount den).
+
+Følgende kommando sletter alt på usbsticket og laver et live USB
+\begin{verbatim}
+sudo dd bs=4M if=/path/to/archlinux.iso of=/dev/sdX status=progress && sync
 \end{verbatim}
 
+Hvor \texttt{/path/to/archlinux.iso} er stien til \texttt{.iso} filen.
+\texttt{/dev/sd}\textbf{X} er stedet hvor USB'en findes, f.eks. /dev/sdb, bemærk
+at det er uden partitionen, så IKKE \texttt{/dev/sdb1}.
+
+Sæt nu USBen i maskinen der skal installeres, og start op fra USB'en.
+
+\begin{mdframed}[style=boxy]
+For at gendanne Live USBsticket til et ``normalt'' USB stick
+\begin{verbatim}
+dd count=1 bs=512 if/dev/zero of=/dev/sdX && sync
+cfdisk /dev/sdX
+\end{verbatim}
+
+Hvis filsystemet Ext4 ønskes:
+\begin{verbatim}
+mkfs.ext4 /dev/sdX1
+e2label /dev/sdX1 USB_STICK
+\end{verbatim}
+Eller for et klassisk Windows Fat32 system
+\begin{verbatim}
+mkfs.vfat -F32 /dev/sdX1
+dosfslabel /dev/sdX1 USB_STICK
+\end{verbatim}
+
+For at lave et Fat32 system kræver det at \texttt{dosfstools} er installeret.
+cfdisk bruges til at lave en partition på USB'en, som findes bå
+\texttt{/dev/sdX1}, \texttt{USB\_STICK} er navnet der ønskes på USB'sticket.
+\end{mdframed}
+
+\subsection{Installation af styresystem}
+
+Hvis man ønsker et andet tastatur layout det gøres med f.eks.
+\code{loadkeys colemak} hvis man ønsker at slå bip-lyden fra kan man gøre det
+med \code{rmmod pcspkr}
+
+\begin{verbatim}
+timedatectl status
+\end{verbatim}
+Vær sikker på at tiden er indstillet korrekt, ovenstående skal sige
+at \textbf{Universal time} er korrekt, din lokale tidszone kan indstilles senere.
+Hvis tiden ikke passer ændres den i BIOS'en inden boot.
+\note{Brug ntp? \code{timedatectl set-ntp true}}
+
+
+\subsubsection{Opret forbindelse til internettet}
+Hvis det er et helt almindeligt trådet netværk virker det muligvis uden
+problemmer
+Hvis maskinen er på et seperat netværk uden internet, men med en gateway som
+brugt til den normalle revyopsætning gøres følgende:
+\begin{verbatim}
+ip link show
+ip link set enpXsX up
+ip addr add 192.168.0.XXX/24 dev enpXsX
+ip route add default via 192.168.0.YYY
+echo nameserver 8.8.8.8 > /etc/resolv.conf
+\end{verbatim}
+\texttt{XXX} er ip'en til maskinen, \texttt{YYY} er ip'en til gateway'en
+\note{Henvis til gateway}
+
+Hvis det er et almindeligt trådløst netværk benyttes \code{wifi-menu} eller
+\texttt{wpa\_supplicant} for mere avancerede opsætninger
+
+Test om der er internet:
 \begin{verbatim}
 ping google.com
 \end{verbatim}
 \textit{tryk Ctrl-c for at stoppe.}
+
+\newpage
+\subsubsection{Opret partitioner}
+Hele situationen omkring UEFI vs. BIOS, GPT vs. MBR, kombineret med bootloaderen
+(grub) og hardwareunderstøttelse er noget gøjl.
+Det er et virvar af forskellige systemer der ikke altid har lyst til at
+samarbejde, ikke fortæller hvorfor det ikke virker, og mangler dokumentation om
+hvordan man får det til at virke.
+I en periode, da det hele var nyt, og denne guide blev skrevet i første omgang,
+var dokumentationen nærmest ikke eksisterende og meget af det her er opdaget ved
+manuel afprøvning.
+
+De næste par afsnit handler om forskellige måder jeg har prøvet at sætte
+systemer op på.
+Oprindeligt brugte jeg GPT-BIOS, da det var hvad jeg endelig fik til at virke,
+men prøv dig frem.
+
+\subsubsection{Opret partitioner (MBR-BIOS)}
+\begin{verbatim}
+fdisk /dev/sda
+\end{verbatim}
+med \code{parted -l /dev/sda} kan man se om det er GPT eller ej (også kaldet msdos)
+tryk \texttt{o} for at skifte type til MBR.
+Lav en swap partition og root + evt. home partition
+sæt resten op som et GPT-BIOS system
+\subsubsection{Opret partitioner (GPT-BIOS)}
+Følgende beskriver hvordan jeg plejer/plejede at oprette partitioner, se det
+alternative afsnit \ref{gpt_uefi} hvis et UEFI system ønskes.
+Jeg tivler på at dette er den korrekte måde at gøre det på, men det virker på
+ældre maskiner.
+
+\code{lsblk} viser alle partitioner på alle diske, alternativt brug \code{fdisk -l}
+
+\note{Følgende sletter alt indhold på harddisken og alle eksisterende partitioner}
+
+\begin{mdframed}[style=boxy]
+  Man kan slette alt indholdet på en disk med
+\begin{verbatim}
+sgdisk --zap-all /dev/sdX
+\end{verbatim}
+\end{mdframed}
 
 \begin{verbatim}
 cgdisk /dev/sdX
@@ -908,24 +1364,25 @@ cgdisk /dev/sdX
 
 Formententligt \texttt{sd\textbf{a}}
 
-Tryk enter.
+Tryk enter. (til alt ``brok'')
 
 \texttt{Delete} alle partitoner.
 
 \textbf{Lav plads til GPT partition}
-\textit{Dette giver plads ti en partions tabel til grub}\
+\textit{Dette giver plads til en partions tabel til grub}\
 \begin{enumerate}
 \item \texttt{New}
 \item Tryk enter, first sector skal bare  være default.
-\item \texttt{1007KiB} enter
+\item \texttt{1M} enter \textit{ - tidligere 1007KiB}
 \item \texttt{ef02} enter
 \item Tryk enter, der behøver ikke at være et navn
 \end{enumerate}
 
 \textbf{Lav swap}
-\textit{Dette er næppe nødvendigt, men jeg laver den af gammel vane}
+\textit{Dette er næppe nødvendigt, men jeg laver den af gammel vane. Alternativt
+kunne man lave en swap fil, men en partion er simplest}
 \begin{enumerate}
-\item Tryk ned.
+\item Tryk ned. (til det store område med free space.)
 \item \texttt{New}
 \item Tryk enter, default er fint, formententligt 2048.
 \item \texttt{3G} mindre swap kan også vælges (eller udelades).
@@ -934,6 +1391,8 @@ Tryk enter.
 \end{enumerate}
 
 \textbf{Lav en partition}
+Hvis flere seperate partitioner ønskes, f.eks. opdelt \texttt{/} og
+\texttt{/home} oprettes de her.
 \begin{enumerate}
 \item Tryk ned.
 \item \texttt{New}
@@ -943,23 +1402,25 @@ Tryk enter.
 \item enter
 \end{enumerate}
 
-Vælg \texttt{Write}, skriv \texttt{yes}.
-Nu kan der stå at den gamle partitionstabel stadig er i brug.
-Afslut, genstart og udfør alle trinene inden \texttt{cgdisk} igen.
+Vælg \texttt{Write}, skriv \texttt{yes}, og afslut.
 
-Når du er klar igen skal vi lave nogle filsystemer.
+Nu kan der stå at den gamle partitionstabel stadig er i brug. I så fald genstart og udfør alle trinene inden \texttt{cgdisk} igen.
+
+Når du er klar skal vi så lave nogle filsystemer.
+For at få overblik over partitionerne:
 \begin{verbatim}
 lsblk
 \end{verbatim}
-For at få overblik
 
 \begin{verbatim}
 mkfs.ext4 /dev/sda3
 mkswap /dev/sda2
 swapon /dev/sda2
 \end{verbatim}
+(Hvis flere partioner blev oprettet til home og root, så gentag øverste linje
+for disse partioner)
 
-Ignorer sda1 indtil videre.
+Ignorer \texttt{sda1} indtil videre.
 
 \begin{verbatim}
 mount /dev/sda3 /mnt
@@ -969,9 +1430,103 @@ Hvis du skulle have lavet en seperat partition til home så lav en mappe
 \code{mkdir /mnt/home} og mount home partitionen der \code{mount /dev/sdaX
   /mnt/home}.
 
+\newpage
+\subsubsection{(GPT-UEFI)}
+\label{gpt_uefi}
+Dette er en lidt simplere gennemgang af at sætte et GPT-UEFI system op.
+Dette er den nye måde at gøre tingene på som understøttes af moderne hardware.
+
+\code{lsblk} viser alle partitioner på alle diske, alternativt brug \code{fdisk -l}
+
+\note{Følgende sletter alt indhold på harddisken og alle eksisterende partitioner}
+
+\begin{mdframed}[style=boxy]
+  Man kan slette alt indholdet på en disk med
+\begin{verbatim}
+sgdisk --zap-all /dev/sdX
+\end{verbatim}
+\end{mdframed}
+
+\begin{verbatim}
+cgdisk /dev/sdX
+\end{verbatim}
+
+Formententligt \texttt{sd\textbf{a}}
+
+Tryk enter. (til alt ``brok'')
+
+\texttt{Delete} alle partitoner.
+
+\textbf{Lav plads til GPT partition}
+\textit{Dette giver plads til en EFI partitionstabel}\
+\begin{enumerate}
+\item \texttt{New}
+\item Tryk enter, first sector skal bare  være default.
+\item \texttt{512M} enter
+\item \texttt{ef00} enter
+\item Tryk enter, der behøver ikke at være et navn
+\end{enumerate}
+
+\textbf{Lav swap}
+\textit{Dette er næppe nødvendigt, men jeg laver den af gammel vane. Alternativt
+  kunne man lave en swap fil, men en partion er simplest}
+\begin{enumerate}
+\item Tryk ned. (til det store område med free space.)
+\item \texttt{New}
+\item Tryk enter, default er fint, formententligt 2048.
+\item \texttt{3G} mindre swap kan også vælges (eller udelades).
+\item \texttt{8200} swap Hex koden.
+\item tryk enter.
+\end{enumerate}
+
+\textbf{Lav en partition}
+Hvis flere seperate partitioner ønskes, f.eks. opdelt \texttt{/} og
+\texttt{/home} oprettes de her.
+\begin{enumerate}
+\item Tryk ned.
+\item \texttt{New}
+\item enter
+\item enter
+\item enter
+\item enter
+\end{enumerate}
+
+Vælg \texttt{Write}, skriv \texttt{yes}, og afslut.
+
+Nu kan der stå at den gamle partitionstabel stadig er i brug. I så fald genstart og udfør alle trinene inden \texttt{cgdisk} igen.
+
+Når du er klar skal vi så lave nogle filsystemer.
+For at få overblik over partitionerne:
+\begin{verbatim}
+lsblk
+\end{verbatim}
+
+\begin{verbatim}
+mkfs.fat -F32 /dev/sda1
+mkfs.ext4 /dev/sda3
+mkswap /dev/sda2
+swapon /dev/sda2
+\end{verbatim}
+(Hvis flere partioner blev oprettet til home og root, så gentag øverste linje
+for disse partioner)
+
+\begin{verbatim}
+mount /dev/sda3 /mnt
+mkdir /mnt/boot
+mount /dev/sda1 /mnt/boot
+\end{verbatim}
+
+Hvis du skulle have lavet en seperat partition til home så lav en mappe
+\code{mkdir /mnt/home} og mount home partitionen der \code{mount /dev/sdaX
+  /mnt/home}.
+
+Du kan bruge \code{lsblk} til at få overblik over partitionerne, og hvor
+de er mounted.
+\newpage
+\subsubsection{Installation}
 Sørg for at være på nettet da vi nu skal hente pakker ned til styresystemet.
 \begin{verbatim}
-pacstrap -i /mnt base
+pacstrap -i /mnt base base-devel
 \end{verbatim}
 Tryk enter til spørgsmål.
 
@@ -982,6 +1537,7 @@ nano /etc/locale.gen
 \end{verbatim}
 
 Fjern kommenteringen til linjerne \textit{\#da\_DK.UTF-8 UTF-8} og\textit{\#en\_US.UTF-8 UTF-8}
+\note{Henvis til brug af nano}
 
 \begin{verbatim}
 locale-gen
@@ -993,22 +1549,87 @@ echo XXX > /etc/hostname
 \end{verbatim}
 hvor XXX er navnet til maskinen
 
+\note{Hvis du hellere vil arbejde med at netværksinterfacene hedder
+  \texttt{eth0} osv. istedet for enpXsX:
+  \code{touch /etc/udev/rules.d/80-net-setup-link.rules}}
+
+\note{?}
+\begin{mdframed}[style=note]\textbf{kopieret fra noter:}
+Brug netctl til automatisk at gå på netværk
+(Ret i hovrdan man bruger deet i resten af dokumentationen)
+\begin{verbatim}
+curl "https://raw/githubusercontent.com/Pilen/ubertex/master/linux/revynet" >
+ /etc/netctl/revynet"
+nano /etc/netctl/revynet
+\end{verbatim}
+Og så skal det gerne matche følgende:
+\begin{mdframed}[style=code]
+  \verbatiminput{linux/revynet}
+\end{mdframed}
+Hvor XXX erstates med den lokale IP, og YYY med gateway'ens.
+
+\begin{verbatim}
+netctl enable revynet
+\end{verbatim}
+Hvis man ændrer i configurationen, f.eks. IP'en:
+\begin{verbatim}
+netctl reanable revynet
+netctl restart revynet
+\end{verbatim}
+\end{mdframed}
+
+Hvis maskinen skal kunne gå på trådløst netværk efterfølgende;
+\begin{verbatim}
+pacman -S iw wpa_supplicant dialog
+\end{verbatim}
+
 \begin{verbatim}
 mkinitcpio -p linux
 \end{verbatim}
 \begin{verbatim}
 passwd
 \end{verbatim}
-Skriv løsn til root.
+Skriv løsn til root (f.eks. \texttt{hamsterroot}).
 
+\note{Du kan med fordel oprette din bruger her}
+\note{Du kan med fordel sætte sudo op her}
+\note{Du kan med fordel installere sshd her}
+
+For et GPT-BIOS system:
 \begin{verbatim}
 pacman -S grub
 grub-install --target=i386-pc --recheck --debug /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
+\end{verbatim}
+For et GPT-UEFI system:
+\begin{verbatim}
+mkdir /boot/efi
+pacman -S grub efibootmgr
+grub-install --target=x86_64-efi --efi-directory=esp --bootloader-id=grub
+grub-mkconfig -o /boot/grub/grub.cfg
+\end{verbatim}
+\note{
+Den vil klage og sige: \texttt{efibootmgr: EFI variables are not supported on
+  this system}, ignorer dette?}
+
+Vi er nu klar til at genstarte op i det nyinstallerede system:
+\begin{verbatim}
 exit
 umount -R /mnt
 shutdown -h now
 \end{verbatim}
+\note{?}
+\begin{mdframed}[style=note]\textbf{Note:}
+  Hvis grub-mkconfig fejler:
+\begin{verbatim}
+nano /etc/default/grub
+...
+...
+#fix broken grub.cfg gen
+GRUB_DISABLE_SUBMENU = y
+\end{verbatim}
+\end{mdframed}
+
 Hiv usbstikket ud.
 
 Tænd datamaten igen.
@@ -1016,6 +1637,15 @@ Hvis du som mig til jubilæumsrevyen installerede systemet på en harddisk i en
 anden datamat en dens egen, kan det være at ramdisken fejler, i grub vælges da
 fallback løsningen og du kalder \code{mkinitcpio -p linux} for at skabe et nyt
 korrekt image.
+
+\subsection{Opsætning}
+\subsubsection{Bruger}
+\note{Hvis en bruger og sudo er sat op kan man logge ind som dem, ellers så log
+  ind som root}
+
+Log ind som root
+
+\note{Kom på nettet igen}
 
 \begin{verbatim}
 ip link show
@@ -1030,30 +1660,15 @@ passwd revy
 \end{verbatim}
 Giv revy et løsn.
 
-
+Sudo er allerede installeret via base-devel, du kan læse mere om sudo i Appendix \ref{linux_guide}.
 \begin{verbatim}
-su revy
-nano /home/revy/lan.sh
-\end{verbatim}
-indtast
-\begin{verbatim}
-ip link set enpXsX up;
-ip addr add 192.168.0.XXX/24 dev enpXsX;
-
-ip route add default via 192.168.0.YYY;
-echo nameserver 8.8.8.8 > /etc/resolv.conf;
-\end{verbatim}
-Gem, luk nano og skriv \code{exit}.
-
-\begin{verbatim}
-pacman -S sudo
 visudo
 \end{verbatim}
 Tryk pil ned til du finder linjen
 \begin{verbatim}
 root ALL=(ALL) ALL
 \end{verbatim}
-placer cursoren under denne og tryk \texttt{i}
+placer cursoren under denne og tryk \code{i}
 tast \texttt{revy ALL=(ALL) ALL} tryk enter, tryk escape
 tryk \text{:wq} enter.
 
@@ -1062,6 +1677,8 @@ revy kan nu sudo'e.
 \begin{verbatim}
 pacman -S openssh
 \end{verbatim}
+\note{Det er nu default at \texttt{PermitRootLogin} er sat til \texttt{no}, så
+  det er ikke længere nødvendigt at ændre det i \texttt{/etc/ssh/sshd\_config}}
 \begin{verbatim}
 systemctl enable sshd.service
 systemctl start sshd
@@ -1069,35 +1686,75 @@ systemctl start sshd
 Nu kan vi ssh'e ind fra vores lokale maskine \code{ssh revy@192.168.0.XXX}.
 \textit{Læs evt. afsnittet om ssh-nøgler.}
 
-Nu kan vi vælge at køre ting via ssh forbindelse.
+Nu kan vi vælge at køre kommandoerne via en ssh forbindelse.
+Du kan også genstarte og logge ind som almindelig bruger istedet, flere af
+kommandoerne kræver da sudo.
 
-
-Nu skal vi installere pakker
+\subsubsection{Grafisk system}
+Nu skal vi installere et grafisk interface
 \begin{verbatim}
 pacman -S xorg-server xorg-server-utils xorg-xinit
 \end{verbatim}
+Den spørger nu hvilken udbyder af \texttt{libgl} der ønskes, default (1
+mesa-libgl) er formententligt et fint valg (medmindre andet ønskes). (tryk 1
+efterfulgt af enter)
 
-Der skal formententligt installeres nogle grafik drivere, følgende er nogle
-udemærkede open source standard drivere
+Den spørger så om hilken udbyder af \texttt{xf86-input-driver} der ønskes,
+1: \texttt{evdev} eller 2: \texttt{libinput}. Libinput er et nyere wayland projekt der
+også virker til xorg. Begge er tilsyneladende fine, jeg valgte evdev da det er
+det ``klassiske'' valg.
 
+Der skal formententligt installeres nogle grafik drivere, læs mere her \url{https://wiki.archlinux.org/index.php/Xorg#Driver_installation}
+\texttt{fbdev} og \texttt{vesa} er nogle udemærkede open source fallback drivere hvis
+ikke der findes et grafikkort (bemærk at det fører til software rendering).
+Hvis det er et intel kort, er intel driveren et godt bud, for nvidia er nouveau
+driverne et godt open source bud
+
+\note{mesa og mesa-libgl er installeret af xorg-server}
 \begin{verbatim}
-pacman -S mesa xf86-video-vesa
+pacman -S xf86-video-fbdev xf86-video-vesa xf86-video-intel
+\end{verbatim}
+Derudover er det en god idé med Hardware video acceleration
+\begin{verbatim}
+pacman -S libav-intel-driver libav-mesa-driver
 \end{verbatim}
 
-Der kan kun køre én instans af pacman af gangen.
-Så sæt ham til at arbejde mens vi i en anden terminal begynder at konfigurere.
+% Der kan kun køre én instans af pacman af gangen.
+% Så sæt ham til at arbejde mens vi i en anden terminal begynder at konfigurere.
+Som windowmanager bruger vi xmonad, en simpel ``tiling'' windowmanager med
+minimale vinduesdekorationer, kan styres med tastaturet og fordi jeg kender den.
+Se Appendix \ref{linux_guide} for mere om brugen.
+
 \begin{verbatim}
-pacman -S xmonad xmonad-cotrib alsa-utils rxvt-unicode feh mplayer ttf-dejavu
+pacman -S xmonad xmonad-cotrib
 \end{verbatim}
 
-I en terminal anden åbner du \texttt{.xinitrc} og skriver aller nederst:
+Vi skal oprette en \texttt{.xinitrc}, den kan hentes sådan
 \begin{verbatim}
-exec xmonad
+curl "https://raw/githubusercontent.com/Pilen/ubertex/master/linux/.xinitrc" > .xinitrc
+chown revy:revy .xinitrc
+nano .xinitrc
+\end{verbatim}
+Indholdet skal da være:
+\begin{mdframed}[style=code]
+  \verbatiminput{linux/.xinitrc}
+\end{mdframed}
+Den usynlige cursor hentes med:
+\begin{verbatim}
+curl "https://raw/githubusercontent.com/Pilen/ubertex/master/linux/.emptycursor.xbm" > .emptycursor.xbm
 \end{verbatim}
 
-Åben så \texttt{lan.sh} og i bunden tilføjer du
 \begin{verbatim}
-xset -dpms; xset s off
+mkdir .xmonad
+curl "https://raw/githubusercontent.com/Pilen/ubertex/master/linux/xmonad.hs" > .xmonad/xmonad.hs
+chown -R revy:revy .xmonad
+\end{verbatim}
+\begin{mdframed}[style=code]
+  \verbatiminput{linux/xmonad.hs}
+\end{mdframed}
+\note{Skal borderWidth være 0?}
+\begin{verbatim}
+xmonad --recompile
 \end{verbatim}
 
 Åben \texttt{.bashrc} og tilføj i bunden:
@@ -1106,9 +1763,28 @@ if [[ -z $DISPLAY && $(tty) = /dev/tty1 ]]; then
     exec startx
 fi
 \end{verbatim}
-Du kan evt. også tilføje følgende alias:
+Du kan evt. også tilføje følgende alias over linjerne:
 \begin{verbatim}
 alias d='export DISPLAY=:0'
+\end{verbatim}
+
+For at systemet automatisk kan logge ind ved opstart kan man gøre følgende
+\begin{verbatim}
+curl "https://raw/githubusercontent.com/Pilen/ubertex/master/linux/autologin.conf" > /etc/systemd/system/getty@tty1.service.d/autologin.conf
+nano /etc/systemd/system/getty@tty1.service.d/autologin.conf
+\end{verbatim}
+indhold af \texttt{autologin.conf}:
+\begin{mdframed}[style=code]
+  \verbatiminput{linux/autologin.conf}
+\end{mdframed}
+\note{I noterne står det som \code{curl
+    "https://raw/githubusercontent.com/Pilen/ubertex/master/linux/autologin.conf"
+    | sudo tee /etc/systemd/system/getty@tty1.service.d/autologin.conf}
+  Outputet fra curl kan skjule forespørgslen efter løsen, så hvis den hænger er
+  det nok derfor}
+\subsubsection{Pakker}
+\begin{verbatim}
+pacman -S alsa-utils rxvt-unicode dmenu xdotool feh mplayer ttf-dejavu screen htop rsync mupdf
 \end{verbatim}
 
 \section{Stripped Emacs}
@@ -1179,5 +1855,10 @@ python-poppler-qt4?
 
 mupdf er et mere minimalistisk/optimeret alternativ til xpdf's poppler.
 har mudraw der kan rendere til png.
+
+% \section{Elisp kode}
+% \includepdf[pages=-]{elisp-source.pdf}
+% \section{C kode}
+% \includepdf[pages=-]{c-source.pdf}
 
 \end{document}
