@@ -43,7 +43,7 @@ void loop_loop(Environment *environment) {
 
         if (mutex_trylock(communication_parsed_queue_lock)) {
             if (communication_parsed_queue -> length > 0){
-                Value expression = list_pop_front(communication_parsed_queue);
+                Value expression = vector_pop_front(communication_parsed_queue);
                 mutex_unlock(communication_parsed_queue_lock);
                 loop_blank = false;
                 print_on(log_output, expression); printf("\n");

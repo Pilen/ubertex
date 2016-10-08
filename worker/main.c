@@ -11,7 +11,7 @@
 #include "options.h"
 #include "initialize.h"
 #include "read.h"
-#include "list.h"
+#include "vector.h"
 #include "eval.h"
 #include "print.h"
 #include "environment.h"
@@ -26,7 +26,7 @@
 int main(int argc, char **argv) {
     Environment *environment = initialize();
 
-    List *statements = list_create_empty();
+    Vector *statements = vector_create_empty();
 
     Bool interactive = false;
     Bool test_only = false;
@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
         }
         case 'e': { // Eval expression
             Value statement = VALUE_STRING(string_create_from_str(optarg));
-            list_push_back(statements, statement);
+            vector_push_back(statements, statement);
             break;
         }
         case 'h': // Hostname
@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
     log_level = log_level_execution;
 
     for (Unt i = 0; i < statements -> length; i++) {
-        Value raw = LIST_GET_UNSAFE(statements, i);
+        Value raw = VECTOR_GET_UNSAFE(statements, i);
         Value statement = read_value(raw);
         log_section("====EVALUATION====");
         Value result = eval(statement, environment);

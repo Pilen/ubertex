@@ -4,7 +4,7 @@
 
 #include "print.h"
 #include "string.h"
-#include "list.h"
+#include "vector.h"
 #include "symbol.h"
 
 void print(Value value) {
@@ -35,14 +35,14 @@ void print_on(FILE *stream, Value value) {
     case STRING:
         fprintf(stream, "\"%s\"", value.val.string_val -> text);
         break;
-    case LIST:
+    case VECTOR:
         fprintf(stream, "(");
-        if (value.val.list_val -> length >= 1) {
-            print_on(stream, LIST_GET_UNSAFE(value.val.list_val, 0));
+        if (value.val.vector_val -> length >= 1) {
+            print_on(stream, VECTOR_GET_UNSAFE(value.val.vector_val, 0));
         }
-        for (Unt i = 1; i < value.val.list_val -> length; i++) {
+        for (Unt i = 1; i < value.val.vector_val -> length; i++) {
             fprintf(stream, " ");
-            print_on(stream, LIST_GET_UNSAFE(value.val.list_val, i));
+            print_on(stream, VECTOR_GET_UNSAFE(value.val.vector_val, i));
         }
         fprintf(stream, ")");
         break;

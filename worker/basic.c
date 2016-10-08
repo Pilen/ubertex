@@ -1,7 +1,7 @@
 #include "debug.h"
 
 #include "basic.h"
-#include "list.h"
+#include "vector.h"
 #include "string.h"
 #include "assert.h"
 #include "image.h"
@@ -47,20 +47,20 @@ Bool equal(Value a, Value b) {
             /* } */
         }
         return true;
-    case LIST:
+    case VECTOR:
         {
-            List *a_list = a.val.list_val;
-            List *b_list = b.val.list_val;
-            if (a_list == b_list) {
+            Vector *a_vector = a.val.vector_val;
+            Vector *b_vector = b.val.vector_val;
+            if (a_vector == b_vector) {
                 return true;
             }
-            if (a_list -> length != b_list -> length) {
+            if (a_vector -> length != b_vector -> length) {
                 return false;
             }
             /* Compare each element recursively */
-            for (int i = 0; i < a_list -> length; i++) {
-                if (!equal(LIST_GET_UNSAFE(a_list, i),
-                           LIST_GET_UNSAFE(b_list, i))) {
+            for (int i = 0; i < a_vector -> length; i++) {
+                if (!equal(VECTOR_GET_UNSAFE(a_vector, i),
+                           VECTOR_GET_UNSAFE(b_vector, i))) {
                     return false;
                 }
 
@@ -101,8 +101,8 @@ Bool eq(Value a, Value b) {
     case FLOAT:
         return a.val.float_val == b.val.float_val;
     case STRING:
-        return a.val.string_val == b.val.string_val;
-    case LIST:
+        return a.val.vector_val == b.val.vector_val;
+    case VECTOR:
         return a.val.string_val == b.val.string_val;
     case HASH:
         return a.val.hash_val == b.val.hash_val;
@@ -115,15 +115,15 @@ Bool eq(Value a, Value b) {
 Value copy_deep(Value value) {
     //TODO: implement
     switch (value.type) {
-    case LIST:
+    case VECTOR:
         {
-            List *old_list = value.val.list_val;
-            List *new_list = list_create(old_list -> size);
-            for (Unt i = 0; i < old_list -> length; i++) {
-                Value copied = copy_deep(LIST_GET_UNSAFE(old_list, i));
-                list_push_back(new_list, copied);
+            Vector *old_vector = value.val.vector_val;
+            Vector *new_vector = vector_create(old_vector -> size);
+            for (Unt i = 0; i < old_vector -> length; i++) {
+                Value copied = copy_deep(VECTOR_GET_UNSAFE(old_vector, i));
+                vector_push_back(new_vector, copied);
             }
-            return VALUE_LIST(new_list);
+            return VALUE_VECTOR(new_vector);
         }
         /* Immutable */
     case ERROR:

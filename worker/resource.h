@@ -8,7 +8,7 @@ size_t resource_size_threshold;
 
 Hash *resource_cache;
 Lock_RW *resource_cache_lock;
-List *resource_list; /* The resource_cache_lock must be held while using this */
+Vector *resource_vector; /* The resource_cache_lock must be held while using this */
 size_t resource_total_size;
 
 void resource_initialize(void);

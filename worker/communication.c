@@ -23,7 +23,7 @@ void communication_initialize(Unt port) {
     SDLNet_Init();
     atexit(SDLNet_Quit);
 
-    communication_parsed_queue = list_create_empty();
+    communication_parsed_queue = vector_create_empty();
     communication_parsed_queue_lock = mutex_create();
 
     IPaddress ip;
@@ -150,9 +150,9 @@ void communication_receive(TCPsocket socket) {
         w_assert(false);
     } else if (strcmp(command, "abort") == 0) {
         mutex_lock(communication_parsed_queue_lock);
-        /* list_clear(communication_parsed_queue); */
+        /* vector_clear(communication_parsed_queue); */
         while (communication_parsed_queue -> length > 0) {
-            (void) list_pop_back(communication_parsed_queue);
+            (void) vector_pop_back(communication_parsed_queue);
         }
         mutex_unlock(communication_parsed_queue_lock);
         log_info("Abort");
@@ -202,7 +202,7 @@ void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
 
     Value parsed = read_from_str(body);
     mutex_lock(communication_parsed_queue_lock);
-    list_push_front(communication_parsed_queue, parsed);
+    vector_push_front(communication_parsed_queue, parsed);
     mutex_unlock(communication_parsed_queue_lock);
 
 }

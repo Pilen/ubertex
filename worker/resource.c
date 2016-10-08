@@ -4,7 +4,7 @@
 #include "types.h"
 #include "resource.h"
 #include "hash.h"
-#include "list.h"
+#include "vector.h"
 #include "string.h"
 #include "environment.h"
 #include "assert.h"
@@ -22,7 +22,7 @@ Int resource_comparison(const void *a, const void *b);
 void resource_initialize(void) {
     resource_cache = hash_create();
     resource_cache_lock = lock_rw_create();
-    resource_list = list_create_empty();
+    resource_vector = vector_create_empty();
     resource_total_size = 0;
     size_t available = memory_estimate_available();
     resource_size_threshold = available * (OPTION_RESOURCE_PERCENTAGE / 100.0);
@@ -64,7 +64,7 @@ Value resource_get(Environment *environment, Value skeleton) {
         if (found) {
             resource = skeleton;
             hash_set(resource_cache, skeleton, resource);
-            list_push_back(resource_list, resource);
+            vector_push_back(resource_vector, resource);
         }
     }
     lock_write_unlock(resource_cache_lock);
@@ -95,7 +95,7 @@ Bool resource_create(Environment *environment, Value resource) {
 
 Unt resource_destroy(Value resource) {
     Unt size;
-    /* w_assert(resource not in resource_list); */
+    /* w_assert(resource not in resource_vector); */
     lock_write_lock(resource_cache_lock);
     hash_delete(resource_cache, resource);
     switch (resource.type) {
@@ -140,14 +140,14 @@ Unt resource_shrink_cache(void) {
         return 0;
     }
 
-    list_normalize(resource_list);
-    qsort(resource_list -> data,
-          resource_list -> length,
+    vector_normalize(resource_vector);
+    qsort(resource_vector -> data,
+          resource_vector -> length,
           sizeof(Value),
           resource_comparison);
     Unt cleared = 0;
-    while (resource_list -> length > 0 && resource_total_size >= resource_size_threshold) {
-        Value resource = list_pop_front(resource_list);
+    while (resource_vector -> length > 0 && resource_total_size >= resource_size_threshold) {
+        Value resource = vector_pop_front(resource_vector);
         if (resource.type == SOUNDSAMPLE) {
             if (resource.val.soundsample_val -> current == 0) {
                 cleared += resource_destroy(resource);
@@ -183,14 +183,14 @@ Unt resource_flush_dirty_cache(void) {
     lock_write_lock(resource_cache_lock);
 
     Unt cleared = 0;
-    List *old_resource_list = resource_list;
-    resource_list = list_create_empty();
+    Vector *old_resource_vector = resource_vector;
+    resource_vector = vector_create_empty();
     int64_t unixtime = (uint64_t) time(NULL);
     Unt current_time = SDL_GetTicks();
     int64_t started = unixtime - (current_time / 1000);
-    while (old_resource_list -> length > 0) {
+    while (old_resource_vector -> length > 0) {
         struct stat file_stat;
-        Value resource = list_pop_front(old_resource_list);
+        Value resource = vector_pop_front(old_resource_vector);
         Int found;
         int64_t modified;
         char *filename;
@@ -202,17 +202,17 @@ Unt resource_flush_dirty_cache(void) {
             if (found != 0) {
                 log_error("File is gone");
                 /* Keep the current */
-                list_push_back(resource_list, resource);
+                vector_push_back(resource_vector, resource);
                 break;
             }
             modified = file_stat.st_mtime;
             if (modified + OPTION_RESOURCE_MODIFICATION_BLEED > started + resource.val.image_val -> created) {
                 /* Resource is dirty */
-                /* Dont push into new resource_list */
+                /* Dont push into new resource_vector */
                 hash_delete(resource_cache, resource);
                 cleared += resource_destroy(resource);
             } else {
-                list_push_back(resource_list, resource);
+                vector_push_back(resource_vector, resource);
             }
         default:
             /* Catch missing */

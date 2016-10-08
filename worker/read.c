@@ -135,7 +135,11 @@ Bool read_munch_comment(char **code, char *end, Unt *linenumber) {
         return false;
     }
     p++;
-    while (p < end && !read_char_exists_in(*p, "\n\r\f")) {
+    while (p < end) {
+        if (read_char_exists_in(*p, "\n\r\f")) {
+            (*linenumber)++;
+            break;
+        }
         p++;
     }
     *code = p;

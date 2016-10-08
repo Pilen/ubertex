@@ -26,7 +26,7 @@ typedef enum {
     INTEGER,
     FLOAT,
     STRING,
-    LIST,
+    VECTOR,
     HASH,
     FUNCTION,
     COLOR,
@@ -49,7 +49,7 @@ typedef enum {
 #define VALUE_INTEGER(val) ((Value) {INTEGER, {.integer_val = val}})
 #define VALUE_FLOAT(val) ((Value) {FLOAT, {.float_val = val}})
 #define VALUE_STRING(val) ((Value) {STRING, {.string_val = val}})
-#define VALUE_LIST(val) ((Value) {LIST, {.list_val = val}})
+#define VALUE_VECTOR(val) ((Value) {VECTOR, {.vector_val = val}})
 #define VALUE_HASH(val) ((Value) {HASH, {.hash_val = val}})
 #define VALUE_FUNCTION(val) ((Value) {FUNCTION, {.function_val = val}})
 #define VALUE_COLOR(val) ((Value) {COLOR, {.color_val = val}})
@@ -63,7 +63,7 @@ typedef enum {
 #define NUM_VAL(v) ((Double) (((v).type == INTEGER) ? (v).val.integer_val : ((v).type == FLOAT) ? (v).val.float_val : NAN))
 
 /* Actual datatype declarations */
-typedef struct List_s List;
+typedef struct Vector_s Vector;
 typedef struct String_s String;
 typedef struct Hash_s Hash;
 typedef struct Function_s Function;
@@ -83,7 +83,7 @@ typedef struct {
         Int integer_val;
         Double float_val;
         String *string_val;
-        List *list_val;
+        Vector *vector_val;
         Hash *hash_val;
         Function *function_val;
         Color *color_val;
