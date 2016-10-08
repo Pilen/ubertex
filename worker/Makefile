@@ -81,7 +81,10 @@ clean:
 linecount:
 	echo -n "linecount: " && cat *.c *.h */*.c */*.h */*.py */*.zlt | wc -l
 
-.PHONY: all clean linecount
+release:
+	gcc $(CFLAGS) $(LFLAGS) $(SRC) -UDEBUG -UOPTION_DEBUG -g0 -O3 -o worker
+
+.PHONY: all clean linecount release
 
 -include .dummy
 .dummy: Makefile
