@@ -25,7 +25,7 @@ uniform interface."
 
             (define-key revy-mode-map (kbd "<XF86Launch1>") 'revy-abort-all)
             (define-key revy-mode-map (kbd "<f10>") 'revy-ubermenu)
-            (define-key revy-mode-map (kbd "<f10>") (lambda () (interactive) (save-buffer) (revy-compile-tex) (revy-upload-files-sync) (revy-ubertex-mode)))
+            ;; (define-key revy-mode-map (kbd "<f10>") (lambda () (interactive) (save-buffer) (revy-compile-tex) (revy-upload-files-sync) (revy-ubertex-mode)))
             revy-mode-map))
 
 (setq revy-uberclear? t)
@@ -95,18 +95,20 @@ setting a function in `revy-mode-next-function'"
                (eq revy-mode-next-function 'revy-mode-next-function)))
       (funcall revy-mode-next-function)
 
-    (save-excursion
-      (goto-char (overlay-end revy-local-cursor))
-      (revy-mode-enter))
+    (let ((window (get-buffer-window)))
+      (save-excursion
+        (goto-char (overlay-end revy-local-cursor))
+        (revy-mode-enter))
 
-    (unless (eq (current-buffer)
-                (overlay-buffer revy-cursor))
-      (pop-to-buffer (overlay-buffer revy-cursor)))
+      (unless (eq (current-buffer)
+                  (overlay-buffer revy-cursor))
+        (pop-to-buffer (overlay-buffer revy-cursor)))
 
-    (unless (null revy-follow-cursor)
+      (when revy-follow-cursor
         (goto-char (overlay-end revy-local-cursor))
         (unless (eq revy-follow-cursor 'follow)
-          (recenter)))))
+          (with-selected-window window
+            (recenter)))))))
 
 
 
