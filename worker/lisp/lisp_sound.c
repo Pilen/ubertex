@@ -42,7 +42,7 @@ LISP_BUILTIN(sound_stop, "") {
     }
 
     Value sound = LIST_GET_UNSAFE(args, 1);
-    Int result;
+    Int result = 0;
     if (sound.type == SOUND) {
         result = sound_stop(environment, sound.val.sound_val);
     } else if (sound.type == STRING) {

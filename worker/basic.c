@@ -123,9 +123,19 @@ Value copy_deep(Value value) {
                 Value copied = copy_deep(LIST_GET_UNSAFE(old_list, i));
                 list_push_back(new_list, copied);
             }
+            return VALUE_LIST(new_list);
         }
+        /* Immutable */
+    case ERROR:
+    case NIL:
+    case SYMBOL:
+    case INTEGER:
+    case FLOAT:
+    case STRING:
+        return value;
     case HASH:
     default:
+        w_assert(false);
         return value;
     }
 }
