@@ -1,6 +1,7 @@
 #include "debug.h"
 
 #include "basic.h"
+#include "list.h"
 #include "vector.h"
 #include "string.h"
 #include "assert.h"
@@ -47,6 +48,11 @@ Bool equal(Value a, Value b) {
             /* } */
         }
         return true;
+    case CONS:
+        if (!equal(CAR(a), CAR(b))) {
+            return false;
+        }
+        return equal(CDR(a), CDR(b));
     case VECTOR:
         {
             Vector *a_vector = a.val.vector_val;
@@ -102,6 +108,8 @@ Bool eq(Value a, Value b) {
         return a.val.float_val == b.val.float_val;
     case STRING:
         return a.val.vector_val == b.val.vector_val;
+    case CONS:
+        return a.val.cons_val == b.val.cons_val;
     case VECTOR:
         return a.val.string_val == b.val.string_val;
     case HASH:
@@ -115,6 +123,8 @@ Bool eq(Value a, Value b) {
 Value copy_deep(Value value) {
     //TODO: implement
     switch (value.type) {
+    case CONS:
+        return CONS(copy_deep(CAR(value)), copy_deep(CDR(value)));
     case VECTOR:
         {
             Vector *old_vector = value.val.vector_val;

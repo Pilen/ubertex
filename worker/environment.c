@@ -16,10 +16,10 @@ Environment *environment_create(void) {
     environment -> width = 0;
     environment -> height = 0;
 
-    environment -> component_next_update = VALUE_NIL;
-    environment -> component_next_update_args = list_create_empty();
-    environment -> component_next_post = VALUE_NIL;
-    environment -> component_next_post_args = list_create_empty();
+    environment -> component_next_update = VALUE_NIL; /* Not set */
+    environment -> component_next_update_args = VALUE_NIL; /* list */
+    environment -> component_next_post = VALUE_NIL; /* Not set */
+    environment -> component_next_post_args = VALUE_NIL; /* list */
 
     environment -> clear_red = 0.0;
     environment -> clear_green = 0.0;
@@ -29,6 +29,6 @@ Environment *environment_create(void) {
     environment -> variables = hash_create();
     environment -> functions = hash_create();
 
-    environment -> call_stack = list_create_empty();
+    environment -> call_stack = VALUE_NIL; /* list */
     return environment;
 }

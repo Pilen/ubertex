@@ -26,6 +26,7 @@ typedef enum {
     INTEGER,
     FLOAT,
     STRING,
+    CONS,
     VECTOR,
     HASH,
     FUNCTION,
@@ -49,6 +50,7 @@ typedef enum {
 #define VALUE_INTEGER(val) ((Value) {INTEGER, {.integer_val = val}})
 #define VALUE_FLOAT(val) ((Value) {FLOAT, {.float_val = val}})
 #define VALUE_STRING(val) ((Value) {STRING, {.string_val = val}})
+#define VALUE_CONS(val) ((Value) {CONS, {.cons_val = val}})
 #define VALUE_VECTOR(val) ((Value) {VECTOR, {.vector_val = val}})
 #define VALUE_HASH(val) ((Value) {HASH, {.hash_val = val}})
 #define VALUE_FUNCTION(val) ((Value) {FUNCTION, {.function_val = val}})
@@ -61,8 +63,10 @@ typedef enum {
 
 #define IS_NUMERIC(val) ((val).type == INTEGER || (val).type == FLOAT)
 #define NUM_VAL(v) ((Double) (((v).type == INTEGER) ? (v).val.integer_val : ((v).type == FLOAT) ? (v).val.float_val : NAN))
+#define IS_LIST(val) ((val).type == CONS || (val).type == NIL)
 
 /* Actual datatype declarations */
+typedef struct Cons_s Cons;
 typedef struct Vector_s Vector;
 typedef struct String_s String;
 typedef struct Hash_s Hash;
@@ -83,6 +87,7 @@ typedef struct {
         Int integer_val;
         Double float_val;
         String *string_val;
+        Cons *cons_val;
         Vector *vector_val;
         Hash *hash_val;
         Function *function_val;

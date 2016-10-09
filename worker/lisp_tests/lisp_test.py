@@ -2,15 +2,9 @@
 import subprocess
 import os.path
 import sys
+import glob
 
-test_files_dir = "lisp_tests"
-test_files =[
-    "basic.zlt",
-    "simple.zlt",
-    "comparison.zlt",
-    "defun.zlt",
-    # "tests.zlt"
-]
+test_files = os.path.join("lisp_tests", "*.zlt")
 
 binary = "./worker"
 test_separator = ";;;;TEST;;;;"
@@ -20,7 +14,11 @@ def main():
     print("========")
     count_total = 0
     count_failed = 0
-    for file in test_files:
+    if len(sys.argv) > 1:
+        files = sys.argv[1:]
+    else:
+        files = glob.glob(test_files)
+    for file in files:
         print("{}:".format(file))
         count, failed = test_file(file)
         count_total += count
@@ -29,7 +27,6 @@ def main():
         print("{}/{} lisp tests completed successfully.".format(count_total - count_failed, count_total))
         print("========")
         return 0
-
     else:
         print("----")
         print("TESTS FAILED!")
@@ -39,22 +36,29 @@ def main():
 
 
 def test_file(file):
-    with open(os.path.join(test_files_dir, file)) as f:
+    with open(file) as f:
         current_linenumber = 0
         linenumber = 0
         tests = []
         text = []
+        ignore = False
         for line in f.readlines():
             linenumber += 1
             if line.startswith(test_separator):
-                tests.append((current_linenumber, "".join(text)))
+                if not ignore:
+                    tests.append((current_linenumber, "".join(text)))
+                    ignore = False
                 text = []
                 current_linenumber = linenumber
             else:
+                if ";ignore;" in line:
+                    ignore = True
+                if line.startswith(";"):
+                    continue
                 text.append(line)
-        tests.append((current_linenumber, "".join(text)))
+        if not ignore:
+            tests.append((current_linenumber, "".join(text)))
         # tests = f.read().split(test_separator)
-
         total = 0
         failed = 0
         for i, (linenumber, test_case) in enumerate(tests):
@@ -78,19 +82,26 @@ def test(file, linenumber, code):
         if (len(pair) > 1):
             statements.append(pair[1])
 
+
     if len(statements) != len(expected):
-        print("ERROR, redundant line in test:\n{}".format(code))
+        print("ERROR, redundant line in test ({}:{}):\n{}".format(file, linenumber, code))
         return False
 
     return lisp(file, linenumber, statements, expected)
 
+
 def lisp(file, linenumber, statements, expected_values):
-    program = [binary, "-t", "-l", "0"]
+    program = [binary, "-t"]
     for statement in statements:
         program.append("-e")
         program.append(statement)
 
-    output = subprocess.check_output(program, universal_newlines=True)
+    result = subprocess.run(program, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if result.returncode != 0:
+        print("TEST-failed: {}:{}: program terminated unexpectedly:\n{}".format(file, linenumber, result.stderr))
+        return False
+    output = result.stdout
+
     output_list = output.strip().split("\n")
     if len(output_list) != len(expected_values):
         print("TEST-failed: {}:{}: \t\toutput length is different than expected".format(file, linenumber))

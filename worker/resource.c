@@ -131,7 +131,7 @@ Unt resource_shrink_cache(void) {
        Else we need some kind of threadsafe metric of this resource being in use right now and probably a lock pr. resource.
     */
 
-    /* w_assert(environment -> call_stack -> length == 0); */
+    /* w_assert(environment -> call_stack.type == NIL); */
     lock_write_lock(resource_cache_lock);
 
     /* Only flush if enough memory has been consumed */

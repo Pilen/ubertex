@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <cairo.h>
 #include <pango/pangocairo.h>
+#include "types.h"
 #include "graphics.h"
 #include "list.h"
 #include "symbol.h"
@@ -77,25 +78,30 @@ Bool graphics_render_at_position(Environment *environment, Renderable *renderabl
 
     cairo_save(environment -> cairo);
 
-    if (position.type != LIST) {
+    if (!IS_LIST(position)) {
         log_error_in;
         goto ERROR;
     }
-    List *list = position.val.list_val;
-    if (list -> length <= 0) {
+    if (position.type != CONS) {
         log_error_in;
         goto ERROR;
     }
-    Value first = LIST_GET_UNSAFE(list, 0);
+    Value length_val = list_length(position);
+    if (length_val.type != INTEGER) {
+        log_error_in;
+        goto ERROR;
+    }
+    Unt length = NUM_VAL(length_val);
+    Value first = NEXT(position);
 
 
     if (first.type == SYMBOL) {
         if (equal(first, symbols_plain)) {
             /**** plain ****/
             /* Render at coords, unscaled */
-            if (list -> length == 3) {
-                Value x = LIST_GET_UNSAFE(list, 1);
-                Value y = LIST_GET_UNSAFE(list, 2);
+            if (length == 3) {
+                Value x = NEXT(position);
+                Value y = NEXT(position);
                 if (IS_NUMERIC(x) && IS_NUMERIC(y)) {
                     cairo_translate(environment -> cairo, NUM_VAL(x), NUM_VAL(y));
                     goto RENDER;
@@ -104,15 +110,15 @@ Bool graphics_render_at_position(Environment *environment, Renderable *renderabl
         } else if (equal(first, symbols_full)) {
             /**** full ****/
             /* Stretch image to fill entire screen */
-            if (list -> length == 1) {
+            if (length == 1) {
                 cairo_scale(environment -> cairo, screen_width/width, screen_height/height);
                 goto RENDER;
             }
         } else if (equal(first, symbols_centered)) {
             /**** centered ****/
-            if (list -> length == 3) {
-                Value x = LIST_GET_UNSAFE(list, 1);
-                Value y = LIST_GET_UNSAFE(list, 2);
+            if (length == 3) {
+                Value x = NEXT(position);
+                Value y = NEXT(position);
                 if (x.type == INTEGER && y.type == INTEGER) {
                     /* Render offset from center */
                     Double dx = (screen_width - width) / 2 + NUM_VAL(x);
@@ -127,7 +133,7 @@ Bool graphics_render_at_position(Environment *environment, Renderable *renderabl
                     cairo_translate(environment -> cairo, dx, dy);
                     goto RENDER;
                 }
-            } else if (list -> length == 1) {
+            } else if (length == 1) {
                 Double dx = (screen_width - width) / 2;
                 Double dy = (screen_height - height) / 2;
                 cairo_translate(environment -> cairo, dx, dy);
@@ -135,12 +141,12 @@ Bool graphics_render_at_position(Environment *environment, Renderable *renderabl
         } else if (equal(first, symbols_scaled)) {
             /**** scaled ****/
             /* TODO: make it work with relative float positions */
-            if (list -> length < 3) {
+            if (length < 3) {
                 log_error_in;
                 goto ERROR;
             }
-            Value a = LIST_GET_UNSAFE(list, 1);
-            Value b = LIST_GET_UNSAFE(list, 2);
+            Value a = NEXT(position);
+            Value b = NEXT(position);
             if (!IS_NUMERIC(a) || !IS_NUMERIC(b)) {
                 log_error_in;
                 goto ERROR;
@@ -150,12 +156,12 @@ Bool graphics_render_at_position(Environment *environment, Renderable *renderabl
 
             Value x_scale;
             Value y_scale;
-            if (list -> length == 4) {
-                x_scale = LIST_GET_UNSAFE(list, 3);
+            if (length == 4) {
+                x_scale = NEXT(position);
                 y_scale = x_scale;
-            } else if (list -> length == 5) {
-                x_scale = LIST_GET_UNSAFE(list, 3);
-                y_scale = LIST_GET_UNSAFE(list, 4);
+            } else if (length == 5) {
+                x_scale = NEXT(position);
+                y_scale = NEXT(position);
             } else {
                 log_error_in;
                 goto ERROR;
@@ -176,14 +182,14 @@ Bool graphics_render_at_position(Environment *environment, Renderable *renderabl
         } else if (equal(first, symbols_sized)) {
             /* sized */
             /* Render scaled but keep aspect ratio */
-            if (list -> length != 5) {
+            if (length != 5) {
                 log_error_in;
                 goto ERROR;
             }
-            Value offset_xv = LIST_GET_UNSAFE(list, 1);
-            Value offset_yv = LIST_GET_UNSAFE(list, 2);
-            Value size_xv = LIST_GET_UNSAFE(list, 3);
-            Value size_yv = LIST_GET_UNSAFE(list, 4);
+            Value offset_xv = NEXT(position);
+            Value offset_yv = NEXT(position);
+            Value size_xv = NEXT(position);
+            Value size_yv = NEXT(position);
 
             Double desired_width;
             Double desired_height;
@@ -227,20 +233,20 @@ Bool graphics_render_at_position(Environment *environment, Renderable *renderabl
             goto RENDER;
         } else if (equal(first, symbols_rotated)) {
             /**** Rotated ****/
-            if (list -> length < 4) {
+            if (length < 4) {
                 log_error_in;
                 goto ERROR;
             }
 
-            Value angle_v = LIST_GET_UNSAFE(list, 1);
+            Value angle_v = NEXT(position);
             if (!IS_NUMERIC(angle_v)) {
                 log_error_in;
                 goto ERROR;
             }
             Double angle = NUM_VAL(angle_v);
 
-            Value x = LIST_GET_UNSAFE(list, 2);
-            Value y = LIST_GET_UNSAFE(list, 3);
+            Value x = NEXT(position);
+            Value y = NEXT(position);
             if (!IS_NUMERIC(x) || !IS_NUMERIC(y)) {
                 log_error_in;
                 goto ERROR;
@@ -250,12 +256,12 @@ Bool graphics_render_at_position(Environment *environment, Renderable *renderabl
 
             Value x_scale;
             Value y_scale;
-            if (list -> length == 5) {
-                x_scale = LIST_GET_UNSAFE(list, 4);
+            if (length == 5) {
+                x_scale = NEXT(position);
                 y_scale = x_scale;
-            } else if (list -> length == 6) {
-                x_scale = LIST_GET_UNSAFE(list, 4);
-                y_scale = LIST_GET_UNSAFE(list, 5);
+            } else if (length == 6) {
+                x_scale = NEXT(position);
+                y_scale = NEXT(position);
             } else {
                 log_error_in;
                 goto ERROR;
@@ -281,8 +287,8 @@ Bool graphics_render_at_position(Environment *environment, Renderable *renderabl
             goto RENDER;
         }
 
-    } else if (IS_NUMERIC(first) && list -> length == 2) {/* (x y) */
-        Value second = LIST_GET_UNSAFE(list, 1);
+    } else if (IS_NUMERIC(first) && length == 2) {/* (x y) */
+        Value second = NEXT(position);
         if (IS_NUMERIC(second)) {
             x = NUM_VAL(first);
             y = NUM_VAL(second);
@@ -300,6 +306,7 @@ Bool graphics_render_at_position(Environment *environment, Renderable *renderabl
     cairo_restore(environment -> cairo);
     return true;
 }
+
 
 void graphics_show_cairo_surface(Environment *environment, void *data) {
     cairo_surface_t *surface = (cairo_surface_t *) data;

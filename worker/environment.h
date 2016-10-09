@@ -16,10 +16,10 @@ typedef struct {
     Int height;
 
     Value component_next_update;
-    List *component_next_update_args;
+    Value component_next_update_args; /* list */
 
     Value component_next_post;
-    List *component_next_post_args;
+    Value component_next_post_args; /* list */
 
     Double clear_red;
     Double clear_green;
@@ -29,7 +29,7 @@ typedef struct {
     Hash *variables;
     Hash *functions;
 
-    List *call_stack;
+    Value call_stack; /* list */
 } Environment;
 
 Environment *environment_create(void);

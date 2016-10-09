@@ -9,40 +9,46 @@
 LISP_BUILTIN(plus, "") {
     Int int_sum = 0;
     Double float_sum = 0.0;
-
     Bool real = false;
-    for (Unt i = 1; i < args -> length; i++) {
-        Value arg = LIST_GET_UNSAFE(args, i);
-        switch (arg.type) {
-        case INTEGER:
+    while (args.type == CONS) {
+        Value arg = NEXT(args);
+        if (arg.type == INTEGER) {
             int_sum += arg.val.integer_val;
-            break;
-        case FLOAT:
-            float_sum += arg.val.float_val;
+        } else if (arg.type == FLOAT) {
             real = true;
+            float_sum = int_sum;
+            float_sum += arg.val.float_val;
             break;
-        default:
+        } else {
             /* TODO: log error */
             return VALUE_ERROR;
         }
     }
     if (real) {
-        return VALUE_FLOAT(float_sum + int_sum);
+        while (args.type == CONS) {
+            Value arg = NEXT(args);
+            if (IS_NUMERIC(arg)) {
+                float_sum += NUM_VAL(arg);
+            } else {
+                /* TODO: log error */
+                return VALUE_ERROR;
+            }
+        }
+        return VALUE_FLOAT(float_sum);
     } else {
         return VALUE_INTEGER(int_sum);
     }
 }
 
 LISP_BUILTIN(minus, "") {
-    if (args -> length == 1) {
+    if (args.type == NIL) {
         return VALUE_INTEGER(0);
     }
     Int int_sum = 0;
     Double float_sum = 0.0;
-
     Bool real = false;
 
-    Value first = LIST_GET_UNSAFE(args, 1);
+    Value first = NEXT(args);
     switch (first.type) {
     case INTEGER:
         int_sum = first.val.integer_val;
@@ -55,32 +61,38 @@ LISP_BUILTIN(minus, "") {
         /* TODO: log error */
         return VALUE_ERROR;
     }
-    if (args -> length == 2) {
+    if (args.type == NIL) {
         if (real) {
             return VALUE_FLOAT(- float_sum);
         } else {
             return VALUE_INTEGER(- int_sum);
         }
-
     }
 
-    for (Unt i = 2; i < args -> length; i++) {
-        Value arg = LIST_GET_UNSAFE(args, i);
-        switch (arg.type) {
-        case INTEGER:
+    while (args.type == CONS) {
+        Value arg = NEXT(args);
+        if (arg.type == INTEGER) {
             int_sum -= arg.val.integer_val;
-            break;
-        case FLOAT:
+        } else if (arg.type == FLOAT) {
             float_sum -= arg.val.float_val;
             real = true;
             break;
-        default:
+        } else {
             /* TODO: log error */
             return VALUE_ERROR;
         }
     }
     if (real) {
-        return VALUE_FLOAT(float_sum + int_sum);
+        while (args.type == CONS) {
+            Value arg = NEXT(args);
+            if (IS_NUMERIC(arg)) {
+                float_sum -= NUM_VAL(arg);
+            } else {
+                /* TODO: log error */
+                return VALUE_ERROR;
+            }
+        }
+        return VALUE_FLOAT(float_sum);
     } else {
         return VALUE_INTEGER(int_sum);
     }
@@ -89,39 +101,46 @@ LISP_BUILTIN(minus, "") {
 LISP_BUILTIN(times, "") {
     Int int_product = 1;
     Double float_product = 1.0;
-
     Bool real = false;
-    for (Unt i = 1; i < args -> length; i++) {
-        Value arg = LIST_GET_UNSAFE(args, i);
-        switch (arg.type) {
-        case INTEGER:
+    while (args.type == CONS) {
+        Value arg = NEXT(args);
+        if (arg.type == INTEGER) {
             int_product *= arg.val.integer_val;
-            break;
-        case FLOAT:
-            float_product *= arg.val.float_val;
+        } else if (arg.type == FLOAT) {
             real = true;
+            float_product = int_product;
+            float_product *= arg.val.float_val;
             break;
-        default:
+        } else {
             /* TODO: log error */
             return VALUE_ERROR;
         }
     }
     if (real) {
-        return VALUE_FLOAT(float_product + int_product);
+        while (args.type == CONS) {
+            Value arg = NEXT(args);
+            if (IS_NUMERIC(arg)) {
+                float_product *= NUM_VAL(arg);
+            } else {
+                /* TODO: log error */
+                return VALUE_ERROR;
+            }
+        }
+        return VALUE_FLOAT(float_product);
     } else {
         return VALUE_INTEGER(int_product);
     }
 }
 
 LISP_BUILTIN(greater_than, "") {
-    if (args -> length < 1) {
+    if (args.type != CONS) {
         return VALUE_ERROR;
     }
 
-    Value previous = LIST_GET_UNSAFE(args, 1);
+    Value previous = NEXT(args);
 
-    for (Unt i = 2; i < args -> length; i++) {
-        Value current = LIST_GET_UNSAFE(args, i);
+    while (args.type == CONS) {
+        Value current = NEXT(args);
         switch (previous.type) {
         case INTEGER:
             switch (current.type) {
@@ -170,11 +189,11 @@ LISP_BUILTIN(greater_than, "") {
 
 
 LISP_BUILTIN(sin, "") {
-    if (args -> length != 2) {
+    if (args.type != CONS);
+    Value angle_v = NEXT(args);
+    if (args.type != NIL) {
         return VALUE_ERROR;
     }
-
-    Value angle_v = LIST_GET_UNSAFE(args, 1);
     Double angle;
     switch (angle_v.type) {
     case INTEGER:
@@ -191,11 +210,11 @@ LISP_BUILTIN(sin, "") {
 }
 
 LISP_BUILTIN(cos, "") {
-    if (args -> length != 2) {
+    if (args.type != CONS);
+    Value angle_v = NEXT(args);
+    if (args.type != NIL) {
         return VALUE_ERROR;
     }
-
-    Value angle_v = LIST_GET_UNSAFE(args, 1);
     Double angle;
     switch (angle_v.type) {
     case INTEGER:
@@ -214,25 +233,25 @@ LISP_BUILTIN(cos, "") {
 LISP_BUILTIN(randint, "") {
     Int lower;
     Int upper;
-
-    if (args -> length == 3) {
-        Value lower_value = LIST_GET_UNSAFE(args, 1);
-        Value upper_value = LIST_GET_UNSAFE(args, 2);
-        if (lower_value.type != INTEGER || upper_value.type != INTEGER) {
+    ENSURE_NOT_EMPTY(args);
+    Value first = NEXT(args);
+    if (args.type == CONS) {
+        Value second = NEXT(args);
+        if (first.type != INTEGER || second.type != INTEGER) {
             return VALUE_ERROR;
         }
-        lower = lower_value.val.integer_val;
-        upper = upper_value.val.integer_val;
-    } else if (args -> length == 2) {
-        Value upper_value = LIST_GET_UNSAFE(args, 2);
-        if (upper_value.type != INTEGER) {
+        lower = first.val.integer_val;
+        upper = first.val.integer_val;
+    } else {
+        if (first.type != INTEGER) {
             return VALUE_ERROR;
         }
         lower = 0;
-        upper = upper_value.val.integer_val;
-    } else {
+        upper = first.val.integer_val;
+
+    }
+    if (args.type != NIL) {
         return VALUE_ERROR;
     }
-
     return VALUE_INTEGER(random_int(lower, upper));
 }

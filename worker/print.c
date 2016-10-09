@@ -4,7 +4,9 @@
 
 #include "print.h"
 #include "string.h"
+#include "list.h"
 #include "vector.h"
+#include "hash.h"
 #include "symbol.h"
 
 void print(Value value) {
@@ -35,8 +37,29 @@ void print_on(FILE *stream, Value value) {
     case STRING:
         fprintf(stream, "\"%s\"", value.val.string_val -> text);
         break;
+    case CONS:
+        {
+            fprintf(stream, "(");
+            Value list = value;
+            while (true) {
+                Value element = NEXT(list);
+                print_on(stream, element);
+                if (list.type == CONS) {
+                    fprintf(stream, " ");
+                    continue;
+                } else if (list.type == NIL) {
+                    break;
+                } else {
+                    fprintf(stream, " . ");
+                    print_on(stream, CDR(list));
+                    break;
+                }
+            }
+            fprintf(stream, ")");
+            break;
+        }
     case VECTOR:
-        fprintf(stream, "(");
+        fprintf(stream, "[");
         if (value.val.vector_val -> length >= 1) {
             print_on(stream, VECTOR_GET_UNSAFE(value.val.vector_val, 0));
         }
@@ -44,12 +67,37 @@ void print_on(FILE *stream, Value value) {
             fprintf(stream, " ");
             print_on(stream, VECTOR_GET_UNSAFE(value.val.vector_val, i));
         }
-        fprintf(stream, ")");
+        fprintf(stream, "]");
         break;
     case HASH:
-        fprintf(stream, "some hash value");
+        {
+            fprintf(stream, "{");
+            Hash *table = value.val.hash_val;
+            Hash_entry *entry = table -> entries;
+            Bool first = true;
+            for (Unt i = 0; i < table -> length; i++) {
+                if (entry[i].status == HASH_OCCUPIED) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        fprintf(stream, ", ");
+                    }
+                    print_on(stream, entry[i].key);
+                    fprintf(stream, ": ");
+                    print_on(stream, entry[i].data);
+                }
+            }
+            fprintf(stream, "}");
+            break;
+        }
+    case FUNCTION:
+        fprintf(stream, "?");
         break;
-    default:
+    case COLOR:
+    case SOUND:
+    case IMAGE:
+    case PDF:
+    case SOUNDSAMPLE:
         fprintf(stream, "Illegal type: %d", value.type);
         break;
     }

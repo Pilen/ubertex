@@ -2,6 +2,7 @@
 #include "../assert.h"
 #include "../eval.h"
 #include "../list.h"
+#include "../vector.h"
 #include "../basic.h"
 #include "../symbol.h"
 #include "../math.h"
@@ -175,14 +176,14 @@ LISP_BUILTIN(resource_usage, "") {
     log_info("Total resource size: %ld", resource_total_size);
 
     Int resource_comparison(const void *a, const void *b);
-    qsort(resource_list -> data,
-          resource_list -> length,
+    qsort(resource_vector -> data,
+          resource_vector -> length,
           sizeof(Value),
           resource_comparison);
 
     Unt total_size = 0;
-    for (Int i = 0; i < resource_list -> length; i++) {
-        Value resource = LIST_GET_UNSAFE(resource_list, i);
+    for (Int i = 0; i < resource_vector -> length; i++) {
+        Value resource = VECTOR_GET_UNSAFE(resource_vector, i);
         switch (resource.type) {
         case IMAGE:
             total_size += resource.val.image_val -> size;
@@ -215,7 +216,8 @@ LISP_BUILTIN(resource_usage, "") {
         case INTEGER:
         case FLOAT:
         case STRING:
-        case LIST:
+        case CONS:
+        case VECTOR:
         case HASH:
         case FUNCTION:
         case COLOR:

@@ -11,19 +11,19 @@
 #include "loop.h"
 
 Value eval_list(Value expression, Environment *environment);
-Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment);
-Bool eval_get_bindings(List *args, List *parameters, List *bindings);
-Value eval_lambda(Value function_symbol, List *args, Environment *environment);
-Value eval_clojure(Value function_symbol, List *args, Environment *environment);
+Value eval_apply(Value function_symbol, Function *function, Value args, Environment *environment);
+Value eval_get_bindings(Value arguments, Value parameters);
+Value eval_lambda(Value lambda, Value args, Environment *environment);
 
 Value eval(Value expression, Environment *environment) {
     switch (expression.type) {
-        /* Self evaluating */
+        /* Self evaluating: */
     case ERROR:
     case NIL:
     case INTEGER:
     case FLOAT:
     case STRING:
+    case VECTOR:
     case HASH:
     default:
         return expression;
@@ -35,81 +35,74 @@ Value eval(Value expression, Environment *environment) {
         } else {
             /* TODO: log error */
             /* TODO: "Did you mean?" */
+            debug_value(expression);
             log_error("Variable XXX not found");
             return VALUE_ERROR;
         }
     }
-    case LIST:
+    case CONS:
         return eval_list(expression, environment);
     }
 }
 
 Value eval_list(Value expression, Environment *environment) {
-    w_assert(expression.type == LIST);
-    /* NOTE: Is this necesary? It should already be handled in the parser.
-       But it might be needed due to eval */
-    List *list = expression.val.list_val;
-    if (list -> length <= 0) {
-        return VALUE_NIL;
+    w_assert(expression.type == CONS);
+
+    Value function_symbol = NEXT(expression);
+    if (function_symbol.type == CONS) {
+        eval_lambda(function_symbol, expression, environment);
     }
 
-    Value function_symbol = LIST_GET_UNSAFE(list, 0);
-
-    /* Lambda function */
-    if (function_symbol.type == LIST &&
-        function_symbol.val.list_val -> length >= 1) {
-        Value head = LIST_GET_UNSAFE(function_symbol.val.list_val, 0);
-        Bool clojure;
-        if (head.type == SYMBOL && head.val.symbol_val == symbols_lambda.val.symbol_val) {
-            clojure = false;
-        } else if (head.type == SYMBOL && head.val.symbol_val == symbols_clojure.val.symbol_val) {
-            clojure = true;
-        } else {
-            return VALUE_ERROR;
-        }
-        List *args = list_create(round_up_to_power_of_2(list -> length + 1));
-        /* Not actually used, but keeps convention like when not evaling */
-        list_push_back(args, symbols_lambda);
-        for (Unt i = 1; i < list -> length; i++) {
-            Value evaled_arg = eval(LIST_GET_UNSAFE(list, i), environment);
-            list_push_back(args, evaled_arg);
-        }
-        Value result;
-        if (clojure) {
-            result = eval_clojure(function_symbol, args, environment);
-        } else {
-            result = eval_lambda(function_symbol, args, environment);
-        }
-        list_destroy(args);
-        return result;
-    }
-
+    debug_value(function_symbol);
+    w_assert(function_symbol.type == SYMBOL);
     Value function_value;
     Bool found = hash_get(environment -> functions, function_symbol, &function_value);
     if (!found) {
         /* TODO: log error */
         /* TODO: "Did you mean?" */
+        debug_value(function_symbol);
         log_error("Function XXX not found");
         return VALUE_ERROR;
     }
     w_assert(function_value.type == FUNCTION);
     Function *function = function_value.val.function_val;
 
-    List *args;
+    Value args;
     if (function -> eval) {
-        args = list_create(round_up_to_power_of_2(list -> length + 1));
-        /* Not actually used, but keeps convention like when not evaling */
-        list_push_back(args, function_symbol);
-        for (Unt i = 1; i < list -> length; i++) {
-            Value evaled_arg = eval(LIST_GET_UNSAFE(list, i), environment);
-            list_push_back(args, evaled_arg);
+        args = VALUE_NIL;
+        while (expression.type == CONS) {
+            Value arg = NEXT(expression);
+            args = CONS(eval(arg, environment), args);
         }
-    } else {
-        args = list;
-        /* list_pop_front(args); */
-        /* for (Unt i = 1; i < list -> length; i++) { */
-        /*     list_push_back(args, LIST_GET_UNSAFE(list, i)); */
+        args = list_reverse(args);
+        w_assert(expression.type == NIL);
+
+        /* TODO: benchmark, which approach is better, the above or below? */
+
+        /* if (expression.type == CONS) { */
+        /*     args = CONS1(VALUE_NIL); */
+        /* } else { */
+        /*     args = expression; */
         /* } */
+        /* Cons *top = args.val.cons_val; */
+        /* while (true) { */
+        /*     Value arg = NEXT(expression); */
+        /*     top -> car = eval(arg, environment); */
+        /*     if (expression.type == CONS) { */
+        /*         top -> cdr = CONS1(VALUE_NIL); */
+        /*         top = top -> cdr.val.cons_val; */
+        /*     } else { */
+        /*         top -> cdr = expression; */
+        /*         break; */
+        /*     } */
+        /* } */
+    } else {
+        /* To ensure we avoid mutation in altering code the list is copied
+           If we guaranteed that no function with eval = false modifies the list we could give it directly
+           This would be an obvious performance optimization. But needs tests.
+           We can only guarantee this for c_code, not for userdefined macros.
+           TODO: Do this */
+        args = list_copy(expression);
     }
 
     Value result = eval_apply(function_symbol, function, args, environment);
@@ -117,27 +110,28 @@ Value eval_list(Value expression, Environment *environment) {
     return result;
 }
 
-Value eval_apply(Value function_symbol, Function *function, List *args, Environment *environment) {
+Value eval_apply(Value function_symbol, Function *function, Value args, Environment *environment) {
+    /* All functions called from apply can be safe to assume ``args'' is a proper list
+       Ensure this! */
     if (loop_abort) {
         return VALUE_ERROR;
     }
     if (function -> c_code) {
         return function -> c_function(args, environment);
     }
-    List *bindings = list_create(args -> size);
-    Bool bindings_wellformed = eval_get_bindings(args, function -> parameters, bindings);
-    if (!bindings_wellformed) {
+    Value bindings = eval_get_bindings(args, function -> parameters);
+    if (bindings.type == ERROR) {
         /* TODO: log error */
         return VALUE_ERROR;
     }
 
-    List *old_bindings = list_create_empty();
-    List *not_bound = list_create_empty();
-    eval_bind(bindings, environment, old_bindings, not_bound);
+    Value old_bindings;
+    Value not_bound;
+    eval_bind(bindings, environment, &old_bindings, &not_bound);
 
-    list_push_back(environment -> call_stack, function_symbol);
+    environment -> call_stack = CONS(function_symbol, environment -> call_stack);
     Value result = eval(function -> body, environment);
-    list_pop_back(environment -> call_stack);
+    environment -> call_stack = CDR(environment -> call_stack);
 
     eval_unbind(environment, old_bindings, not_bound);
     list_destroy(old_bindings);
@@ -145,112 +139,140 @@ Value eval_apply(Value function_symbol, Function *function, List *args, Environm
     return result;
 }
 
-Value eval_lambda(Value function_symbol, List *args, Environment *environment) {
+Value eval_lambda(Value lambda, Value args, Environment *environment) {
     return VALUE_ERROR;
-}
-Value eval_clojure(Value function_symbol, List *args, Environment *environment) {
-    return VALUE_ERROR;
+    Value head = CAR(lambda);
+    Bool clojure;
+    if (head.type == SYMBOL && head.val.symbol_val == symbols_lambda.val.symbol_val) {
+        clojure = false;
+    } else if (head.type == SYMBOL && head.val.symbol_val == symbols_clojure.val.symbol_val) {
+        clojure = true;
+    } else {
+        return VALUE_ERROR;
+    }
+    /* Eval args */
+    Value rest = args;
+    args = VALUE_NIL;
+    while (rest.type == CONS) {
+        Value arg = NEXT(rest);
+        args = CONS(eval(arg, environment), args);
+    }
+    w_assert(rest.type == NIL);
+    args = list_reverse(args);
+    args = CONS(symbols_lambda, args);
+    Value result;
+    if (clojure) {
+        /* result = eval_clojure(function_symbol, args, environment); */
+    } else {
+        /* result = eval_lambda(function_symbol, args, environment); */
+    }
+    list_destroy(args);
+    return result;
+
 }
 
-Bool eval_get_bindings(List *arguments, List *parameters, List *bindings) {
+Value eval_get_bindings(Value arguments, Value parameters) {
+    /* Returns bindings in opposite direction (first is tightest bound) */
+    w_assert(IS_LIST(arguments));
+    w_assert(IS_LIST(parameters));
     /* Most of the error logging should be in defun, not here! */
     Bool optional = false;
     Bool rest = false;
-    Unt a = 1; /* For the name */
-    Unt p = 0;
-    while (a < arguments -> length && p < parameters -> length) {
-        Value parameter = LIST_GET_UNSAFE(parameters, p);
+    Value bindings = VALUE_NIL;
+    while (parameters.type == CONS) {
+        Value parameter = NEXT(parameters);
         if (parameter.val.symbol_val == symbols_ampersand_optional.val.symbol_val) {
             optional = true;
-            p++;
             break;
         }
         if (parameter.val.symbol_val == symbols_ampersand_rest.val.symbol_val) {
             rest = true;
-            p++;
             break;
         }
-        list_push_back(bindings, parameter);
-        Value argument = LIST_GET_UNSAFE(arguments, a);
-        list_push_back(bindings, argument);
-        a++, p++;
+        ENSURE_NOT_EMPTY(arguments);
+        Value argument = NEXT(arguments);
+        bindings = CONS(CONS(parameter, argument), bindings);
     }
 
     if (optional) {
-        while (p < parameters -> length) {
-            Value parameter = LIST_GET_UNSAFE(parameters, p);
+        while (parameters.type == CONS) {
+            Value parameter = NEXT(parameters);
             if (parameter.val.symbol_val == symbols_ampersand_rest.val.symbol_val) {
                 rest = true;
-                p++;
                 break;
             }
-            list_push_back(bindings, parameter);
             Value argument;
-            if (a < arguments -> length) {
-                argument = LIST_GET_UNSAFE(arguments, a);
-                a++;
+            if (arguments.type == CONS) {
+                argument = NEXT(arguments);
             } else {
                 argument = VALUE_NIL;
             }
-            list_push_back(bindings, argument);
-            p++;
+            bindings = CONS(CONS(parameter, argument), bindings);
         }
     }
 
     if (rest) {
-        if (parameters -> length - p >= 1) {
-            /* TODO: log error, too many rest params */
-            return false;
-        } else if (parameters -> length - p == 0) {
-            /* TODO: log error, missing rest params */
-            return false;
-        } else {
-            Value parameter = LIST_GET_UNSAFE(parameters, p);
-            Unt rest_length = arguments -> length - a;
-            List *rest = list_create(round_up_to_power_of_2(rest_length));
-            while (a < arguments -> length) {
-                list_push_back(rest, LIST_GET_UNSAFE(arguments, a));
-                a++;
+        debug("hej");
+        if (parameters.type == CONS) {
+            debug("fisk");
+            Value parameter = NEXT(parameters);
+            bindings = CONS(CONS(parameter, arguments), bindings);
+            arguments = VALUE_NIL;
+            /* It would make sense to only allow one rest parameter
+               But as Emacs allows more (or none) so do we.
+               But defun could definitely give a warning */
+            while (parameters.type == CONS) {
+                parameter = NEXT(parameters);
+                bindings = CONS(CONS(parameter, VALUE_NIL), bindings);
+                arguments = VALUE_NIL;
             }
-            list_push_back(bindings, parameter);
-            list_push_back(bindings, VALUE_LIST(rest));
+        } else {
+            debug("else");
+            arguments = VALUE_NIL;
+            parameters = VALUE_NIL;
         }
     }
-
-
-    if (a < arguments -> length || p < parameters -> length) {
-        /* TODO: log error */
-        return false;
-    }
-    return true;
+    ENSURE_EMPTY(arguments);
+    ENSURE_EMPTY(parameters);
+    /* w_assert(parameters.type == NIL); */
+    /* w_assert(arguments.type == NIL); */
+    return bindings;
 }
 
-void eval_bind(List *bindings, Environment *environment, List *old_bindings, List *not_bound) {
-    for (Unt i = 0; i < bindings -> length; i += 2) {
-        Value parameter = LIST_GET_UNSAFE(bindings, i);
-        Value argument = LIST_GET_UNSAFE(bindings, i+1);
+void eval_bind(Value bindings, Environment *environment, Value *old_bindings, Value *not_bound) {
+    /* TODO: this is a stupid/ugly way of doing things, only done while converting eval_get_bindings returns an inverted list*/
+    *old_bindings = VALUE_NIL;
+    *not_bound = VALUE_NIL;
+    bindings = list_reverse(bindings);
+    while (bindings.type == CONS) {
+        Value pair = NEXT(bindings);
+        w_assert(pair.type == CONS);
+        Value parameter = CAR(pair);
+        Value argument = CDR(pair);
+
         Value old_value;
         Bool found = hash_get(environment -> variables, parameter, &old_value);
         if (found) {
-            list_push_back(old_bindings, parameter);
-            list_push_back(old_bindings, old_value);
-            /* TODO: increase refcount */
+            *old_bindings = CONS(CONS(parameter, old_value), *old_bindings);
         } else {
-            list_push_back(not_bound, parameter);
+            *not_bound = CONS(parameter, *not_bound);
         }
         /* Note: performance could be improved with a combined get old/insert new, "hash_replace" method */
         hash_set(environment -> variables, parameter, argument);
     }
+    w_assert(bindings.type == NIL);
 }
 
-void eval_unbind(Environment *environment, List *old_bindings, List *not_bound) {
-    for (Unt i = 0; i < old_bindings -> length; i += 2) {
-        Value symbol = LIST_GET_UNSAFE(old_bindings, i);
-        Value old_value = LIST_GET_UNSAFE(old_bindings, i+1);
+void eval_unbind(Environment *environment, Value old_bindings, Value not_bound) {
+    while (old_bindings.type == CONS) {
+        Value pair = NEXT(old_bindings);
+        w_assert(pair.type == CONS);
+        Value symbol = CAR(pair);
+        Value old_value = CDR(pair);
         hash_set(environment -> variables, symbol, old_value);
     }
-    for (Unt i = 0; i < not_bound -> length; i++) {
-        Value symbol = LIST_GET_UNSAFE(not_bound, i);
+    while (not_bound.type == CONS) {
+        Value symbol = NEXT(not_bound);
         hash_delete(environment -> variables, symbol);
     }
 }

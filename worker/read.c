@@ -51,9 +51,9 @@ Value read_from_str(char *str) {
 
 Bool read_script(char **code, char *end, Unt *linenumber, Value *result) {
     char *p = *code;
-    List *list = list_create(2);
-
-    list_push_back(list, symbols_progn);
+    Value script = CONS1(symbols_progn);
+    Value last = script;
+    Unt count = 0;
 
     while (p < end) {
         Value value;
@@ -61,15 +61,20 @@ Bool read_script(char **code, char *end, Unt *linenumber, Value *result) {
         if (!read_expression(&p, end, linenumber, &value)) {
             break;
         }
-        list_push_back(list, value);
+        count++;
+        CDR(last) = CONS1(value);
+        last = CDR(last);
     }
     read_munch_whitespace(&p, end, linenumber);
     if (p != end) {
-        list_destroy(list);
+        /* list_destroy(script); */
         return false;
     }
+    if (count == 1) {
+        script = CAR(CDR(script));
+    }
+    *result = script;
     *code = p;
-    *result = VALUE_LIST(list);
     return true;
 }
 
@@ -335,36 +340,27 @@ Bool read_list(char **code, char *end, Unt *linenumber, Value *result) {
     }
     p++;
     read_munch_whitespace(&p, end, &line);
-    if (p < end && *p == ')') {
-        p++;
-        *result = VALUE_NIL;
-        *linenumber = line;
-        *code = p;
-        return true;
-    }
 
-    read_munch_whitespace(&p, end, &line);
-
-    List *list = list_create(1);
+    Value list = VALUE_NIL;
     while (p < end && *p != ')') {
         Value value;
         if (!read_expression(&p, end, &line, &value)) {
-            list_destroy(list);
+            /* list_destroy(list); */
             return false;
         }
-        list_push_back(list, value);
+        list = CONS(value, list);
         read_munch_whitespace(&p, end, &line);
     }
-
+    list = list_reverse(list);
     if (p >= end) {
-        list_destroy(list);
+        /* list_destroy(list); */
         return false;
     }
     p++;
 
     *linenumber = line;
     *code = p;
-    *result = VALUE_LIST(list);
+    *result = list;
     return true;
 }
 
@@ -380,10 +376,7 @@ Bool read_quote(char **code, char *end, Unt *linenumber, Value *result) {
         return false;
     }
 
-    List *list = list_create(2);
-    list_push_back(list, symbols_quote);
-    list_push_back(list, value);
-    *result = VALUE_LIST(list);
+    *result = CONS(symbols_quote, CONS1(value));
     *code = p;
     return true;
 }

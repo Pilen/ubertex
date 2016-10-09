@@ -1,0 +1,5 @@
+;;;;TEST;;;;
+;;ignore;;
+(defun foo ()
+  (lambda (x) x))
+((lambda (y) y) 3) ;=> 3

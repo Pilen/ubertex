@@ -25,7 +25,7 @@ typedef struct {
 struct Hash_s {
     Unt refcount;
     Unt size;
-    Unt length;
+    Unt length; /* Number of entries */
     Hash_entry *entries;
 };
 

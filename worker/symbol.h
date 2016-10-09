@@ -22,6 +22,7 @@ Value symbols_symbol;
 Value symbols_integer;
 Value symbols_float;
 Value symbols_string;
+Value symbols_cons;
 Value symbols_vector;
 Value symbols_hash;
 

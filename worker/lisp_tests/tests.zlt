@@ -1,7 +1,9 @@
 ;;;;TEST;;;;
+;;ignore;;
 1 ;=> 1
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x 0)
 (setq y 0)
 (setq z 0)
@@ -12,11 +14,13 @@ z ;=> 0
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (((lambda (x) (print x) (lambda (y) (print x) 1)) 10) 20) ;=> error
 ('(lambda (x) (print x) 1) 10) ;=> error
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x 0)
 (let* ((a (setq x 1))
        (a (setq x 3)))
@@ -33,6 +37,7 @@ x ;=> 3
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (lexical-let ((a 1)
           (a 2))
   a) ;=> 2
@@ -45,6 +50,7 @@ x ;=> 3
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x 0)
 (let ((x (setq x (1+ x)))
       (x (setq x (1+ x))))
@@ -59,6 +65,7 @@ x ;=> 1
 
 
 ;;;;TEST;;;;
+;;ignore;;
 
 ;; lambda executed inside lexical-let
 (setq x 0)
@@ -117,6 +124,7 @@ x ;=> 1
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x (list 1 2 3))
 (setf (car x) 4)
 x ;=> (4 2 3)
@@ -130,6 +138,7 @@ y ;=> 5
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x (list 1 2 3))
 (defun id (x) x)
 (id (setf (car (id x)) 10)) ;=> 10
@@ -137,6 +146,7 @@ x ;=> 10
 
 
 ;;;;TEST;;;;
+;;ignore;;
 ;;;;LATEX caption=eq-modification, label=test:eq-modification
 (setq x '(1 2 3))
 (eq x (progn (setf (car x) 10) x)) ;=> t
@@ -149,6 +159,7 @@ x ;=> 10
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x (list 1 2 3))
 (setq y (list x 4 5))
 (setf (car x) 10)
@@ -157,6 +168,7 @@ y ;=> ((10 2 3) 4 5)
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (apply 'list (1 x 3)) ;=> (1 x 3)
 
 
@@ -184,6 +196,7 @@ foo ;;=> (lambda () (list 1 2 3 4) -1)
 foo ;=> (lambda nil (list 1 2 3 4 4 4 4 4 4 4 4 ...   ) ...)
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq foo (lambda (x)
         (setf (nthcdr (- (length foo) 1) foo) (cons x (nthcdr (- (length foo) 1) foo)))
         (funcall foo (+ x 1))))
@@ -193,12 +206,14 @@ foo ;=> (lambda (x) (setf ...) 1 2 3 4 5 6 7 8 9 ... (funcall foo (+ x 1)))
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x '(list 1 2 (eval x)))
 (eval x) ;=> stack overflow
 
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x ())
 (while t
   (push 1 x)) ;=> (uendelig løkke, langsom, fylder hukommelsen)
@@ -206,6 +221,7 @@ foo ;=> (lambda (x) (setf ...) 1 2 3 4 5 6 7 8 9 ... (funcall foo (+ x 1)))
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x (list 1 2 3))
 (nconc x x)
 (setq x (cons '+ x))
@@ -213,18 +229,21 @@ foo ;=> (lambda (x) (setf ...) 1 2 3 4 5 6 7 8 9 ... (funcall foo (+ x 1)))
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x (list '+ 2 3))
 (setcar (cddr x) x)
 (eval x) ;=> stack overflow
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (set 'x 10)
 (set 'nil (progn (set 'x 11) 20))
 x ;=> 11
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x 1
       y 2
       z 3) ;=> 3
@@ -234,6 +253,7 @@ z ;=> 3
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x 1
       y 2
       z 3
@@ -245,6 +265,7 @@ q ;=> nil
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x 1
       y 2
       z 3) ;=> 3
@@ -262,6 +283,7 @@ z ;=> 3
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x 1
       y 2
       z 3) ;=> 3
@@ -278,6 +300,7 @@ z ;=> 3
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x 1
       y 2
       z 3) ;=> 3
@@ -294,6 +317,7 @@ z ;=> 3
 
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x 1)
 (let ((x (+ 10 x))) x) ;=> 11
 x ;=> 1
@@ -303,6 +327,7 @@ x ;=> 1
 x ;=> 1
 
 ;;;;TEST;;;;
+;;ignore;;
 (setq x 10)
-((lumdba ()) (setq x 11))
-x
+((lamdba ()) (setq x 11))
+x ;=> 10

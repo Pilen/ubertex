@@ -13,16 +13,16 @@
 #include "sound.h"
 #include "graphics.h"
 
-void loop_update(Environment *environment, Value update_symbol, List *args);
+void loop_update(Environment *environment, Value update_symbol, Value args);
 
 void loop_loop(Environment *environment) {
     while (true) {
         log_section("====LOOP====");
         if (loop_abort) {
             environment -> component_next_update = VALUE_NIL;
-            environment -> component_next_update_args = list_create_empty();
+            environment -> component_next_update_args = VALUE_NIL;
             environment -> component_next_post = VALUE_NIL;
-            environment -> component_next_post_args = list_create_empty();
+            environment -> component_next_post_args = VALUE_NIL;
             sound_stop_all();
         }
         loop_abort = false;
@@ -57,7 +57,7 @@ void loop_loop(Environment *environment) {
         lock_read_lock(resource_cache_lock);
         loop_update(environment, environment -> component_next_update, environment -> component_next_update_args);
         loop_update(environment, environment -> component_next_post, environment -> component_next_post_args);
-        w_assert(environment -> call_stack -> length == 0);
+        w_assert(environment -> call_stack.type == NIL);
         lock_read_unlock(resource_cache_lock);
 
         if (loop_blank) {
@@ -93,7 +93,7 @@ void loop_loop(Environment *environment) {
     }
 }
 
-void loop_update(Environment *environment, Value update_symbol, List *args) {
+void loop_update(Environment *environment, Value update_symbol, Value args) {
     /* Lookup must be done every frame as the body can be redefined. */
     /* TODO: or a lambda! */
     if (update_symbol.type == SYMBOL) {

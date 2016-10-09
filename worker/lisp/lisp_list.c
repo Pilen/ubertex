@@ -10,16 +10,16 @@
 #include "../loop.h"
 
 LISP_BUILTIN(list, "") {
-    if (args -> length == 1) {
-        return VALUE_NIL;
-    }
-    List *result = list_create(round_up_to_power_of_2(args -> length - 1));
-    for (Unt i = 1; i < args -> length; i++) {
-        /* Already evaluated */
-        Value value = LIST_GET_UNSAFE(args, i);
-        list_push_back(result, value);
-    }
-    return VALUE_LIST(result);
+    /* Already evaluated */
+    return args;
+}
+
+LISP_BUILTIN(cons, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value car = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
+    Value cdr = NEXT(args);
+    return CONS(car, cdr);
 }
 
 /* LISP_BUILTIN(nth, "") { */

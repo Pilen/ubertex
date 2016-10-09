@@ -9,53 +9,38 @@
 #include "../debug.h"
 
 LISP_BUILTIN(eq, "") {
-    if (args -> length < 3) {
-        return VALUE_ERROR;
-    }
-
-    Value head = LIST_GET_UNSAFE(args, 1);
-    for (Unt i = 2; i < args -> length; i++) {
-        Value other = LIST_GET_UNSAFE(args, i);
-        if (!eq(head, other)) {
+    ENSURE_NOT_EMPTY(args);
+    Value previous = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
+    while (args.type == CONS) {
+        Value current = NEXT(args);
+        if (!eq(previous, current)) {
             return VALUE_NIL;
         }
     }
-
     return symbols_t;
 }
 
 LISP_BUILTIN(equal, "") {
-    if (args -> length < 3) {
-        return VALUE_ERROR;
-    }
-
-    Value head = LIST_GET_UNSAFE(args, 1);
-    for (Unt i = 2; i < args -> length; i++) {
-        Value other = LIST_GET_UNSAFE(args, i);
-        if (!equal(head, other)) {
+    ENSURE_NOT_EMPTY(args);
+    Value previous = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
+    while (args.type == CONS) {
+        Value current = NEXT(args);
+        if (!equal(previous, current)) {
             return VALUE_NIL;
         }
     }
-
     return symbols_t;
 }
 
 LISP_BUILTIN(not, "") {
-    if (args -> length != 2) {
-        return VALUE_ERROR;
-    }
-
-    Value value = LIST_GET_UNSAFE(args, 1);
-    switch (value.type) {
-    case NIL:
+    ENSURE_NOT_EMPTY(args);
+    Value value = NEXT(args);
+    ENSURE_EMPTY(args);
+    if (value.type == NIL) {
         return symbols_t;
-    case LIST:
-        if (value.val.list_val -> length == 0) {
-            return symbols_t;
-        } else {
-            return VALUE_NIL;
-        }
-    default:
+    } else {
         return VALUE_NIL;
     }
 }

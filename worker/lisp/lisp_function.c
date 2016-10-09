@@ -10,51 +10,36 @@
 #include "../debug.h"
 
 LISP_BUILTIN(defun, "") {
-    if (args -> length < 3) {
-        return VALUE_ERROR;
-    }
-
-    Value function_name = LIST_GET_UNSAFE(args, 1);
-    Value parameters = LIST_GET_UNSAFE(args, 2);
-    String *docstring = NULL;
-
+    ENSURE_NOT_EMPTY(args);
+    Value function_name = NEXT(args);
     if (function_name.type != SYMBOL) {
         return VALUE_ERROR;
     }
 
-    List *param_list;
-    if (parameters.type == LIST) {
-        param_list = parameters.val.list_val;
-    } else if (parameters.type == NIL) {
-        param_list = list_create_empty();
-    } else {
+    ENSURE_NOT_EMPTY(args);
+    Value parameters = NEXT(args);
+    /* TODO: validate parameters */
+    if (!IS_LIST(parameters)) {
         return VALUE_ERROR;
     }
-    /* TODO: validate parameters */
 
-    if (args -> length >= 4) {
-        Value docstring_value = LIST_GET_UNSAFE(args, 3);
-        if (docstring_value.type == STRING) {
-            docstring = docstring_value.val.string_val;
+    Value body = CONS(symbols_progn, args);
+
+    String *docstring = NULL;
+    if (args.type == CONS) {
+        if (CAR(args).type == STRING) {
+            docstring = CAR(args).val.string_val;
+        } else {
+            docstring = string_create_from_str("Undocumented function");
         }
-    }
-    if (!docstring) {
-        docstring = string_create_from_str("Undocumented function");
-    }
-
-    List *body = list_create(round_up_to_power_of_2(args -> length - 3 + 1));
-    list_push_back(body, symbols_progn);
-    for (Unt i = 3; i < args -> length; i++) {
-        Value statement = LIST_GET_UNSAFE(args, i);
-        list_push_back(body, statement);
     }
 
     Function *function = memory_malloc(sizeof(Function));
     function -> eval = true;
     function -> c_code = false;
     function -> c_function = NULL;
-    function -> parameters = param_list;
-    function -> body = VALUE_LIST(body);
+    function -> parameters = parameters;
+    function -> body = body;
     function -> docstring = docstring;
     Value function_value = VALUE_FUNCTION(function);
 
@@ -63,13 +48,11 @@ LISP_BUILTIN(defun, "") {
 }
 
 LISP_BUILTIN(lambda, "") {
-    if (args -> length < 2) {
-        return VALUE_ERROR;
-    }
-    Value params = LIST_GET_UNSAFE(args, 1);
-    if (params.type != NIL && params.type != LIST) {
-        return VALUE_ERROR;
-    }
+    ENSURE_NOT_EMPTY(args);
 
-    return VALUE_LIST(args);
+    Value parameters = CAR(args);
+    if (!IS_LIST(parameters)) {
+        return VALUE_ERROR;
+    }
+    return CONS(symbols_lambda, args);
 }

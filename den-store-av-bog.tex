@@ -1078,6 +1078,21 @@ Windos/super eller alt som modifier knap.
 \section{- Worker}
 \note{Generelt om hvordan en worker virker}
 \section{- Lisp}
+Vectorer er ikke ens.
+I Emacs lisp er de konstante. I Worker Lisp er de dynamiske arrays. ak indsætte
+foran og bagi i O(1) tid (ammortiseret)
+
+Lister er en slags ``meta'' type over consceller. En konvention!
+En liste er en Cons-celle hvor \texttt{car} indeholder et element i listen, og
+\texttt{cdr} indeholder en liste (resten).
+Alternativt er en liste \texttt{nil} som angiver den tomme liste eller
+slutningen på en liste.
+Der er således ikke en konkret type i sproget der hedder \textit{list}, men man
+bruger det som om der var.
+
+Quote opfører sig anderledes
+(Skal jeg lade være med at deep copy'e?
+
 \subsection{Hvordan programmerer man?}
 \subsection{De forskellige lisp dele}
 \section{\LaTeX}

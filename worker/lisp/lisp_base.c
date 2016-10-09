@@ -9,76 +9,72 @@
 #include "../debug.h"
 #include "../memory.h"
 #include "../loop.h"
+#include "../assert.h"
 
 LISP_BUILTIN(progn, "") {
-    Value value = VALUE_NIL;
-    for (Unt i = 1; i < args -> length; i++) {
-        Value arg = LIST_GET_UNSAFE(args, i);
-        value = eval(arg, environment);
+    Value result = VALUE_NIL;
+    while (args.type == CONS) {
+        Value arg = NEXT(args);
+        result = eval(arg, environment);
     }
-    return value;
+    return result;
 }
 
 LISP_BUILTIN(quote, "") {
-    if (args -> length != 2) {
-        return VALUE_ERROR;
-    }
-    Value value = LIST_GET_UNSAFE(args, 1);
+    ENSURE_NOT_EMPTY(args);
+    Value value = NEXT(args);
+    ENSURE_EMPTY(args);
     return copy_deep(value);
 }
 
 LISP_BUILTIN(eval, "") {
-    if (args -> length != 2) {
-        return VALUE_ERROR;
-    }
-
-    Value body = LIST_GET_UNSAFE(args, 1);
+    ENSURE_NOT_EMPTY(args);
+    Value body = NEXT(args);
+    ENSURE_EMPTY(args);
     return eval(body, environment);
 }
 
 LISP_BUILTIN(if, "") {
-    if (args -> length < 3) {
-        return VALUE_ERROR;
-    }
-
-    Value condition = eval(LIST_GET_UNSAFE(args, 1), environment);
-    condition = NILIFY(condition);
-    switch (condition.type) {
+    ENSURE_NOT_EMPTY(args);
+    Value condition = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
+    Value consequent = NEXT(args);
+    Value condition_result = eval(condition, environment);
+    switch (condition_result.type) {
     case ERROR:
         return VALUE_ERROR;
     default:
         {
-            Value consequent = eval(LIST_GET_UNSAFE(args, 2), environment);
-            return consequent;
+            return eval(consequent, environment);
         }
     case NIL:
         {
-            Value alternative = VALUE_NIL;
-            for (Unt i = 3; i < args -> length; i++) {
-                alternative = eval(LIST_GET_UNSAFE(args, i), environment);
+            Value result = VALUE_NIL;
+            while (args.type == CONS) {
+                Value arg = NEXT(args);
+                result = eval(arg, environment);
             }
-            return alternative;
+            return result;
         }
     }
 }
 
 /* NOTE: should probably be a macro */
 LISP_BUILTIN(when, "") {
-    if (args -> length < 2) {
-        return VALUE_ERROR;
-    }
-    Value condition = eval(LIST_GET_UNSAFE(args, 1), environment);
-    condition = NILIFY(condition);
-    switch (condition.type) {
+    ENSURE_NOT_EMPTY(args);
+    Value condition = NEXT(args);
+    Value condition_result = eval(condition, environment);
+    switch (condition_result.type) {
     case ERROR:
         return VALUE_ERROR;
     default:
         {
-            Value alternative = VALUE_NIL;
-            for (Unt i = 2; i < args -> length; i++) {
-                alternative = eval(LIST_GET_UNSAFE(args, i), environment);
+            Value result = VALUE_NIL;
+            while (args.type == CONS) {
+                Value arg = NEXT(args);
+                result = eval(arg, environment);
             }
-            return alternative;
+            return result;
         }
     case NIL:
         return VALUE_NIL;
@@ -87,48 +83,47 @@ LISP_BUILTIN(when, "") {
 
 /* NOTE: should probably be a macro */
 LISP_BUILTIN(unless, "") {
-    if (args -> length < 2) {
-        return VALUE_ERROR;
-    }
-    Value condition = eval(LIST_GET_UNSAFE(args, 1), environment);
-    condition = NILIFY(condition);
-    switch (condition.type) {
+    ENSURE_NOT_EMPTY(args);
+    Value condition = NEXT(args);
+    Value condition_result = eval(condition, environment);
+    switch (condition_result.type) {
     case ERROR:
         return VALUE_ERROR;
     default:
         return VALUE_NIL;
     case NIL:
         {
-            Value alternative = VALUE_NIL;
-            for (Unt i = 2; i < args -> length; i++) {
-                alternative = eval(LIST_GET_UNSAFE(args, i), environment);
+            Value result = VALUE_NIL;
+            while (args.type == CONS) {
+                Value arg = NEXT(args);
+                result = eval(arg, environment);
             }
-            return alternative;
+            return result;
         }
     }
 }
 
 LISP_BUILTIN(while, "") {
-    if (args -> length < 2) {
-        return VALUE_ERROR;
-    }
+    ENSURE_NOT_EMPTY(args);
 
-    Value condition = LIST_GET_UNSAFE(args, 1);
+    Value condition = NEXT(args);
     while (true) {
         if (loop_abort) {
             return VALUE_ERROR;
         }
         Value result = eval(condition, environment);
-        result = NILIFY(result);
         switch(result.type) {
         case ERROR:
             return VALUE_ERROR;
         case NIL:
             return VALUE_NIL;
         default:
-            for (Unt i = 2; i < args -> length; i++) {
-                Value body = LIST_GET_UNSAFE(args, i);
-                eval(body, environment);
+            {
+                Value body = args;
+                while (body.type == CONS) {
+                    Value current = NEXT(body);
+                    eval(current, environment);
+                }
             }
         }
     }
@@ -136,9 +131,10 @@ LISP_BUILTIN(while, "") {
 
 LISP_BUILTIN(and, "") {
     Value result = symbols_t;
-    for (Unt i = 1; i < args -> length; i++) {
-        result = LIST_GET_UNSAFE(args, i);
-        switch(NILIFY(result).type) {
+    while (args.type == CONS) {
+        Value arg = NEXT(args);
+        result = eval(arg, environment);
+        switch(result.type) {
         case ERROR:
             return VALUE_ERROR;
         case NIL:
@@ -152,9 +148,10 @@ LISP_BUILTIN(and, "") {
 
 LISP_BUILTIN(or, "") {
     Value result = VALUE_NIL;
-    for (Unt i = 1; i < args -> length; i++) {
-        result = LIST_GET_UNSAFE(args, i);
-        switch(NILIFY(result).type) {
+    while (args.type == CONS) {
+        Value arg = NEXT(args);
+        result = eval(arg, environment);
+        switch(result.type) {
         case ERROR:
             return VALUE_ERROR;
         case NIL:
@@ -168,101 +165,73 @@ LISP_BUILTIN(or, "") {
 
 
 LISP_BUILTIN(set, "") {
-    if (args -> length < 3) {
-        return VALUE_ERROR;
-    }
-
-    Value symbol = LIST_GET_UNSAFE(args, 1);
-    symbol = NILIFY(symbol);
-
-    Value value = LIST_GET_UNSAFE(args, 2);
-    value = NILIFY(value);
-
-
+    ENSURE_NOT_EMPTY(args);
+    Value symbol = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
+    Value value = NEXT(args);
+    ENSURE_EMPTY(args);
     hash_set(environment -> variables, symbol, value);
     return value;
 }
 
 LISP_BUILTIN(setq, "") {
-    Value symbol;
-    Value value;
-    Unt i;
-    for (i = 0; i < (args -> length - 1) / 2; i++) {
-        symbol = LIST_GET_UNSAFE(args, i * 2 + 1);
-        symbol = NILIFY(symbol);
-
-        value = LIST_GET_UNSAFE(args, i * 2 + 1 + 1);
-        value = eval(value, environment);
-
-        if (symbol.type != SYMBOL ||
-            symbol.val.symbol_val == symbols_t.val.symbol_val) {
-            return VALUE_ERROR;
-        }
-
-        hash_set(environment -> variables, symbol, value);
+    Value length = list_length(args);
+    w_assert(length.type == INTEGER);
+    if (length.val.integer_val % 2 != 0) {
+        return VALUE_ERROR;
     }
-
-    if (i * 2 < args -> length - 1) {
-        symbol = LIST_GET_UNSAFE(args, i * 2 + 1);
-        symbol = eval(symbol, environment);
-        symbol = NILIFY(symbol);
-
+    Value value = VALUE_NIL;
+    while (args.type == CONS) {
+        Value symbol = NEXT(args);
+        Value expr = NEXT(args);
+        value = eval(expr, environment);
         if (symbol.type != SYMBOL ||
             symbol.val.symbol_val == symbols_t.val.symbol_val) {
             return VALUE_ERROR;
         }
-
-        value = VALUE_NIL;
         hash_set(environment -> variables, symbol, value);
     }
     return value;
 }
 
 LISP_BUILTIN(let, "") {
-    if (args -> length < 2) {
-        return VALUE_ERROR;
-    }
+    ENSURE_NOT_EMPTY(args);
+    Value pairs = NEXT(args);
 
-    Value pairs_value = LIST_GET_UNSAFE(args, 1);
-    List *pairs = pairs_value.val.list_val;
-
-    List *bindings = list_create(round_up_to_power_of_2((pairs -> length - 1) * 2));
-    for (Unt i = 0; i < pairs -> length; i++) {
-        Value pair = LIST_GET_UNSAFE(pairs, i);
+    Value bindings = VALUE_NIL;
+    while (pairs.type == CONS) {
+        Value pair = NEXT(pairs);
         switch (pair.type) {
         case SYMBOL:
-            list_push_back(bindings, pair);
-            list_push_back(bindings, VALUE_NIL);
+            bindings = CONS(CONS1(pair), bindings);
             break;
-        case LIST:
+        case CONS:
             {
-                Value symbol;
-                Value value;;
-                if (pair.val.list_val -> length == 1) {
-                    symbol = LIST_GET_UNSAFE(pair.val.list_val, 0);
+                Value symbol = NEXT(pair);
+                Value value;
+                if (pair.type == NIL) {
                     value = VALUE_NIL;
-                } else if (pair.val.list_val -> length == 2) {
-                    symbol = LIST_GET_UNSAFE(pair.val.list_val, 0);
-                    value = LIST_GET_UNSAFE(pair.val.list_val, 1);
+                } else if (pair.type == CONS) {
+                    value = NEXT(pair);
+                    ENSURE_EMPTY(pair);
                     value = eval(value, environment);
                 } else {
                     return VALUE_ERROR;
                 }
-                list_push_back(bindings, symbol);
-                list_push_back(bindings, value);
+                bindings = CONS(CONS(symbol, value), bindings);
+                break;
             }
-            break;
         default:
             return VALUE_ERROR;
         }
     }
-
-    List *old_bindings = list_create_empty();
-    List *not_bound = list_create_empty();
-    eval_bind(bindings, environment, old_bindings, not_bound);
+    ENSURE_EMPTY(pairs);
+    Value old_bindings;
+    Value not_bound;
+    eval_bind(bindings, environment, &old_bindings, &not_bound);
     Value result = VALUE_NIL;
-    for (Unt i = 2; i < args -> length; i++) {
-        Value body = LIST_GET_UNSAFE(args, i);
+    while (args.type == CONS) {
+        Value body = NEXT(args);
         result = eval(body, environment);
     }
     eval_unbind(environment, old_bindings, not_bound);
@@ -270,55 +239,50 @@ LISP_BUILTIN(let, "") {
 }
 
 LISP_BUILTIN(let_star, "") {
-    if (args -> length < 2) {
-        return VALUE_ERROR;
-    }
+    ENSURE_NOT_EMPTY(args);
+    Value pairs = NEXT(args);
 
-    Value pairs_value = LIST_GET_UNSAFE(args, 1);
-    List *pairs = pairs_value.val.list_val;
+    Value old_bindings;
+    Value not_bound;
 
-    List *old_bindings = list_create_empty();
-    List *not_bound = list_create_empty();
-
-    for (Unt i = 0; i < pairs -> length; i++) {
-        Value pair = LIST_GET_UNSAFE(pairs, i);
+    while (pairs.type == CONS) {
+        Value pair = NEXT(pairs);
         Value symbol;
         Value value = VALUE_NIL;
         switch (pair.type) {
         case SYMBOL:
             symbol = pair;
             break;
-        case LIST:
-            if (pair.val.list_val -> length == 1) {
-                symbol = LIST_GET_UNSAFE(pair.val.list_val, 0);
-            } else if (pair.val.list_val -> length == 2) {
-                symbol = LIST_GET_UNSAFE(pair.val.list_val, 0);
-                value = LIST_GET_UNSAFE(pair.val.list_val, 1);
-                value = eval(value, environment);
-            } else {
-                list_destroy(old_bindings);
-                list_destroy(not_bound);
-                return VALUE_ERROR;
+        case CONS:
+            {
+                symbol = NEXT(pair);
+                if (pair.type == NIL) {
+                    value = VALUE_NIL;
+                } else if (pair.type == CONS) {
+                    value = NEXT(pair);
+                    ENSURE_EMPTY(pair);
+                    value = eval(value, environment);
+                } else {
+                    return VALUE_ERROR;
+                }
+                break;
             }
-            break;
         default:
             return VALUE_ERROR;
         }
         Value old_value;
         Bool found = hash_get(environment -> variables, symbol, &old_value);
         if (found) {
-            list_push_back(old_bindings, symbol);
-            list_push_back(old_bindings, old_value);
-            /* TODO: increase refcount */
+            old_bindings = CONS(CONS(symbol, old_value), old_bindings);
         } else {
-            list_push_back(not_bound, symbol);
+            not_bound = CONS(symbol, not_bound);
         }
         hash_set(environment -> variables, symbol, value);
     }
 
     Value result = VALUE_NIL;
-    for (Unt i = 2; i < args -> length; i++) {
-        Value body = LIST_GET_UNSAFE(args, i);
+    while (args.type == CONS) {
+        Value body = NEXT(args);
         result = eval(body, environment);
     }
     eval_unbind(environment, old_bindings, not_bound);
@@ -327,10 +291,9 @@ LISP_BUILTIN(let_star, "") {
 }
 
 LISP_BUILTIN(print, "") {
-    if (args -> length != 2) {
-        return VALUE_ERROR;
-    }
-    Value value = LIST_GET_UNSAFE(args, 1);
+    ENSURE_NOT_EMPTY(args);
+    Value value = NEXT(args);
+    ENSURE_EMPTY(args);
     print(value);
     return value;
 }

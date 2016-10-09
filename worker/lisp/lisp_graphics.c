@@ -95,10 +95,10 @@ LISP_BUILTIN(clear, "") {
 }
 
 LISP_BUILTIN(fill, "") {
-    Value r = LIST_GET_UNSAFE(args, 1);
-    Value g = LIST_GET_UNSAFE(args, 2);
-    Value b = LIST_GET_UNSAFE(args, 3);
-    Value a = LIST_GET_UNSAFE(args, 4);
+    Value r = NEXT(args);
+    Value g = NEXT(args);
+    Value b = NEXT(args);
+    Value a = NEXT(args);
     if (!IS_NUMERIC(r) ||
         !IS_NUMERIC(g) ||
         !IS_NUMERIC(b) ||
@@ -121,12 +121,11 @@ LISP_BUILTIN(fill, "") {
 }
 
 LISP_BUILTIN(image, "") {
-    if (args -> length != 3) {
-        return VALUE_ERROR;
-    }
+    ENSURE_NOT_EMPTY(args);
 
-    Value file = LIST_GET_UNSAFE(args, 1);
-    Value position = LIST_GET_UNSAFE(args, 2);
+    Value file = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
+    Value position = NEXT(args);
 
     Renderable renderable;
     if (!image_get_renderable_from_file(environment, file, &renderable)) {
@@ -140,22 +139,20 @@ LISP_BUILTIN(image, "") {
 }
 
 LISP_BUILTIN(pdf, "") {
-    if (args -> length != 3 && args -> length != 4) {
-        return VALUE_ERROR;
-    }
-
-    Value file = LIST_GET_UNSAFE(args, 1);
+    ENSURE_NOT_EMPTY(args);
+    Value file = NEXT(args);
     if (file.type != STRING) {
         return VALUE_ERROR;
     }
-    Value slide = LIST_GET_UNSAFE(args, 2);
+    ENSURE_NOT_EMPTY(args);
+    Value slide = NEXT(args);
     if (slide.type != INTEGER) {
         return VALUE_ERROR;
     }
 
     Value position = VALUE_NIL;
-    if (args -> length == 4) {
-        position = LIST_GET_UNSAFE(args, 3);
+    if (args.type == CONS) {
+        position = NEXT(args);
     }
 
     Renderable renderable;
@@ -171,32 +168,34 @@ LISP_BUILTIN(text, "") {
 
     /* TODO: The arguments should be interpreted better */
     Int fontsize = -1;
-    Value position = VALUE_NIL;
     Bool align_center = true;
+    Value position = VALUE_NIL;
 
-    if (args -> length >= 3) {
-        Value fontsize_v = LIST_GET_UNSAFE(args, 2);
+    ENSURE_NOT_EMPTY(args);
+    Value string = NEXT(args);
+    if (string.type != STRING) {
+        return VALUE_ERROR;
+    }
+
+    if (args.type == CONS) {
+        Value fontsize_v = NEXT(args);
         if (fontsize_v.type == INTEGER) {
             fontsize = fontsize_v.val.integer_val;
         } else {
             return VALUE_ERROR;
         }
     }
-    if (args -> length >= 4) {
-        Value center_v = LIST_GET_UNSAFE(args, 3);
+    if (args.type == CONS) {
+        Value center_v = NEXT(args);
         align_center = center_v.type != NIL;
     }
-    if (args -> length == 5) {
-        position = LIST_GET_UNSAFE(args, 4);
+    if (args.type == CONS) {
+        position = NEXT(args);
     }
-    if (args -> length < 2 || args -> length > 5) {
+    if (args.type != NIL) {
         return VALUE_ERROR;
     }
 
-    Value string = LIST_GET_UNSAFE(args, 1);
-    if (string.type != STRING) {
-        return VALUE_ERROR;
-    }
 
     cairo_set_source_rgb(environment -> cairo, 1.0, 1.0, 1.0);
     Renderable renderable;

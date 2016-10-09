@@ -11,6 +11,7 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN(symbols_quote, quote, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(eval, eval, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(list, list, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(cons, cons, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(if, if, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(when, when, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(unless, unless, false, environment);
@@ -68,6 +69,12 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(sdl_internals, sdl_internals, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(resource_usage, resource_usage, true, environment);
 
+
+
+
+
+    /* Variables: */
+    hash_set(environment -> variables, symbols_t, symbols_t);
 }
 
 void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, String *docstring, Environment *environment) {
@@ -75,7 +82,7 @@ void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, 
     function -> eval = eval;
     function -> c_code = true;
     function -> c_function = c_function;
-    function -> parameters = NULL;
+    function -> parameters = VALUE_NIL;
     function -> body = (Value) {ERROR, {0}}; /* Done this way to avoid logging */
     function -> docstring = docstring;
     Value function_value = VALUE_FUNCTION(function);

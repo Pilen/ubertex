@@ -4,11 +4,12 @@
 #include "../lisp.h"
 
 LISP_BUILTIN(type_of, "") {
-    if (args -> length != 2) {
+    ENSURE_NOT_EMPTY(args);
+
+    Value value = NEXT(args);
+    if (args.type != NIL) {
         return VALUE_ERROR;
     }
-
-    Value value = LIST_GET_UNSAFE(args, 1);
     switch (value.type) {
     case ERROR:
         return symbols_symbol;
@@ -20,8 +21,10 @@ LISP_BUILTIN(type_of, "") {
         return symbols_float;
     case STRING:
         return symbols_string;
-    case LIST:
-        return symbols_list;
+    case CONS:
+        return symbols_cons;
+    case VECTOR:
+        return symbols_vector;
     case HASH:
         return symbols_hash;
     default:

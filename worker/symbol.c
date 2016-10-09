@@ -29,6 +29,7 @@ void symbol_initialize() {
     symbols_integer = symbol_get(VALUE_STRING(string_create_from_str("integer")));
     symbols_float = symbol_get(VALUE_STRING(string_create_from_str("float")));
     symbols_string = symbol_get(VALUE_STRING(string_create_from_str("string")));
+    symbols_vector = symbol_get(VALUE_STRING(string_create_from_str("cons")));
     symbols_vector = symbol_get(VALUE_STRING(string_create_from_str("vector")));
     symbols_hash = symbol_get(VALUE_STRING(string_create_from_str("hash")));
 
