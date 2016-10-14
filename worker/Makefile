@@ -1,52 +1,3 @@
-
-# CXXFLAGS=-std=c99 -Wall -Werror -pedantic -Wno-unused-result -ggdb -DDEBUG
-
-# # CXXFLAGS=-I. -I/usr/local/include -std=c99 -Wall -Werror -pedantic -Wno-unused-result -Wextra
-# LDFLAGS=-lglut -lGLEW -lGL -lm
-
-# HEADERS=debug.h types.h basic.h list.h hash.h string.h memory.h symbol.h read.h print.h eval.h
-
-# all: repl Makefile
-
-# basic.o: basic.c ${HEADERS}
-# 	gcc ${CXXFLAGS} -c basic.c
-
-# list.o: list.c ${HEADERS}
-# 	gcc ${CXXFLAGS} -c list.c
-
-# hash.o: hash.c ${HEADERS}
-# 	gcc ${CXXFLAGS} -c hash.c
-
-# string.o: string.c ${HEADERS}
-# 	gcc ${CXXFLAGS} -c string.c
-
-# memory.o: memory.c ${HEADERS}
-# 	gcc ${CXXFLAGS} -c memory.c
-
-# symbol.o: symbol.c ${HEADERS}
-# 	gcc ${CXXFLAGS} -c symbol.c
-
-
-# read.o: read.c ${HEADERS}
-# 	gcc ${CXXFLAGS} -c read.c
-
-# print.o: print.c ${HEADERS}
-# 	gcc ${CXXFLAGS} -c print.c
-
-# eval.o: eval.c ${HEADERS}
-# 	gcc ${CXXFLAGS} -c eval.c
-
-
-# repl.o: repl.c ${HEADERS}
-# 	gcc ${CXXFLAGS} -c repl.c
-
-# clean:
-# 	rm -f *.o repl
-
-# repl: basic.o list.o hash.o string.o memory.o symbol.o read.o print.o eval.o repl.o
-
-# .PHONY: all clean
-
 CFLAGS=-std=c99 -ggdb -DDEBUG
 # CFLAGS += -D_GNU_SOURCE
 CFLAGS += -D_POSIX_C_SOURCE=200809L
@@ -76,15 +27,27 @@ test: tests
 	timeout 300s ./tests && timeout 30s ./lisp_tests/lisp_test.py
 
 clean:
-	rm -f *.o *.d worker    lisp/*.o lisp/*.d    tests_src/*.o tests_src/*.d tests
+	rm -f *.o *.d worker    lisp/*.o lisp/*.d    tests_src/*.o tests_src/*.d
 
 linecount:
 	echo -n "linecount: " && cat *.c *.h */*.c */*.h */*.py */*.zlt | wc -l
 
-release:
+
+release: clean
 	gcc $(CFLAGS) $(LFLAGS) $(SRC) -UDEBUG -UOPTION_DEBUG -g0 -O3 -o worker
 
-.PHONY: all clean linecount release
+coverage: CFLAGS += -fprofile-arcs -ftest-coverage
+coverage: LFLAGS += -fprofile-arcs -ftest-coverage
+coverage: clean worker tests test
+	rm -rf coverage;
+	mkdir coverage;
+	gcov -fp *.gcno lisp/*.gcno tests_src/*.gcno > coverage/report;
+	find . -iname "*.gcov" -exec mv -t coverage "{}" +;
+	find . \( -iname "*.gcda" -or -iname "*.gcno" \) -delete;
+	$(MAKE) --no-print-directory clean
+
+
+.PHONY: all clean linecount release coverage
 
 -include .dummy
 .dummy: Makefile
