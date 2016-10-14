@@ -16,6 +16,9 @@
 void loop_update(Environment *environment, Value update_symbol, Value args);
 
 void loop_loop(Environment *environment) {
+    Unt next_tick = SDL_GetTicks();
+    Unt fast_runs = 0;
+
     while (true) {
         log_section("====LOOP====");
         if (loop_abort) {
@@ -88,8 +91,21 @@ void loop_loop(Environment *environment) {
         fflush(log_output);
         fflush(output);
 
+        next_tick += environment -> skip_ticks;
+        Unt sleep_time = next_tick - SDL_GetTicks();
+        if (sleep_time >= 0) {
+            SDL_Delay(sleep_time);
+            fast_runs = 0;
+            environment -> fast_run = false;
+        } else {
+            /* We are running behind! */
+            fast_runs++;
+            if (fast_runs > OPTION_MAX_FAST_RUNS) {
+                fast_runs = 0;
+            }
+            environment -> fast_run = fast_runs != 0;
+        }
         log_section("====LOOP-END====");
-        SDL_Delay(1000/30);
     }
 }
 

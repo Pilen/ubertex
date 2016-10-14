@@ -48,3 +48,13 @@
 (defun foo (a a a) (list a a a))
 (defun bar (a a a) (list (foo 4 5 6) a a a))
 (bar 1 2 3) ;=> ((6 6 6) 3 3 3)
+
+
+;;;;TEST;;;;
+(defun foo (x)
+  x)
+(defun bar (x)
+  (list (foo 1) x))
+(defun baz (x)
+  (list (bar 2) x))
+(baz 3) ;=> ((1 2) 3)
