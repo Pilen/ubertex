@@ -189,11 +189,9 @@ LISP_BUILTIN(greater_than, "") {
 
 
 LISP_BUILTIN(sin, "") {
-    if (args.type != CONS);
+    ENSURE_NOT_EMPTY(args);
     Value angle_v = NEXT(args);
-    if (args.type != NIL) {
-        return VALUE_ERROR;
-    }
+    ENSURE_EMPTY(args);
     Double angle;
     switch (angle_v.type) {
     case INTEGER:
@@ -210,11 +208,9 @@ LISP_BUILTIN(sin, "") {
 }
 
 LISP_BUILTIN(cos, "") {
-    if (args.type != CONS);
+    ENSURE_NOT_EMPTY(args);
     Value angle_v = NEXT(args);
-    if (args.type != NIL) {
-        return VALUE_ERROR;
-    }
+    ENSURE_EMPTY(args);
     Double angle;
     switch (angle_v.type) {
     case INTEGER:
@@ -250,8 +246,6 @@ LISP_BUILTIN(randint, "") {
         upper = first.val.integer_val;
 
     }
-    if (args.type != NIL) {
-        return VALUE_ERROR;
-    }
+    ENSURE_EMPTY(args);
     return VALUE_INTEGER(random_int(lower, upper));
 }

@@ -192,10 +192,7 @@ LISP_BUILTIN(text, "") {
     if (args.type == CONS) {
         position = NEXT(args);
     }
-    if (args.type != NIL) {
-        return VALUE_ERROR;
-    }
-
+    ENSURE_EMPTY(args);
 
     cairo_set_source_rgb(environment -> cairo, 1.0, 1.0, 1.0);
     Renderable renderable;

@@ -74,9 +74,7 @@ Value list_copy(Value list) {
 /*         temp = CONS(CAR(list), temp); */
 /*         list = CDR(list); */
 /*     } */
-/*     if (list.type != NIL) { */
-/*         return VALUE_ERROR; */
-/*     } */
+/*     ENSURE_EMPTY(args); */
 /*     Value result = VALUE_NIL; */
 /*     while (list.type == CONS) { */
 /*         result = CONS(CAR(temp), result); */

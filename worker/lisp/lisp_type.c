@@ -7,9 +7,7 @@ LISP_BUILTIN(type_of, "") {
     ENSURE_NOT_EMPTY(args);
 
     Value value = NEXT(args);
-    if (args.type != NIL) {
-        return VALUE_ERROR;
-    }
+    ENSURE_EMPTY(args);
     switch (value.type) {
     case ERROR:
         return symbols_symbol;
