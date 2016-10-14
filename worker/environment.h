@@ -26,12 +26,17 @@ typedef struct {
     Double clear_blue;
     Double clear_alpha;
 
-    Hash *variables;
+    Value dynamic_variables;
+    Hash *global_variables;
     Hash *functions;
 
     Value call_stack; /* list */
 } Environment;
 
 Environment *environment_create(void);
+void environment_bind_variables(Value bindings, Environment *environment);
+void environment_unbind_variables(Environment *environment);
+Bool environment_lookup_variable(Environment *environment, Value key, Value *result);
+void environment_set_variable(Environment *environment, Value key, Value value);
 
 #endif

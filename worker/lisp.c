@@ -74,7 +74,7 @@ void lisp_initialize(Environment *environment) {
 
 
     /* Variables: */
-    hash_set(environment -> variables, symbols_t, symbols_t);
+    hash_set(environment -> global_variables, symbols_t, symbols_t);
 }
 
 void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, String *docstring, Environment *environment) {

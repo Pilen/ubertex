@@ -170,7 +170,7 @@ LISP_BUILTIN(set, "") {
     ENSURE_NOT_EMPTY(args);
     Value value = NEXT(args);
     ENSURE_EMPTY(args);
-    hash_set(environment -> variables, symbol, value);
+    environment_set_variable(environment, symbol, value);
     return value;
 }
 
@@ -189,7 +189,7 @@ LISP_BUILTIN(setq, "") {
             symbol.val.symbol_val == symbols_t.val.symbol_val) {
             return VALUE_ERROR;
         }
-        hash_set(environment -> variables, symbol, value);
+        environment_set_variable(environment, symbol, value);
     }
     return value;
 }
@@ -226,24 +226,20 @@ LISP_BUILTIN(let, "") {
         }
     }
     ENSURE_EMPTY(pairs);
-    Value old_bindings;
-    Value not_bound;
-    eval_bind(bindings, environment, &old_bindings, &not_bound);
+    environment_bind_variables(bindings, environment);
     Value result = VALUE_NIL;
     while (args.type == CONS) {
         Value body = NEXT(args);
         result = eval(body, environment);
     }
-    eval_unbind(environment, old_bindings, not_bound);
+    environment_unbind_variables(environment);
     return result;
 }
 
 LISP_BUILTIN(let_star, "") {
     ENSURE_NOT_EMPTY(args);
     Value pairs = NEXT(args);
-
-    Value old_bindings;
-    Value not_bound;
+    Unt count = 0;
 
     while (pairs.type == CONS) {
         Value pair = NEXT(pairs);
@@ -270,14 +266,8 @@ LISP_BUILTIN(let_star, "") {
         default:
             return VALUE_ERROR;
         }
-        Value old_value;
-        Bool found = hash_get(environment -> variables, symbol, &old_value);
-        if (found) {
-            old_bindings = CONS(CONS(symbol, old_value), old_bindings);
-        } else {
-            not_bound = CONS(symbol, not_bound);
-        }
-        hash_set(environment -> variables, symbol, value);
+        environment_bind_variables(CONS1(CONS(symbol, value)), environment);
+        count++;
     }
 
     Value result = VALUE_NIL;
@@ -285,9 +275,10 @@ LISP_BUILTIN(let_star, "") {
         Value body = NEXT(args);
         result = eval(body, environment);
     }
-    eval_unbind(environment, old_bindings, not_bound);
+    for (; count > 0; count--) {
+        environment_unbind_variables(environment);
+    }
     return result;
-
 }
 
 LISP_BUILTIN(print, "") {

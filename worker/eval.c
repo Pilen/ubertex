@@ -29,7 +29,7 @@ Value eval(Value expression, Environment *environment) {
         return expression;
     case SYMBOL: {
         Value result;
-        Bool found = hash_get(environment -> variables, expression, &result);
+        Bool found = environment_lookup_variable(environment, expression, &result);
         if (found) {
             return result;
         } else {
@@ -125,17 +125,12 @@ Value eval_apply(Value function_symbol, Function *function, Value args, Environm
         return VALUE_ERROR;
     }
 
-    Value old_bindings;
-    Value not_bound;
-    eval_bind(bindings, environment, &old_bindings, &not_bound);
-
+    environment_bind_variables(bindings, environment);
     environment -> call_stack = CONS(function_symbol, environment -> call_stack);
     Value result = eval(function -> body, environment);
     environment -> call_stack = CDR(environment -> call_stack);
+    environment_unbind_variables(environment);
 
-    eval_unbind(environment, old_bindings, not_bound);
-    list_destroy(old_bindings);
-    list_destroy(not_bound);
     return result;
 }
 
@@ -237,42 +232,4 @@ Value eval_get_bindings(Value arguments, Value parameters) {
     /* w_assert(parameters.type == NIL); */
     /* w_assert(arguments.type == NIL); */
     return bindings;
-}
-
-void eval_bind(Value bindings, Environment *environment, Value *old_bindings, Value *not_bound) {
-    /* TODO: this is a stupid/ugly way of doing things, only done while converting eval_get_bindings returns an inverted list*/
-    *old_bindings = VALUE_NIL;
-    *not_bound = VALUE_NIL;
-    bindings = list_reverse(bindings);
-    while (bindings.type == CONS) {
-        Value pair = NEXT(bindings);
-        w_assert(pair.type == CONS);
-        Value parameter = CAR(pair);
-        Value argument = CDR(pair);
-
-        Value old_value;
-        Bool found = hash_get(environment -> variables, parameter, &old_value);
-        if (found) {
-            *old_bindings = CONS(CONS(parameter, old_value), *old_bindings);
-        } else {
-            *not_bound = CONS(parameter, *not_bound);
-        }
-        /* Note: performance could be improved with a combined get old/insert new, "hash_replace" method */
-        hash_set(environment -> variables, parameter, argument);
-    }
-    w_assert(bindings.type == NIL);
-}
-
-void eval_unbind(Environment *environment, Value old_bindings, Value not_bound) {
-    while (old_bindings.type == CONS) {
-        Value pair = NEXT(old_bindings);
-        w_assert(pair.type == CONS);
-        Value symbol = CAR(pair);
-        Value old_value = CDR(pair);
-        hash_set(environment -> variables, symbol, old_value);
-    }
-    while (not_bound.type == CONS) {
-        Value symbol = NEXT(not_bound);
-        hash_delete(environment -> variables, symbol);
-    }
 }

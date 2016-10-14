@@ -1,5 +1,6 @@
 #include "types.h"
 #include "environment.h"
+#include "basic.h"
 #include "hash.h"
 #include "memory.h"
 #include "list.h"
@@ -26,9 +27,50 @@ Environment *environment_create(void) {
     environment -> clear_blue = 0.0;
     environment -> clear_alpha = 1.0;
 
-    environment -> variables = hash_create();
+    environment -> global_variables = hash_create();
+    environment -> dynamic_variables = VALUE_NIL;
     environment -> functions = hash_create();
 
     environment -> call_stack = VALUE_NIL; /* list */
     return environment;
+}
+
+void environment_bind_variables(Value bindings, Environment *environment) {
+    environment -> dynamic_variables = CONS(bindings, environment -> dynamic_variables);
+}
+
+void environment_unbind_variables(Environment *environment) {
+    environment -> dynamic_variables = CDR(environment -> dynamic_variables);
+}
+
+Bool environment_lookup_variable(Environment *environment, Value key, Value *result) {
+    /* Cant simply return value or nil/error, as we cant distinguish values not found to ones bound */
+    Value groups = environment -> dynamic_variables;
+    while (groups.type == CONS) {
+        Value bindings = NEXT(groups);
+        while (bindings.type == CONS) {
+            Value binding = NEXT(bindings);
+            if (equal(key, CAR(binding))) {
+                *result = CDR(binding);
+                return true;
+            }
+        }
+    }
+    Bool found = hash_get(environment -> global_variables, key, result);
+    return found;
+}
+
+void environment_set_variable(Environment *environment, Value key, Value value) {
+    Value groups = environment -> dynamic_variables;
+    while (groups.type == CONS) {
+        Value bindings = NEXT(groups);
+        while (bindings.type == CONS) {
+            Value binding = NEXT(bindings);
+            if (equal(key, CAR(binding))) {
+                CDR(binding) = value;
+                return;
+            }
+        }
+    }
+    hash_set(environment -> global_variables, key, value);
 }
