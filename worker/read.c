@@ -86,13 +86,14 @@ Bool read_expression(char **code, char *end, Unt *linenumber, Value *result) {
     if (read_float(code, end, linenumber, result)) {
         return true;
     }
+    /* Should be before read_integer else 1x will read an integer then a symbol */
+    if (read_symbol(code, end, linenumber, result)) {
+        return true;
+    }
     if (read_integer(code, end, linenumber, result)) {
         return true;
     }
     if (read_string(code, end, linenumber, result)) {
-        return true;
-    }
-    if (read_symbol(code, end, linenumber, result)) {
         return true;
     }
     if (read_list(code, end, linenumber, result)) {
@@ -283,14 +284,17 @@ Bool read_symbol(char **code, char *end, Unt *linenumber, Value *result) {
     char *p = *code;
     Bool found = false;
 
+    /* Eat leading digits */
     while (p < end && *p >= '0' && *p <= '9') {
         p++;
     }
 
     while (p < end) {
+        /* illegal now */
         if (read_char_exists_in(*p, " \t\n\r\f0123456789()[];\"'.,:#")) {
             break;
         }
+        /* skip escaped */
         if (*p == '\\') {
             if (p + 1 < end) {
                 p++;
@@ -298,12 +302,13 @@ Bool read_symbol(char **code, char *end, Unt *linenumber, Value *result) {
                 return false;
             }
         } else {
-            /* Normal character, potentially followed by a number */
-            while (p < end && *p >= '0' && *p <= '9') {
-                p++;
-            }
+            /* Normal character */
+            p++;
         }
-        p++;
+        /* Some character, potentially followed by a number */
+        while (p < end && *p >= '0' && *p <= '9') {
+            p++;
+        }
         found = true;
     }
 
