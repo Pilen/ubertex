@@ -220,6 +220,7 @@ LISP_BUILTIN(resource_usage, "") {
         case VECTOR:
         case HASH:
         case FUNCTION:
+        case COMPONENT:
         case COLOR:
         case SOUND:
             break;

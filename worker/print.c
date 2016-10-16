@@ -8,6 +8,7 @@
 #include "vector.h"
 #include "hash.h"
 #include "symbol.h"
+#include "component.h"
 
 void print(Value value) {
     print_on(output, value);
@@ -93,6 +94,10 @@ void print_on(FILE *stream, Value value) {
     case FUNCTION:
         fprintf(stream, "?");
         break;
+    case COMPONENT:
+        fprintf(stream, "#<component ");
+        print_on(stream, symbol_name(value.val.component_val -> name));
+        fprintf(stream, ">");
     case COLOR:
     case SOUND:
     case IMAGE:

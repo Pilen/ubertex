@@ -4,6 +4,7 @@
 #include "hash.h"
 #include "memory.h"
 #include "list.h"
+#include "component.h"
 
 /* Note: decide if this function should just be located in initialize.c */
 Environment *environment_create(void) {
@@ -19,6 +20,11 @@ Environment *environment_create(void) {
 
     environment -> width = 0;
     environment -> height = 0;
+
+    environment -> component_definitions = hash_create();
+    environment -> current_component = NULL;
+    environment -> current_layer = 0;
+    environment -> layers = component_layer_create(environment -> current_layer);
 
     environment -> component_next_update = VALUE_NIL; /* Not set */
     environment -> component_next_update_args = VALUE_NIL; /* list */

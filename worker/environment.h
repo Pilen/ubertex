@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <cairo.h>
 #include "hash.h"
+#include "layer.h"
 
 typedef struct {
     SDL_Window *window;
@@ -17,6 +18,11 @@ typedef struct {
 
     Int width;
     Int height;
+
+    Hash *component_definitions;
+    Component *current_component;
+    Int current_layer;
+    Layer *layers;
 
     Value component_next_update;
     Value component_next_update_args; /* list */
