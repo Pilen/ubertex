@@ -115,6 +115,7 @@ def lisp(file, linenumber, statements, expected_values):
         if output.strip() == expected.strip():
             continue
         else:
+            print(result.stderr)
             text = "\texpected {} got {}".format(expected, output)
             print("TEST-failed: {}:{}: \t\t{}".format(file, linenumber, text))
             return False

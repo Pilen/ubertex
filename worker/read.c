@@ -22,8 +22,8 @@ Bool read_string(char **code, char *end, Unt *linenumber, Value *result);
 Bool read_symbol(char **code, char *end, Unt *linenumber, Value *result);
 Bool read_list(char **code, char *end, Unt *linenumber, Value *result);
 Bool read_quote(char **code, char *end, Unt *linenumber, Value *result);
+Bool read_at_delimiter(char *character, char *end);
 Bool read_char_exists_in(char character, char* text);
-
 
 Value read_value(Value value) {
     if (value.type != STRING) {
@@ -86,11 +86,10 @@ Bool read_expression(char **code, char *end, Unt *linenumber, Value *result) {
     if (read_float(code, end, linenumber, result)) {
         return true;
     }
-    /* Should be before read_integer else 1x will read an integer then a symbol */
-    if (read_symbol(code, end, linenumber, result)) {
+    if (read_integer(code, end, linenumber, result)) {
         return true;
     }
-    if (read_integer(code, end, linenumber, result)) {
+    if (read_symbol(code, end, linenumber, result)) {
         return true;
     }
     if (read_string(code, end, linenumber, result)) {
@@ -171,6 +170,10 @@ Bool read_integer(char **code, char *end, Unt *linenumber, Value *result) {
         return false;
     }
 
+    if (!read_at_delimiter(p, end)) {
+        return false;
+    }
+
     Int number;
     Int count = sscanf(*code, "%d", &number);
     if (count == EOF || count <= 0) {
@@ -181,6 +184,7 @@ Bool read_integer(char **code, char *end, Unt *linenumber, Value *result) {
         return true;
     }
 }
+
 /* TODO: ensure that this works if end comes unexpected */
 Bool read_float(char **code, char *end, Unt *linenumber, Value *result) {
     char *p = *code;
@@ -214,7 +218,7 @@ Bool read_float(char **code, char *end, Unt *linenumber, Value *result) {
         }
     }
 
-    if (p < end &&  (*p == 'e' || *p == 'E')) {
+    if (p < end && (*p == 'e' || *p == 'E')) {
         /* Create a "roll-back point" */
         char *p_previous = p;
 
@@ -234,6 +238,10 @@ Bool read_float(char **code, char *end, Unt *linenumber, Value *result) {
         }
 
         decimals = true;
+    }
+
+    if (!read_at_delimiter(p, end)) {
+        return false;
     }
 
     if (!decimals) {
@@ -291,7 +299,7 @@ Bool read_symbol(char **code, char *end, Unt *linenumber, Value *result) {
 
     while (p < end) {
         /* illegal now */
-        if (read_char_exists_in(*p, " \t\n\r\f0123456789()[];\"'.,:#")) {
+        if (read_at_delimiter(p, end) || (*p >= '0' && *p <= '9')) {
             break;
         }
         /* skip escaped */
@@ -312,6 +320,9 @@ Bool read_symbol(char **code, char *end, Unt *linenumber, Value *result) {
         found = true;
     }
 
+    if (!read_at_delimiter(p, end)) {
+        return false;
+    }
     if (!found) {
         return false;
     }
@@ -386,6 +397,10 @@ Bool read_quote(char **code, char *end, Unt *linenumber, Value *result) {
     return true;
 }
 
+Bool read_at_delimiter(char *character, char *end) {
+    /* No . */
+    return character == end || !character || read_char_exists_in(*character, " \t\n\r\f()[];\"',:#");
+}
 Bool read_char_exists_in(char character, char* text) {
     while (*text != '\0') {
         if (character == *text) {
