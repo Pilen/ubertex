@@ -33,7 +33,21 @@ void print_on(FILE *stream, Value value) {
         fprintf(stream, "%d", value.val.integer_val);
         break;
     case FLOAT:
-        fprintf(stream, "%lf", value.val.float_val);
+        {
+            /* So there is no way for fprintf to skip trailing zeroes, but always keep atleast one decimal */
+            char buffer[64];
+            Int i = sprintf(buffer, "%lf", value.val.float_val);
+            i--;
+            while (i >= 0 && buffer[i] == '0') {
+                i--;
+            }
+            if (buffer[i] == '.') {
+                i++;
+            }
+            i++;
+            buffer[i] = '\0';
+            fprintf(stream, "%s", buffer);
+        }
         break;
     case STRING:
         fprintf(stream, "\"%s\"", value.val.string_val -> text);
