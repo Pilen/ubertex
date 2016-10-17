@@ -12,6 +12,13 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(eval, eval, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(list, list, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(cons, cons, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(car, car, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(hd, car, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(head, car, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(cdr, cdr, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(tl, cdr, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(tail, cdr, true, environment);
+
     LISP_REGISTER_BUILTIN_FROM_RAW(if, if, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(when, when, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(unless, unless, false, environment);
