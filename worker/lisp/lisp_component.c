@@ -79,7 +79,13 @@ LISP_BUILTIN(define_component, "") {
 LISP_BUILTIN(create_component, "") {
     ENSURE_NOT_EMPTY(args);
     Value name = NEXT(args);
-    Component *component = component_create(name, args, environment);
+    Value evaled = VALUE_NIL;
+    while (args.type == CONS) {
+        Value arg = NEXT(args);
+        evaled = CONS(eval(arg, environment), evaled);
+    }
+    evaled = list_reverse(evaled);
+    Component *component = component_create(name, evaled, environment);
     return VALUE_COMPONENT(component);
 }
 
