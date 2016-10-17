@@ -15,6 +15,7 @@
 #include "../resource.h"
 #include "../sound.h"
 #include "../image.h"
+#include "../component.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 /* #include "../libs/cairosdl/cairosdl.h" */
@@ -228,5 +229,10 @@ LISP_BUILTIN(resource_usage, "") {
     }
     log_info("Total size: %d", total_size);
     lock_read_unlock(resource_cache_lock);
+    return VALUE_NIL;
+}
+
+LISP_BUILTIN(component_update_all, "") {
+    component_update_all(environment);
     return VALUE_NIL;
 }

@@ -12,6 +12,7 @@
 #include "resource.h"
 #include "sound.h"
 #include "graphics.h"
+#include "component.h"
 
 void loop_update(Environment *environment, Value update_symbol, Value args);
 
@@ -26,6 +27,7 @@ void loop_loop(Environment *environment) {
             environment -> component_next_update_args = VALUE_NIL;
             environment -> component_next_post = VALUE_NIL;
             environment -> component_next_post_args = VALUE_NIL;
+            component_destroy_all(environment);
             sound_stop_all();
         }
         loop_abort = false;
@@ -61,6 +63,10 @@ void loop_loop(Environment *environment) {
         loop_update(environment, environment -> component_next_update, environment -> component_next_update_args);
         loop_update(environment, environment -> component_next_post, environment -> component_next_post_args);
         w_assert(environment -> call_stack.type == NIL);
+        w_assert(environment -> dynamic_variables.type == NIL);
+        component_update_all(environment);
+        w_assert(environment -> call_stack.type == NIL);
+        w_assert(environment -> dynamic_variables.type == NIL);
         lock_read_unlock(resource_cache_lock);
 
         if (loop_blank) {

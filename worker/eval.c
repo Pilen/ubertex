@@ -50,10 +50,9 @@ Value eval_list(Value expression, Environment *environment) {
 
     Value function_symbol = NEXT(expression);
     if (function_symbol.type == CONS) {
-        eval_lambda(function_symbol, expression, environment);
+        return eval_lambda(function_symbol, expression, environment);
     }
 
-    debug_value(function_symbol);
     w_assert(function_symbol.type == SYMBOL);
     Value function_value;
     Bool found = hash_get(environment -> functions, function_symbol, &function_value);
@@ -135,6 +134,7 @@ Value eval_apply(Value function_symbol, Function *function, Value args, Environm
 }
 
 Value eval_lambda(Value lambda, Value args, Environment *environment) {
+    w_assert(false);
     return VALUE_ERROR;
     Value head = CAR(lambda);
     Bool clojure;

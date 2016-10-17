@@ -8,13 +8,13 @@ struct Layer_s {
     Int index;
     Value entries; /* list */
     Value last_entry; /* last element of entrieslist */
-    Layer *lower;
-    Layer *higher;
+    Layer *next;
 };
 
 /* Component definitions are stored as Function values */
 struct Component_s {
     Value name; /* symbol */
+    Layer *layer; /* Dead if NULL */
 
     Value local_variables; /* list */
 

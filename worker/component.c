@@ -4,20 +4,10 @@
 #include "lisp.h"
 #include "hash.h"
 #include "eval.h"
+#include "assert.h"
+#include "debug.h"
 
 void component_execute(Value symbol, Value args, Environment *environment);
-
-void component_define(Value name, Value constructor, Value parameters, String *docstring, Value body, Environment *environment) {
-    Function *function = memory_malloc(sizeof(Function));
-    function -> eval = true;
-    function -> c_code = false;
-    function -> c_function = NULL;
-    function -> parameters = parameters;
-    function -> body = body;
-    function -> docstring = docstring;
-    Value function_value = VALUE_FUNCTION(function);
-    hash_set(environment -> component_definitions, name, function_value);
-}
 
 Component *component_create(Value name, Value args, Environment *environment) {
     Value definition;
@@ -28,6 +18,7 @@ Component *component_create(Value name, Value args, Environment *environment) {
 
     Component *component = memory_malloc(sizeof(Component));
     component -> name = name;
+    component -> layer = NULL;
     component -> local_variables = VALUE_NIL;
     component -> update = VALUE_NIL;
     component -> update_arguments = VALUE_NIL;
@@ -35,14 +26,36 @@ Component *component_create(Value name, Value args, Environment *environment) {
     component -> render_arguments = VALUE_NIL;
     component -> message_queue = VALUE_NIL;
     Value component_value = VALUE_COMPONENT(component);
+
+    component_layer_insert_component(environment -> current_layer, component, environment);
+
+    Component *previous_component = environment -> current_component;
+    environment -> current_component = component;
     eval_apply(component_value, definition.val.function_val, args, environment);
+    environment -> current_component = previous_component;
     return component;
 }
 
-void component_update_all(Component *component, Environment *environment) {
-    environment -> current_component = component;
-    component_execute(component -> update, component -> update_arguments, environment);
-    component_execute(component -> render, component -> render_arguments, environment);
+void component_update_all(Environment *environment) {
+    Layer *layer = environment -> layers;
+    while (layer) {
+        environment -> current_layer = layer -> index;
+        Value components = layer -> entries;
+        while (components.type == CONS) {
+            Value component_value = NEXT(components);
+            Component *component = component_value.val.component_val;
+            environment -> current_component = component;
+            environment_bind_variables(component -> local_variables, environment);
+            eval(component -> update, environment);
+            eval(component -> render, environment);
+            /* component_execute(component -> update, component -> update_arguments, environment); */
+            /* component_execute(component -> render, component -> render_arguments, environment); */
+            environment_unbind_variables(environment);
+        }
+        layer = layer -> next;
+    }
+    environment -> current_layer = OPTION_DEFAULT_LAYER;
+    environment -> current_component = NULL;
 }
 
 void component_execute(Value symbol, Value args, Environment *environment) {
@@ -71,39 +84,85 @@ Layer *component_layer_create(Int index) {
     Layer *layer = memory_malloc(sizeof(Layer));
     layer -> index = index;
     layer -> entries = VALUE_NIL;
-    layer -> lower = NULL;
-    layer -> higher = NULL;
+    layer -> next = NULL;
     return layer;
 }
 
-void component_layer_insert_component(Int index, Value component, Environment *environment) {
+void component_layer_insert_component(Int index, Component *component, Environment *environment) {
+    /* Assume environment -> layers is a sorted sequence */
     Layer *layer = environment -> layers;
+    if (index < layer -> index) {
+        Layer *next = layer;
+        layer = component_layer_create(index);
+        environment -> layers = layer;
+        layer -> next = next;
+        layer -> entries = CONS1(VALUE_COMPONENT(component));
+        layer -> last_entry = layer -> entries;
+        component -> layer = layer;
+        return;
+    }
+
     while (true) {
         if (index == layer -> index) {
             break;
-        } else if (index < layer -> index) {
-            if (layer -> lower) {
-                layer = layer -> lower;
-            } else {
-                layer = component_layer_create(index);
-                layer -> lower = layer;
-                break;
-            }
-        } else { // index > layer -> index
-            if (layer -> higher) {
-                layer = layer -> higher;
-            } else {
-                layer = component_layer_create(index);
-                layer -> higher = layer;
-                break;
-            }
+        }
+        Layer *next = layer -> next;
+        if (!next) {
+            layer -> next = component_layer_create(index);
+            layer = next;
+            break;
+        }
+        if (index > next -> index) {
+            layer -> next = component_layer_create(index);
+            layer = layer -> next;
+            layer -> next = next;
+            break;
         }
     }
 
+    /* insert into layer */
     if (layer -> entries.type == NIL) {
-        layer -> entries = CONS1(component);
+        layer -> entries = CONS1(VALUE_COMPONENT(component));
         layer -> last_entry = layer -> entries;
     } else {
-        CDR(layer -> last_entry) = CONS1(component);
+        CDR(layer -> last_entry) = CONS1(VALUE_COMPONENT(component));
     }
+    component -> layer = layer;
+}
+
+void component_destroy_all(Environment *environment) {
+    Layer *layer = environment -> layers;
+    while (layer) {
+        Value components = layer -> entries;
+        while (components.type == CONS) {
+            Value component = NEXT(components);
+            component.val.component_val -> layer = NULL;
+        }
+        layer = layer -> next;
+    }
+    environment -> current_layer = OPTION_DEFAULT_LAYER;
+    environment -> layers = component_layer_create(OPTION_DEFAULT_LAYER);
+}
+
+/* Remove component from layers.
+   Does not mark it destroyed, so can be used for moving between layers */
+void component_remove(Component *component, Environment *environment) {
+    w_assert(component -> layer);
+    Layer *layer = component -> layer;
+    component -> layer = NULL;
+    Value entries = layer -> entries;
+    w_assert(entries.type == CONS); /* The component must exist in this layer */
+    if (CAR(entries).val.component_val == component) {
+        layer -> entries = CDR(entries);
+        return;
+    }
+    while (true) {
+        w_assert(CDR(entries).type == CONS); /* The component must exist in this layer */
+        if (CAR(CDR(entries)).val.component_val == component) {
+            CDR(entries) = CDR(CDR(entries));
+            return;
+        }
+        (void) NEXT(entries);
+    }
+    w_assert(false);
 }

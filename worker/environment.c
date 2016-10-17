@@ -23,8 +23,9 @@ Environment *environment_create(void) {
 
     environment -> component_definitions = hash_create();
     environment -> current_component = NULL;
-    environment -> current_layer = 0;
-    environment -> layers = component_layer_create(environment -> current_layer);
+    /* environment -> current_layer = OPTION_DEFAULT_LAYER; */
+    /* environment -> layers = component_layer_create(environment -> current_layer); */
+    component_destroy_all(environment); /* initializes all */
 
     environment -> component_next_update = VALUE_NIL; /* Not set */
     environment -> component_next_update_args = VALUE_NIL; /* list */
