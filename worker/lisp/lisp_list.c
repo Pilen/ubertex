@@ -22,6 +22,24 @@ LISP_BUILTIN(cons, "") {
     return CONS(car, cdr);
 }
 
+LISP_BUILTIN(car, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value list = NEXT(args);
+    if (list.type != CONS) {
+        return VALUE_ERROR;
+    }
+    return CAR(list);
+}
+
+LISP_BUILTIN(cdr, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value list = NEXT(args);
+    if (list.type != CONS) {
+        return VALUE_ERROR;
+    }
+    return CDR(list);
+}
+
 /* LISP_BUILTIN(nth, "") { */
 /*     if (args -> length != 3) { */
 /*         return VALUE_ERROR; */
