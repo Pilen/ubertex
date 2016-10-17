@@ -145,6 +145,7 @@ LISP_BUILTIN(deflocal, "") {
 
     if (args.type == CONS) {
         value = NEXT(args);
+        value = eval(value, environment);
     }
 
     if (!environment -> current_component) {
