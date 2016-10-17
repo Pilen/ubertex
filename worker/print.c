@@ -90,7 +90,7 @@ void print_on(FILE *stream, Value value) {
             Hash *table = value.val.hash_val;
             Hash_entry *entry = table -> entries;
             Bool first = true;
-            for (Unt i = 0; i < table -> length; i++) {
+            for (Unt i = 0; i < table -> size; i++) {
                 if (entry[i].status == HASH_OCCUPIED) {
                     if (first) {
                         first = false;
@@ -112,6 +112,7 @@ void print_on(FILE *stream, Value value) {
         fprintf(stream, "#<component ");
         print_on(stream, symbol_name(value.val.component_val -> name));
         fprintf(stream, ">");
+        break;
     case COLOR:
     case SOUND:
     case IMAGE:
