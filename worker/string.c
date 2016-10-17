@@ -40,10 +40,15 @@ String *string_create_from_substr(char* str, Unt bytes) {
             switch (str[i]) {
             case 'n': string -> text[j] = '\n'; break;
             case 't': string -> text[j] = '\t'; break;
+            case '\\': string -> text[j] = '\\'; break; /* Is this line correct? */
+            default:                                    /* Is this line correct? */
+                string -> text[j] = '\\';               /* Is this line correct? */
+                j++;                                    /* Is this line correct? */
+                string -> text[j] = str[i]; break;      /* Is this line correct? */
             }
-            break;
+        } else {                                        /* Is this line correct?, previously next happened unconditionally */
+            string -> text[j] = str[i];
         }
-        string -> text[j] = str[i];
     }
 
     return string;
