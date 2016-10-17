@@ -112,7 +112,6 @@ int main(int argc, char **argv) {
         close(STDERR_FILENO);
         log_output = fopen("log.txt", "w");
         output = log_output;
-        fprintf(log_output, "Hej");
         fflush(log_output);
     }
 
@@ -140,7 +139,7 @@ int main(int argc, char **argv) {
         Value result = eval(statement, environment);
         log_section("====EVALUATION-END====");
         print(result);
-        printf("\n");
+        fprintf(output, "\n");
 
     }
 
@@ -154,7 +153,7 @@ int main(int argc, char **argv) {
             free(line);
             Value result = eval(statement, environment);
             print(result);
-            printf("\n");
+            fprintf(output, "\n");
         }
     }
 

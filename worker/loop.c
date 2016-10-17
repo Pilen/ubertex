@@ -51,9 +51,9 @@ void loop_loop(Environment *environment) {
                 Value expression = vector_pop_front(communication_parsed_queue);
                 mutex_unlock(communication_parsed_queue_lock);
                 loop_blank = false;
-                print_on(log_output, expression); printf("\n");
+                print_on(log_output, expression); fprintf(log_output, "\n");
                 Value result = eval(expression, environment);
-                print_on(log_output, result); printf("\n");
+                print_on(log_output, result); fprintf(log_output, "\n");
             } else {
                 mutex_unlock(communication_parsed_queue_lock);
             }
