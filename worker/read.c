@@ -44,6 +44,9 @@ Value read_from_str(char *str) {
     if (found && code == end) {
         return result;
     }
+    if (found) {
+        log_error("Read something, but not all");
+    }
     /* TODO: log error */
     return VALUE_ERROR;
 }
@@ -55,17 +58,18 @@ Bool read_script(char **code, char *end, Unt *linenumber, Value *result) {
     Value last = script;
     Unt count = 0;
 
+    read_munch_whitespace(&p, end, linenumber);
     while (p < end) {
         Value value;
-        read_munch_whitespace(&p, end, linenumber);
         if (!read_expression(&p, end, linenumber, &value)) {
+            log_error("could not read expression: %s", p);
             break;
         }
+        read_munch_whitespace(&p, end, linenumber);
         count++;
         CDR(last) = CONS1(value);
         last = CDR(last);
     }
-    read_munch_whitespace(&p, end, linenumber);
     if (p != end) {
         /* list_destroy(script); */
         return false;
@@ -82,7 +86,6 @@ Bool read_script(char **code, char *end, Unt *linenumber, Value *result) {
 Bool read_expression(char **code, char *end, Unt *linenumber, Value *result) {
     /* Skip spaces */
     /* read_munch_whitespace(code, end, linenumber); */
-
     if (read_float(code, end, linenumber, result)) {
         return true;
     }
