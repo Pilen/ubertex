@@ -18,13 +18,11 @@ struct Component_s {
 
     Value local_variables; /* list */
 
-    Value update; /* body */
-    Value update_arguments; /* list */
+    Value update; /* expression */
 
-    Value render; /* body */
-    Value render_arguments; /* list */
+    Value render; /* expression */
 
-    Value message_queue; /* list? */
+    Hash *message_handlers;
 };
 
 #endif

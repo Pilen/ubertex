@@ -16,6 +16,7 @@
 #include "../sound.h"
 #include "../image.h"
 #include "../component.h"
+#include "../message.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 /* #include "../libs/cairosdl/cairosdl.h" */
@@ -234,5 +235,10 @@ LISP_BUILTIN(resource_usage, "") {
 
 LISP_BUILTIN(component_update_all, "") {
     component_update_all(environment);
+    return VALUE_NIL;
+}
+
+LISP_BUILTIN(message_dispatch, "") {
+    message_dispatch(environment);
     return VALUE_NIL;
 }

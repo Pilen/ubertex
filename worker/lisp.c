@@ -76,7 +76,12 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(update, update, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(render, render, false, environment);
 
+    LISP_REGISTER_BUILTIN_FROM_RAW(send, send, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(broadcast, broadcast, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(receive, receive, false, environment);
+
     LISP_REGISTER_BUILTIN_FROM_RAW(component_update_all, component_update_all, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(message_dispatch, message_dispatch, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(resource_cache_size, resource_cache_size, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(sounds_playing, resource_cache_size, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(allocate_useless, allocate_useless, true, environment);

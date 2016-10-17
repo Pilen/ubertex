@@ -15,24 +15,29 @@ Component *component_create(Value name, Value args, Environment *environment) {
     if (!found) {
         return NULL;
     }
+    Function *constructor = definition.val.function_val;
 
     Component *component = memory_malloc(sizeof(Component));
     component -> name = name;
     component -> layer = NULL;
     component -> local_variables = VALUE_NIL;
     component -> update = VALUE_NIL;
-    component -> update_arguments = VALUE_NIL;
     component -> render = VALUE_NIL;
-    component -> render_arguments = VALUE_NIL;
-    component -> message_queue = VALUE_NIL;
-    Value component_value = VALUE_COMPONENT(component);
+    component -> message_handlers = hash_create();
 
     component_layer_insert_component(environment -> current_layer, component, environment);
 
     Component *previous_component = environment -> current_component;
     environment -> current_component = component;
-    eval_apply(component_value, definition.val.function_val, args, environment);
+    /* eval_apply cant be used as we have to bind the parameters locally,
+       not dynamically, and keep them. */
+    Value bindings = eval_get_bindings(args, constructor -> parameters);
+    component -> local_variables = bindings;
+    environment_bind_variables(bindings, environment);
+    eval(constructor -> body, environment); /* Discard return value */
+    environment_unbind_variables(environment);
     environment -> current_component = previous_component;
+
     return component;
 }
 
@@ -125,7 +130,12 @@ void component_layer_insert_component(Int index, Component *component, Environme
         layer -> entries = CONS1(VALUE_COMPONENT(component));
         layer -> last_entry = layer -> entries;
     } else {
-        CDR(layer -> last_entry) = CONS1(VALUE_COMPONENT(component));
+        /* TODO: need a test for this part */
+        Value new = CONS1(VALUE_COMPONENT(component));
+        CDR(layer -> last_entry) = new;
+        layer -> last_entry = new;
+
+
     }
     component -> layer = layer;
 }

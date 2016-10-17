@@ -24,6 +24,9 @@ typedef struct {
     Int current_layer;
     Layer *layers;
 
+    Value messages;
+    Value last_message;
+
     Value component_next_update;
     Value component_next_update_args; /* list */
 

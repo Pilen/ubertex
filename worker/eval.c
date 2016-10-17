@@ -207,9 +207,7 @@ Value eval_get_bindings(Value arguments, Value parameters) {
     }
 
     if (rest) {
-        debug("hej");
         if (parameters.type == CONS) {
-            debug("fisk");
             Value parameter = NEXT(parameters);
             bindings = CONS(CONS(parameter, arguments), bindings);
             arguments = VALUE_NIL;
@@ -222,7 +220,6 @@ Value eval_get_bindings(Value arguments, Value parameters) {
                 arguments = VALUE_NIL;
             }
         } else {
-            debug("else");
             arguments = VALUE_NIL;
             parameters = VALUE_NIL;
         }
