@@ -34,6 +34,7 @@ Each worker is a list
 `port' is the listening port of zeigen on the worker. nil means the default is used.
 `display' is the display the worker should display at, most likely :0 if it has only one display. nil means the default is used.
 `dir' is the directory on the worker where all files for the revy are stored. nil means the default is used.
+`installation' Is the directory of the ubertex installation.
 
 'all is automatically added to the list of names.
 The workers are stored in an internal datastructure, for use in elisp simply use one of the names as symbols"
