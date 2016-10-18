@@ -30,7 +30,7 @@
   (interactive)
   (when (yes-or-no-p "Quit the revy closing all workers?")
     (when (yes-or-no-p "Are you sure you want to close all workers?")
-      (revy-shell "killall -9 repl" 'all))))
+      (revy-shell "killall -9 worker" 'all))))
 
 (defun revy-open (filename &optional worker)
   "Open a new uberscript or ubertex file and start it
