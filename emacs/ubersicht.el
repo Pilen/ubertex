@@ -29,6 +29,7 @@ Based off `emacs-lisp-mode'"
   (goto-char (point-min)))
 
 (add-to-list 'auto-mode-alist '("\\.revy\\'" . revy-ubersicht-mode))
+(add-to-list 'auto-mode-alist '("\\.sketch\\'" . revy-ubersicht-mode))
 
 
 (defun revy-ubersicht-enter ()

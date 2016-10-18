@@ -105,15 +105,15 @@ Then it will load it"
         ;; (search-forward-regexp "\\(sketches/[^.]*\\).tex")
 
         (goto-char (point-min))
-        (when (yes-or-no-p "Replace all .tex sketches with .el sketches?")
-          (replace-regexp "\\(sketches/.*?\\.\\)tex" "\\1el"))
+        (when (yes-or-no-p "Replace all .tex sketches with .sketch files?")
+          (replace-regexp "\\(sketches/.*?\\.\\)tex" "\\1sketch"))
 
         (goto-char (point-min))
-        (when (yes-or-no-p "Replace all .tex videos with .el videos?")
-          (replace-regexp "\\(video/.*?\\.\\)tex" "\\1el"))
+        (when (yes-or-no-p "Replace all .tex videos with .sketch files?")
+          (replace-regexp "\\(video/.*?\\.\\)tex" "\\1sketch"))
 
         (goto-char (point-min))
-        (replace-regexp "\\(^[^/\n]*/.*?\\.\\(tex\\|el\\)\\)" "(revy-open \"\\1\")")
+        (replace-regexp "\\(^[^/\n]*/.*?\\.\\(tex\\|sketch\\)\\)" "(revy-open \"\\1\")")
 
         (goto-char (point-min))
         (insert "\n(revy-start)\n\n\n")
