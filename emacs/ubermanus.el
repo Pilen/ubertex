@@ -45,9 +45,9 @@ the functions can be called on their own."
 ")
 
 (defun revy-manus-prepare ()
-  ;; TODO: (query-replace-regexp "^%%.*$" "") alternatively (query-replace-regexp "^%%.*\n" "")
-
   (interactive)
+  ;; TODO: (query-replace-regexp "^%%.*$" "") alternatively (query-replace-regexp "^%%.*\n" "")
+  (revy-manus-mode)
   (let ((melody nil))
     (goto-char (point-min))
     (when (search-forward-regexp "\\\\melody{\\([^}]*\\)}" nil t)
