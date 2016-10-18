@@ -145,6 +145,8 @@ void communication_receive(TCPsocket socket) {
         }
 
         communication_receive_lisp(socket, size, frame);
+    } else if (strcmp(command, "ping") == 0) {
+        return;
     } else if (strcmp(command, "ready?") == 0) {
         log_error("ready? command not yet implemented");
         w_assert(false);
