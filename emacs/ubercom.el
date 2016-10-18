@@ -208,7 +208,7 @@ Wont return untill all workers has been synced."
                        (error nil))))
         (if channel
             (progn
-              (process-send-string channel "hej")
+              (process-send-string channel "ping")
               (accept-process-output channel 1)
               (goto-char (point-min))
               (if (search-forward "Got it. Bye" nil t)
