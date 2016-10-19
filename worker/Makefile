@@ -20,14 +20,14 @@ all: worker test Makefile linecount
 worker: $(SRC:%.c=%.o)
 	cc $(LFLAGS) -o $@ $^
 
-tests: $(TESTS_SRC:%.c=%.o)
+run_tests: $(TESTS_SRC:%.c=%.o)
 	cc $(LFLAGS) -o $@ $^
 
-test: tests
-	timeout 300s ./tests && timeout 30s ./lisp_tests/lisp_test.py
+test: run_tests
+	timeout 300s ./run_tests && timeout 30s ./lisp_tests/lisp_test.py
 
 clean:
-	rm -f *.o *.d worker    lisp/*.o lisp/*.d    tests_src/*.o tests_src/*.d
+	rm -f *.o *.d worker    lisp/*.o lisp/*.d    tests_src/*.o tests_src/*.d run_tests
 
 linecount:
 	echo -n "linecount: " && cat *.c *.h */*.c */*.h */*.py */*.zlt | wc -l
