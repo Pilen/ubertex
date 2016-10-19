@@ -80,9 +80,7 @@ void loop_loop(Environment *environment) {
         }
 
         graphics_present(environment);
-
         memory_update();
-
 
         Unt cleared = 0;
         cleared += resource_shrink_cache();
@@ -99,12 +97,11 @@ void loop_loop(Environment *environment) {
             log_info("Flushed %d, %zd still in cache", cleared, resource_total_size);
             lock_read_unlock(resource_cache_lock);
         }
-
         fflush(log_output);
         fflush(output);
 
         next_tick += environment -> skip_ticks;
-        Unt sleep_time = next_tick - SDL_GetTicks();
+        Int sleep_time = next_tick - SDL_GetTicks();
         if (sleep_time >= 0) {
             SDL_Delay(sleep_time);
             fast_runs = 0;
