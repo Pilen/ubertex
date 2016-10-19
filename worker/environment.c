@@ -27,10 +27,8 @@ Environment *environment_create(void) {
     /* environment -> layers = component_layer_create(environment -> current_layer); */
     component_destroy_all(environment); /* initializes all */
 
-    environment -> component_next_update = VALUE_NIL; /* Not set */
-    environment -> component_next_update_args = VALUE_NIL; /* list */
-    environment -> component_next_post = VALUE_NIL; /* Not set */
-    environment -> component_next_post_args = VALUE_NIL; /* list */
+    environment -> update = VALUE_NIL;
+    environment -> render = VALUE_NIL;
 
     environment -> clear_red = 0.0;
     environment -> clear_green = 0.0;

@@ -13,30 +13,6 @@
 #include "../component.h"
 #include "../assert.h"
 
-LISP_BUILTIN(next_update, "") {
-    /* All the args are already evaluated in the call to next_update */
-    ENSURE_NOT_EMPTY(args);
-    Value function = NEXT(args);
-    environment -> component_next_update = function;
-    if (function.type == ERROR) {
-        return VALUE_ERROR;
-    }
-    environment -> component_next_update_args = args;
-    return VALUE_NIL;
-}
-
-LISP_BUILTIN(next_post, "") {
-    /* All the args are already evaluated in the call to next_update */
-    ENSURE_NOT_EMPTY(args);
-    Value function = NEXT(args);
-    environment -> component_next_post = function;
-    if (function.type == ERROR) {
-        return VALUE_ERROR;
-    }
-    environment -> component_next_post_args = args;
-    return VALUE_NIL;
-}
-
 LISP_BUILTIN(define_component, "") {
     ENSURE_NOT_EMPTY(args);
     Value component_name = NEXT(args);
@@ -173,7 +149,7 @@ LISP_BUILTIN(update, "") {
     if (environment -> current_component) {
         environment -> current_component -> update = body;
     } else {
-        w_assert(false);
+        environment -> update = body;
     }
     return VALUE_NIL;
 }
@@ -190,7 +166,7 @@ LISP_BUILTIN(render, "") {
     if (environment -> current_component) {
         environment -> current_component -> render = body;
     } else {
-        w_assert(false);
+        environment -> render = body;
     }
     return VALUE_NIL;
 }

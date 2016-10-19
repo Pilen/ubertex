@@ -115,7 +115,7 @@ This function will also call revy-abort-all "
 
 (defun revy-calibrate ()
   (interactive)
-  (revy-send-lisp 'all '(next-update 'calibrate)))
+  (revy-send-lisp 'all '(update (calibrate))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Image
@@ -135,7 +135,7 @@ This function will also call revy-abort-all "
                   `(setq image-position ,position)
                   '(defun image-viewer ()
                      (image image-file image-position))
-                  '(next-update 'image-viewer)))
+                  '(update (image-viewer))))
 
 (defun revy-image-preload (&rest files)
   "Open one or more images, and show the first."
@@ -155,7 +155,7 @@ This function will also call revy-abort-all "
                   '(defun pdf-slideshow ()
                      ;; (pdf pdf-file pdf-slide '(centered 0.1 0.2)))
                      (pdf pdf-file pdf-slide '(sized 0.0 0.0 0.8 0.8)))
-                  `(next-update 'pdf-slideshow)))
+                  `(update (pdf-slideshow))))
 
 (defun revy-pdf-reload ()
   "Reload current pdf"
@@ -230,4 +230,4 @@ This function will also call revy-abort-all "
   (interactive)
   (unless text
     (setq text (read-from-minibuffer "Text: " nil nil nil 'revy--show-text-history)))
-  (revy-send-lisp nil `(next-update 'text ,text)))
+  (revy-send-lisp nil `(update (text ,text))))

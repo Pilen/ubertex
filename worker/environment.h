@@ -27,11 +27,8 @@ typedef struct {
     Value messages;
     Value last_message;
 
-    Value component_next_update;
-    Value component_next_update_args; /* list */
-
-    Value component_next_post;
-    Value component_next_post_args; /* list */
+    Value update; /* expression */
+    Value render; /* expression */
 
     Double clear_red;
     Double clear_green;
