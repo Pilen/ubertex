@@ -95,9 +95,13 @@ LISP_BUILTIN(clear, "") {
 }
 
 LISP_BUILTIN(fill, "") {
+    ENSURE_NOT_EMPTY(args);
     Value r = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
     Value g = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
     Value b = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
     Value a = NEXT(args);
     if (!IS_NUMERIC(r) ||
         !IS_NUMERIC(g) ||
