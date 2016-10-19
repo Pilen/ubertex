@@ -117,6 +117,8 @@ void initialize_graphics(Environment *environment, Bool fullscreen) {
 
     if (fullscreen) {
         SDL_ShowCursor(0);
+    } else {
+        SDL_SetWindowPosition(window, 0, 0);
     }
 
 
