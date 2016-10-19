@@ -55,6 +55,7 @@ the functions can be called on their own."
 
     (goto-char (point-min))
     ;; TODO:? Fix mellemrum
+    ;; TODO: fix \scene no { \say \act
     (while (search-forward-regexp "\\\\sings{\\|\\\\scene{" nil t)
       (backward-delete-char 7)
       (insert "%% ")
