@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
 #include "../types.h"
 #include "../assert.h"
 #include "../eval.h"
@@ -17,8 +21,6 @@
 #include "../image.h"
 #include "../component.h"
 #include "../message.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 /* #include "../libs/cairosdl/cairosdl.h" */
 
 LISP_BUILTIN(resource_cache_size, "") {
@@ -240,5 +242,11 @@ LISP_BUILTIN(component_update_all, "") {
 
 LISP_BUILTIN(message_dispatch, "") {
     message_dispatch(environment);
+    return VALUE_NIL;
+}
+
+LISP_BUILTIN(exit_program, "") {
+    debug("exit_program called");
+    exit(EXIT_SUCCESS);
     return VALUE_NIL;
 }
