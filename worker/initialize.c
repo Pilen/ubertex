@@ -85,7 +85,7 @@ void initialize_graphics(Environment *environment, Bool fullscreen) {
     if (!fullscreen) {
         /* TODO: Get the display as an argument */
         Int index = 0;
-        /* index = SDL_GetNumVideoDisplays() - 1; /\* Hack to always use extern screen *\/ */
+        index = SDL_GetNumVideoDisplays() - 1; /* Hack to always use extern screen */
         SDL_DisplayMode display;
         SDL_GetDesktopDisplayMode(index, &display);
 
