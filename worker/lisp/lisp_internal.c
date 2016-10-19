@@ -260,6 +260,6 @@ LISP_BUILTIN(set_window_position, "") {
     if (x_value.type != INTEGER && y_value.type != INTEGER) {
         return VALUE_ERROR;
     }
-    SDL_SetWindowPosition(window, x_value.val.integer_val, y_value.val.integer_val);
+    SDL_SetWindowPosition(environment -> window, x_value.val.integer_val, y_value.val.integer_val);
     return VALUE_NIL;
 }
