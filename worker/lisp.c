@@ -88,6 +88,7 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(sdl_internals, sdl_internals, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(resource_usage, resource_usage, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(exit_program, exit_program, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(set_window_position, set_window_position, true, environment);
 
 
 

@@ -250,3 +250,16 @@ LISP_BUILTIN(exit_program, "") {
     exit(EXIT_SUCCESS);
     return VALUE_NIL;
 }
+
+LISP_BUILTIN(set_window_position, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value x_value = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
+    Value y_value = NEXT(args);
+    ENSURE_EMPTY(args);
+    if (x_value.type != INTEGER && y_value.type != INTEGER) {
+        return VALUE_ERROR;
+    }
+    SDL_SetWindowPosition(window, x_value.val.integer_val, y_value.val.integer_val);
+    return VALUE_NIL;
+}
