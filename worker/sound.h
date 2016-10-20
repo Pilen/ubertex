@@ -24,15 +24,15 @@ struct Sound_s {
 };
 
 void sound_initialize(void);
-Value sound_play(Environment *environment, Value filename, Int Volume, Int loops);
+Value sound_play(Value filename, Int Volume, Int loops, Environment *environment);
 
-Bool sound_stop(Environment *environment, Sound *sound);
-Int sound_stop_file(Environment *environment, Value filename);
+Bool sound_stop(Sound *sound, Environment *environment);
+Int sound_stop_file(Value filename, Environment *environment);
 void sound_stop_all(void);
 void sound_fade_out_all(Int duration);
 
 
 void sound_mark_dirty(Value filename);
 
-Unt resource_create_soundsample(Environment *environment, Value skeleton);
+Unt resource_create_soundsample(Value skeleton, Environment *environment);
 #endif

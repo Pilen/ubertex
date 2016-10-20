@@ -14,10 +14,10 @@
 #include "resource.h"
 #include "file.h"
 
-Bool pdf_get_slide(Environment *environment, Value filename, Int slide, Renderable *target) {
+Bool pdf_get_slide(Value filename, Int slide, Renderable *target, Environment *environment) {
     Pdf *skeleton = memory_malloc(sizeof(Pdf));
     skeleton -> path = filename;
-    Value result = resource_get(environment, VALUE_PDF(skeleton));
+    Value result = resource_get(VALUE_PDF(skeleton), environment);
 
     if (result.type == PDF) {
         Pdf *pdf = result.val.pdf_val;
@@ -33,7 +33,7 @@ Bool pdf_get_slide(Environment *environment, Value filename, Int slide, Renderab
     return false;
 }
 
-Unt resource_create_pdf(Environment *environment, Value skeleton) {
+Unt resource_create_pdf(Value skeleton, Environment *environment) {
     debug("Loading pdf: %s", skeleton.val.pdf_val -> path.val.string_val -> text);
     cairo_status_t status;
     w_assert(skeleton.type == PDF);

@@ -37,14 +37,14 @@ void graphics_present(Environment *environment) {
     SDL_LockTexture(environment -> base_texture, NULL, &pixels, &pitch);
 
 }
-void graphics_render_at(Environment *environment, Renderable *renderable, Double x, Double y) {
+void graphics_render_at(Renderable *renderable, Double x, Double y, Environment *environment) {
     cairo_save(environment -> cairo);
     cairo_translate(environment -> cairo, x, y);
     renderable -> render(environment, renderable -> data);
     cairo_restore(environment -> cairo);
 }
 
-void graphics_render_centered_at(Environment *environment, Renderable *renderable, Double x, Double y) {
+void graphics_render_centered_at(Renderable *renderable, Double x, Double y, Environment *environment) {
     cairo_save(environment -> cairo);
     Double w = renderable -> width;
     Double h = renderable -> height;
@@ -67,7 +67,7 @@ void graphics_render_centered_at(Environment *environment, Renderable *renderabl
 
  * (windowed)
  */
-Bool graphics_render_at_position(Environment *environment, Renderable *renderable, Value position) {
+Bool graphics_render_at_position(Renderable *renderable, Value position, Environment *environment) {
     Double x;
     Double y;
 
@@ -308,13 +308,13 @@ Bool graphics_render_at_position(Environment *environment, Renderable *renderabl
 }
 
 
-void graphics_show_cairo_surface(Environment *environment, void *data) {
+void graphics_show_cairo_surface(void *data, Environment *environment) {
     cairo_surface_t *surface = (cairo_surface_t *) data;
     cairo_set_source_surface(environment -> cairo, surface, 0, 0);
     cairo_paint(environment -> cairo);
 }
 
-void graphics_fill(Environment *environment, Double red, Double green, Double blue, Double alpha) {
+void graphics_fill(Double red, Double green, Double blue, Double alpha, Environment *environment) {
     cairo_set_source_rgba(environment -> cairo, red, green, blue, alpha);
     cairo_paint(environment -> cairo);
 }

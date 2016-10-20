@@ -109,7 +109,7 @@ LISP_BUILTIN(fill, "") {
         !IS_NUMERIC(a)) {
         return VALUE_ERROR;
     }
-    graphics_fill(environment, NUM_VAL(r), NUM_VAL(g), NUM_VAL(b), NUM_VAL(a));
+    graphics_fill(NUM_VAL(r), NUM_VAL(g), NUM_VAL(b), NUM_VAL(a), environment);
     return VALUE_NIL;
 
     /* if (args -> length != 2) { */
@@ -120,7 +120,7 @@ LISP_BUILTIN(fill, "") {
     /*     return VALUE_ERROR; */
     /* } */
     /* Double *vector = color.val.vector4f_val; */
-    /* graphics_fill(environment, vector[0], vector[1], vector[2], vector[3]); */
+    /* graphics_fill(vector[0], vector[1], vector[2], vector[3], environment); */
     /* return VALUE_NIL; */
 }
 
@@ -132,10 +132,10 @@ LISP_BUILTIN(image, "") {
     Value position = NEXT(args);
 
     Renderable renderable;
-    if (!image_get_renderable_from_file(environment, file, &renderable)) {
+    if (!image_get_renderable_from_file(file, &renderable, environment)) {
         return VALUE_ERROR;
     }
-    if (graphics_render_at_position(environment, &renderable, position)) {
+    if (graphics_render_at_position(&renderable, position, environment)) {
         return symbols_t;
     } else {
         return VALUE_ERROR;
@@ -160,10 +160,10 @@ LISP_BUILTIN(pdf, "") {
     }
 
     Renderable renderable;
-    if (!pdf_get_slide(environment, file, slide.val.integer_val, &renderable)) {
+    if (!pdf_get_slide(file, slide.val.integer_val, &renderable, environment)) {
         return VALUE_ERROR;
     }
-    graphics_render_at_position(environment, &renderable, position);
+    graphics_render_at_position(&renderable, position, environment);
     return symbols_t;
 }
 
@@ -200,14 +200,14 @@ LISP_BUILTIN(text, "") {
 
     cairo_set_source_rgb(environment -> cairo, 1.0, 1.0, 1.0);
     Renderable renderable;
-    if (!text(environment, string.val.string_val, fontsize, align_center, &renderable)) {
+    if (!text(string.val.string_val, fontsize, align_center, &renderable, environment)) {
         return VALUE_ERROR;
     }
 
     if (position.type == NIL) {
-        graphics_render_centered_at(environment, &renderable, environment -> width/2, environment -> height/2);
+        graphics_render_centered_at(&renderable, environment -> width/2, environment -> height/2, environment);
     } else {
-        graphics_render_at_position(environment, &renderable, position);
+        graphics_render_at_position(&renderable, position, environment);
     }
     return VALUE_NIL;
 }

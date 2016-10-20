@@ -30,7 +30,7 @@ LISP_BUILTIN(sound, "") {
             return VALUE_ERROR;
         }
     }
-    return sound_play(environment, file, volume, 0);
+    return sound_play(file, volume, 0, environment);
 }
 
 LISP_BUILTIN(sound_stop, "") {
@@ -38,9 +38,9 @@ LISP_BUILTIN(sound_stop, "") {
     Value sound = NEXT(args);
     Int result = 0;
     if (sound.type == SOUND) {
-        result = sound_stop(environment, sound.val.sound_val);
+        result = sound_stop(sound.val.sound_val, environment);
     } else if (sound.type == STRING) {
-        result = sound_stop_file(environment, sound);
+        result = sound_stop_file(sound, environment);
     }
     if (result) {
         return VALUE_INTEGER(result);

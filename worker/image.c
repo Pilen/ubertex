@@ -11,10 +11,10 @@
 #include "resource.h"
 #include "file.h"
 
-Bool image_get_renderable_from_file(Environment *environment, Value filename, Renderable *target) {
+Bool image_get_renderable_from_file(Value filename, Renderable *target, Environment *environment) {
     Image *skeleton = memory_malloc(sizeof(Image));
     skeleton -> path = filename;
-    Value result = resource_get(environment, VALUE_IMAGE(skeleton));
+    Value result = resource_get(VALUE_IMAGE(skeleton), environment);
     if (result.type == IMAGE) {
         cairo_surface_t *surface = result.val.image_val -> surface;
         target -> data = (void *) surface;
@@ -27,7 +27,7 @@ Bool image_get_renderable_from_file(Environment *environment, Value filename, Re
     return false;
 }
 
-Unt resource_create_image(Environment *environment, Value skeleton) {
+Unt resource_create_image(Value skeleton, Environment *environment) {
     w_assert(skeleton.type == IMAGE);
     Image *image = skeleton.val.image_val;
     w_assert(image -> path.type == STRING);

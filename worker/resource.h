@@ -12,7 +12,7 @@ Vector *resource_vector; /* The resource_cache_lock must be held while using thi
 size_t resource_total_size;
 
 void resource_initialize(void);
-Value resource_get(Environment *environment, Value skeleton);
+Value resource_get(Value skeleton, Environment *environment);
 
 Unt resource_shrink_cache(void);
 Unt resource_flush_entire_cache(void);

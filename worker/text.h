@@ -14,6 +14,6 @@ struct Text_s {
     SDL_Texture *texture;
 };
 
-Bool text(Environment *environment, String *text, Int fontsize, Bool align_center, Renderable *target);
+Bool text(String *text, Int fontsize, Bool align_center, Renderable *target, Environment *environment);
 
 #endif

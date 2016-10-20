@@ -11,13 +11,13 @@
 #include "debug.h"
 #include "graphics.h"
 
-void text_show(Environment *environment, void *data) {
+void text_show(void *data, Environment *environment) {
     PangoLayout *layout = (PangoLayout *) data;
     pango_cairo_show_layout(environment -> cairo, layout);
     g_object_unref(layout);
 }
 
-Bool text(Environment *environment, String *text, Int fontsize, Bool align_center, Renderable *target) {
+Bool text(String *text, Int fontsize, Bool align_center, Renderable *target, Environment *environment) {
     if (fontsize <= 0) {
         fontsize = 26;
     }
@@ -49,7 +49,7 @@ Bool text(Environment *environment, String *text, Int fontsize, Bool align_cente
     return true;
 }
 
-/* SDL_Texture *text(Environment *environment, String *text, Int fontsize, Bool center) { */
+/* SDL_Texture *text(String *text, Int fontsize, Bool center, Environment *environment) { */
 /*     Text *skeleton = memory_malloc(sizeof(Text)); */
 /*     skeleton -> text = text; */
 /*     skeleton -> fontsize = fontsize; */
@@ -62,7 +62,7 @@ Bool text(Environment *environment, String *text, Int fontsize, Bool align_cente
 /*     } */
 /* } */
 
-/* Bool resource_create_text(Environment *environment, Value skeleton, Unt initial_score, Unt *size) { */
+/* Bool resource_create_text(Value skeleton, Unt initial_score, Unt *size, Environment *environment) { */
 /*     debug("Creating text"); */
 /*     /\* cairo_status_t status; *\/ */
 /*     Int width; */

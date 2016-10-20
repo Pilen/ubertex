@@ -15,7 +15,7 @@
 #include "pdf.h"
 #include "sound.h"
 
-Bool resource_create(Environment *environment, Value skeleton);
+Bool resource_create(Value skeleton, Environment *environment);
 Int resource_comparison(const void *a, const void *b);
 
 
@@ -28,7 +28,7 @@ void resource_initialize(void) {
     resource_size_threshold = available * (OPTION_RESOURCE_PERCENTAGE / 100.0);
 }
 
-Value resource_get(Environment *environment, Value skeleton) {
+Value resource_get(Value skeleton, Environment *environment) {
     /* Resource might be eq to skeleton, might not */
     Value resource;
 
@@ -60,7 +60,7 @@ Value resource_get(Environment *environment, Value skeleton) {
     /* Ensure the resource has not been created by a simultaneous thread */
     found = hash_get(resource_cache, skeleton, &resource);
     if (!found) {
-        found = resource_create(environment, skeleton);
+        found = resource_create(skeleton, environment);
         if (found) {
             resource = skeleton;
             hash_set(resource_cache, skeleton, resource);
@@ -72,18 +72,18 @@ Value resource_get(Environment *environment, Value skeleton) {
     return resource;
 }
 
-Bool resource_create(Environment *environment, Value resource) {
+Bool resource_create(Value resource, Environment *environment) {
     /* lock_write_lock(resource_cache_lock); Should be hold by caller */
     Unt size;
     switch (resource.type) {
     case IMAGE:
-        size = resource_create_image(environment, resource);
+        size = resource_create_image(resource, environment);
         break;
     case PDF:
-        size = resource_create_pdf(environment, resource);
+        size = resource_create_pdf(resource, environment);
         break;
     case SOUNDSAMPLE:
-        size = resource_create_soundsample(environment, resource);
+        size = resource_create_soundsample(resource, environment);
         break;
     default:
         w_assert(false);

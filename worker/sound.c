@@ -61,12 +61,12 @@ void sound_finished(Int channel) {
     mutex_unlock(sound_lock);
 }
 
-Value sound_play(Environment *environment, Value filename, Int volume, Int loops) {
+Value sound_play(Value filename, Int volume, Int loops, Environment *environment) {
     debug("start");
     Unt start = SDL_GetTicks();
     Soundsample *skeleton = memory_malloc(sizeof(Soundsample));
     skeleton -> path = filename;
-    Value result = resource_get(environment, VALUE_SOUNDSAMPLE(skeleton));
+    Value result = resource_get(VALUE_SOUNDSAMPLE(skeleton), environment);
     if (result.type != SOUNDSAMPLE) {
         return VALUE_ERROR;
     }
@@ -105,7 +105,7 @@ Value sound_play(Environment *environment, Value filename, Int volume, Int loops
     return VALUE_SOUND(sound);
 }
 
-Bool sound_stop(Environment *environment, Sound *sound) {
+Bool sound_stop(Sound *sound, Environment *environment) {
     /* w_assert(soundv.type == SOUND); */
     /* Sound *sound = soundv.val.sound_val; */
 
@@ -119,7 +119,7 @@ Bool sound_stop(Environment *environment, Sound *sound) {
     return true;
 }
 
-Int sound_stop_file(Environment *environment, Value filename) {
+Int sound_stop_file(Value filename, Environment *environment) {
     mutex_lock(sound_lock);
     for (Unt i = 0; i < sound_channels; i++) {
         Sound *sound = sound_table[i];
@@ -130,7 +130,7 @@ Int sound_stop_file(Environment *environment, Value filename) {
         /* NOTE: must match matching used for equal -> SOUNDSAMPLE */
         Value path = sound -> sample -> path;
         if (equal(path, filename)) {
-            sound_stop(environment, sound);
+            sound_stop(sound, environment);
         }
     }
     mutex_unlock(sound_lock);
@@ -159,7 +159,7 @@ void sound_mark_dirty(Value filename) {
     }
     mutex_unlock(sound_lock);
 }
-Unt resource_create_soundsample(Environment *environment, Value skeleton) {
+Unt resource_create_soundsample(Value skeleton, Environment *environment) {
     w_assert(skeleton.type == SOUNDSAMPLE);
     Soundsample *soundsample = skeleton.val.soundsample_val;
     w_assert(soundsample -> path.type == STRING);
