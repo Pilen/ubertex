@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
     }
 
     if (!test_only) {
-        initialize_graphics(environment, fullscreen);
+        initialize_graphics(fullscreen, environment);
         communication_initialize(port);
      }
     /* Must be done after initialize_graphics as SDL registers its own function */

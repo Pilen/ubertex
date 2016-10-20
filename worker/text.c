@@ -54,7 +54,7 @@ Bool text(String *text, Int fontsize, Bool align_center, Renderable *target, Env
 /*     skeleton -> text = text; */
 /*     skeleton -> fontsize = fontsize; */
 /*     skeleton -> center = center; */
-/*     Value result = resource_get(environment, VALUE_TEXT(skeleton)); */
+/*     Value result = resource_get(VALUE_TEXT(skeleton), environment); */
 /*     if (result.type == TEXT) { */
 /*         return result.val.text_val -> texture; */
 /*     } else { */
@@ -190,7 +190,7 @@ Bool text(String *text, Int fontsize, Bool align_center, Renderable *target, Env
 
 
 /*     SDL_Texture *texture = SDL_CreateTextureFromSurface(environment -> renderer, sdl_surface); */
-/*     /\* graphics_render_at(environment, texture, 10, 15); *\/ */
+/*     /\* graphics_render_at(texture, 10, 15, environment); *\/ */
 
 /*     pango_font_description_free(font); */
 /*     g_object_unref(layout); */

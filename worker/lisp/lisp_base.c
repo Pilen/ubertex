@@ -170,7 +170,7 @@ LISP_BUILTIN(set, "") {
     ENSURE_NOT_EMPTY(args);
     Value value = NEXT(args);
     ENSURE_EMPTY(args);
-    environment_set_variable(environment, symbol, value);
+    environment_set_variable(symbol, value, environment);
     return value;
 }
 
@@ -189,7 +189,7 @@ LISP_BUILTIN(setq, "") {
             symbol.val.symbol_val == symbols_t.val.symbol_val) {
             return VALUE_ERROR;
         }
-        environment_set_variable(environment, symbol, value);
+        environment_set_variable(symbol, value, environment);
     }
     return value;
 }

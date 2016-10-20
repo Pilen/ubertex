@@ -51,7 +51,7 @@ void environment_unbind_variables(Environment *environment) {
     environment -> dynamic_variables = CDR(environment -> dynamic_variables);
 }
 
-Bool environment_lookup_variable(Environment *environment, Value key, Value *result) {
+Bool environment_lookup_variable(Value key, Value *result, Environment *environment) {
     /* Cant simply return value or nil/error, as we cant distinguish values not found to ones bound */
     Value groups = environment -> dynamic_variables;
     while (groups.type == CONS) {
@@ -68,7 +68,7 @@ Bool environment_lookup_variable(Environment *environment, Value key, Value *res
     return found;
 }
 
-void environment_set_variable(Environment *environment, Value key, Value value) {
+void environment_set_variable(Value key, Value value, Environment *environment) {
     Value groups = environment -> dynamic_variables;
     while (groups.type == CONS) {
         Value bindings = NEXT(groups);

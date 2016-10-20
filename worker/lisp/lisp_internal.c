@@ -59,7 +59,7 @@ LISP_BUILTIN(render_test, "") {
 /*     /\* SDL_RenderDrawLine(environment -> renderer, 1024/2, 768/2 - 300, 1024/2, 768/2 + 300); *\/ */
 /*     /\* SDL_Texture *text_test2(Environment *environment); *\/ */
 /*     /\* SDL_Texture *texture = text_test2(environment); *\/ */
-/*     /\* graphics_render_centered_at(environment, texture, 1024/2, 768/2); *\/ */
+/*     /\* graphics_render_centered_at(texture, 1024/2, 768/2, environment); *\/ */
 /*     /\* graphics_present(environment); *\/ */
 /*     /\* SDL_Delay(10000000); *\/ */
 
@@ -127,7 +127,7 @@ LISP_BUILTIN(render_test, "") {
 /*     debug("fisk"); */
 /*     return VALUE_NIL; */
 
-    /* cairo_surface_t *surface = image_get_surface_from_file(environment, VALUE_STRING(string_create_from_str("/home/pilen/av/2016/billeder/test-square.png"))); */
+    /* cairo_surface_t *surface = image_get_surface_from_file(VALUE_STRING(string_create_from_str("/home/pilen/av/2016/billeder/test-square.png")), environment); */
     /* Int width = cairo_image_surface_get_width(surface); */
     /* Int height = cairo_image_surface_get_height(surface); */
 
@@ -157,7 +157,7 @@ LISP_BUILTIN(render_test, "") {
 LISP_BUILTIN(pdf_test, "") {
     /* Pdf pdf; */
     /* pdf.path = VALUE_STRING(string_create_from_str("/tmp/laesehovedet.pdf")); */
-    /* pdf_create(environment, VALUE_PDF(&pdf), 1); */
+    /* pdf_create(VALUE_PDF(&pdf), 1, environment); */
     return VALUE_NIL;
 }
 

@@ -15,7 +15,7 @@
 #include "component.h"
 #include "message.h"
 
-void loop_update(Environment *environment, Value update_symbol, Value args);
+void loop_update(Value update_symbol, Value args, Environment *environment);
 
 void loop_loop(Environment *environment) {
     Unt next_tick = SDL_GetTicks();
@@ -116,7 +116,7 @@ void loop_loop(Environment *environment) {
     }
 }
 
-void loop_update(Environment *environment, Value update_symbol, Value args) {
+void loop_update(Value update_symbol, Value args, Environment *environment) {
     /* Lookup must be done every frame as the body can be redefined. */
     /* TODO: or a lambda! */
     if (update_symbol.type == SYMBOL) {

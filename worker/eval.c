@@ -29,7 +29,7 @@ Value eval(Value expression, Environment *environment) {
         return expression;
     case SYMBOL: {
         Value result;
-        Bool found = environment_lookup_variable(environment, expression, &result);
+        Bool found = environment_lookup_variable(expression, &result, environment);
         if (found) {
             return result;
         } else {

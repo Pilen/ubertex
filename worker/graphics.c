@@ -40,7 +40,7 @@ void graphics_present(Environment *environment) {
 void graphics_render_at(Renderable *renderable, Double x, Double y, Environment *environment) {
     cairo_save(environment -> cairo);
     cairo_translate(environment -> cairo, x, y);
-    renderable -> render(environment, renderable -> data);
+    renderable -> render(renderable -> data, environment);
     cairo_restore(environment -> cairo);
 }
 
@@ -49,7 +49,7 @@ void graphics_render_centered_at(Renderable *renderable, Double x, Double y, Env
     Double w = renderable -> width;
     Double h = renderable -> height;
     cairo_translate(environment -> cairo, x - w/2, y - h/2);
-    renderable -> render(environment, renderable -> data);
+    renderable -> render(renderable -> data, environment);
     cairo_restore(environment -> cairo);
 }
 
@@ -300,7 +300,7 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
     cairo_restore(environment -> cairo);
     return false;
  RENDER:
-    renderable -> render(environment, renderable -> data);
+    renderable -> render(renderable -> data, environment);
     /* cairo_set_source_surface(environment -> cairo, surface, 0, 0); */
     /* cairo_paint(environment -> cairo); */
     cairo_restore(environment -> cairo);
