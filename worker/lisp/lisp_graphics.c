@@ -101,27 +101,16 @@ LISP_BUILTIN(fill, "") {
     Value g = NEXT(args);
     ENSURE_NOT_EMPTY(args);
     Value b = NEXT(args);
-    ENSURE_NOT_EMPTY(args);
-    Value a = NEXT(args);
-    if (!IS_NUMERIC(r) ||
-        !IS_NUMERIC(g) ||
-        !IS_NUMERIC(b) ||
-        !IS_NUMERIC(a)) {
+    Value a = VALUE_FLOAT(1.0);
+    if (args.type == CONS) {
+        a = NEXT(args);
+    }
+    Color *color = color_create_rgba(r, g, b, a);
+    if (!color) {
         return VALUE_ERROR;
     }
-    graphics_fill(NUM_VAL(r), NUM_VAL(g), NUM_VAL(b), NUM_VAL(a), environment);
+    graphics_fill(color, environment);
     return VALUE_NIL;
-
-    /* if (args -> length != 2) { */
-    /*     return VALUE_ERROR; */
-    /* } */
-    /* Value color = LIST_GET_UNSAFE(args, 1); */
-    /* if (color.type != VECTOR4I) { */
-    /*     return VALUE_ERROR; */
-    /* } */
-    /* Double *vector = color.val.vector4f_val; */
-    /* graphics_fill(vector[0], vector[1], vector[2], vector[3], environment); */
-    /* return VALUE_NIL; */
 }
 
 LISP_BUILTIN(image, "") {

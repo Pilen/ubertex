@@ -314,8 +314,8 @@ void graphics_show_cairo_surface(void *data, Environment *environment) {
     cairo_paint(environment -> cairo);
 }
 
-void graphics_fill(Double red, Double green, Double blue, Double alpha, Environment *environment) {
-    cairo_set_source_rgba(environment -> cairo, red, green, blue, alpha);
+void graphics_fill(Color *color, Environment *environment) {
+    cairo_set_source_rgba(environment -> cairo, color -> r, color -> g, color -> b, color -> a);
     cairo_paint(environment -> cairo);
 }
 
