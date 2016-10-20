@@ -177,7 +177,7 @@ LISP_BUILTIN(sdl_internals, "") {
 
 LISP_BUILTIN(resource_usage, "") {
     lock_read_lock(resource_cache_lock);
-    log_info("Total resource size: %ld", resource_total_size);
+    log_info("Total resource size: %zu", resource_total_size);
 
     Int resource_comparison(const void *a, const void *b);
     qsort(resource_vector -> data,
