@@ -1,6 +1,8 @@
 
 #include <stdlib.h>
 #include "math.h"
+#include "debug.h"
+#include "assert.h"
 
 Unt round_up_to_power_of_2(Unt n) {
     /* If n is a power of two, return it */
@@ -16,6 +18,7 @@ Unt round_up_to_power_of_2(Unt n) {
 }
 
 Double random_int(Int lower, Int upper) {
+    w_assert(lower < upper);
     Int limit = upper - lower;
     long long int divisor = RAND_MAX / limit;
     int retval;
