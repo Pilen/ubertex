@@ -246,7 +246,7 @@ LISP_BUILTIN(message_dispatch, "") {
 }
 
 LISP_BUILTIN(exit_program, "") {
-    debug("exit_program called");
+    log_info("exit_program called");
     exit(EXIT_SUCCESS);
     return VALUE_NIL;
 }
