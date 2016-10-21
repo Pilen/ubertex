@@ -9,6 +9,7 @@
 #include "hash.h"
 #include "symbol.h"
 #include "component.h"
+#include "assert.h"
 
 void print(Value value) {
     print_on(output, value);
@@ -110,7 +111,8 @@ void print_on(FILE *stream, Value value) {
         break;
     case COMPONENT:
         fprintf(stream, "#<component ");
-        print_on(stream, symbol_name(value.val.component_val -> name));
+        w_assert(value.val.component_val);
+        print_on(stream, value.val.component_val -> name);
         fprintf(stream, ">");
         break;
     case COLOR:

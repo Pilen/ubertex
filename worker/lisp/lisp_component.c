@@ -19,7 +19,6 @@ LISP_BUILTIN(define_component, "") {
     if (component_name.type != SYMBOL) {
         return VALUE_ERROR;
     }
-
     ENSURE_NOT_EMPTY(args);
     Value parameters = NEXT(args);
     /* TODO: validate parameters */
@@ -61,6 +60,11 @@ LISP_BUILTIN(create_component, "") {
     }
     evaled = list_reverse(evaled);
     Component *component = component_create(name, evaled, environment);
+    if (!component) {
+        /* TODO: log error */
+        log_error("No such component");
+        return VALUE_ERROR;
+    }
     return VALUE_COMPONENT(component);
 }
 
