@@ -63,7 +63,8 @@ Bool mutex_trylock(Mutex *lock) {
         return true;
     } else if (status == SDL_MUTEX_TIMEDOUT) {
         return false;
+    } else {
+        log_error("Couldn't lock mutex\n%s", SDL_GetError());
+        return false;
     }
-    w_assert(false);
-    return false;
 }
