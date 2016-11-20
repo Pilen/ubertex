@@ -65,7 +65,8 @@ Returns the process used to compile the tex file"
                  (buffer nil))
 
     (when (file-newer-than-file-p tex pdf)
-      (setq buffer (generate-new-buffer (concat "*revy-compile-" short "*")))
+      (setq buffer (get-buffer-create (concat "*revy-compile-" short "*")))
+      (with-current-buffer buffer (erase-buffer))
       ;; (let* ((sty (concat "TEXINPUTS=" revy-ubertex-dir ":" "$TEXINPUTS" ":" ".//" ":"))
       (let* ((sty (concat "TEXINPUTS=" revy-ubertex-dir ":" ".//" ":"))
              (process-environment (cons sty process-environment)))
