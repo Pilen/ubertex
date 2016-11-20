@@ -207,7 +207,7 @@ Also does all the preparations for the buffer "
   (let ((code nil))
     (save-excursion
       (goto-char end)
-      (search-backward-regexp "\\\\begin{overtex}\\|\\\\pause[{}]?" nil t)
+      (search-backward-regexp "\\\\begin{overtex}\\|\\\\pause[{}]?[.\n]" nil t)
       (save-excursion
         (while (search-forward-regexp "\\\\shell{\\([^}]*\\)}" end t)
           (revy-shell (match-string 1))))
@@ -215,7 +215,6 @@ Also does all the preparations for the buffer "
       ;; Collect all lisp code
       (while (search-forward-regexp "\\\\elisp{\\([^}]*\\)}" end t)
         ;; Dont evaluate in save-excursion, so we can jump around
-        (message "fisk")
         (push (match-string 1) code)))
 
     ;; Evaluate lisp code in correct order
