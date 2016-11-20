@@ -60,4 +60,7 @@ The workers are stored in an internal datastructure, for use in elisp simply use
 (defun revy-get-workers (name)
   "Return the workers with name, or nil if no such worker exists.
 Does not ensure the worker is actually live."
-  (gethash name revy-workers))
+  (let ((value (gethash name revy-workers)))
+    (unless value
+      (message "No such worker %s" name))
+    value))
