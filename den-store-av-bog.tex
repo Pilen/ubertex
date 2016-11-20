@@ -22,6 +22,7 @@
 \usepackage{pdfpages}
 \usepackage{shorttoc}
 \usepackage{setspace}
+\usepackage{color}
 
 \setlength{\marginparwidth}{1.0in}
 \setlength{\marginparsep}{0.1in}
@@ -57,6 +58,12 @@
 \newcommand{\code}[1]{\colorbox{verbgray}{\texttt{#1}}}
 
 \newcommand{\commnt}[1]{}
+
+\newcommand{\documentcommand}[1]{{\colorbox{lime}{\large \texttt{\{#1\}}}}\\}
+\newcommand{\documentargument}[1]{``\texttt{#1}''}
+\newcommand{\optional}[1]{\&\textit{optional}}
+\newcommand{\rest}[1]{\&\textit{rest}}
+\newcommand{\lquote}[1]{\textquotesingle{}#1}
 
 \pagestyle{fancy}
 \fancyhead{}
@@ -565,7 +572,7 @@ Dette må være essensen af et godt AV system, når man kun skal tage sig af
 timingen på skuespillerne/sangerne samt disses fejltagelser.
 
 \section{- Guidelines til en AV mand}
-% \label{sec:god-av-mand}
+\label{sec:god-av-mand}
 % \begin{center}
 %   {\Huge \textit{ ``Lyt til mig en gang''}}
 % \end{center}
@@ -1074,10 +1081,260 @@ Windos/super eller alt som modifier knap.
 % Der sørges automatisk for at det korrekte major mode køres på .tex og .el
 % filer
 \subsection{ubersicht}
+\label{subsec:ubersicht}
 \subsection{ubertex}
+\label{subsec:ubertex}
 \subsection{Konvertering fra manuskrift til overtekster}
+
+\subsection{Kommandoer}
+Dette er en liste af kommandoer der kan bruges på masteren. En del af disse kan
+også bruges interaktivt
+
+\subsubsection{Lokale}
+Commandoer der gør ting lokalt på masteren.
+
+
+\documentcommand{revy-start}
+Starter en revy, den første kommando i en .revy fil.
+Forbinder til alle arbejderne og starter programmet.
+Hvis den fejler er det typisk fordi en server ikke har forbindelse til
+netværket (måske er den ikke tændt), fordi masteren ikke har forbindelse til
+netværket (har du sat stikket i / fået en statisk IP?) eller fordi programmet er
+installeret i en anden mappe end den angivne.
+\note{Der er lige nu en fejl i programmet der gør at denne kommando nogle gange
+  skal køres to gange for at virke}
+
+
+\documentcommand{revy-quit}
+Lukker programmet på alle arbejderne hårdt og brutalt.
+Den inverse funktion af revy-start.
+Bør kun bruges fordi tingene virkeligt er gået i hårdknude, f.eks. hvis en
+arbejder stopper med at svare når man prøver at eksekvere kode på den.
+
+\documentcommand{revy-open filename \optional{} worker}
+Åbner en fil i revysystemet og eksekverer den i dens revysammenhæng.
+Se de specifikke revy modes\ref{subsec:ubersicht}, \ref{subsec:ubertex} for en
+bedre indføring i de enkelte dele.
+Når en fil åbnes på denne måde, vises den i en buffer i det korrekte mode og
+eksekveringen starter fra toppen.
+Rækkefølgen af filer der åbnes, og deres placering huskes, så et kald til
+\code{revy-end-sketch} fra den åbnede fil returnerer til her.
+
+\documentargument{filename} er en tekststreng med navnet på filen. Umiddelbart bruges en
+relativ sti \code{(revy-open "sange/lalala.tex")}, og denne sti tager så
+udgangspunkt i mappen hvor revyen er gemt (på din lokale maskine).
+Alternativt kan man bruge en absolut sti hvis man f.eks. pludselig fik lyst til
+at åbne en fil fra en gammel revy.
+
+\documentargument{worker} er navnet på en arbejder, denne vil blive brugt som ``default
+worker'' istedet for den nuværende. Så kan man f.eks. åbne en tex/pdf på en
+anden arbejder end den nuværende
+\code{(revy-open "sange/lalala.tex"\ \lquote{mid})}
+
+\documentargument{revy-nop \rest ...}
+Gør ingenting, og ignorerer alle argumenterne.
+Kan f.eks. bruges til at udkommentere en kommando.
+Kan også bruges i .revy filen istedetfor \code{revy-open} for at signalere at
+dette nummer ikke indeholder noget AV.
+\begin{verbatim}
+(revy-open "sketches/den-sjove.sketch")
+(revy-nop "sketches/den-kedelige.sketch")
+(revy-open "sange/sjov-sang.tex")
+\end{verbatim}
+
+\documentcommand{revy-end-sketch}
+Lukker et nummer.
+Kan bruges i alle slags filer, både .tex og .sketch.
+Returnerer til den fil der har åbnet den nuværende og fortsætter fra hvor
+cursoren stod sidst.
+Bruges typisk til at komme tilbage til .revy oversigten fra en sang eller
+sketch.
+
+Funktionen kalder \code{revy-abort-all}, og lukker dermed allt kørende kode på arbejderne
+automatisk.
+
+\documentcommand{revy-return}
+Virker lidt lige som \code{revy-end-sketch}, returnerer til det sted der åbnede
+det nuværende nummer. Men lukker ikke kørende kode. Den kører altså ikke
+\code{revy-abort-all}.
+
+\documentcommand{revy-restart}
+Genstarter det nuværende nummer. Svarer til at lukke og åbne filen.
+
+\subsubsection{Generelle}
+\documentcommand{revy-abort-all}
+Den store røde stop knap! Stopper alt der kører på alle arbejderne. Alle lyde,
+billeder, pdf'er og kode der kører afbrydes.
+Er praktisk at have i baghånden til når tingene går galt, og kan bruges
+interaktivt til dette. Men kan også bruges inde i en sketch til at stoppe alt
+der køres samtidigt.
+Vær opmærksom på at lyde stoppes ret abrupt, hvilket ikke altid er hvad der
+ønskes.
+Bør ikke bruges som panik knap hvis f.eks. en sanger synger forkert, i så fald
+stoppes hele pdf'en med at blive vist. Så er man nødt til at genåbne filen,
+finde tilbage igen, og fortsætte. Til dette formål bør man istedet bruge
+``blank'' funktionerne.
+
+\documentcommand{revy-abort}
+Lige som \code{revy-abort-all}, men stopper kun de ting der kører på den
+nuværende arbejder.
+Så den kan f.eks. bruges i en sketch til at holde højtex kørende mens man
+stopper et billede og en lyd på overtex.
+
+\documentcommand{revy-blank)}
+Stopper visningen af grafik på den nuværende arbejder indtil næste input.
+Alt kode og lyd fortsætter med at køre, men skærmen ``cleares'' inden den vises.
+I praksis svarer det til at der tegnes en uendelig stor sort firkant oven på
+alting.
+Blankningen forbliver indtil der modtages en form for kode eller signal.
+I praksis indtil du gøre noget der skulle gøre noget på arbejderen.
+
+Bruges typisk interaktivt til at stoppe visningen af sangtekster når sangeren
+synger forkert. Så blanker AVmanden, finder frem til hvor sangeren er nået til,
+og fortsætter så. Når AVmanden fortsætter holder blankningen op og teksten vises
+som normalt.
+
+\documentcommand{revy-blank-all}
+Som \code{revy-blank}, men blanker alle arbejdere.
+Vær opmærksom på at arbejderne venter enkeltvist på at få et signal om ikke
+længere at være blanke.
+
+Bruges ikke så ofte da formålet med at blanke typisk kun er at fjerne det der er
+forkert, sangerens tekst, og ikke alt hvad der også er på de andre arbejdere.
+
+\documentcommand{revy-unblank-all}
+Sender signal til alle arbejdere om at de ikke længere skal være blanke.
+Bruges typisk efter et \code{revy-blank-all}
+
+\documentcommand{revy-calibrate}
+Viser et kalibrerings billede.
+Er en simpel måde at sikre sig at alle arbejdere virker, er tændt og deres
+projektorer står indstillet korrekt.
+
+\subsubsection{Billeder}
+\documentcommand{revy-image file \optional{} position}
+Sender et program til den nuværende arbejder der viser et billede.
+Den indbyggede \code{image} funktion på arbejderne tegner et billede på en
+position en enkelt gang i et enkelt frame.
+For at få vist et billede i længere tid kan man bruge denne funktion der sender
+en stump kode der definerer en billede viser der kontinuerligt viser billedet.
+Den bliver ved med at tegne billedet i hvert frame indtil den afbrydes.
+\code{revy-image} sætter bare det nuværende kode til at være denne billede
+viser.
+
+Se \ref{command:update} for hvordan det præcist virker med at afvikle kode i
+hvert frame.
+
+\begin{verbatim}
+(revy-image "billeder/hund.png") ;; Viser et billede af en hund.
+(revy-image "billeder/kat.png")  ;; Viser et billede af en kat istedet.
+\end{verbatim}
+
+``Position'' argumentet er lidt magisk og kan en hel masse
+\note{TODO: Forklar noget om dette}
+
+\documentcommand{revy-image-preload \rest{} files}
+Bruges ikke til noget.
+
+
+\documentcommand{revy-pdf-open file}
+Åbner en pdf fil og viser slide 0 (det første).
+Til sangtekster vil man typisk bruge ubertex\ref{subsec:ubertex} som også
+sagtens kan bruges til at lave andre slideshows en bare overtekster.
+Til billeder og diasshow er det ofte at foretrække at bruge enkelte billeder da
+de nemmere kan justeres enkeltvist med ``position'' argumentet for hvert enkelt
+slide.
+Men ind imellem får man som AV-mand en pdf med billeder der skal vises.
+Til dette kan man bruge \code{revy-pdf-open} som definerer en pdf-viser meget
+lig den førnævnte billedeviser.
+
+Vær opmærksom på at det kan tage lidt tid at åbne en stor pdf.
+
+\note{Vær opmærksom på at revysystemet 0-indeksere slides i pdf'er.
+  en pdf på 3 sider vil da indeholde slide 0, 1 og 2.}
+
+\documentcommand{revy-pdf-goto-slide slide}
+Skifter hvilket slide den \textit{nuværende} pdf-viser viser. ``slide'' er et
+0-indekseret tal der angiver hvilket slide der skal vises.
+
+\note{Hvad sker der hvis tallet er størrere end antallet af slides?}
+
+\documentcommand{revy-pdf-next}
+Skifter slidet den \textit{nuværende} pdf-viser viser til det næste
+
+Bør generelt ikke bruges i en sketch da man ikke længere kan gå til en vilkårlig
+position og fortsætte.
+Hvis en skuespiller f.eks. hopper fra slide 5 til slide 8 i sit diasshow, kan
+man ikke hoppe med hvis man kun er sat op til at bruge \code{revy-pdf-next}.
+Hvis man derimod bruger \code{revy-pdf-goto-slide} kan man rykke direkte ned til
+slide 8 og vise dette.
+
+\note{Hvad sker der hvis det nuværende slide er det sidste?}
+
+\documentcommand{revy-sound file \optional{} volume}
+Afspiller en lyd.
+Lyden bliver afspillet som en sepperat komponent, så den har ikke indvirkning på
+anden afviklet kode/lyde.
+Man kan således bruge revy-sound flere gange til at afspille flere lyde på samme
+tid.
+Man kan angive en ønsket volume, et heltal mellem 0 (min) og 128 (maks).
+Hvis ikke lydstyrken angives spilles den på maks.
+
+\note{Vær opmærksom på at den lydmixer der bruges lige nu er ret dårlig og
+  forringer lydkvaliteten en hel del. Til forestillingen er dette dog ikke det
+  store problem på grund af andet lyd/larm i salen.
+
+  Hvis man virkelig ønsker sig at en bedre lydkvalitet, f.eks. ved musikken til
+  et dansenummer kan man istedet for \code{revy-sound} bruge \code{revy-mplayer}
+  der udover videoer også kan afspille musik. Så mister man dog en del
+  fleksibilitet til at stoppe/fade lyde.}
+
+\documentcommand{revy-stop-sounds}
+Stopper alle lyde der afspilles på den nuværende arbejder. Virker lidt som \code{revy-abort},
+men kun på lyde.
+
+\documentcommand{revy-fade-sounds \optional{} duration}
+Virker lidt som \code{revy-stop-sounds}, men istedet for at stoppe lydene brat,
+så fades de langsomt ud.
+Man kan angive en varighed i sekunder, som standard tager det 4 sekunder at fade
+ud.
+
+Er et godt alternativ til \code{revy-stop-sounds} i mange situationer da det
+ofte lyder bedre.
+
+Hvis man kalder den interaktivt spørger den efter en varighed.
+
+\documentcommand{revy-mplayer file \optional{} x y w h}
+Afspiller en video. Kører det eksterne program ``mplayer'' på den nuværende
+arbejder som afspiller videoen.
+Kan også afspille lydfiler.
+
+\note{Hvordan indstiller man mplayer?}
+
+\documentcommand{revy-kill-mplayer}
+Lukker alle instanser af ``mplayer'' på den nuværende arbejder.
+Ofte kan man bruge revy-abort istedet.
+
+\documentcommand{revy-text \optional{} text}
+Viser en tekst midt på skærmen af den nuværende arbejder.
+
+Kan kaldes interaktivt, hvor den spørge om en tekst der så vises. Man kan bruge
+piletasterne til at finde tidligere tekster.
+\note{Snak om Markup sproget}
+
+
+
+
 \section{- Worker}
 \note{Generelt om hvordan en worker virker}
+\subsection{Kommandoer}
+
+\documentcommand{update}
+\label{command:update}
+Du skal forstå dette her hvis du vil lave noget som helst avanceret...
+Så er det ærgeligt at dokumentationen er mangelfuld, beklager...
+
+
 \section{- Lisp}
 Vectorer er ikke ens.
 I Emacs lisp er de konstante. I Worker Lisp er de dynamiske arrays. ak indsætte
