@@ -14,6 +14,7 @@
 #include "graphics.h"
 #include "component.h"
 #include "message.h"
+#include "profiler.h"
 
 void loop_update(Value update_symbol, Value args, Environment *environment);
 
@@ -22,6 +23,7 @@ void loop_loop(Environment *environment) {
     Unt fast_runs = 0;
 
     while (true) {
+        profiler_start(profile_total);
         log_section("====LOOP====");
         if (loop_abort) {
             environment -> update = VALUE_NIL;
@@ -58,6 +60,7 @@ void loop_loop(Environment *environment) {
             }
         }
 
+        profiler_start(profile_loop);
         lock_read_lock(resource_cache_lock);
         environment -> current_layer = OPTION_DEFAULT_LAYER;
         environment -> current_component = NULL;
@@ -72,6 +75,7 @@ void loop_loop(Environment *environment) {
         w_assert(environment -> call_stack.type == NIL);
         w_assert(environment -> dynamic_variables.type == NIL);
         lock_read_unlock(resource_cache_lock);
+        profiler_end(profile_loop);
 
         if (loop_blank) {
             graphics_clear(environment);
@@ -95,16 +99,22 @@ void loop_loop(Environment *environment) {
             log_info("Flushed %d, %zd still in cache", cleared, resource_total_size);
             lock_read_unlock(resource_cache_lock);
         }
+        profiler_end(profile_total);
+        profiler_total_report();
         fflush(log_output);
         fflush(output);
 
         next_tick += environment -> skip_ticks;
         Int sleep_time = next_tick - SDL_GetTicks();
         if (sleep_time >= 0) {
+            if (sleep_time < 20) {
+                /* debug("sleep: %i", sleep_time); */
+            }
             SDL_Delay(sleep_time);
             fast_runs = 0;
             environment -> fast_run = false;
         } else {
+            /* debug("LATE!"); */
             /* We are running behind! */
             fast_runs++;
             if (fast_runs > OPTION_MAX_FAST_RUNS) {

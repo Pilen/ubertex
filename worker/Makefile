@@ -38,7 +38,7 @@ release: clean
 
 coverage: CFLAGS += -fprofile-arcs -ftest-coverage
 coverage: LFLAGS += -fprofile-arcs -ftest-coverage
-coverage: clean worker tests test
+coverage: clean worker test
 	rm -rf coverage;
 	mkdir coverage;
 	gcov -fp *.gcno lisp/*.gcno tests_src/*.gcno > coverage/report;
@@ -46,8 +46,12 @@ coverage: clean worker tests test
 	find . \( -iname "*.gcda" -or -iname "*.gcno" \) -delete;
 	$(MAKE) --no-print-directory clean
 
+profile: CFLAGS += -g -pg
+profile: LFLAGS += -g -pg
+profile: clean worker
+	echo -e "\n\n\nRemember, profiling information is only generated on a clean exit (exit_program)"
 
-.PHONY: all clean linecount release coverage
+.PHONY: all clean linecount release coverage profile
 
 -include .dummy
 .dummy: Makefile

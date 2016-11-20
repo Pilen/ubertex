@@ -17,6 +17,7 @@
 #include "sound.h"
 #include "graphics.h"
 #include "loop.h"
+#include "profiler.h"
 
 Environment *initialize(void) {
     /* static Bool initialized = false; */
@@ -30,6 +31,7 @@ Environment *initialize(void) {
 
     log_section("====INITIALIZE====");
     memory_initialize();
+    profiler_initialize();
     symbol_initialize();
     Environment *environment = environment_create();
     lisp_initialize(environment);

@@ -12,6 +12,8 @@
 #define OPTION_DEBUG 1
 #define OPTION_DEBUG_MEMORY 1
 
+#define OPTION_PROFILE 0
+
 #define OPTION_PROGRAM_NAME "worker"
 #define OPTION_DEFAULT_PORT 9999
 

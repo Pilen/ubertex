@@ -7,6 +7,7 @@
 #include "symbol.h"
 #include "debug.h"
 #include "basic.h"
+#include "profiler.h"
 
 Color graphics_parse_color(Value raw) {
     /* Should work on a cons cell */
@@ -21,7 +22,9 @@ void graphics_clear(Environment *environment) {
                           environment -> clear_alpha);
     cairo_paint(environment -> cairo);
 }
+
 void graphics_present(Environment *environment) {
+    profiler_start(profile_present);
     void *pixels;
     int pitch;
     SDL_Rect rect;
@@ -35,8 +38,9 @@ void graphics_present(Environment *environment) {
     SDL_RenderCopy(environment -> renderer, environment -> base_texture, &rect, &rect);
     SDL_RenderPresent(environment -> renderer);
     SDL_LockTexture(environment -> base_texture, NULL, &pixels, &pitch);
-
+    profiler_end(profile_present);
 }
+
 void graphics_render_at(Renderable *renderable, Double x, Double y, Environment *environment) {
     cairo_save(environment -> cairo);
     cairo_translate(environment -> cairo, x, y);
@@ -68,6 +72,7 @@ void graphics_render_centered_at(Renderable *renderable, Double x, Double y, Env
  * (windowed)
  */
 Bool graphics_render_at_position(Renderable *renderable, Value position, Environment *environment) {
+    profiler_start(profile_render);
     Double x;
     Double y;
 
@@ -298,12 +303,14 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
     }
  ERROR:
     cairo_restore(environment -> cairo);
+    profiler_end(profile_render);
     return false;
  RENDER:
     renderable -> render(renderable -> data, environment);
     /* cairo_set_source_surface(environment -> cairo, surface, 0, 0); */
     /* cairo_paint(environment -> cairo); */
     cairo_restore(environment -> cairo);
+    profiler_end(profile_render);
     return true;
 }
 
@@ -311,7 +318,9 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
 void graphics_show_cairo_surface(void *data, Environment *environment) {
     cairo_surface_t *surface = (cairo_surface_t *) data;
     cairo_set_source_surface(environment -> cairo, surface, 0, 0);
+    profiler_start(profile_cairo);
     cairo_paint(environment -> cairo);
+    profiler_end(profile_cairo);
 }
 
 void graphics_fill(Color *color, Environment *environment) {
