@@ -87,8 +87,8 @@
 \maketitle
 \newpage
 {\linespread{0.0}
-  \shorttoc{Indhold (kort)}{1}
-}
+  \shorttoc{Indhold (kort)}{1}}
+\newpage
 
 %% Vis indholdsfortegnelse
 \tableofcontents
@@ -96,7 +96,7 @@
 
 \section{Introduktion}
 \begin{center}
-  {\Huge \textit{ ``Er der en AV-mand tilstede?!?''}}
+  {\Huge \textit{``Er der en AV-mand tilstede?!?''}}
 \end{center}
 Sådan kunne spørgsmålet lyde. Når du har gjort dig bekendt med denne bog er du
 forhåbentligt istand til at svare \textit{``Ja!''}.
@@ -1090,8 +1090,8 @@ Windos/super eller alt som modifier knap.
 Dette er en liste af kommandoer der kan bruges på masteren. En del af disse kan
 også bruges interaktivt
 
-\subsubsection{Lokale}
-Commandoer der gør ting lokalt på masteren.
+\subsubsection{Lokale kommandoer}
+Kommandoer der gør ting lokalt på masteren.
 
 
 \documentcommand{revy-start}
@@ -1161,7 +1161,7 @@ det nuværende nummer. Men lukker ikke kørende kode. Den kører altså ikke
 \documentcommand{revy-restart}
 Genstarter det nuværende nummer. Svarer til at lukke og åbne filen.
 
-\subsubsection{Generelle}
+\subsubsection{Generelle kommandoer}
 \documentcommand{revy-abort-all}
 Den store røde stop knap! Stopper alt der kører på alle arbejderne. Alle lyde,
 billeder, pdf'er og kode der kører afbrydes.
@@ -1211,7 +1211,7 @@ Viser et kalibrerings billede.
 Er en simpel måde at sikre sig at alle arbejdere virker, er tændt og deres
 projektorer står indstillet korrekt.
 
-\subsubsection{Billeder}
+\subsubsection{Audio Visuelle kommandoer}
 \documentcommand{revy-image file \optional{} position}
 Sender et program til den nuværende arbejder der viser et billede.
 Den indbyggede \code{image} funktion på arbejderne tegner et billede på en
@@ -1323,8 +1323,38 @@ piletasterne til at finde tidligere tekster.
 \note{Snak om Markup sproget}
 
 
+\subsubsection{Interaktive kommandoer}
+\documentcommand{revy-create}
+Opretter en ny revy. Fører dig igennem en længere ``wizard'' (opsætnings guide).
+\note{Forklaring om hvordan denne virker}
+
+\documentcommand{revy-load}
+Loader en allerede oprettet revy.
+Spørger dig om du vil indlæse en af de revyer den kender til, typisk den du
+arbejder på.
+Ellers kan du vælge ``other revy...'' hvorefter du kan angive den præcise
+placering for en revy.
+
+\documentcommand{revy-mode-enter}
+\documentcommand{revy-mode-next}
+\documentcommand{revy-mode-point-forward}
+\documentcommand{revy-mode-point-backward}
 
 
+\subsubsection{Andre}
+\documentcommand{revy-on-worker worker function \rest{} args}
+\documentcommand{revy-create-workers}
+\documentcommand{revy-send-lisp}
+\documentcommand{revy-send-command}
+\documentcommand{revy-shell}
+\documentcommand{revy-shell-sync}
+\documentcommand{revy-shell-local}
+\documentcommand{revy-shell-local-sync}
+\documentcommand{revy-elisp}
+\documentcommand{revy-upload-files}
+\documentcommand{revy-upload-files-sync}
+\documentcommand{revy-build}
+\documentcommand{revy-compile-tex}
 \section{- Worker}
 \note{Generelt om hvordan en worker virker}
 \subsection{Kommandoer}
@@ -1467,6 +1497,7 @@ Det er en af grundene til at vi vil lave vores egen fremviser (Zeigen).
 }
 
 \appendix
+\section{Sådan bruges ``Simple Emacs''}
 \section{En guide til Linux}
 \label{linux_guide}
 % Sådan bruger du en terminal
@@ -2060,74 +2091,9 @@ indhold af \texttt{autologin.conf}:
 pacman -S alsa-utils rxvt-unicode dmenu xdotool feh mplayer ttf-dejavu screen htop rsync mupdf
 \end{verbatim}
 
-\section{Stripped Emacs}
-\section{Emacs}
-\section{mangler}
-revy-shell skal escape kommandoer
-Youtube
-Arduinoer
-Stripped Emacs
+\section{Worker-protokol}
+\note{Her burde følge en introduction af protokollen mellem master og worker.}
 
-\section{Zeigen-protokol}
-
-ADVARSEL beskeder til sketches er lokale for den nuværende eksekverende sketch!!!.
-
-Zegien forstår følgende protokol:
-
-\begin{verbatim}
-host [otherhost];<time>;command;options
-\end{verbatim}
-
-\texttt{Host} er en mellemrums adskilt liste af navne på de zeigen servere/grupper der
-skal have beskeden (tage sig af den). Husk at navne er caseinsensitive.
-
-\texttt{<time>} er klokkeslettet hvor kommandoen skal udføres.
-Beskeder i datiden udføres hurtigst muligt, så brug 0 hvis den skal udføres med
-det samme.
-
-\texttt{command} er den kommando der ønskes udført
-\begin{verbatim}
-clearqueue
-kill
-quit
-sketch
-start
-sync
-\end{verbatim}
-
-\texttt{options} er argumenter der gives til kommandoen.
-formattet for \texttt{options} afgøres af kommandoen
-
-\subsection{kill}
-Lukker den nuværende sketch.
-
-Man kan give ét argument med og kommandoen udføres kun hvis sketchens navn
-matcher dette.
-
-Sketchens navn er Ikke casesensitiv.
-
-\subsection{Start}
-Start lukker den nuværende sketch og starter en ny.
-
-Man kan give ét argument med og kommandoen udføres kun hvis sketchens navn
-matcher dette.
-
-\subsection{Sketch}
-\texttt{sketch} kommandoen regner med at option består af følgende
-\begin{verbatim}
-sketchname;message
-\end{verbatim}
-
-Hvis \texttt{sketchname} tilsvarer navnet på den nuværende afviklende sketch,
-sendes \texttt{message} til sketchen på det før angivne tidspunkt.
-Beskeden modtages i sketchens \textit{receive} metode.
-
-\section{PDF/billedviser}
-Kan baseres på poppler.
-python-poppler-qt4?
-
-mupdf er et mere minimalistisk/optimeret alternativ til xpdf's poppler.
-har mudraw der kan rendere til png.
 
 % \section{Elisp kode}
 % \includepdf[pages=-]{elisp-source.pdf}
