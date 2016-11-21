@@ -2,7 +2,8 @@
 \usepackage[danish]{babel}
 \usepackage[utf8]{inputenc}
 % \usepackage[margin=3cm]{geometry}
-\usepackage[margin=4cm]{geometry}
+% \usepackage[margin=4cm]{geometry}
+\usepackage[margin=3cm]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{listings}
@@ -59,7 +60,7 @@
 
 \newcommand{\commnt}[1]{}
 
-\newcommand{\documentcommand}[1]{{\colorbox{lime}{\large \texttt{\{#1\}}}}\\}
+\newcommand{\documentcommand}[1]{{\colorbox{lime}{\large \texttt{(#1)}}}\\}
 \newcommand{\documentargument}[1]{``\texttt{#1}''}
 \newcommand{\optional}[1]{\&\textit{optional}}
 \newcommand{\rest}[1]{\&\textit{rest}}
@@ -332,7 +333,7 @@ småting der er værd at huske.
 
 \subsection{Forudsætninger}
 \note{TODO: Dårligt afsnit. Find ud af hvor det passer, og omforumler det til
-  det her skal du lære}
+  det her skal/vil du lære i bogen}
 
 Hvad skal man kunne for at bruge DIKUrevyens AV-system?
 
@@ -346,7 +347,7 @@ Hvad skal man kunne for at bruge DIKUrevyens AV-system?
 
 \textbf{\LaTeX}\\
 Bruges til at skrive selve overteksterne. Der bruges Beamer til at lave et langt
-slideshow, overtex.sty definerer en række makroer der gør det let at lave en
+slideshow, \code{overtex.sty} definerer en række makroer der gør det let at lave en
 lang præsentation.
 De fleste på natfak burde kunne \LaTeX, hvis ikke er den mængde der bruges til
 at lave normale overtekster ret lille og burde kunne mestres ved bare at kigge i
@@ -617,7 +618,8 @@ anbefale dig at læse og forstå hvad der står her.
 % man skal tælle
 
 
-
+I afsnit \ref{subsec:konvertering-manus-overtekst} kan du læse mere om hvordan
+man via systemet let kan konvertere fra et .tex manuskript til overtekster.
 
 
 % husk blanke slides
@@ -745,6 +747,8 @@ En god tradition, som en AV-mand bør holde i hævd, er at rense projektornes fi
 når man henter dem i begyndelsen af revyugen.
 Der er tilsyneladende ikke andre der gør det, så lad det blive en del af
 rutinen. Så overopheder de ikke lige så nemt.
+Husk at sætte filteret rigtigt i igen, der er ofte mange tapper og dibedutter
+der skal passes ind i filteret for at det sidder korrekt.
 
 
 Til projektorene er der bygget en række projektorkasser af gamle colakasser.
@@ -761,6 +765,12 @@ Desuden kan der komme langt mere luft til.\\
 
 Se afsnittene om Ubertex, Uberscript og Emacs for at finde ud af hvordan
 softwaren bruges.
+
+Der er et forlænger VGA kabel.
+En ide er at sætte det i krok og føre det over til projektoren, så kan man nemt
+skifte hvilken maskine der er koblet til projektoren.
+\note{TODO: Indsæt diagram fra bagsiden af side 10, Den Store AV-bog printet 27.
+  september 2016}
 
 \subsubsection{Projektorklapper}
 En ulempe ved projektore er at deres ``sorte'' ikke er mangel på lys, men bare
@@ -787,7 +797,10 @@ begynde at skyde billedet op på lærredet
 Arduino ftw!
 
 \subsection{Netværk}
+\note{Numerer datamaterne i [1; 254] Hvor xxx er tallet til maskinen
+  Vis f.eks. et eksempel}
 \subsubsection{Statisk IP}
+\marginnote{\note{How to know?}}
 Hvis dit netværks interface hedder enp0s25
 \begin{verbatim}
 sudo ip link set enp0s25 up
@@ -805,6 +818,10 @@ maskinerne.
 Dette gøres lokalt i \texttt{/etc/hosts}
 et eksempel:
 
+\note{Indfør noter, skelne mellem eksempel, og default værdier.
+  Nævn at arbejdere har en standard statisk IP som de bruger automatisk.}
+\marginnote{controller: 192.168.0.10\\
+  overtex istedet for intro?}
 \begin{verbatim}
 192.168.0.20    intro
 192.168.0.30    brok
@@ -812,7 +829,7 @@ et eksempel:
 192.168.0.50    mid
 192.168.0.60    right
 \end{verbatim}
-
+\marginnote{back: 192.168.0.31\\Back(bach): Back mirror of Brok}
 Nu kan man ssh'e ind ved blot at skrive:
 
 \begin{verbatim}
@@ -834,7 +851,7 @@ alternativt kan du bruge
 \begin{verbatim}
 ssh-copy-id revy@192.168.0.30
 \end{verbatim}
-Udskift \texttt{pilen} og ip'en med den relevante bruger og ip.
+Udskift \texttt{revy} og ip'en med den relevante bruger og ip.
 Husk at du skal have en ssh nøgle først
 dannes med:
 
@@ -852,7 +869,7 @@ kommunikeres med køres \texttt{sshfs} som får filerne frem.
 \textbf{Installer sshfs}
 F.eks.:
 \begin{verbatim}
-sudo pacman -S sshfs}
+sudo pacman -S sshfs
 \end{verbatim}
 
 \textbf{fuse}
@@ -860,7 +877,10 @@ sudo pacman -S sshfs}
 \begin{verbatim}
 sudo modprobe fuse
 \end{verbatim}
-\subsubsection{Gateway}
+Hvis dette ikke virker kan det være fordi kernen er blevvet opdateret, men ikke
+genstartet. I så fald, kan du prøve at genstarte maskinen.
+
+\subsubsection{Internet gateway}
 Hvis du er intereseret i at få internet på det lokale netværk kan man lave en
 gateway.
 Dette består i at en af datamaterne på det lokale netværk også er forbundet til
@@ -877,12 +897,12 @@ statisk ip.
 
 herefter skrives
 \begin{verbatim}
-route add default gw 192.168.0.XXX
+ip route add default via 192.168.0.XXX
 \end{verbatim}
 
-eller
+eller alternativt
 \begin{verbatim}
-ip route add default via 192.168.0.XXX
+route add default gw 192.168.0.XXX
 \end{verbatim}
 Hvor ``192.168.0.XXX'' er ip'en til gatewaymaskinen
 
@@ -893,8 +913,11 @@ echo nameserver 8.8.8.8 > /etc/resolv.conf
 
 Hvis dette ikke virker kan man evt. kigge på
 \url{https://wiki.archlinux.org/index.php/Internet_Share} for en ip baseret løsning
+\note{Baser hele afsnittet på dette (ip)
 
+  uddyb her}
 
+\note{internet0 = wlp3s0\\net0 =enp0s25}
 \subsection{Arbejdere}
 Arbejdere er de maskiner/servere der er sluttet til projektorne. Det er deres
 rolle at vise AV-indholdet det kunne være overtekster, film, lydeffekter,
@@ -922,7 +945,17 @@ skal vises på lærredet.
 Derudover findes \texttt{left}, \texttt{mid} og \texttt{right} der bruges til at vise \textit{højtex}.
 
 
-\subsection{Brok}
+\subsection{Hvordan virker en arbejder}
+Og hvordan bruger man dem.
+``plug and play''
+auto netværknetctl + revynet
+default statiske ip'er
+Forhåbentligt skal man som almindelig AV-mand rode så lidt som muligt, kun sætte
+maskinerne fysisk op og tænde, så ordnes resten via masteren iform af Emacs.
+Indimellem kan det dog være nødvendigt med maintanence (Det ordner Søren).
+
+
+\subsection{Brok (Deprecated)}
 \textbf{Her er en guide om at få brok til at virke:}
 
 Sæt ham til
@@ -1080,13 +1113,39 @@ Windos/super eller alt som modifier knap.
 \section{- Master}
 % Der sørges automatisk for at det korrekte major mode køres på .tex og .el
 % filer
+Se også \ref{subsec:master-commands}
+
 \subsection{ubersicht}
 \label{subsec:ubersicht}
 \subsection{ubertex}
 \label{subsec:ubertex}
 \subsection{Konvertering fra manuskrift til overtekster}
+\label{subsec:konvertering-manus-overtekst}
 
-\subsection{Kommandoer}
+\section{- Worker}
+\note{Generelt om hvordan en worker virker}
+Se også \ref{subsec:worker-commands}
+
+\section{- Lisp}
+Vectorer er ikke ens.
+I Emacs lisp er de konstante. I Worker Lisp er de dynamiske arrays. ak indsætte
+foran og bagi i O(1) tid (ammortiseret)
+
+Lister er en slags ``meta'' type over consceller. En konvention!
+En liste er en Cons-celle hvor \texttt{car} indeholder et element i listen, og
+\texttt{cdr} indeholder en liste (resten).
+Alternativt er en liste \texttt{nil} som angiver den tomme liste eller
+slutningen på en liste.
+Der er således ikke en konkret type i sproget der hedder \textit{list}, men man
+bruger det som om der var.
+
+Quote opfører sig anderledes
+(Skal jeg lade være med at deep copy'e?
+
+\subsection{Hvordan programmerer man?}
+\subsection{De forskellige lisp dele}
+\subsection{Lisp på master}
+\label{subsec:master-commands}
 Dette er en liste af kommandoer der kan bruges på masteren. En del af disse kan
 også bruges interaktivt
 
@@ -1355,9 +1414,9 @@ placering for en revy.
 \documentcommand{revy-upload-files-sync}
 \documentcommand{revy-build}
 \documentcommand{revy-compile-tex}
-\section{- Worker}
-\note{Generelt om hvordan en worker virker}
-\subsection{Kommandoer}
+
+\subsection{Lisp på worker}
+\label{subsec:worker-commands}
 
 \documentcommand{update}
 \label{command:update}
@@ -1365,24 +1424,80 @@ Du skal forstå dette her hvis du vil lave noget som helst avanceret...
 Så er det ærgeligt at dokumentationen er mangelfuld, beklager...
 
 
-\section{- Lisp}
-Vectorer er ikke ens.
-I Emacs lisp er de konstante. I Worker Lisp er de dynamiske arrays. ak indsætte
-foran og bagi i O(1) tid (ammortiseret)
+\documentcommand{progn}
+\documentcommand{quote}
+\documentcommand{eval}
+\documentcommand{list}
+\documentcommand{cons}
+\documentcommand{car}
+\documentcommand{hd}
+\documentcommand{head}
+\documentcommand{cdr}
+\documentcommand{tl}
+\documentcommand{tail}
+\documentcommand{if}
+\documentcommand{when}
+\documentcommand{unless}
+\documentcommand{while}
+\documentcommand{and}
+\documentcommand{or}
+\documentcommand{print}
+\documentcommand{set}
+\documentcommand{setq}
+\documentcommand{let}
+\documentcommand{let*}
+\documentcommand{eq}
+\documentcommand{equal}
+\documentcommand{not}
+\documentcommand{defun}
+\documentcommand{lambda}
+\documentcommand{+}
+\documentcommand{-}
+\documentcommand{*}
+\documentcommand{>}
+\documentcommand{sin}
+\documentcommand{cos}
+\documentcommand{randint}
+\documentcommand{color}
+\documentcommand{clear-color}
+\documentcommand{clear}
+\documentcommand{fill}
+\documentcommand{image}
+\documentcommand{pdf}
+\documentcommand{text}
+\documentcommand{calibrate}
+\documentcommand{sound}
+\documentcommand{sound-stop}
+\documentcommand{sound-stop-all}
+\documentcommand{sound-fade-all}
+\documentcommand{defcomp}
+\documentcommand{defcomponent}
+\documentcommand{create}
+\documentcommand{destroy}
+\documentcommand{current-layer}
+\documentcommand{deflocal}
+\documentcommand{update}
+\documentcommand{render}
+\documentcommand{send}
+\documentcommand{broadcast}
+\documentcommand{receive}
 
-Lister er en slags ``meta'' type over consceller. En konvention!
-En liste er en Cons-celle hvor \texttt{car} indeholder et element i listen, og
-\texttt{cdr} indeholder en liste (resten).
-Alternativt er en liste \texttt{nil} som angiver den tomme liste eller
-slutningen på en liste.
-Der er således ikke en konkret type i sproget der hedder \textit{list}, men man
-bruger det som om der var.
 
-Quote opfører sig anderledes
-(Skal jeg lade være med at deep copy'e?
+magiske
+\documentcommand{component\_update\_all}
+\documentcommand{message\_dispatch}
+\documentcommand{resource\_cache\_size}
+\documentcommand{sounds\_playing}
+\documentcommand{allocate\_useless}
+\documentcommand{render\_test}
+\documentcommand{pdf\_test}
+\documentcommand{sdl\_internals}
+\documentcommand{resource\_usage}
+\documentcommand{exit\_program}
+\documentcommand{set\_window\_position}
 
-\subsection{Hvordan programmerer man?}
-\subsection{De forskellige lisp dele}
+
+
 \section{\LaTeX}
 \section{- Værktøjer}
 \subsection{Schneider}
@@ -1404,9 +1519,6 @@ hinanden og ikke over under. Det burde dog være let at rette til.
 \textit{Tysk: Timelord}
 Er en bastardiseret udgave af en NTP tidsserver til at holde de forskellige
 maskiner synkroniseret.
-
-\subsection{Zeigen}
-
 
 \note{Externe:}
 \subsection{xpdf}
@@ -1436,6 +1548,7 @@ m filnavn
 \subsubsection{Positionering af mplayer}
 \textit{TODO: Noget om positionering af mplayer her}
 
+\note{Konfigurer mplayer fra Emacs, væk på sigt}
 
 \section{- FAQ}
 Ubertex tager ikke højde for pauser i comments, latex gør.
@@ -1454,8 +1567,8 @@ filen ligger, sætte shell variablen \texttt{TEXINPUTS} til at indeholde mappen 
 \texttt{overtex.sty} ligger eller kopiere filen ind i
 \texttt{\~{}/texmf/tex/latex/overtex/overtex.sty} hvor den vil være synlig for oversætteren.
 
-\section{- Problemer/løsninger}
-\subsection{Der er lag/forsinkelser}
+\subsection{- Problemer/løsninger}
+\subsubsection{Der er lag/forsinkelser}
 Lag er irriterende, det opleves primært som en forsinkelse fra man har trykket
 på knappen til der sker noget på projektoren. Det er et problem når man skal
 lave overtekster.
