@@ -85,3 +85,28 @@ g ;=> (13 3 12 2 11 1)
 (create foo (+ 10 20))
 (component_update_all)
 g ;=> 30
+
+
+;;;;TEST;;;;
+;;ignore;;
+(defcomp foo ()
+  (deflocal x 10)
+  (assert x 10)
+  ) ;=> foo
+(create foo) ;=> #<component foo>
+
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (deflocal baz 10)
+  (receive (bar baz) (assert baz 11))) ;=> foo
+(create foo) ;=> #<component foo>
+(broadcast 'bar 11) ;=> nil
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (deflocal baz 10)
+  (deflocal qux 11)
+  (receive (bar baz) (assert baz 12) (assert qux 11))) ;=> foo
+(create foo) ;=> #<component foo>
+(broadcast 'bar 12) ;=> nil
