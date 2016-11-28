@@ -86,8 +86,10 @@ Bool message_receive(Component *component, Value message, Environment *environme
     environment -> current_layer = component -> layer -> index;
     environment -> current_component = component;
 
+    environment_bind_variables(component -> local_variables, environment);
     environment_bind_variables(bindings, environment);
     eval(body, environment);
+    environment_unbind_variables(environment);
     environment_unbind_variables(environment);
     return true;
 }
