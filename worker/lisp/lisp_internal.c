@@ -23,6 +23,27 @@
 #include "../message.h"
 /* #include "../libs/cairosdl/cairosdl.h" */
 
+LISP_BUILTIN(assert, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value first = NEXT(args);
+    if (args.type == CONS) {
+        Value second = NEXT(args);
+        debug_value(first);
+        debug_value(second);
+        if (!equal(first, second)) {
+            log_assert(lisp-assertion, 0);
+            exit(EXIT_FAILURE);
+        }
+    } else {
+        if (args.type == NIL || args.type == ERROR) {
+            log_assert(lisp-assertion, 0);
+            exit(EXIT_FAILURE);
+        }
+    }
+    ENSURE_EMPTY(args);
+    return VALUE_NIL;
+}
+
 LISP_BUILTIN(resource_cache_size, "") {
     lock_read_lock(resource_cache_lock);
     Unt size = resource_total_size;
