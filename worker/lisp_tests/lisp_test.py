@@ -47,7 +47,7 @@ def test_file(file):
             if line.startswith(test_separator):
                 if not ignore:
                     tests.append((current_linenumber, "".join(text)))
-                    ignore = False
+                ignore = False
                 text = []
                 current_linenumber = linenumber
             else:
