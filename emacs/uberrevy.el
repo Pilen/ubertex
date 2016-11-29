@@ -110,7 +110,7 @@ Use `setq-default' to set the default worker when none is chosen explicitly.")
      (:font "DejaVu Sans Mono" :height 50 :foreground "gray50")))
   "")
 
-(setq revy-cursor (make-overlay 0 20 (current-buffer) t t))
+(setq revy-cursor (make-overlay 0 20 (current-buffer) t nil))
 (overlay-put revy-cursor 'revy t)
 (overlay-put revy-cursor 'priority 5000)
 (overlay-put revy-cursor 'face 'revy-cursor-face)
