@@ -58,12 +58,6 @@ If FILE has no extension, EXTENSION is simply added at the end."
   (use-local-map (copy-keymap (current-local-map)))
   (local-set-key key command))
 
-(defun revy-on-worker (worker function &rest args)
-  "Run instruction on another worker than the current
-Used like (revy-on-worker revy-worker-brok 'revy-play-sound \"sound.mp3\")"
-  (let ((revy-current-worker worker))
-    (apply function args)))
-
 (defun revy-join-path (dir &rest dirs)
   "Join dirs into a single path.
 Does not expand it nor makes it absolute, use `expand-file-name' for that"
