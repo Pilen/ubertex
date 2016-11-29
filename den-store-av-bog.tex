@@ -2,8 +2,7 @@
 \usepackage[danish]{babel}
 \usepackage[utf8]{inputenc}
 % \usepackage[margin=3cm]{geometry}
-% \usepackage[margin=4cm]{geometry}
-\usepackage[margin=3cm]{geometry}
+\usepackage[margin=4cm]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{listings}
@@ -24,6 +23,8 @@
 \usepackage{shorttoc}
 \usepackage{setspace}
 \usepackage{color}
+\usepackage{pdflscape}
+\usepackage{verbatim}
 
 \setlength{\marginparwidth}{1.0in}
 \setlength{\marginparsep}{0.1in}
@@ -65,6 +66,18 @@
 \newcommand{\optional}[1]{\&\textit{optional}}
 \newcommand{\rest}[1]{\&\textit{rest}}
 \newcommand{\lquote}[1]{\textquotesingle{}#1}
+\newcommand{\documentkey}[2]{\code{#1}\quad\quad--- \textit{#2}\\}
+
+\usepackage{relsize}
+\def\SaTyR{S\kern-.0967em%
+  \lower.2ex\hbox{\smaller[2]A}%
+  \kern-.155em%
+  {\smaller[1]T}%
+  \kern-.1667em%
+  \lower.2ex\hbox{\smaller[2]Y}%
+  \kern-.055em%
+  R\spacefactor1000 }
+
 
 \pagestyle{fancy}
 \fancyhead{}
@@ -94,6 +107,11 @@
 %% Vis indholdsfortegnelse
 \tableofcontents
 \newpage
+
+\note{TODO:
+  Skal det omtales som Master, Controller eller kontrolmaskine?
+  Skal det kaldes en kommando eller en instruktion?
+}
 
 \section{Introduktion}
 \begin{center}
@@ -331,7 +349,7 @@ småting der er værd at huske.
 \end{description}
 
 
-\subsection{Forudsætninger}
+\subsection{Forudsætninger (Skal ændres)}
 \note{TODO: Dårligt afsnit. Find ud af hvor det passer, og omforumler det til
   det her skal/vil du lære i bogen}
 
@@ -391,8 +409,8 @@ systemet.
 %   {\Huge \textit{ ``Hvad tænkte han dog på?''}}
 % \end{center}
 Den grundliggende filosofi bag systemet er at AV skal kunne komplementere eller understøtte en
-revy uden at komme i vejen. Der skal dermed kun vises det som publikum skal
-se og høre og intet andet.
+revy uden at komme i vejen. Der skal dermed kun vises det som publikum skal se
+og høre og intet andet.
 Det kan være med til at bryde indlevelsen og virke utroligt amatøragtigt lige så
 snart publikum ser en cursor, en film der maksimeres eller rammerne på et
 vindue. Det er sådanne fejltagelser der hiver folk tilbage til virkeligheden i
@@ -510,11 +528,11 @@ Det er dette princip DIKUrevyens AV-system benytter sig af.
 \note{Lidt baggrundshistorie for de nørdede.\\
   Det første hjemmelavede AV-system blev lavet af Troels Henriksen.
   Han lavede et programmeringssprog \textit{Sindre} i Haskell til at lave
-  grænseflader.  I det sprog lavede han et \texttt{dmenu} lignende program
-  kaldet \textit{sinmenu} som han brugte som interface. Selve overteksterne
-  bestod af en pdf som han lokalt oversatte til rå tekst som blev fodret ind i
+  grafiske grænseflader. I det sprog lavede han et \texttt{dmenu} lignende program
+  kaldet \textit{sinmenu} som han brugte som interface til systemet. Selve overteksterne
+  bestod af en pdf som han lokalt oversatte tilbage til rå tekst som blev fodret ind i
   et script der brugte hans grænseflade. Dette script kommunikerede med en
-  server koblet til en projektor over en sshforbindelse.  \texttt{Xpdf} kan
+  server koblet til en projektor over en \texttt{ssh}-forbindelse. \texttt{Xpdf} kan
   køres som en server der kan modtage kommandoer fra en kommandolinje, på denne
   måde kunne man derfor styre overtekster over ssh.
 
@@ -525,12 +543,54 @@ Det er dette princip DIKUrevyens AV-system benytter sig af.
   AV-system til DIKUrevyen 2012.
   At skrive et AV-system er dog ikke en nem tjans og det endte med at foregå i en
   løbende process med forbedringer til hver revy.
+
+  Den føte forbedrede udgave udskiftede interfacet man som AV-mand arbejdede i.
+  Tanken var at istedet for at arbejde med pdf'en og hive teksten ud af dette,
+  kunne man istedet bruge et værktøj der arbejde direkte på \LaTeX{} koden og så
+  fjernstyrede pdf-læseren ud fra dette. Emacs blev valgt som base for systemet.
+  Det er et system jeg allerede var bekendt med og som jeg i forvejen benyttede
+  til at arbejde med \LaTeX{}. Med Emacs kunne man derfor benytte samme program
+  til at skrive overteksterne og til at vise/styre dem.
+  Den store force ved Emacs er at det er ekstremt programmerbart, man kunne
+  derfor nemt bygge av-systemet ovenpå. Ligeledes var det muligt for Emacs at
+  kigge i \LaTeX{} koden mens den blev fremvist for at finde indlejret kode som
+  ikke blev vist, men som Emacs kunne evaluere for at gøre andre ting samtidigt.
+  Dette kunne f.eks. bruges til at afspille lyde under en sang eller vise en
+  video.
+
+  Hurtigt viste det sig at være et stærkt værktøj at kunne bruge Emacs til at
+  styre hele revyen. Der viste sig dog en ulempe i at bruge forskellige
+  programmer til visningen af hver ting. Man kunne f.eks. ikke vise to
+  forskellige billeder ovenpå hinanden.
+  Ligeledes var der problemer med at en del programmer tog tid at starte op, og
+  at pdf-læseren var lang tid om at reagere på at Emacs bad den om at skifte
+  slide. Et halvt til et helt sekunds forsinkelse lyder måske ikke af meget, men
+  er besværligt når man skal time en linjes overtekst til en hurtig sang.
+
+  Derfor opstod idéen om at bygge et dedikeret program til at vise alt hvad
+  Emacs (masteren) kommanderede den til. En første udgave blev udviklet der tog
+  udgangspunkt i java-frameworket \url{https://processing.org/} som så kunne
+  programmeres til at vise forskellige ting. Til sin sketch kunne man så lave et
+  lille javaprogram som man kunne fjernstyre fra Emacs.
+  Så blev der programmeret en pdf-viser som Emacs fjernstyrede til at vise
+  overtekster. Ligeledes blev der programmeret en billede viser og en lyd
+  afspiller osv. Det viste sig dog ikke at være den bedste løsning. I praksis er
+  det meget få af de numre der har behov for AV der har specielle ønsker, som
+  oftest er det bare en kombination af at vise billeder, lyde, videoer og
+  pdf'er. At alting kørte som forskellige programmerede dele gjorde så at man
+  ikke nemt kunne opbygge AV'en ud fra allerede definerede dele men skulle
+  opbygge alting fra bunden lige så snart man ville bare en lille smule.
+
+  Derfor endte det med at en helt anden backend til arbejderne blev
+  programmeret. Idéen var at man let skulle kunne kombinere allerede
+  programmerede dele til sit behov. Det blev besluttet at denne backend skulle
+  programmeres i elisp, eller i det mindste et sprog der mindede meget om dette.
+  På den måde var der således ikke den store forskel på at scripte ting der
+  kørte i Emacs på masteren , og ting der kørte i backenden på arbejderne.
+
+  Det er dette system der fungerer som DIKUrevyens AV-system nu.
 }
-\newpage
-\note{Herfra skal der skrives om, det er mere en ``se hvad jeg har lavet'' end et
-  ``nødvendigt mindset''
-  \hrule
-}
+\note{Skal følgende merges med ovenstående?}
 DIKUrevyens AV-system består af en central grænseflade der kan kommunikere med flere
 forskellige maskiner der kan vise AV materiale.
 
@@ -572,6 +632,7 @@ at afvikle en revy.
 Dette må være essensen af et godt AV system, når man kun skal tage sig af
 timingen på skuespillerne/sangerne samt disses fejltagelser.
 
+\newpage
 \section{- Guidelines til en AV mand}
 \label{sec:god-av-mand}
 % \begin{center}
@@ -622,6 +683,9 @@ I afsnit \ref{subsec:konvertering-manus-overtekst} kan du læse mere om hvordan
 man via systemet let kan konvertere fra et .tex manuskript til overtekster.
 
 
+\subsection{Om at vise overtekster}
+\note{Noget om timingen}
+
 % husk blanke slides
 
 \newpage
@@ -629,6 +693,7 @@ man via systemet let kan konvertere fra et .tex manuskript til overtekster.
 % \begin{center}
 %   {\Huge \textit{ ``Det er faktisk slet ikke så svært''}}
 % \end{center}
+\note{Dette er en meget gammel gennemgang}
 
 Til en standard opsætning ala DIKUrevyens skal du bruge:
 \begin{figure}[h!]
@@ -1110,6 +1175,7 @@ Man kan se om dpms er slået til ved at kalde \code{xset -q}
 \subsection{Xmonad}
 Windos/super eller alt som modifier knap.
 
+\newpage
 \section{- Master}
 % Der sørges automatisk for at det korrekte major mode køres på .tex og .el
 % filer
@@ -1119,14 +1185,579 @@ Se også \ref{subsec:master-commands}
 \label{subsec:ubersicht}
 \subsection{ubertex}
 \label{subsec:ubertex}
-\subsection{Konvertering fra manuskrift til overtekster}
+\subsection{Konvertering fra manuskript til overtekster}
 \label{subsec:konvertering-manus-overtekst}
 
+\newpage
+\section{\%Emacs (Deprecated, merges med Master)}
+\note{Denne section blev fundet i en gammel udprintet udgave af
+  den-store-av-bog, men kunne ikke findes i git historikken.
+Den er noget udtateret i forhold til hvad vi gerne vil og antager lidt at folk
+har styr på ting.}
+
+Her er en kort introduktion til den del af revy-systemet der foregår i Emacs.
+Emacser ikke bare en teksteditor men et helt miljø til at arbejde med tekst og
+evaluere lisp kode (specifikt en dialekt kaldet Emacs lisp eller bare elisp)
+
+Som AV-mand er en stor del af ens arbejde i bund og grund at arbejde med den
+tekst der skal vises og afvikle den kode der viser det, derfor er Emacs et så
+centralt element i systemet. I appendix XXX\marginnote{\note{Nej der er ej}} er en
+introduktion til at bruge en forsimplet udgave af Emacs. Hvis man synes at Emacs
+er lidt besværligt at bruge kan man istedet kigge på ``Simple Emacs'' som er en
+konfiguration af Emacs designet til revyen og som minder om et mere traditionelt
+program (det kan dog stadig anbefales at sætte sig ind i hvordan Emacs virker).
+
+Revyens AV-system er designet som en række filer indeholdende forskelig
+funktionalitet. Som udgangspunkt er det nok at tilføje \code{ubertex/emacs}
+mappen til sin \code{load-path} og sw indlæse ``revy''
+
+\begin{verbatim}
+(add-to-list 'load-path "path/to/ubertex/emacs")
+(require 'revy)
+\end{verbatim}
+
+Som udgangspunkt defineres blot to funktioner \code{revy-create} og
+\code{recy-load} Først når disse bruges indlæses resten af funktionaliteten. På
+denne måde slipper man for at have mere end højst nødvendigt indlæst hvis man
+benytter Emacs til andre formål.
+
+Da Emacs ikke har ``namespaces'' eller en anden form for modulsystem er det med
+vilje designet med så \textit{få} hjælpe funktioner som muligt. Tanken er at
+enhver funktion virker selvstændigt så man som bruger af systemet kan se på
+enhver funktion kaledt \code{revy-} og bruge den i sine egne scripts.
+Dette betyder dog at enkelte funktioner kan blive lidt lange og indviklede, det
+er en pris der må betales for at det bliver så simpelt at programmere op i mod
+som muligt.\marginnote{Implementerings noter?}
+
+\subsection{revy.el}
+Indeholder grundfunktionaliteten. De to funktioner \code{revy-create} og
+\code{revy-load} henholdsvist opretter og indlæser en revy. Herefter indlæses
+revyen samt funktionerne til at arbejde med denne.
+
+Det er ikke nok bare at åbne en \code{.revy} fil manuelt.
+
+\subsection{uberrevy.el}
+Binder revy modesne sammen. Overordnet er en række variabler defineret her. Når
+en revy indlæses, loades uberrevy som sørger for at loade alt andet.
+
+\subsection{ubercom.el}
+Indeholder funktionalitet til at kommunikere med leiter (som står for
+kommunikationen med arbejderne).
+
+Derudover er en række hjælpefunktioner defineret til at gøre kommunikationen med
+arbejderne lettere. Disse kan både bruges interaktivt eller i koden.
+
+\subsection{ubersicht.el}
+Ubersicht er et system til at holde styr på scripts. I bund og grund er det et
+system bygget til at evaluere et emcas script skridt for skridt. Dette
+sammenholdt med en lang række revyspeciffike funktioner giver en stor
+fleksibilitet.
+
+Hvert skridt består af en \textit{instruktion} (``instruction'' i koden)
+
+Man kan bruge ubersicht til at lave en fil med aktoversigten, ved hvert nummer
+benytter man så ubersichts ``næste'' funktionalitet til at bevæge sig videre til
+næste nummer, dette kan så være en kommado der åbner f.eks. en sang eller en
+sketch. Man kan ligeledes benytte ubersicht til at have en sekvens af
+instruktioner der afvikles under en sketch. Det kunne være at der undervejs i
+sketchen skal afspilles nogle lyde, billedr eller film, disse vil være skrevet
+ind i filen som en række instruktioner. Når man i sketchen når til at det er tid
+til at afvikle en instruktion trykker man blot ``næste. Til sidst vil man typisk
+have en ``afslut'' instruktion der returnerer tilbage til det ubersict scrpit
+der åbnede det nuværende, det kunne f.eks. være aktoversigten.
+
+Systemet er lavet fleksibelt for at gøre det bredt anvendeligt men en typisk
+brug består i én aktfordeling liggende i en fil kaldet \code{revyens-navn.revy}
+eller noget i den stil. Indholdet kunne se således ud:
+
+\begin{verbatim}
+(revy-start)
+
+
+Akt 1
+(revy-open "sketches/velkommen.sketch")
+(revy-open "sange/en_sjov_sang.tex")
+(revy-open "sketches/sketchen_med_ordspil.sketch")
+(revy-open "video/dum_video.sketch")
+(revy-open "sange/nu_er_der_pause_sangen.tex")
+
+Akt2
+(revy-open "sange/revyen_er_sjov.tex")
+(revy-open "sketches/dårlig-sketch.sketch")
+(revy-open "sange/sidste_sang.tex")
+
+Ekstranumre
+(revy-open "video/en_anden_video.sketch")
+(revy-open "sange/sjovt_ekstranummer.tex")
+\end{verbatim}
+
+Den første instruktion man evaluerer er at starte revyen, herefter kører man
+igennem de forskellige numre i revyen.
+
+En instruktion er et kald til en elisp funktion\marginnote{eller makro} og
+består \textbf{altid} af en startparentes på en ny linje. Dermed bliver
+teksterne ``Akt 1'', ``Akt 2'' og ``Ekstranumre'' ignoreret. Der er dermed rig
+mulighed for at sætte noter ind. Man kan skrive elisp kommentarer der begynder
+med et \code{;}, man kan skrive elisp strenge \code{"Noget
+  tekst"} eller blot skrive klartekst (Pas dog på, hvis filen
+evalueres som normal elisp kode vil klartekst indskrevet direkte i filen blive
+evalueret som kode, hvilket kan give en fejl).\marginnote{Som i *-config.el}
+
+En markør, makerer hvilken instruktion der bliver udført på nuværende tidspunkt.
+Markøren farver hele instruktionen så det er tydeligt. Husk at markøren (kaldet
+``cursor'' i koden) ikke er det samme som tekstmarkøren hvor tekst bliver indsat
+når der tastes (denne kaldes i Emacs for ``point'').
+
+Overordnet er der 3 funktioner relateret til at bruge ubersicht
+
+\code{revy-ubersicht-mode}\\
+Er et Emacs major mode, baseret på det indbyggede
+emacs-lisp-mode. Dette bruges primært for sine genvejstaster samt at holde styr
+på den nuværende sketch. Når man kalder funktionen startes major modet.
+
+\code{revy-ubersicht-next}\\
+Rykker markøren frem og udfører den næste instruktion. (Rykker også point).
+
+\code{revy-ubersicht-enter}\\
+Eksekverer instruktionen som point er i ellerden efterfølgende.
+
+Derudover har vi adgang til en lang rzkke funktioner der kan bruges som
+instruktioner. I virkeligheden kan enhver elisp funktion bruges. En række
+funktioner til brug for at styre og afvikle revyen er defineret og findes i
+\code{uberinstructions.el}
+
+\subsubsection{Instruktioner der er værd at kende}
+
+\code{revy-start}\\
+Starter en revy.
+
+\code{revy-open}\\
+Åbner og begynder eksekveringen af et nyt script eller overtekster.
+
+\code{revy-nop}\\
+Gør ingenting og ignorerer alle argumenter. Imodsætning til en kommentar
+eksekveres denne instruktion stadig, den udfører bare ingenting. Dette kan
+bruges hvis f.eks. er en sketch uden AV-indhold, man kan på denne måde stadig
+følge med i hvor man er i revyen ved blot at trykke næste.
+
+(alternativt kan man bruge \code{ignore} som gør næsten det samme.)
+
+\code{revy-end-sketch}\\
+Afslutter den nuværende sketch og returnerer til den der åbnede den. Hvis man
+fra sin aktoversigt.revy har kaldt \code{revy-open} på en sketch, vil et kald
+til \code{revy-end-sketch} i sketchen afslutte denne og hoppe tilbage til
+aktoversigten så man kan fortsætte til næste nummer.
+
+\code{revy-shell}\\
+Er defineret i \code{ubercom.el}, og kan afvikle en shell kommando på enten den
+lokale maskine eller på en arbejder.
+
+\textit{TODO: denne funktion skal refaktoreres}
+
+\subsection{ubertex.el}
+Ubertex er på mange måder tilsvarende uberscript, men hvor man i et uberscript
+benytter sig af elisp funktioner til at udføre en sekvens af instruktioner er
+ubertex beregnet til at vise slidesne til en pdf skrevet i \LaTeX{} med beamer
+klassen.
+
+Pointen er at man skriver en latex fil med beamerkalssen og overtex pakken. Man
+kan der definere hvert slide, samt pauserne id disse. Når nummeret skal vises
+kører en pdf fremviser på arbejderne som styres via ubertex i Emacs. Systemet
+minder om uberscript, en markørvires hvilken del af latexen der vises som slide
+i pdf'en, og man kan så bladre ned igennem.
+
+\begin{verbatim}
+\documentclass[14pt]{beamer}
+\usepackage[danish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{overtex}
+
+%% Melody: Den der disney sang, https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+\begin{document}
+\obeylines
+
+\begin{overtex}
+  % forspil
+\end{overtex}
+
+%% S1
+\begin{overtex}
+  Det her er første linje\pause
+  den er lang så vi deler den
+\end{overtex}
+
+\begin{overtex}
+  % blank
+\end{overtex}
+
+\begin{overtex}
+  Mere sang\pause{} med en pause\pause
+  det er vældigt smart
+\end{overtex}
+\begin{overtex}
+  Flere linjer\pause
+  i denne sang
+\end{overtex}
+
+\begin{overtex}
+  Tralala\pause
+  Tralala\pause
+  Tralala\pause{} lalala
+\end{overtex}
+
+\begin{overtex}
+  % slut
+\end{overtex}
+\begin{overtex}
+  \elisp{(revy-end-sketch)}
+\end{overtex}
+\end{document}
+\end{verbatim}
+
+Når man afvikler en sang, bliver latexken skjult af vejen så man kan fokusere på
+indholdet. Husk at naår man laver en ændring i latexen livestreames den ikke til
+pdf-fremviseren, først skal latexkoden oversættes til en pdf, herefter skal
+denne overføres til arbejderne der så skal have at vide at nu skal den nye pdf
+vises istedet.
+
+\subsection{manus.el}
+Indeholder brugbar funktionalitet til at konvertere et \texttt{.tex} manuskript
+til brugbare overtekster.
+
+\code{revy-manus-mode}
+Starter \code{revy-manus-mode}. Primært er formålet at stille en række
+genvejstaster til rådighed.
+
+\subsubsection{Konvertering fra manuskript til overtekster}
+\begin{verbatim}
+(add-to-list 'load-path "~/code/ubertex/emacs")
+(require 'revy)
+\end{verbatim}
+
+\newpage
 \section{- Worker}
 \note{Generelt om hvordan en worker virker}
 Se også \ref{subsec:worker-commands}
 
+\newpage
 \section{- Lisp}
+Lisp er en famillie af programmeringssprog, en af de ældste udgaver er Emacs
+Lisp, eller bare elisp som bruges til at udvide og opbygge programmet Emacs.
+Elisp er et ældre sprog, fra 1985, derfor kan mange ting godt virke lidt
+specielle og ``sære'', men overordnet fungerer det godt til formålet.
+Hvis du kender til lisp i forvejen vil det hjælpe en hel del, men elisp minder
+som sprog mere om common lisp end om scheme, racket eller clojure.
+
+Til av-systemet bruges elisp til at programmere masteren. En variant wlisp kører
+på workerne. wlisp er designet til at minde meget om elisp, og i praksis behøver
+du typisk ikke at tænke dem som to forskellige sprog. Der er dog nogle små
+forskelle hist og her, disse vil blive nævnt i dokumentationen herunder.
+
+Ok, men hvad er et programmeringsprog? Et programmeringssprog er en måde at
+sammensætte en sekvens af instruktioner som en ``computer'' kan forstå. Du kan
+se det som en måde at lave en opskrift, men istedet for at forklare hvordan du
+skal bage en æblekage, forklarer vi hvordan en arbejder skal tegne et billede
+hvor vi ønsker. Der findes mange forskellige programmeringssprog der kan se
+meget forskellige ud, men som alle bygger på nogle fælles underliggende træk.
+
+\subsection{Delene i Lisp / De forskellige lisp dele}
+\subsubsection{Værdier}
+I elisp og wlisp fremover bare nævnt som lisp har vi et koncept om ``værdier''.
+En værdi er noget konkret som f.eks et heltal, et komma tal, en tekst streng, en
+liste eller et symbol, derudover findes kode der kan arbejde med disse, det
+kunne f.eks. være funktionen \code{+} der tager et par tal og returnere et andet
+tal. Alt kode returner en værdi, nogle gange bliver værdi ignoreret, f.eks.
+fordi den er ligegyldig. Nogen kange kan kode gøre mere end bare returnere en
+værdi, så siger vi at det har en ``sideeffekt'' fordi det har en effekt udover
+bare at returnere en værdi. En sideeffekt kunne være at vise et billede,
+afspille en lyd, åbne en fil eller noget helt andet. En af de ting der gør lisp
+lidt specielt er at det er ret nemt at lave kode der arbejder med andet kode,
+fordi vi faktisk kan se kode som en værdi som ``evalueres'' for at gøre noget.
+Vi kan styre denne evaluering og hvornår den sker hvilket er et væsentligt
+koncept i lisp, og som bruges af av-systemet.
+
+Der findes flere slags værdier, disse ``slags'' kaldes en type.
+I lisp har heltal typen \code{integer} og kunne f.eks. være
+13, -17, 0, 1074234. Bemærk at for effektivitet er heltal begrænset til en
+endelig mængde det betyder at vi ikke kan repræsentere tal størrere end
+2147483647, eller mindre end -2147483647. Denne begrænsning er typisk ikke et
+problem i de programmer vi laver her.
+
+Et kommatal af typen \code{float} er en slags reelt tal. 9.17, 1.0, -14.30421,
+0.1 er alle \texttt{float}s. Vær opmærksom på at der er en begrænset præcision,
+tallet vil derfor altid være afrundet til en værdi der kan repræsenteres internt
+i computeren. Du kan derfor ikke gemme \(\pi\) med alle decimaler, men må nøjes
+med en mindre størrelse. Denne afrunding gør at \texttt{float}s tiltider kan
+føre til resultater der ikke helt matcher hvad du forventede, det er derfor
+typisk en dårlig idé at bruge \texttt{float} hvis du vil have et eksakt resultat
+at sammenligne med. Men til meget almindeligt brug er de en fin type.
+
+En \code{string} er en tekststreng. En sekvens af bogstaver, tal og tegn der
+bruges som en tekst. Det kunne f.eks. være et filnavn, en tekst der ønskes
+skrevet på skærmen, eller noget andet. En streng kunne se således ud
+\code{\"{}Hello, World!\"} bemærk de to dobbeltplinger/quotes som bruges til at
+angive at indholdet imellem er teksttrengen. Hvis man gerne vil have en sådan
+til at forekomme inde i strengen kan man ``escape'' den med et ``backslash''.
+\code{\"{}abc\textbackslash{}\"{}def\"}
+
+Et \code{symbol} er et ord og minder måske lidt om en \code{string}, men et
+symbol er kun et enkelt ord, og indeholder altså ingen mellemrum. Man laver
+typisk et symbol med \code{\lquote} operatoren
+\code{\lquote{fisk}}. Symboler er en af grundstenene i lisp, deres
+formål er typisk i at når de evalueres returnerer de ikke sig selv, men en anden
+værdi. En variabel er således et symbol der når det bliver evalueret resulterer
+i en anden værdi.
+
+
+En liste skrives som \code{(1 2 3)} en start parantes efterfulgt af indholdet
+separeret af mellemrum. Lister bliver intern omsat til hægtede lister i form af
+såkaldte ``cons'' celler.
+En conscelle er en værdi i computerens hukommelse der indeholder to værdier. Et
+hovede og en Hale (tænk på en haletudse). Consceller kan bruges til alle mulige
+formål, men deres klassiske brug er til lister.
+I en liste er konventionen at det første element i listen findes i hovedet på
+den første conscelle, halen peger på den anden conscelle. Det andet element
+findes i hovedet på den anden conscelle og den tredje conscelle bliver peget på i halen
+på den anden. Således er hele listen opbygget af consceller der peger på værdier
+og på resten af listen. I den sidste celle er der jo ikke flere celler tilbage,
+derfor indeholder halen symbolet \code{nil} for at angive at der ikke er flere
+elementer tilbage.
+
+\note{TODO: lav et diagram}
+
+Lister er ligesom variabler lidt specielle, de evaluerer ikke til sig selv men
+til et funktionskald. Koden \code{(+ 1 2)} bliver derfor evalueret som et kald
+til funktionen \code{+} med argumenterne \code{1} og \code{2}. Hvis man gerne
+vil have en liste kan man istedet bruge \code{list} funktionen\ref{command:list}
+eller man kan bruge \lquote{} operatoren som siger at den efterfølgende
+operand ikke skal evalueres \code{\lquote{(1 2 3)}}
+
+\subsubsection{Sandhed}
+De fleste programmeringssprog har et koncept om sandheden af en værdi. Mange
+sprog har en ``boolean'' type til at konkretisere værdierne sandt og falsk,
+sådan er det dog \textit{ikke} i lisp. I lisp har vi det lidt specielle symbol
+\code{nil} som repræsenterer den falske værdi. I lisp er \code{nil} falsk som
+den eneste værdi, alle andre værdier betragtes som at være sande.
+Husk på at \code{nil} også er den tomme liste, det vil sige at lister med
+indhold er sande, mens den tomme liste er falsk.
+
+Om noget er sandt eller ej bruges i betingelser, som \texttt{if}, \texttt{when},
+\texttt{unless} og \texttt{while} der alle gør forskellige ting alt efter om et
+af deres argumenter evaluere til en sand eller falsk værdi.
+
+
+\subsubsection{Variabler}
+En variabel minder måske lidt om dem du kender fra matematik, men ikke helt.
+Variabler bruges til at huske ting, enten midlertidigt mens vi arbejder med
+noget, eller for at huske noget på længere sigt.
+En variabel er et navn for en værdi, så når man bruger variablen bruger man
+faktisk den værdi der er bundet til den. En variabel har et navn, et symbol, som
+er bundet til en konkret værdi på et givent tidspunkt i programeksekveringen.
+Når lisp evaluerer et symbol slår den op i en tabel over alle variabler og
+finder ud af hvad variablen er bundet til, så returneres denne værdi.
+Lad os sige at variablen \code{alder} er bundet til værdien \code{42}, så kan vi
+skrive \code{alder} i koden og dette vil returnere værdien \code{42} når det
+bliver evalueret.
+Hvis du vil vide hvor gammel man bliver om et år kan man så f.eks. skrive
+\code{(+ alder 1)} når lisp evaluere dette vil det først evaluere symbolet
+\code{alder} til værdien \code{42}, så evalueredet heltalet \code{1}, dette
+evaluere til sig selv, altså \code{1}, så evalueres funktionen \code{+} med
+argumenterne 42 og 1, dette kald returnere så resultatet 43 som den endelige
+værdi.
+
+Så hvis vi skriver \code{x} evalueres dette af lisp til den værdi \code{x} er
+bundet til. Hvis vi bare gerne vil have symbolet \code{x}, skal vi istedet
+skrive \code{\lquote{x}}
+
+For at tildele en værdi til en variabel kan man bruge \code{setq} som i
+\code{(setq alder 44)} dette sætter variablen med navnet \code{alder} til
+værdien 44. \texttt{setq} står for ``set quoted'' dette er en makro der ikke
+evaluerer navnet men tager det uevalueret for så at sætte den tildelte værdi i
+tabellen over alle variabler. I dette tilfælde evalueres \code{alder} altså ikke
+til den tidligere værdi, og fordi \code{setq} er en makro behøver vi ikke at
+skrive \code{\lquote{alder}}. Der findes også en anden funktion \code{set} som
+ikke er en makro, og den \textit{skal} kaldes med et symbol som i \code{(set
+  \lquote{alder} 45)} denne funktion bruges dog ganske sjældent i normal kode.
+
+\subsubsection{Funktioner}
+En funktion er noget kode der kan eksekveres (udføres) når funktionen bliver
+kaldt. En funktion minder på en måde om funktioner som du måske kan huske fra
+matematik \(f(x) = 3x^2 + 7x -4\), her er det beskrevet hvordan funktionen \(f\)
+afhænger af parametret \(x\) og hvordan resultatet bliver udregnet, vi kan nu
+udregne at \(f(8)\) giver værdien 244. Hvis vi gerne ville formulere denne
+udregning som en funktion i lisp kunne vi skrive:
+\begin{verbatim}
+(defun f (x) (+ (* 3 x x) (* 7 x) -4))
+\end{verbatim}
+Og vi kan som før udregne at \code{(f 8)} giver resultatet 244.
+En funktion er således en måde at beskrive hvordan noget udregnes, muligvis
+afhængigt af nogle parametre. En funktion er dog lidt mere generel, den kan
+nemlig også have ``sideeffekter''. I virkeligheden ville det måske være mere
+korrekt at kalde dem procedurer end funktioner, det tager vi dog ikke så tungt
+her og holder os til den mere gængse terminologi. Det betyder dog at en funktion
+kan mere end blot at beskrive hvordan man udregner et resultat, de kan faktisk
+bruges til at beskrive vilkårlige sekvenser af hvordan ting skal gøres.
+Det kunne f.eks. være at tegne et landskab ud fra nogle billeder af træer,
+en himmel, et hus og en mark.
+
+Når vi kalder en funktion i lisp kan vi give nogle argumenter med, f.eks. gav
+vi argumentet 8 til funktionen \code{f}. Disse evalueres og gemmes så i
+parametret som en variabel, herefter udføres kroppen af funktionen med
+parametrene. I ovenstående eksempel er \code{x} derfor en variabel som er bundet
+til 8 når vi kalder funktionen med 8 som argument.
+
+Så kan lisp gå i gang med at evaluere kroppen. I dette tilfælde består kroppen
+af et kald til funktionen \code{+}, der gives her 3 argumenter til denne
+funktion, først evalueres første argument, det er et kald til funktionen
+\code{*}. Vi giver 3 argumenter til \code{*}, først tallet 3 som evaluere til
+sig selv, herefter \code{x}, \code{x} er en variabel og evaluere til det den er
+bundet til, i det her tilfælde 8, herefter evalueres \code{x} igen, dette udfra
+at \(x \times x = x^2\). Nu udregner lisp kroppen af multiplikationen der giver
+resultatet 192, dette er altså det første argument til \code{+}, nu udregnes
+andet argument \code{(* 7 x)} som ligeledes er et kald til \code{*}, 7 evaluere
+til 7, \code{x} evaluerer til 8, og produktet er 56, som det andet argument til
+\code{+}, det tredje tal er \(-4\) som evaluere til sig selv. Nu har lisp altså
+udregnet de tre argumenter til \code{+} funktionen som altså svarer til \code{(+
+  192 56 -4)} dette kan lisp så udregne og det giver 244. Nu kan lisp så se at
+der ikke er mere at lave i funktionen \code{f}, derfor returneres den seneste
+værdi som resultatet af hele funktionen, \code{f} returnere således 244 tilbage
+til der hvor den blev kaldt.
+\marginnote{\code{+} er en lidt speciel funktion, den kan tage vilkårligt mange
+  argumenter som den summerer, ligeledes kan \code{*} bruges til at udregne
+  produktet af alle sine argumenter}
+
+
+Det kan ses som meget arbejde, men det hele gøres automatisk af lisp når vi
+eksekvere koden, et program er således opbygget af en masse kald til forskellige
+funktioner der typisk kalder andre funktioner indtil alle værdierne er udregnet.
+Det kan virke lidt uoverskueligt i starten, men denne måde at bygge funktioner
+op på er ret central i lisp (og de fleste andre programmeringssprog), det
+tilader os at opbygge et lag af abstraktioner, vi kan nu snakke om at udregne
+\(f\) frem for at snakke om multiplikation og addition, eller det at tegne et
+landskab frem for at tegne enkelte dele.
+
+
+\note{\textbf{Hvad er forskellen på et argument og et parameter?}
+  parametret er navnet på variablen/variablerne som funktionen tager dem, det er
+  altså de navne værdierne bliver bundet til. Når vi kalder en funktion giver vi
+  den nogle værdier, disse kaldes argumenter. Argumenter bruges altså når vi
+  kalder funktioner, parametre bruges i funktionens definition.
+
+  I praksis er det dog ikke specielt vigtigt hvad du kalder dem, mange bruger de
+  to udtryk uden at tænke over hvad det præcis er, og ingen vil tænke synderligt
+  over det om du siger argument eller parameter.
+}
+
+Defun, valgfrie argumenter, valgfrie argumenter og nil værdien, rest parametre.
+
+\subsubsection{Makroer}
+En makro minder på mange måder om en funktion, en central forskel er dog
+\subsubsection{Fejl}
+elisp undtagelser, wlisp error
+ikke definerede variabler giver fejl.
+
+\subsubsection{Lokale variabler}
+Der findes forskellige slags variabler. Dette har noget at gøre med hvor og hvor
+længe de er synlige/eksisterer.
+En normal variabel hvis vi bare skriver \code{(setq foo 10)} vil være en global
+variabel. Denne er synlig i resten af programmet af alt kode. Vi kan således
+skrive \code{foo} for at få den tildelte værdi. Hvis vi nu efterfølgende skriver
+\code{(setq foo 11)} vil vi opdatere værdien for foo til 11, vi kan således ikke
+længere se den gamle værdi 10, men istedet den nye værdi 11.
+
+Til tider kan det være praktisk med en eller flere midlertidige variabler, til
+brug mens man udregner noget, men som ikke har noget formål at gemme.
+Så kan vi bruge \code{let} eller \code{let*}. Disse introducere nogle
+\textit{nye} variabler der kun eksisterer inde i kroppen af let udtrykket.
+Hvis vi bruger \verb+;=>+ som en syntaks i vores kode eksempler til at betyde
+``evaluere til'' så gælder der da at
+\begin{verbatim}
+(setq foo 10)
+foo ;=> 10
+(let ((foo 100))
+  foo ;=> 100
+  (setq foo 101)
+  foo ;=> 101
+)
+foo ;=> 10
+\end{verbatim}
+Så \code{foo} sættes til at være værdien 10. I let udtrykket defineres så den
+nye variabel der også hedder foo, denne har værdien 100. Den originale variabel
+findes stadig, men når vi nu skriver \code{foo} henviser vi altså til den nye
+udgave og ikke den gamle. Dette gælder også hvis vi ændrer i værdien, dette
+gøres for den nuværende variabel, og ikke den gamle.
+Efter let udtrykket henviser \code{foo} altså igen (eller stadig) på den gamle variabel 10.
+
+Denne måde at lave en midlertidig binding er utrolig praktisk, på den måde
+undgår vi at overskrive anden data som vi faktisk gerne ville beholde
+Det er især praktisk i forbindelse med funktioner. I en funktion vil vi gerne
+undgå at et kald har en unødig indvirkning på anden kode. Ved at bruge et let
+udtryk ungår vi dette.
+Her er et par eksempler, disse giver nok mere mening når du om lidt har læst afsnittet
+om funktioner.
+
+\begin{verbatim}
+(defun foo ()
+   (setq a 1)
+   (bar)
+   a)
+(defun bar ()
+  (setq a 2)
+  a)
+(foo) ;=> 2
+\end{verbatim}
+Her henviser \code{a} til den samme globale variabel. Derfor returneres værdien 2.
+
+\begin{verbatim}
+(defun foo ()
+   (let ((a 1))
+     (bar)
+    a))
+(defun bar ()
+  (setq a 2)
+  a)
+(foo) ;=> 1
+\end{verbatim}
+Foo erklærer en ny variabel \code{a}, men på grund af ``dynamisk scope'' er det
+denne variabel som \code{bar} ser og opdatere. Det endelige resultat er derfor
+det samme, men efter kaldet til \code{foo} vil den globale værdi af \code{a}, hvis den
+findes være den samme som tidligere.
+
+\begin{verbatim}
+(defun foo ()
+   (let ((a 1))
+     (bar)
+    a))
+(defun bar ()
+  (let ((a 2))
+    a))
+(foo) ;=> 1
+\end{verbatim}
+Dette er den korrekte måde at undgå at variabler i andre funktionskald ændres.
+\code{foo} erklærer en ny variabel \code{a}, det samme gør \code{bar}, i
+\code{bar} vil alle ændringerne af \code{a} inde i let udtrykket derfor ikke
+være synlige i \code{foo}.
+
+
+En anden ting der er omkring variabler er at parametrene til en funktion
+effektivt er midlertidige variabler defineret og synlige i funktionskroppen og
+bundet til værdien af det tilsvarende argument.
+\begin{verbatim}
+(defun foo (a)
+  (setq a 1)
+  (bar a)
+  a)
+(defun bar (a)
+  (setq a 2)
+  a)
+(foo 0) ;=> 1
+\end{verbatim}
+
+Noget om component lokale variabler
+Noget om ikke definerede variabler
+\subsubsection{...}
+\note{
 Vectorer er ikke ens.
 I Emacs lisp er de konstante. I Worker Lisp er de dynamiske arrays. ak indsætte
 foran og bagi i O(1) tid (ammortiseret)
@@ -1140,10 +1771,14 @@ Der er således ikke en konkret type i sproget der hedder \textit{list}, men man
 bruger det som om der var.
 
 Quote opfører sig anderledes
-(Skal jeg lade være med at deep copy'e?
-
+(Skal jeg lade være med at deep copy'e?)
+}
 \subsection{Hvordan programmerer man?}
-\subsection{De forskellige lisp dele}
+\subsubsection{Betingelser}
+\subsubsection{Løkker}
+\subsubsection{Hvordan arbejder man med lister}
+\subsubsection{Om at finde/rette fejl}
+
 \subsection{Lisp på master}
 \label{subsec:master-commands}
 Dette er en liste af kommandoer der kan bruges på masteren. En del af disse kan
@@ -1188,18 +1823,27 @@ at åbne en fil fra en gammel revy.
 \documentargument{worker} er navnet på en arbejder, denne vil blive brugt som ``default
 worker'' istedet for den nuværende. Så kan man f.eks. åbne en tex/pdf på en
 anden arbejder end den nuværende
+
 \code{(revy-open "sange/lalala.tex"\ \lquote{mid})}
 
 \documentargument{revy-nop \rest ...}
-Gør ingenting, og ignorerer alle argumenterne.
+Gør ingenting, og ignorerer alle argumenter.
 Kan f.eks. bruges til at udkommentere en kommando.
 Kan også bruges i .revy filen istedetfor \code{revy-open} for at signalere at
 dette nummer ikke indeholder noget AV.
+Imodsætning til en kommentar eksekveres denne instruktion stadig, den udfører bare ingenting. Dette kan
+bruges hvis f.eks. er en sketch uden AV-indhold, man kan på denne måde stadig
+følge med i hvor man er i revyen ved blot at trykke næste.
+
+
 \begin{verbatim}
 (revy-open "sketches/den-sjove.sketch")
 (revy-nop "sketches/den-kedelige.sketch")
 (revy-open "sange/sjov-sang.tex")
 \end{verbatim}
+Den kedelige sketch markeres stadig når man trykker videre fra den sjove sketch,
+men der sker ikke noget, så ved næste tryk bevæger man sig videre til den sjove
+sang.
 
 \documentcommand{revy-end-sketch}
 Lukker et nummer.
@@ -1241,6 +1885,7 @@ Så den kan f.eks. bruges i en sketch til at holde højtex kørende mens man
 stopper et billede og en lyd på overtex.
 
 \documentcommand{revy-blank)}
+\label{command:revy-blank}
 Stopper visningen af grafik på den nuværende arbejder indtil næste input.
 Alt kode og lyd fortsætter med at køre, men skærmen ``cleares'' inden den vises.
 I praksis svarer det til at der tegnes en uendelig stor sort firkant oven på
@@ -1428,6 +2073,7 @@ Så er det ærgeligt at dokumentationen er mangelfuld, beklager...
 \documentcommand{quote}
 \documentcommand{eval}
 \documentcommand{list}
+\label{command:list}
 \documentcommand{cons}
 \documentcommand{car}
 \documentcommand{hd}
@@ -1497,8 +2143,7 @@ magiske
 \documentcommand{set\_window\_position}
 
 
-
-\section{\LaTeX}
+\newpage
 \section{- Værktøjer}
 \subsection{Schneider}
 \textit{Tysk: Skrædder}
@@ -1550,10 +2195,22 @@ m filnavn
 
 \note{Konfigurer mplayer fra Emacs, væk på sigt}
 
+\subsection{Gimp}
+\subsection{Inkscape?}
+\subsection{Audacity}
+
+\newpage
 \section{- FAQ}
 Ubertex tager ikke højde for pauser i comments, latex gør.
 
 \subsection{\LaTeX{}}
+\subsubsection{Hvordan indsætter jeg \"{} (quotes)}
+Hvis Emacs indsætter \`{}\`{} hver gang du faktisk trykker \"{} så er det fordi
+Emacs prøver at være smart og indsætte \LaTeX{}s pæne quotes automatisk. Dette
+er selvfølgelig irriterende hvis du ønsker at indsætte \"{} til brug i koden,
+f.eks. i indsat elisp. Hvis du blot trykker \"{} en ekstra gang laves det dog om
+til det korrekte tegn.
+
 \subsubsection{File `overtex.sty' not found.}
 \texttt{overtex.sty} er en fil hvori de overtex speciffike kommandoer er
 defineret. \texttt{revy-manus-prepare} indsætter automatisk
@@ -1603,14 +2260,317 @@ Jeg ved ikke helt hvordan dette skal løses.
 Det er en af grundene til at vi vil lave vores egen fremviser (Zeigen).
 
 
+\newpage
 \section{- Eksempler}
 \note{Med screenshots og eksempler, både på brug af program og effekter
   Se det som hvad jeg ville vise til et AV-føl
   Videosekvens på skrift/billede
 }
 
+\newpage
 \appendix
+\section{\LaTeX}
+\LaTeX er et markup sprog der bruges til at designe dokumenter. Man bruger HTML
+som du måske kender til at lave hjemmesider, \LaTeX{} derimod bruges til at lave
+dokumenter. Det er originalt lavet til at skrive artikler og bøger, især inden
+for Datalogi, matematik og fysik, da det har rig mulighed for at opsætte formler
+pænt. Mange på NatFak bruger \LaTeX{} til at skrive artikler, aflevering og alt
+muligt andet. Den store AV bog som du læser lige nu er f.eks. også skrevet i
+\LaTeX{}. Ligeledes bruger en del revyer \LaTeX{} til deres manuskript.
+Udover at lave artikler kan man også lave præsentationer ved hjælp af beamer
+pakken.
+Det er sådan overteksterne kan laves.
+Der er en AV-specifik pakke kaldet overtex.sty der kan bruges og som indeholder
+makroer Emacs kan forstå og bruge til at fjernstyre backenden.
+
+Hvis du aldrig har arbejdet med \LaTeX{} før kan det godt virke lidt kryptisk og
+kompliceret. Du er måske vant til at arbejde med word og power-point som er
+såkaldte `What You See Is What You Get'' redskaber (wysiwyg). Det betyder at det
+er det sammme program du bruger om du redigerer eller bare kigger i et word
+dokument. Du ændrer direkte i det som du ser det.
+\LaTeX{} derimod er et programmeringssprog skrevet i en helt simpel tekst fil,
+med endelsen .tex det betyder at du ville bruge et program som notepad til at
+arbejde med koden, og ikke et program som word. Emacs er et godt bud på et
+værktøj til at arbejde med tex filer. At det er et programmeringssprog betyder
+at man ikke bare markere et stykke tekst og trykker \textbf{fed} men at man
+skriver noget kode der beskriver at det her skal læses som \verb+\textbf{fed}+
+det kan tage lidt tid at vende sig til men det er ikke en uoverkomelig opgave.
+For så at få en visbar fil, f.eks. en pdf, skal man ``oversætte'' .tex filen.
+Dette kan man gøre med \code{pdflatex}. Emacs og især av-systemet har værktøjer
+til at gøre dette. Det sker f.eks. når man kalder \code{revy-build} der
+oversætter alle .tex filer og overfører dem til arbejderne.
+
+Det kan ske at en .tex fil indeholder fejl, det kan f.eks. være at man har
+skrevet en af \LaTeX{}s kommandoer forkert, glemt et special tegn, brugt noget
+der ikke findes eller brugt det forkert. Hvis der er en fejl stopper
+oversætteren med en fejlbesked. \LaTeX{} har notorisk dårlige fejlbeskeder, og
+de er ikke lette at tyde eller at finde automatisk via software.
+Hvis du bruger \code{revy-build} vil der blive lavet en buffer kaldet
+``*revy-compile-filnavn*'' hvor filnavnet er navnet på texfilen der oversættes.
+Du kan kigge i denne buffer for at finde ud af hvad der gik galt.
+Det kan også være en idé at kalde \code{revy-manus-clean} som kan finde en del
+almindelige fejl.
+
+Her ses et eksempel på en .tex fil:
+\begin{verbatim}
+\documentclass[14pt]{beamer}
+\usepackage[danish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{overtex}
+
+%% Melody: Den der disney sang, https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+\begin{document}
+\obeylines
+
+\begin{overtex}
+  % forspil
+\end{overtex}
+
+%% S1
+\begin{overtex}
+  Det her er første linje\pause
+  den er lang så vi deler den
+\end{overtex}
+
+\begin{overtex}
+  % blank
+\end{overtex}
+
+\begin{overtex}
+  Mere sang\pause{} med en pause\pause
+  det er vældigt smart
+\end{overtex}
+\begin{overtex}
+  Flere linjer\pause
+  i denne sang
+\end{overtex}
+
+\begin{overtex}
+  Tralala\pause
+  Tralala\pause
+  Tralala\pause{} lalala
+\end{overtex}
+
+\begin{overtex}
+  % slut
+\end{overtex}
+\begin{overtex}
+  \elisp{(revy-end-sketch)}
+\end{overtex}
+\end{document}
+\end{verbatim}
+
+Preamplen, alt teksten inden \verb+\begin{document}+ er fortæller \LaTeX{}
+  hvordan indholdet skal forstås.
+
+\% bruges til at lave en kommentar, alt tekst herfra indtil linjens slutning
+ignoreres af \LaTeX{}.
+
+\verb+\obeylines+ betyder at \LaTeX{} overholder linjeskiftne. Så et linjeskift
+i .tex filen også betyder at der er et linjeskift i pdf'en. Dette er det mest
+naturlige i overtekster.
+
+\subsection{AV-specifik}
+\begin{verbatim}
+\begin{overtex}
+
+\end{overtex}
+\end{verbatim}
+Definerer et slide, alle linjerne imellem bliver vist sammen.
+
+\verb+\pause+ kan bruges til at dele et slide op i to sider i den endelige pdf.
+På den måde vises linjerne inden ``pausen'' først og så de næste linjer
+bagefter. Det er almindeligt at have \verb+\pause+ som slutning på de første
+linjer i et slide. Men man kan faktisk også have pauser inde i linjerne der så
+bliver splittet op. Så anbefales det dog at skrive \verb+\pause{}+ uden de
+krøllede paranteser bliver mellemrummet frem til det efterfølgende ord
+spist/ignoreret.
+
+
+
+\subsection{Generelt brugbare makroer}
+Man kan lave forskellige skriftstørrelser.
+Følgende kommandoer ændrer størrelsen inde i et scope,
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}[h!]{ll}
+    \textbackslash{}tiny & {\tiny noget tekst}\\
+    \textbackslash{}scriptsize & {\scriptsize noget tekst}\\
+    \textbackslash{}footnotesize & {\footnotesize noget tekst}\\
+    \textbackslash{}small & {\small noget tekst}\\
+    \textbackslash{}normalsize & {\normalsize noget tekst}\\
+    \textbackslash{}large & {\large noget tekst}\\
+    \textbackslash{}Large & {\Large noget tekst}\\
+    \textbackslash{}LARGE & {\LARGE noget tekst}\\
+    \textbackslash{}huge & {\huge noget tekst}\\
+    \textbackslash{}Huge & {\Huge noget tekst}\\
+  \end{tabular}
+\end{table}
+
+Et eksempel kunne være følgende taget fra satyr-revy 2016:
+\begin{verbatim}
+\begin{overtex}
+  {\Huge FUCK\pause{} MIT\pause{} LIV!}
+\end{overtex}
+\end{verbatim}
+Som i over tre sider skriver teksten med stort.
+
+\newpage
 \section{Sådan bruges ``Simple Emacs''}
+\label{sec:simple-emacs}
+
+Emacs kan være svært at bruge.
+Buffere, genvejstaster, input, hov noget gik galt.
+
+\begin{landscape}
+  \newgeometry{top=12cm}
+  \thispagestyle{empty}
+  {\scriptsize
+    \verbatiminput{emacs/help.el}
+  }
+  \restoregeometry
+\end{landscape}
+
+Her er en gennemgang af mange af de genvejstaster der findes i Emacs, specifikt
+med den forsimplende konfiguration kaldet Simple Emacs, som findes i
+\code{revy-simple}
+
+For at slå den permanent til skal man gå ind i sin \code{.emacs} fil i sin
+hjemmemappe og tilføje følgende linjer:
+
+\begin{verbatim}
+(add-to-list 'load-path "~/ubertex/emacs")
+(require 'revy-simple)
+\end{verbatim}
+
+Hvor stien for \code{load}-path peger på \code{emacs} mappen i den mappe hvor \code{ubertex} er installeret.
+
+
+\documentkey{<f9>}{menu}
+Åbner menuen
+
+\documentkey{C-o}{Open file} åben en fil i en ny buffer.
+
+\documentkey{C-s}{Save file} gemmer filen.
+
+\documentkey{C-S-s}{Save all buffers} Gemmer alle ikke gemte buffere.
+
+\documentkey{C-e}{End of line} flytter point til slutningen af linjen.
+
+\documentkey{C-a}{Beginning of line} flytter point til starten af linjen.
+
+\documentkey{C-k}{Kill rest of line} sletter alt tekst fra point til slutningen af
+linjen.
+
+\documentkey{C-S-k}{Kill whole line} sletter hele linjen.
+
+\documentkey{H-<backspace>}{Join line} sletter linjeskiftet før denne linje, så
+den forige og denne bliver til én lang linje.
+
+\documentkey{C-f}{Find} Find en tekst i bufferen. Når man har trykket tasten,
+bliver man spurgt om en tekst, Emacs begynder med det samme at søge ned igennem
+bufferen. Søgningen starter fra der hvor point er lige nu. Hvis man vil søge
+videre efter næste forkomst kan man trykke \code{C-f} igen. Hvis man når til
+slutningen af bufferen vil \code{C-f} starte forfra fra toppen.
+Når man er færdig med at søge skal man trykke \code{<enter>} som stopper
+søgningen. Man kan trykke \code{C-S-f} for at \textit{reverse} søgeretningen og
+søge baglens gennem bufferen. Man kan således bruge \code{C-f} og \code{C-S-f}
+til at søge forlæns og baglæns.
+
+\documentkey{C-H-f}{Find reverse} Finder noget baglæns, se \code{C-f}
+
+\documentkey{C-r}{Replace} Spørger først om en tekst der skal erstattes, spørger
+så efter en tekst der skal erstatte den. Nu bevæger Emacs sig fra hvor point er
+ned over alle matches og spørger om de skal erstattes, hvis man trykker
+\code{<space>} eller \code{y} bliver teksten erstattet, hvis man trykker
+\code{n} går man videre til næste match uden at erstatte det nuværende. Hvis man
+trykker \code{!} erstattes alle følgende matches uden at spørge.
+
+
+\documentkey{C-z}{Undo} Fortryder den seneste ændring, hver opmærksom på at
+Emacs måde at håndtere undos på er lidt anderledes. Hvis man i et ``normalt''
+program gør handling A, B, og så C, og trykker undo og nu gør handling D, vil
+historikken huske A, B og D, undo og redo kan således kun komme frem og tilbage
+mellem disse. Emacs er lidt anderledes, her findes ``redo'' ikke, tilgengæld er
+undo en handling der kan undo'es i sig selv. Så hvis man udfører handling A, B og så C,
+så trykker man undo og så D, så vil undo-historikken se således ud: A, B, C,
+undo C, D. Man kan så bruge undo til at komme tilbage til C. Tilgengæld vil
+disse ændringer også være synlige, således kan Emacs huske alt, men det kan godt
+være lidt uoverskueligt.
+
+\documentkey{C-t}{Start shell (terminal)} Starter en eshell i Emacs.
+
+\documentkey{C-b}{Switch buffer} Kommer op med en menu der lader dig skifte
+buffer i det nuværende vindue.
+
+\documentkey{<menu>}{buffer menu} Menu knappen er den der sidder i højre side
+mellem \code{<AltGr>} og den højre \code{<Ctrl>} knap. Den ligner typisk en
+lille menu med en cursor (og findes ikke på Mac). Når man trykker på den åbner
+den en buffer med en liste af alle åbne buffere i Emacs.
+Man kan nu bevæge point ned til at pege på en linje og trykke enter for at åbne
+denne buffer.
+
+\documentkey{<f5>}{Close window} Lukker det nuværende vindue. Vær opmærksom på
+at hvad du normalt ville kalde et vindue, kalder Emacs et \textit{frame}, mens
+Emacs bruger termet ``window'' om dens interne måde at vise flere buffere.
+Man kan ikke lukke det sidste/eneste vindue på denne måde.
+
+\documentkey{<f6>}{Split window horizontal} Splitter det nuværende vindue så der
+lægges to ved siden af hinanden.
+
+\documentkey{<f7>}{Setup revy windows} Opsætter vinduerne i Emacs så det er
+smart i forhold til revyen. Emacs bliver opdelt til ialt to vinduer, det ene er
+aktoversigten det andet er hvad man ellers arbejder med.
+
+\documentkey{<f8>}{other window} Skifter fokus til det næste vindue.
+
+\documentkey{C-æ}{other window} Skifter fokus til det næste vindue.
+
+\documentkey{C-ø}{Balance windows} ``Balancerer'' winduerene, så størrelserne
+bliver ensartede.
+
+
+\documentkey{<f1>}{revy manus insert comment} Indætter en kommentar i et ubertex
+dokumment, spørger om hvad du gerne vil have indsat i kommentaren, når du
+trykker \code{<enter>} indættes en \verb+\comment{}+ med indholdet.
+Det kan være en smart måde hvis man står og afvikler en sang til en prøve, og
+man lægger mærke til en fejl, hvis man forsøger at rette den med det samme
+kommer man muligvis bagud, og hvis man venter glemmer man måske hvor præcis det
+var. Hvis man skynder sig at trykke \code{<f1>} og kaster en hurtig kommentar
+sammen vil denne blive indsat hvor point er nu, så kan man rette tingene til
+senere. Hvis man glemmer det så har man dog ikke ødelagt noget ved et eller
+andet forhastet og forfejlet forsøg.
+
+
+\note{I Emacs bliver Alt knappen af historiske årsager kaldt Meta}
+
+\marginnote{Disse fire genvejstaster gør at du kan holde \code{<Alt>} nede og så
+  bruge WASD til at flytte point rundt.}
+\documentkey{M-w}{Previous line} Bevæger point til forrige linje.
+
+\documentkey{M-s}{Next line} Bevæger point til næste linje.
+
+\documentkey{M-a}{left char} Bevæger point et tegn til venstre.
+
+\documentkey{M-d}{Right char} Bevæger point et tegn til venstre.
+
+
+
+\documentkey{<home>}{revy next} Avancerer revy cursoren fra hvor den er nu
+videre til den efterfølgende instruktion eller slide. Hvor pointeren er har
+ingen indvirkning. Centrerer derudover cursoren midt på skærmen.
+
+\documentkey{<end>}{revy enter} Eksekverere instruktionen eller det slide der er
+under point. Hvis point er udenfor en instruktion eller slide, vil det første
+efterfølgende blive eksekveret.
+
+\documentkey{<delete>}{revy blank} ``Blanker'' skærmen. Se \ref{command:revy-blank}.
+
+
+
+\newpage
 \section{En guide til Linux}
 \label{linux_guide}
 % Sådan bruger du en terminal
@@ -1632,6 +2592,7 @@ nævn
 xmonad --recompile
 xmonad --restart
 \end{verbatim}
+
 \newpage
 \section{Installation af Arch Linux}
 Dette appendix gennemgår installationen af Arch Linux fra bunden.
@@ -2204,6 +3165,7 @@ indhold af \texttt{autologin.conf}:
 pacman -S alsa-utils rxvt-unicode dmenu xdotool feh mplayer ttf-dejavu screen htop rsync mupdf
 \end{verbatim}
 
+\newpage
 \section{Worker-protokol}
 \note{Her burde følge en introduction af protokollen mellem master og worker.}
 
