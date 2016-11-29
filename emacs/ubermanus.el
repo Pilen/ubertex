@@ -68,6 +68,8 @@ the functions can be called on their own."
         (insert "\n")))
 
     (goto-char (point-min))
+    (replace-string "\\scene " "%% \\scene ")
+    (goto-char (point-min))
     (replace-regexp "\n\n+\\\\end{document}" "\n")
     (goto-char (point-min))
     (search-forward "\\begin{song}")
