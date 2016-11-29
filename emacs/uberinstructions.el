@@ -108,16 +108,6 @@ but without closing it, essentially not calling revy-abort-all"
   ;; todo fix:
   (revy-kill-mplayer))
 
-(defun revy-kill (&optional sketch)
-  (interactive)
-  (if (null sketch)
-      (revy-send-message "kill")
-    (revy-send-message "kill" sketch)))
-
-(defun revy-test-all ()
-  (interactive)
-  (revy-send-message revy-worker-all "start" "Test"))
-
 (defun revy-calibrate ()
   (interactive)
   (revy-send-lisp 'all '(update (calibrate))))
@@ -161,10 +151,6 @@ but without closing it, essentially not calling revy-abort-all"
                      ;; (pdf pdf-file pdf-slide '(centered 0.1 0.2)))
                      (pdf pdf-file pdf-slide '(sized 0.0 0.0 0.8 0.8)))
                   `(update (pdf-slideshow))))
-
-(defun revy-pdf-reload ()
-  "Reload current pdf"
-  (revy-send-message "module" "PDF" "reload"))
 
 (defun revy-pdf-goto-slide (slide)
   "Goto pdf slide."
