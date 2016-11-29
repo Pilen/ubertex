@@ -53,8 +53,13 @@ Ignores all arguments" nil nil)
   "Finish the current sketch and return to the one opening it
 This function will also call revy-abort-all "
   (interactive)
-  (revy-clear-overlays)
   (revy-abort-all)
+  (revy-return))
+
+(defun revy-return ()
+  "Returns, like finishing the current sketch like `revy-end-sketch',
+but without closing it, essentially not calling revy-abort-all"
+  (revy-clear-overlays)
   (pop-to-buffer (pop revy-stack))
   (let ((start (overlay-start revy-local-cursor))
         (end (overlay-end revy-local-cursor)))
