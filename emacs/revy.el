@@ -221,22 +221,22 @@ Then it will load it"
         (delete-backward-char 1)
         (insert ")\n\n")
 
-            ;; Default worker
-            (insert "(setq-default revy-current-worker '"
-                    (ido-completing-read "Default worker: " (reverse workers) nil t)
-                    ")\n")))
+        ;; Default worker
+        (insert "(setq-default revy-current-worker '"
+                (ido-completing-read "Default worker: " (reverse workers) nil t)
+                ")\n")))
 
-        ;; Store revy in file containing latest revy.
-        (let* ((local (concat (file-name-as-directory revy-ubertex-dir) "local"))
-               (latest-revy (concat (file-name-as-directory local) "latest-revy")))
-          (when (not (file-exists-p local))
-            (make-directory local))
-          (with-temp-file latest-revy
-            (insert name "\n"
-                    ubersicht "\n")))
+    ;; Store revy in file containing latest revy.
+    (let* ((local (concat (file-name-as-directory revy-ubertex-dir) "local"))
+           (latest-revy (concat (file-name-as-directory local) "latest-revy")))
+      (when (not (file-exists-p local))
+        (make-directory local))
+      (with-temp-file latest-revy
+        (insert name "\n"
+                ubersicht "\n")))
 
-        (message "%s has been created" name)
-        (revy-load ubersicht)))
+    (message "%s has been created" name)
+    (revy-load ubersicht)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
