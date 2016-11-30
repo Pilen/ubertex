@@ -1190,7 +1190,7 @@ Se også \ref{subsec:master-commands}
 \label{subsec:konvertering-manus-overtekst}
 
 \newpage
-\section{\%Emacs (Deprecated, merges med Master)}
+\section*{\%Emacs (Deprecated, merges med Master)}
 \note{Denne section blev fundet i en gammel udprintet udgave af
   den-store-av-bog, men kunne ikke findes i git historikken.
 Den er noget udtateret i forhold til hvad vi gerne vil og antager lidt at folk
@@ -1462,6 +1462,19 @@ skal bage en æblekage, forklarer vi hvordan en arbejder skal tegne et billede
 hvor vi ønsker. Der findes mange forskellige programmeringssprog der kan se
 meget forskellige ud, men som alle bygger på nogle fælles underliggende træk.
 
+
+Udover denne guide til lisp har Emacs en kæmpe mængde dokumentation af alle
+mulige systemer til rådighed. I Emacs kan du trykke \code{C-h i} for at få en
+liste over alle disse. Der er en guide til at bruge Emacs, men derudover er der
+en ``Emacs Lisp Intro'' til at forklare elisp for begyndere, desuden er der en
+stor section om elisp der dokumenterer alle de elisp dele Emacs kommer med som
+standard.
+
+I Emacs menu, som enten vises i toppen af vinduet som de fleste andre
+programmer, alternativt hvis denne menubar er slået fra (som mange gør) kan man
+få den frem midlertidigt ved at holde \code{Ctrl} nede og så højreklikke.
+I menuen ``Help'' kan du i undermenuen ``More manuals'' også finde elisp
+introduktionen samt elisp referencerne.
 \subsection{Delene i Lisp / De forskellige lisp dele}
 \subsubsection{Værdier}
 I elisp og wlisp fremover bare nævnt som lisp har vi et koncept om ``værdier''.
@@ -2562,6 +2575,15 @@ Som i over tre sider skriver teksten med stort.
 Emacs kan være svært at bruge.
 Buffere, genvejstaster, input, hov noget gik galt.
 
+\note{Copy-pastet fra lisp, nævn Emacs tutorial og Emacs manual.
+
+I Emacs menu, som enten vises i toppen af vinduet som de fleste andre
+programmer, alternativt hvis denne menubar er slået fra (som mange gør) kan man
+få den frem midlertidigt ved at holde \code{Ctrl} nede og så højreklikke.
+I menuen ``Help'' kan du i undermenuen ``More manuals'' også finde elisp
+introduktionen samt elisp referencerne.
+}
+
 \begin{landscape}
   \newgeometry{top=12cm}
   \thispagestyle{empty}
@@ -3312,5 +3334,11 @@ pacman -S alsa-utils rxvt-unicode dmenu xdotool feh mplayer ttf-dejavu screen ht
 % \includepdf[pages=-]{elisp-source.pdf}
 % \section{C kode}
 % \includepdf[pages=-]{c-source.pdf}
+
+\newpage
+\thispagestyle{empty}
+{\huge Husk at slukke projektorerne når du går!}
+
+Det forværer deres holdbarhed at lade dem stå tændt en hel revy-uge.
 
 \end{document}
