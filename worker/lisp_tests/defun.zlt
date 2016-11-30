@@ -58,3 +58,35 @@
 (defun baz (x)
   (list (bar 2) x))
 (baz 3) ;=> ((1 2) 3)
+
+
+
+
+
+;;;;TEST;;;;
+(defun mlist (&rest l) l)
+(mlist 1 2 3) ;=> (1 2 3)
+
+(setq x (mlist 1 2 3)) ;=> (1 2 3)
+(setq y (mlist 1 2 3)) ;=> (1 2 3)
+(equal x y) ;=> t
+(eq x y) ;=> nil
+(mlist) ;=> nil
+
+
+;;;;TEST;;;;
+(defun my-list-atleast-2 (a b &rest l)
+  (cons a (cons b l)))
+(my-list-atleast-2 1 2 3 4) ;=> (1 2 3 4)
+(my-list-atleast-2 1 2) ;=> (1 2)
+(my-list-atleast-2) ;=> error
+(my-list-atleast-2 1) ;=> error
+
+;;;;TEST;;;;
+(defun my-optional (a b &optional c &rest l)
+  (cons a (cons b (cons c l))))
+(my-optional 1 2 3 4 5) ;=> (1 2 3 4 5)
+(my-optional 1 2 3) ;=> (1 2 3)
+(my-optional 1 2) ;=> (1 2 nil)
+(my-optional) ;=> error
+(my-optional 1) ;=> error
