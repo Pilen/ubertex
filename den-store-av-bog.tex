@@ -66,6 +66,7 @@
 \newcommand{\optional}[1]{\&\textit{optional}}
 \newcommand{\rest}[1]{\&\textit{rest}}
 \newcommand{\lquote}[1]{\textquotesingle{}#1}
+\newcommand{\lstring}[1]{\"{}#1\"{}}
 \newcommand{\documentkey}[2]{\code{#1}\quad\quad--- \textit{#2}\\}
 
 \usepackage{relsize}
@@ -1522,7 +1523,9 @@ findes i hovedet på den anden conscelle og den tredje conscelle bliver peget p�
 på den anden. Således er hele listen opbygget af consceller der peger på værdier
 og på resten af listen. I den sidste celle er der jo ikke flere celler tilbage,
 derfor indeholder halen symbolet \code{nil} for at angive at der ikke er flere
-elementer tilbage.
+elementer tilbage. En alternativ måde at skrive \code{nil} på er som \code{()}
+altßw de tomme parantesser, eller den tomme liste. \code{nil} og \code{()}
+bliver behandlet som akkurat det samme, det er bare to måder at skrive det samme.
 
 \note{TODO: lav et diagram}
 
@@ -1532,6 +1535,14 @@ til funktionen \code{+} med argumenterne \code{1} og \code{2}. Hvis man gerne
 vil have en liste kan man istedet bruge \code{list} funktionen\ref{command:list}
 eller man kan bruge \lquote{} operatoren som siger at den efterfølgende
 operand ikke skal evalueres \code{\lquote{(1 2 3)}}
+
+
+Når vi i lisp taler om et udtryk taler vi om en sådan værdi, eller mere præcist
+noget som når det bliver evalueret resulterer i en værdi.
+Således er en liste der indeholder flere lister bare ét udtryk (men opbygget af
+flere andre udtryk). Ligeledes er et funktionskald der som argument tager
+resultatet af flere andre funktionskald, også ét udtryk med flere udtryk som
+argument.
 
 \subsubsection{Sandhed}
 De fleste programmeringssprog har et koncept om sandheden af en værdi. Mange
@@ -1590,7 +1601,8 @@ udregning som en funktion i lisp kunne vi skrive:
 \begin{verbatim}
 (defun f (x) (+ (* 3 x x) (* 7 x) -4))
 \end{verbatim}
-Og vi kan som før udregne at \code{(f 8)} giver resultatet 244.
+Og vi kan som før udregne at \code{(f 8)} giver resultatet 244. Bemærk hvordan
+funktionsnavnet står som det første inde i parantesen.
 En funktion er således en måde at beskrive hvordan noget udregnes, muligvis
 afhængigt af nogle parametre. En funktion er dog lidt mere generel, den kan
 nemlig også have ``sideeffekter''. I virkeligheden ville det måske være mere
@@ -1617,25 +1629,24 @@ at \(x \times x = x^2\). Nu udregner lisp kroppen af multiplikationen der giver
 resultatet 192, dette er altså det første argument til \code{+}, nu udregnes
 andet argument \code{(* 7 x)} som ligeledes er et kald til \code{*}, 7 evaluere
 til 7, \code{x} evaluerer til 8, og produktet er 56, som det andet argument til
-\code{+}, det tredje tal er \(-4\) som evaluere til sig selv. Nu har lisp altså
-udregnet de tre argumenter til \code{+} funktionen som altså svarer til \code{(+
-  192 56 -4)} dette kan lisp så udregne og det giver 244. Nu kan lisp så se at
-der ikke er mere at lave i funktionen \code{f}, derfor returneres den seneste
-værdi som resultatet af hele funktionen, \code{f} returnere således 244 tilbage
-til der hvor den blev kaldt.
+\code{+}, det tredje argument er tallet \(-4\) som evaluere til sig selv. Nu har
+lisp altså udregnet de tre argumenter til \code{+} funktionen som altså svarer
+til \code{(+ 192 56 -4)} dette kan lisp så udregne og det giver 244. Nu kan lisp
+så se at der ikke er mere at lave i funktionen \code{f}, derfor returneres den
+seneste værdi som resultatet af hele funktionen, \code{f} returnere således 244
+tilbage til der hvor den blev kaldt.
 \marginnote{\code{+} er en lidt speciel funktion, den kan tage vilkårligt mange
   argumenter som den summerer, ligeledes kan \code{*} bruges til at udregne
   produktet af alle sine argumenter}
 
-
 Det kan ses som meget arbejde, men det hele gøres automatisk af lisp når vi
-eksekvere koden, et program er således opbygget af en masse kald til forskellige
-funktioner der typisk kalder andre funktioner indtil alle værdierne er udregnet.
-Det kan virke lidt uoverskueligt i starten, men denne måde at bygge funktioner
-op på er ret central i lisp (og de fleste andre programmeringssprog), det
-tilader os at opbygge et lag af abstraktioner, vi kan nu snakke om at udregne
-\(f\) frem for at snakke om multiplikation og addition, eller det at tegne et
-landskab frem for at tegne enkelte dele.
+eksekverer koden, et program er således opbygget af en masse kald til
+forskellige funktioner der typisk kalder andre funktioner indtil alle værdierne
+er udregnet. Det kan virke lidt uoverskueligt i starten, men denne måde at bygge
+funktioner op på er ret central i lisp (og de fleste andre programmeringssprog),
+det tilader os at opbygge et lag af abstraktioner, vi kan nu snakke om at
+udregne \(f\) frem for at snakke om multiplikation og addition, eller det at
+tegne et landskab frem for at tegne enkelte dele.
 
 
 \note{\textbf{Hvad er forskellen på et argument og et parameter?}
@@ -1649,7 +1660,133 @@ landskab frem for at tegne enkelte dele.
   over det om du siger argument eller parameter.
 }
 
-Defun, valgfrie argumenter, valgfrie argumenter og nil værdien, rest parametre.
+Måden vi erklærer en funktion er med \code{defun}, dette er en makro som
+erklærer en funktion, hvilke parametre den har og hvad den gør når den bliver
+kaldt. Det første argument til \code{defun} er funktionens navn, dette skal vi
+bruge hver gang vi fremover vil kalde funktionen. Det andet argument er en liste
+af parametrene funktionen har, som udgangspunkt skal en funktion kaldes med et
+argument til hvert parameter funktionen har, man skal derfor give præcis det
+samme antal argumenter som funktionen har parametre.
+Efter listen af parametre kommer der potentielt en såkaldt ``docstring'', dette
+er en kort dokumentation af hvad funktionen gør. Docstringen er valgfri, til sin
+korte funktion der skal tegne et landskab til revyen behøver man den næppe, men langt de fleste
+funktioner i Emacs har f.eks. en sådan dokumentation.
+
+Herefter kommer selve kroppen. Dette er en vilkårlig lang sekvens af udtryk, når
+funktionen evalueres, evalueres disse udtryk et ad gangen. resultatet af
+evalueringen af det sidste udtryk bliver returneret som resultatet af hele
+funktionskaldet.
+
+Udover de obligatoriske ``normale'' parametre kan man også have valgfrie
+argumenter. Til dette bruger man det lidt magiske ord \code{\&optional} i sin
+sekvens af parametre, efter dette er de efterfølgende parametre valgfrie.
+Det betyder at når man kalder koden skal man angive alle de obligatoriske
+parametre, og man kan, men behøver ikke at angive de valgfrie argumenter.
+det kunne f.eks. se således ud:
+\begin{verbatim}
+(defun foo (a b &optional c d)
+  (list a b c d))
+\end{verbatim}
+Funktionen med det intetsigende navn \textit{foo} skal kaldes med to argumenter,
+men man kan kalde den med ialt 2, 3 eller 4 argumenter. De argumenter man kalder
+funktionen med bliver gemt i parametrene i rækkefølge. De parametre der ikke
+bliver givet som argument bliver tildelt værdien \code{nil}, altså den
+intetsigende falske værdi. Dette er så måden at se på om der ikke blev givet et
+argument.
+
+Vi kan f.eks. kalde \code{(foo 1 2 3 4)} og \code{list} kaldet i \code{foo} vil
+lave lave en liste ud af argumenterne og resultatet vil da være \code{(1 2 3
+  4)}. Hvis vi kalder \code{(foo 1 2 3)} er resultatet \code{(1 2 3 nil)}, hvis
+vi kalder \code{(foo 1 2)} er resultatet \code{(1 2 nil nil)}.
+
+Når vi ikke giver et argument med er parametret således sat til \code{nil}, vi kan bruge dette
+til at lave en anderledes opførsel for en funktion:
+\begin{verbatim}
+(defun bar (&optional a)
+  (if a
+      "Jeg fik en værdi"
+    "Jeg fik ikke en værdi")
+\end{verbatim}
+Her har vi en betingelse, (mere om dem i \ref{subsubsec:betingelser}) hvis
+\code{a} \textit{ikke} er \code{nil} så returneres strengen \code{\lstring{Jeg
+    fik en værdi}} ellers, hvis \code{a} er \code{nil}, returneres
+\code{\lstring{Jeg fik ikke en værdi}}.
+Så hvis vi kalder \code{(bar)} returnerer den \code{\lstring{Jeg fik ikke en værdi}}
+og hvis vi kalder \code{(bar 10)} returnerer den  \code{\lstring{Jeg fik en
+    værdi}},
+
+Der er dog en ting vi skal være opmærksomme på, vi kan ikke skelne om et
+argument ikke blev givet, eller om \code{nil} værdien blev givet som argument.
+Hvis vi kalder \code{(bar nil)} vil resultatet derfor være \code{\lstring{Jeg
+    fik ikke en værdi}}
+Dette kan være lidt overraskende da man jo faktisk gav en værdi med. Man kan
+vælge at se det som at hvis man kalder en funktion med \code{nil} som argument
+til et valgfrit parameter, så siger man at man explicit bare vil have at den
+skal gøre det som den gør som standard uden et argument. Det kan være brugbart
+for en funktion der tager flere forskellige valgfrie parametre og har forskellig
+opførsel alt efter værdien af disse. Så kan man f.eks. give \code{nil} som værdi
+for at få den til at behandle nogle argumenter som om vi ikke gav dem, samtidigt
+med at vi giver nogle af de senere explicit. F.eks. kunne vi kalde \code{(foo 1
+  2 nil 4)} som ville returnere \code{(1 2 nil 4)}, nu er dette et ret simpelt
+tilfælde, men det er praktisk for nogle af de mere komplicerede funktioner i
+Emacs.
+
+
+En anden type valgfrie parametre er ``resten'' parametre, disse kan bruges til
+at sige at en funktion kan tage vilkårligt mange argumenter. De bliver så givet
+som et rest parameter i en liste indeholdende dem alle.
+Man bruger også her det lidt magiske ord \code{\&rest} foran et enkelt parameter
+navn som alle de resterende argumenter bliver gemt i.
+
+Vi kunne dermed oprette vores egen udgave af \code{list} funktionen vi så
+tidligere:
+\begin{verbatim}
+(defun my-list (&rest l)
+  l)
+\end{verbatim}
+Denne funktion har ét rest parameter kaldet \code{l}, som alle argumenterne til
+\code{my-list} bliver lagt i. Funktionen gør ikke andet en at returnere denne
+liste. Vi kan så kalde \code{(my-list 1 2 3)} og vi får \code{(1 2 3)} som
+resultat, eller vi kan kalde \code{(my-list 1 2 "a" 3 "c" 4)} og vi får \code{(1
+  2 "a" 3 "c" 4)} tilbage som resultat. Hvis vi kalder \code{(my-list)} får vi
+den tomme liste tilbage \code{nil} (som er det samme som \code{()}).
+
+Vi kan også kombinere dette med obligatoriske argumenter
+\begin{verbatim}
+(defun my-list-atleast-2 (a b &rest l)
+  (cons a (cons b l)))
+\end{verbatim}
+Denne funktion sætter de to første argumenter sammen i et par consceller der
+peger på hinanden og videre på resten af argumenterne i \code{l}, således
+konstrueres der én lang liste. Resultatet er altså lig det fra \code{my-list},
+forskellen er at denne funktion fejler hvis ikke den bliver kaldt med 2 eller
+flere argumenter.
+
+Vi kan også have valgfrie parametre:
+\begin{verbatim}
+(defun my-optional (a b &optional c &rest l)
+  (cons a (cons b (cons c l))))
+\end{verbatim}
+Denne lidt mærkelige funktion \textit{skal} have mindst 2 argumenter, ellers
+fejler den, man \textit{kan} vælge at give den et tredje, ellers indsættes et
+\code{nil} i listen, og man kan give den vilkårligt flere der så indsættes i
+enden. \code{(my-optional 1 2 3 4 5)} giver så \code{(1 2 3 4 5)}
+\code{(my-optional 1 2)} giver \code{(1 2 nil)} og hvis vi kalder
+\code{my-optional} med færrere end 2 argumenter resulterer det i en fejl.
+
+Det giver \textbf{ikke} mening at have flere parametre efter \code{\&rest}
+nøgleordet, men man kan navngive det som man vil.
+
+\note{Vær opmærksom på at først skal du angive \textbf{ALLE} obligatoriske
+  parametre, så skal du angive \textbf{ALLE} de valgfrie, og herefter kan du
+  angive ``resten'', du kan altså ikke blande rundt i rækkefølgen}
+
+
+En sidste ting omkring funktioner, er at man skal være opmærksom på at de først
+kan bruges \textit{efter} de er defineret. Og at det altid er den seneste
+definerede udgave der kaldes. Hvis man omdefinerer en funktion behøver man altså
+ikke at gøre noget ved de funktioner der allerede er defineret og som kalder
+funktionen, de vil automatisk kalde den nyest definerede udgave.
 
 \subsubsection{Makroer}
 En makro minder på mange måder om en funktion, en central forskel er dog
@@ -1775,6 +1912,7 @@ Quote opfører sig anderledes
 }
 \subsection{Hvordan programmerer man?}
 \subsubsection{Betingelser}
+\label{subsubsec:betingelser}
 \subsubsection{Løkker}
 \subsubsection{Hvordan arbejder man med lister}
 \subsubsection{Om at finde/rette fejl}
