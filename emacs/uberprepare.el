@@ -15,7 +15,7 @@
 (defun revy-build ()
   "Build all .tex files"
   (interactive)
-  (save-some-buffers)
+  (save-some-buffers revy-force-save)
   (setq revy--compile-processes nil)
   (let ((directories (list (expand-file-name revy-dir)))
         (dir nil)

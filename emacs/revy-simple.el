@@ -64,7 +64,7 @@
             (define-key revy-simple-mode-map (kbd "C-o") 'ido-find-file)
 
             (define-key revy-simple-mode-map (kbd "C-s") 'save-buffer)
-            (define-key revy-simple-mode-map (kbd "C-S-s") (lambda () (interactive) (save-some-buffers t)))
+            (define-key revy-simple-mode-map (kbd "C-S-s") (lambda () (interactive) (save-some-buffers revy-force-save)))
 
             (define-key revy-simple-mode-map (kbd "C-e") 'move-end-of-line)
             (define-key revy-simple-mode-map (kbd "C-a") 'move-beginning-of-line)
@@ -139,6 +139,7 @@
 (require 'revy)
 (require 'revy-ubermenu "ubermenu.el")
 
+(setq revy-force-save t)
 
 (progn (find-file (concat
                    (file-name-as-directory

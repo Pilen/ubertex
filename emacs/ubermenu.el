@@ -60,7 +60,7 @@
   (revy-ubermenu-add 'revy-mode-next)
 
   (revy-ubermenu-add 'eshell)
-  (revy-ubermenu-add 'save-some-buffers "save-all-buffers")
+  (revy-ubermenu-add (lambda (insert) (save-some-buffers revy-force-save)) "save-all-buffers")
   (revy-ubermenu-add 'save-buffer)
   (revy-ubermenu-add 'isearch-forward)
   (revy-ubermenu-add 'isearch-backward)

@@ -46,6 +46,11 @@ nil means nothing is done.
                  (const :tag "Follow cursor" follow)
                  (const :tag "Follow and recenter" recenter)))
 
+(defcustom revy-force-save nil
+  "When non-nil, the revy-system will always save all buffers instead of prompting.
+Default is nil, as is the default behaviour of Emacs.
+Revy-simple sets this to t."
+  :group 'uberrevy)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Internal variables
