@@ -150,4 +150,5 @@
        (setq truncate-lines t))
 
 
+(server-force-delete)
 (server-start)
