@@ -71,7 +71,7 @@ but without closing it, essentially not calling revy-abort-all"
   (let ((previous-point (point))
         (previous-cursor (overlay-start revy-local-cursor)))
     (funcall major-mode)
-    (goto-char (previous-cursor))
+    (goto-char previous-cursor)
     (revy-mode-enter)
     (goto-char previous-point)))
 
