@@ -281,7 +281,7 @@ Else try to find it somewhere."
                (not (string= "revy" (file-name-extension destination)))
                (not (file-exists-p destination)))
       (setq destination (expand-file-name (read-directory-name "Please specify revy directory: " destination nil t)))
-      (let ((content (directory-files destination t ".*?\\.revy")))
+      (let ((content (directory-files destination t ".*?\\.revy$")))
         (when (not (null content))
           (if (= (length content) 1)
               (setq destination (car content))
