@@ -148,3 +148,6 @@
                      "emacs"))
                    "help.el"))
        (setq truncate-lines t))
+
+
+(server-start)
