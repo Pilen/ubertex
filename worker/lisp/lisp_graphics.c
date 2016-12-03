@@ -117,8 +117,12 @@ LISP_BUILTIN(image, "") {
     ENSURE_NOT_EMPTY(args);
 
     Value file = NEXT(args);
-    ENSURE_NOT_EMPTY(args);
-    Value position = NEXT(args);
+    Value position;
+    if (args.type == CONS) {
+        position = NEXT(args);
+    } else {
+        position = VALUE_NIL;
+    }
 
     Renderable renderable;
     if (!image_get_renderable_from_file(file, &renderable, environment)) {
