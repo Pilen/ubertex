@@ -83,6 +83,10 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
 
     cairo_save(environment -> cairo);
 
+    if (position.type == NIL) {
+        cairo_scale(environment -> cairo, screen_width/width, screen_height/height);
+        goto RENDER;
+    }
     if (!IS_LIST(position)) {
         log_error_in;
         goto ERROR;
