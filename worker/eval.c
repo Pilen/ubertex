@@ -53,7 +53,9 @@ Value eval_list(Value expression, Environment *environment) {
         return eval_lambda(function_symbol, expression, environment);
     }
 
-    w_assert(function_symbol.type == SYMBOL);
+    if (function_symbol.type != SYMBOL) {
+        return VALUE_ERROR;
+    }
     Value function_value;
     Bool found = hash_get(environment -> functions, function_symbol, &function_value);
     if (!found) {
