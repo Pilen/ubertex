@@ -252,3 +252,22 @@ LISP_BUILTIN(randint, "") {
     }
     return VALUE_INTEGER(random_int(lower, upper));
 }
+
+
+LISP_BUILTIN(floor, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value val = NEXT(args);
+    ENSURE_EMPTY(args);
+
+    if (val.type == INTEGER) {
+        return val;
+    }
+    if (val.type == FLOAT) {
+        Int floored = (int) floor(val.val.float_val);
+        return VALUE_INTEGER(floored);
+    }
+    return VALUE_ERROR;
+
+
+
+}
