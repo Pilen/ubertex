@@ -114,6 +114,13 @@
   Skal det kaldes en kommando eller en instruktion?
 }
 
+\note{De gamle stationærere kan overhovedet ikke følge med til krævende opgaver,
+  videoer og afspiller musik med dårlig kvalitet}
+
+\note{Husk at teste lyd. Kablet er sært, man kan risikere at den ikke registrerer det eller noget.
+Altså at kablet er sat i, men der ikke kommer lyd over det.
+TEST DETTE, HVAD ER DET HELT KONKRET DER FEJLER???}
+
 \section{Introduktion}
 \begin{center}
   {\Huge \textit{``Er der en AV-mand tilstede?!?''}}
@@ -684,11 +691,19 @@ I afsnit \ref{subsec:konvertering-manus-overtekst} kan du læse mere om hvordan
 man via systemet let kan konvertere fra et .tex manuskript til overtekster.
 
 
+
+\note{Det nytter ikke at have to ens slides, del op i 2x2 eller 1x4}
 \subsection{Om at vise overtekster}
 \note{Noget om timingen}
 
+
+Husk at hvis man først begynder at vise linjen når sangeren begynder at synge
+den, så er man i sagens natur allerede bagud.
+
+Detter
 % husk blanke slides
 
+Husk at tage det roligt, når man er i tvivl om ting
 \newpage
 \section{- Opsætning af tekniken}
 % \begin{center}
@@ -1803,6 +1818,7 @@ funktionen, de vil automatisk kalde den nyest definerede udgave.
 
 \subsubsection{Makroer}
 En makro minder på mange måder om en funktion, en central forskel er dog
+
 \subsubsection{Fejl}
 elisp undtagelser, wlisp error
 ikke definerede variabler giver fejl.
@@ -1844,8 +1860,7 @@ undgår vi at overskrive anden data som vi faktisk gerne ville beholde
 Det er især praktisk i forbindelse med funktioner. I en funktion vil vi gerne
 undgå at et kald har en unødig indvirkning på anden kode. Ved at bruge et let
 udtryk ungår vi dette.
-Her er et par eksempler, disse giver nok mere mening når du om lidt har læst afsnittet
-om funktioner.
+Her er et par eksempler:
 
 \begin{verbatim}
 (defun foo ()
@@ -2375,6 +2390,15 @@ filen ligger, sætte shell variablen \texttt{TEXINPUTS} til at indeholde mappen 
 \texttt{overtex.sty} ligger eller kopiere filen ind i
 \texttt{\~{}/texmf/tex/latex/overtex/overtex.sty} hvor den vil være synlig for oversætteren.
 
+\subsection{Build fejler}
+\subsubsection{Jeg har lige oprettet en revy  / Jeg vil gerne se min første
+  overtex}
+\code{revy-build} forsøger at oversætte samtlige .tex filer. Hvis bare én af tex
+filerne ikke kan oversættes, så fejler build. Da tex filerne fra manuskriptet
+kræver en speciel revy pakke fejler de typisk. Det betyder at man er nødt til at
+konverterre samtlige .tex filer til overtekster (eller til noget der oversætter)
+før man kan builde.
+
 \subsection{- Problemer/løsninger}
 \subsubsection{Der er lag/forsinkelser}
 Lag er irriterende, det opleves primært som en forsinkelse fra man har trykket
@@ -2417,6 +2441,19 @@ Det er en af grundene til at vi vil lave vores egen fremviser (Zeigen).
   Se det som hvad jeg ville vise til et AV-føl
   Videosekvens på skrift/billede
 }
+
+\newpage
+\section{Videregivelse af AV}
+Du skal oplære et føl!
+
+Den idéelle tid for en texnikker er 4år plus.
+
+
+i praksis 2-3 år, mange desværre kun et enkelt.
+
+Så oplær et føl...
+
+
 
 \newpage
 \appendix
@@ -3325,6 +3362,42 @@ indhold af \texttt{autologin.conf}:
 pacman -S alsa-utils rxvt-unicode dmenu xdotool feh mplayer ttf-dejavu screen htop rsync mupdf
 \end{verbatim}
 
+
+
+
+\subsection{Grafisk interface}
+\note{Hvis der ønskes et grafisk interface for at lave en master}
+\begin{verbatim}
+sudo pacman -S lxde
+\end{verbatim}
+Bare installer det hele \code{all}
+
+
+
+Automount af USB.
+
+Jeg lavede en fil til polkit, (også til penguin) dette virkede ikke (eller var
+ihvertfald ikke nok
+ \code{sudo nano /etc/polkit-1/rules.d/10-enable-mount.rules}
+\begin{verbatim}
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.udisks2.filesystem-mount-system" && subject.isInGroup("storage")) {
+        return polkit.Result.YES;
+    }
+});
+\end{verbatim}
+
+
+Jeg installerede også
+\begin{verbatim}
+sudo pacman -S gvfs gvfs-afc
+\end{verbatim}
+
+Hvis man gør begge dele virker det ihvertfald, måske også med mindre.
+
+Dette får også trash til at virke på magisk vis...
+
+Husk at reboote.
 \newpage
 \section{Worker-protokol}
 \note{Her burde følge en introduction af protokollen mellem master og worker.}
