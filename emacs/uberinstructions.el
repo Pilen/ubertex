@@ -201,18 +201,27 @@ but without closing it, essentially not calling revy-abort-all"
 ;; Todo outsource this to work through zeigen
 
 (defconst revy-mplayer-default-geometry "-xy 550 -geometry 55%:45%")
+(defconst revy-mplayer-flags "-vo x11")
+(defconst revy-mplayer-default-flags "-nolirc -msglevel all=-1 -msglevel statusline=5 -zoom")
 
-(defun revy-mplayer (file &optional x y w h)
+(defun revy-mplayer (file &optional geometry flags default-flags x y w h)
   "Play a video through mplayer on current worker"
   (revy-kill-mplayer)
-  (let ((geometry (or x revy-mplayer-default-geometry)))
-    ;; (revy-shell (concat "mplayer -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 500 -geometry 49%:40% \"" file "\""))
-    ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 400 -geometry 55%:45% \"" file "\""))
-    ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 620 -geometry 55%:50% \"" file "\""))
-
-    ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 400 -geometry 55%:45% \"" file "\""))
-    ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 550 -geometry 55%:45% \"" file "\""))
-    (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom " geometry "  \"" file "\""))))
+  ;; -nolirc                : disable Linux Infrared Remote Control
+  ;; -msglevel -all=-1      : all siclence
+  ;; -msglevel statusline=5 : except statusline
+  ;; -zoom                  : enable Allow software scaling
+  ;; -xy <value>            : set width to value, keep aspect ratio.
+  ;; -geometry <x>:<y>      : x:y position (in percent)
+  ;; -xy 500 -geometry 49%:40%
+  ;; -xy 620 -geometry 55%:50%
+  ;; -xy 400 -geometry 55%:45%
+  ;; -xy 550 -geometry 55%:45%
+  ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 550 -geometry 55%:45% \"" file "\""))
+  (let ((geometry (or geometry revy-mplayer-default-geometry))
+        (flags (or flags revy-mplayer-flags))
+        (default-flags (or default-flags revy-mplayer-default-flags)))
+    (revy-shell (concat "mplayer " default-flags " " flags " " geometry "  \"" file "\""))))
 
 (defun revy-kill-mplayer ()
   "Killall instances of mplayer on worker"
