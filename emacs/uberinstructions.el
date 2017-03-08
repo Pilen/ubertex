@@ -201,6 +201,7 @@ but without closing it, essentially not calling revy-abort-all"
 ;; Todo outsource this to work through zeigen
 
 (defconst revy-mplayer-default-geometry "-xy 550 -geometry 55%:45%")
+
 (defun revy-mplayer (file &optional x y w h)
   "Play a video through mplayer on current worker"
   (revy-kill-mplayer)
