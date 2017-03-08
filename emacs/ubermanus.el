@@ -93,9 +93,9 @@ the functions can be called on their own."
 
     ;; (indent-region (point-min) (point-max))
     (goto-char (point-min))
-    (query-replace-regexp "^\\\\act{[^}]*}\n" "")
+    (query-replace-regexp "^\\\\act{[^}]*}\n" "") ;; TODO: kig her??
     (goto-char (point-min))
-    (query-replace-regexp "\\\\act{[^}]*}" "")
+    (query-replace-regexp "\\\\act{[^}]*}" "") ;; TODO: kig her??, fanger heller ikke alt
     ))
 
 
@@ -146,7 +146,7 @@ the functions can be called on their own."
 
   ;; Delete characters from bad sets
   (goto-char (point-min))
-  (replace-regexp "–" "-")
+  (replace-regexp "–" "-") ;; dash *looking* char
   (goto-char (point-min))
   (replace-regexp "’" "'")
   (goto-char (point-min))
@@ -174,7 +174,9 @@ the functions can be called on their own."
             (setq outside nil))))))
 
   ;; change ... into ldots?
-  (when (y-or-n-p "Should ... be replaced with \ldots (will ask for each occurrence")
+  (goto-char (point-min))
+  (when (and (search-forward "..." nil t)
+             (y-or-n-p "Should ... be replaced with \\ldots (will ask for each occurrence"))
     (goto-char (point-min))
     (while (search-forward-regexp "\\.\\.\\.*" nil t)
       (when (save-match-data (y-or-n-p (format "Replace %s with \ldots?" (match-string 0))))
