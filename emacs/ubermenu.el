@@ -37,7 +37,7 @@
   (revy-ubermenu-add 'revy-abort)
   (revy-ubermenu-add 'revy-stop-sounds)
   (revy-ubermenu-add 'revy-fade-sounds)
-  (revy-ubermenu-add 'revy-show-text)
+  (revy-ubermenu-add 'revy-text)
   (revy-ubermenu-add 'revy-ubertex-mode)
   (revy-ubermenu-add 'revy-ubersicht-mode)
   (revy-ubermenu-add 'revy-upload-files)
