@@ -15,7 +15,14 @@
 worker/worker
 worker/tests
 worker/coverage
+worker/run_tests
 
 worker/GPATH
 worker/GRTAGS
 worker/GTAGS
+
+auto/
+
+local/
+
+tools/__pycache__/

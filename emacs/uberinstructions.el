@@ -200,16 +200,18 @@ but without closing it, essentially not calling revy-abort-all"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Todo outsource this to work through zeigen
 
+(defconst revy-mplayer-default-geometry "-xy 550 -geometry 55%:45%")
 (defun revy-mplayer (file &optional x y w h)
   "Play a video through mplayer on current worker"
   (revy-kill-mplayer)
-  ;; (revy-shell (concat "mplayer -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 500 -geometry 49%:40% \"" file "\""))
-  ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 400 -geometry 55%:45% \"" file "\""))
-  ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 620 -geometry 55%:50% \"" file "\""))
+  (let ((geometry (or x revy-mplayer-default-geometry)))
+    ;; (revy-shell (concat "mplayer -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 500 -geometry 49%:40% \"" file "\""))
+    ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -xy 400 -geometry 55%:45% \"" file "\""))
+    ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 620 -geometry 55%:50% \"" file "\""))
 
-  ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 400 -geometry 55%:45% \"" file "\""))
-  (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 550 -geometry 55%:45% \"" file "\""))
-  )
+    ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 400 -geometry 55%:45% \"" file "\""))
+    ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 550 -geometry 55%:45% \"" file "\""))
+    (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom " geometry "  \"" file "\""))))
 
 (defun revy-kill-mplayer ()
   "Killall instances of mplayer on worker"
