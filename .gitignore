@@ -26,3 +26,6 @@ auto/
 local/
 
 tools/__pycache__/
+
+c-source.pdf
+elisp-source.pdf
