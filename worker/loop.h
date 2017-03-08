@@ -1,5 +1,5 @@
-#ifndef Z_LOOP_H
-#define Z_LOOP_H
+#ifndef W_LOOP_H
+#define W_LOOP_H
 
 #include "types.h"
 #include "environment.h"
