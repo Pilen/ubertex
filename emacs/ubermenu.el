@@ -18,12 +18,12 @@
 
 (defun revy-ubermenu ()
   (interactive)
-  (let* ((name (ido-completing-read
-                ">: "
-                (mapcar #'car revy-ubermenu-commands)))
-         (command (cdr (assoc name revy-ubermenu-commands)))
-         (cell (cons name command)))
-    (setq revy-ubermenu-commands (cons cell (delete cell revy-ubermenu-commands)))
+  (let* ((names (mapcar #'car revy-ubermenu-commands))
+         (name (ido-completing-read ">: " names))
+         (pair (assoc name revy-ubermenu-commands))
+         (command (cdr pair)))
+    (setq revy-ubermenu-commands
+          (cons pair (delete pair revy-ubermenu-commands)))
     (if (commandp command)
         (call-interactively command)
       (funcall command))))
