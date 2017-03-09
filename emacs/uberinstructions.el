@@ -223,7 +223,7 @@ but without closing it, essentially not calling revy-abort-all"
         (default-flags (or default-flags revy-mplayer-default-flags))
         command)
     (setq command (concat "mplayer " default-flags " " flags " " geometry "  \"" file "\""))
-    (message command)
+    (message "%s" command)
     (revy-shell command)))
 
 (defun revy-kill-mplayer ()
