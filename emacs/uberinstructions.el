@@ -220,8 +220,11 @@ but without closing it, essentially not calling revy-abort-all"
   ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 550 -geometry 55%:45% \"" file "\""))
   (let ((geometry (or geometry revy-mplayer-default-geometry))
         (flags (or flags revy-mplayer-flags))
-        (default-flags (or default-flags revy-mplayer-default-flags)))
-    (revy-shell (concat "mplayer " default-flags " " flags " " geometry "  \"" file "\""))))
+        (default-flags (or default-flags revy-mplayer-default-flags))
+        command)
+    (setq command (concat "mplayer " default-flags " " flags " " geometry "  \"" file "\""))
+    (message command)
+    (revy-shell command)))
 
 (defun revy-kill-mplayer ()
   "Killall instances of mplayer on worker"
