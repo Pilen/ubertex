@@ -4,7 +4,7 @@ import os.path
 import sys
 import glob
 
-test_files = os.path.join("lisp_tests", "*.zlt")
+test_files = os.path.join("lisp_tests", "*.wlt")
 
 binary = "./worker"
 test_separator = ";;;;TEST;;;;"
