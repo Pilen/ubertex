@@ -4,8 +4,8 @@
 #include "vector.h"
 #include "lock.h"
 
-Vector *communication_parsed_queue;
-Mutex *communication_parsed_queue_lock;
 void communication_initialize(Unt port);
+void communication_add(Unt frame, Value value);
+Bool communication_extract(Unt before, Value *result);
 
 #endif

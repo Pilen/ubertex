@@ -47,17 +47,12 @@ void loop_loop(Environment *environment) {
         }
 
 
-        if (mutex_trylock(communication_parsed_queue_lock)) {
-            if (communication_parsed_queue -> length > 0){
-                Value expression = vector_pop_front(communication_parsed_queue);
-                mutex_unlock(communication_parsed_queue_lock);
-                loop_blank = false;
-                print_on(log_output, expression); fprintf(log_output, "\n");
-                Value result = eval(expression, environment);
-                print_on(log_output, result); fprintf(log_output, "\n");
-            } else {
-                mutex_unlock(communication_parsed_queue_lock);
-            }
+        Value expression; // Only valid inside if expression
+        if (communication_extract(environment -> frame, &expression)) {
+            loop_blank = false;
+            print_on(log_output, expression); fprintf(log_output, "\n");
+            Value result = eval(expression, environment);
+            print_on(log_output, result); fprintf(log_output, "\n");
         }
 
         profiler_start(profile_loop);

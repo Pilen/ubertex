@@ -10,6 +10,16 @@
 #include "memory.h"
 #include "loop.h"
 
+typedef struct Communication_node_s {
+    Unt frame;
+    Value value;
+    struct Communication_node_s *next;
+} Communication_node;
+
+Communication_node *communication_queue;
+Mutex *communication_queue_lock;
+
+
 Int communication_loop(void *data);
 void communication_receive(TCPsocket socket);
 void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame);
@@ -23,8 +33,8 @@ void communication_initialize(Unt port) {
     SDLNet_Init();
     atexit(SDLNet_Quit);
 
-    communication_parsed_queue = vector_create_empty();
-    communication_parsed_queue_lock = mutex_create();
+    communication_queue = NULL;
+    communication_queue_lock = mutex_create();
 
     IPaddress ip;
     Int error;
@@ -149,12 +159,9 @@ void communication_receive(TCPsocket socket) {
         log_error("ready? command not yet implemented");
         w_assert(false);
     } else if (strcmp(command, "abort") == 0) {
-        mutex_lock(communication_parsed_queue_lock);
-        /* vector_clear(communication_parsed_queue); */
-        while (communication_parsed_queue -> length > 0) {
-            (void) vector_pop_back(communication_parsed_queue);
-        }
-        mutex_unlock(communication_parsed_queue_lock);
+        mutex_lock(communication_queue_lock);
+        communication_queue = NULL;
+        mutex_unlock(communication_queue_lock);
         log_info("Abort");
         loop_abort = true;
     } else if (strcmp(command, "blank") == 0) {
@@ -200,8 +207,43 @@ void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
     }
 
     Value parsed = read_from_str(body);
-    mutex_lock(communication_parsed_queue_lock);
-    vector_push_front(communication_parsed_queue, parsed);
-    mutex_unlock(communication_parsed_queue_lock);
+    mutex_lock(communication_queue_lock);
+    communication_add(frame, parsed);
+    mutex_unlock(communication_queue_lock);
 
+}
+
+void communication_add(Unt frame, Value value) {
+    Communication_node *new = memory_malloc(sizeof(Communication_node));
+    new -> frame = frame;
+    new -> value = value;
+
+    mutex_lock(communication_queue_lock);
+
+    if (communication_queue == NULL || frame < communication_queue -> frame) {
+        new -> next = communication_queue;
+        communication_queue = new;
+    } else {
+        Communication_node *current = communication_queue;
+        while (current -> next != NULL &&
+               current -> next -> frame <= frame) {
+            current = current -> next;
+        }
+        new -> next = current -> next;
+        current -> next = new;
+    }
+    mutex_unlock(communication_queue_lock);
+}
+
+Bool communication_extract(Unt before, Value *result) {
+    /* NOTE: Freeing of node left for GC */
+    Bool retval = false;
+    mutex_lock(communication_queue_lock);
+    if (communication_queue && communication_queue -> frame <= frame) {
+        *result = communication_queue -> value;
+        communication_queue = communication_queue -> next;
+        retval = true;
+    }
+    mutex_unlock(communication_queue_lock);
+    return retval;
 }
