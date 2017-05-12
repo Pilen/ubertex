@@ -58,7 +58,6 @@ Int communication_loop(void *data) {
 
     while (true) {
         Int ready = SDLNet_CheckSockets(set, -1);
-        /* TODO: Find out if CheckSockets returns -1 on timeout */
         if (ready == -1) {
             /* perror("CheckSockets"); /\* Only prints on stderr *\/ */
             log_fatal("CheckSockets returned -1: %s", SDLNet_GetError());
