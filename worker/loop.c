@@ -26,12 +26,12 @@ void loop_loop(Environment *environment) {
         profiler_start(profile_total);
         log_section("====LOOP====");
         if (loop_abort) {
+            loop_abort = false;
             environment -> update = VALUE_NIL;
             environment -> render = VALUE_NIL;
             component_destroy_all(environment);
             sound_stop_all();
         }
-        loop_abort = false;
 
         graphics_clear(environment);
 
@@ -87,12 +87,12 @@ void loop_loop(Environment *environment) {
         Unt cleared = 0;
         cleared += resource_shrink_cache();
         if (flush_dirty_cache) {
-            cleared += resource_flush_dirty_cache();
             flush_dirty_cache = false;
+            cleared += resource_flush_dirty_cache();
         }
         if (flush_entire_cache) {
-            cleared += resource_flush_entire_cache();
             flush_entire_cache = false;
+            cleared += resource_flush_entire_cache();
         }
         if (cleared > 0) {
             lock_read_lock(resource_cache_lock);
