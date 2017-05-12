@@ -91,7 +91,6 @@ void communication_receive(TCPsocket socket) {
         perror("CheckSockets");
         return;
     } else if (ready == 0) {
-        SDLNet_FreeSocketSet(set);
         log_error("Connection timed out before recieving header");
         return;
     }
@@ -186,7 +185,6 @@ void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
         perror("CheckSockets");
         return;
     } else if (ready == 0) {
-        SDLNet_FreeSocketSet(set);
         log_error("Connection timed out before recieving body");
         return;
     }
