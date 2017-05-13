@@ -25,6 +25,7 @@
 \usepackage{color}
 \usepackage{pdflscape}
 \usepackage{verbatim}
+\usepackage{bashful}
 
 \setlength{\marginparwidth}{1.0in}
 \setlength{\marginparsep}{0.1in}
@@ -100,6 +101,10 @@
 
 %% Vis titel
 \maketitle
+% a
+% \input|"sh av-bog-git-status.sh"
+% b
+
 \newpage
 {\linespread{0.0}
   \shorttoc{Indhold (kort)}{1}}
@@ -704,6 +709,10 @@ Detter
 % husk blanke slides
 
 Husk at tage det roligt, når man er i tvivl om ting
+
+
+Kan være rigtigt at fortsætte når de bare "knævrer"
+
 \newpage
 \section{- Opsætning af tekniken}
 % \begin{center}
@@ -1465,10 +1474,11 @@ specielle og ``sære'', men overordnet fungerer det godt til formålet.
 Hvis du kender til lisp i forvejen vil det hjælpe en hel del, men elisp minder
 som sprog mere om common lisp end om scheme, racket eller clojure.
 
-Til av-systemet bruges elisp til at programmere masteren. En variant wlisp kører
-på workerne. wlisp er designet til at minde meget om elisp, og i praksis behøver
-du typisk ikke at tænke dem som to forskellige sprog. Der er dog nogle små
-forskelle hist og her, disse vil blive nævnt i dokumentationen herunder.
+Til av-systemet bruges elisp til at programmere masteren. En variant kaldet
+wlisp kører på workerne. wlisp er designet til at minde meget om elisp, og i
+praksis behøver du typisk ikke at tænke dem som to forskellige sprog. Der er dog
+nogle små forskelle hist og her, disse vil blive nævnt i dokumentationen
+herunder.
 
 Ok, men hvad er et programmeringsprog? Et programmeringssprog er en måde at
 sammensætte en sekvens af instruktioner som en ``computer'' kan forstå. Du kan
@@ -2434,7 +2444,9 @@ overteksterne og ikke nødvendigvis størrelsen af pdfen.
 Jeg ved ikke helt hvordan dette skal løses.
 Det er en af grundene til at vi vil lave vores egen fremviser (Zeigen).
 
-
+\note{ Noget om youtube playbackRate til at ændre hastighed/speed
+  \code{x = document.getElementsByTagName("video")[0].playbackRate = 1.5}
+}
 \newpage
 \section{- Eksempler}
 \note{Med screenshots og eksempler, både på brug af program og effekter
@@ -3365,8 +3377,25 @@ pacman -S alsa-utils rxvt-unicode dmenu xdotool feh mplayer ttf-dejavu screen ht
 
 
 
-\subsection{Grafisk interface}
+\subsection{Master interface}
 \note{Hvis der ønskes et grafisk interface for at lave en master}
+
+\begin{verbatim}
+sudo useradd -m -s /bin/bash master
+\end{verbatim}
+\begin{verbatim}
+sudo passwd master
+\end{verbatim}
+Giv revy et løsn.
+
+\begin{verbatim}
+sudo pacman -S zsh emacs
+\end{verbatim}
+\begin{verbatim}
+ssh-copy-id $WORKER
+\end{verbatim}
+
+
 \begin{verbatim}
 sudo pacman -S lxde
 \end{verbatim}
@@ -3393,11 +3422,24 @@ Jeg installerede også
 sudo pacman -S gvfs gvfs-afc
 \end{verbatim}
 
+Det virker kun med disse to!
 Hvis man gør begge dele virker det ihvertfald, måske også med mindre.
 
 Dette får også trash til at virke på magisk vis...
 
 Husk at reboote.
+
+
+\subsection{Opdater efter lang tid}
+Hvis det er virkeligt lang tid siden du har opdateret
+
+\begin{verbatim}
+sudo rm -rf /etc/pacman.d/gnupg/
+sudo pacman-key --init
+sudo pacman-key --populate archlinux
+sudo pacman -S pacman archlinux-keyring
+\end{verbatim}
+
 \newpage
 \section{Worker-protokol}
 \note{Her burde følge en introduction af protokollen mellem master og worker.}
