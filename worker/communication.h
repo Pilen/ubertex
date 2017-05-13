@@ -6,6 +6,6 @@
 
 void communication_initialize(Unt port);
 void communication_add(Unt frame, Value value);
-Bool communication_extract(Unt before, Value *result);
+Bool communication_extract(Unt before, Value *result, Unt *designated_frame);
 
 #endif

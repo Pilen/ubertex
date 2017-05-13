@@ -154,23 +154,29 @@ void communication_receive(TCPsocket socket) {
 
         communication_receive_lisp(socket, size, frame);
     } else if (strcmp(command, "ping") == 0) {
+        w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
         return;
     } else if (strcmp(command, "ready?") == 0) {
         log_error("ready? command not yet implemented");
         w_assert(false);
+        w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
     } else if (strcmp(command, "abort") == 0) {
+        w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
         mutex_lock(communication_queue_lock);
         communication_queue = NULL;
         mutex_unlock(communication_queue_lock);
         log_info("Abort");
         loop_abort = true;
     } else if (strcmp(command, "blank") == 0) {
+        w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
         log_info("Blank");
         loop_blank = true;
     } else if (strcmp(command, "flush_dirty_cache") == 0) {
+        w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
         log_info("Flush dirty cache");
         flush_dirty_cache = true;
     } else if (strcmp(command, "flush_entire_cache") == 0) {
+        w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
         log_info("Flush entire cache");
         flush_entire_cache = true;
     } else {
@@ -235,12 +241,13 @@ void communication_add(Unt frame, Value value) {
     mutex_unlock(communication_queue_lock);
 }
 
-Bool communication_extract(Unt before, Value *result) {
+Bool communication_extract(Unt frame, Value *result, Unt *designated_frame) {
     /* NOTE: Freeing of node left for GC */
     Bool retval = false;
     mutex_lock(communication_queue_lock);
     if (communication_queue && communication_queue -> frame <= frame) {
         *result = communication_queue -> value;
+        *designated_frame = communication_queue -> frame;
         communication_queue = communication_queue -> next;
         retval = true;
     }

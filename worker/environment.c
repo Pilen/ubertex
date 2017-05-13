@@ -15,6 +15,8 @@ Environment *environment_create(void) {
     environment -> cairo_surface = NULL;
     environment -> cairo = NULL;
 
+    environment -> frame = 0;
+
     environment -> skip_ticks = 1000 / OPTION_DEFAULT_FPS;
     environment -> fast_run = false;
 

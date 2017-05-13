@@ -13,6 +13,8 @@ typedef struct {
     cairo_surface_t *cairo_surface;
     cairo_t *cairo;
 
+    Unt frame;
+
     Unt skip_ticks; /* 1000 / FPS */
     Bool fast_run;
 

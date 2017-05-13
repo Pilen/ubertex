@@ -23,6 +23,7 @@ void loop_loop(Environment *environment) {
     Unt fast_runs = 0;
 
     while (true) {
+        environment -> frame++;
         profiler_start(profile_total);
         log_section("====LOOP====");
         if (loop_abort) {
@@ -48,7 +49,11 @@ void loop_loop(Environment *environment) {
 
 
         Value expression; // Only valid inside if expression
-        if (communication_extract(environment -> frame, &expression)) {
+        Unt designated_frame; // Only valid inside if expression
+        if (communication_extract(environment -> frame, &expression, &designated_frame)) {
+            if (designated_frame < environment -> frame && designated_frame != 0) {
+                log_late(environment -> frame - designated_frame);
+            }
             loop_blank = false;
             print_on(log_output, expression); fprintf(log_output, "\n");
             Value result = eval(expression, environment);
