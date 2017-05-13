@@ -98,6 +98,7 @@ void communication_receive(TCPsocket socket) {
     int ready = SDLNet_CheckSockets(set, OPTION_HEADER_TIMEOUT);
     SDLNet_FreeSocketSet(set);
     if (ready < 0) {
+        /* TODO: Use actual logging */
         perror("CheckSockets");
         return;
     } else if (ready == 0) {
@@ -195,6 +196,7 @@ void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
     int ready = SDLNet_CheckSockets(set, OPTION_BODY_TIMEOUT);
     SDLNet_FreeSocketSet(set);
     if (ready < 0) {
+        /* TODO: Use actual logging */
         perror("CheckSockets");
         return;
     } else if (ready == 0) {

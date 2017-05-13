@@ -11,7 +11,7 @@ void vector_contract(Vector *vector);
 Vector *vector_create(Unt size) {
     assert_build((1.0 / VECTOR_EXPANSION_FACTOR) > VECTOR_CONTRACT_LIMIT);
     Vector *vector = memory_malloc(sizeof(Vector));
-    Value *data= memory_cmalloc(sizeof(Value) * size);
+    Value *data = memory_cmalloc(sizeof(Value) * size);
 
     vector -> refcount = 0;
     vector -> size = size;
