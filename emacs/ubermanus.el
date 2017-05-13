@@ -140,6 +140,7 @@ the functions can be called on their own."
 ;; Todo ask to insert \pause on lines missing them
 ;; Todo dont clean elisp code/latex macros
 ;; Todo remove text (not comments) outside slides
+;; Todo clean fix quotes
 (defun revy-manus-clean ()
   (interactive)
   (goto-char (point-min))
