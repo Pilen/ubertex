@@ -30,7 +30,7 @@ clean:
 	rm -f *.o *.d worker    lisp/*.o lisp/*.d    tests_src/*.o tests_src/*.d run_tests
 
 linecount:
-	echo -n "linecount: " && cat *.c *.h */*.c */*.h */*.py */*.zlt | wc -l
+	echo -n "linecount: " && cat *.c *.h */*.c */*.h */*.py */*.wlt | wc -l
 
 
 release: clean
