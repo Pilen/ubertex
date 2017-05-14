@@ -40,6 +40,8 @@ Environment *initialize(void) {
     loop_blank = false;
     flush_dirty_cache = false;
     flush_entire_cache = false;
+    loop_resync = false;
+    loop_new_seed = 0;
 
     srand(0);
 

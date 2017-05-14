@@ -53,7 +53,7 @@ Ignores all arguments" nil nil)
   "Finish the current sketch and return to the one opening it
 This function will also call revy-abort-all "
   (interactive)
-  (revy-abort-all)
+  (revy-resync)
   (revy-return))
 
 (defun revy-return ()
@@ -110,6 +110,15 @@ but without closing it, essentially not calling revy-abort-all"
 (defun revy-abort-all ()
   (interactive)
   (revy-send-command 'all "abort")
+  ;; todo fix:
+  (revy-kill-mplayer))
+
+(defun revy-resync (&optional seed)
+  "Aborts all and resyncs
+Uses either the given seed or a random number between 0 and most-positive-fixnum"
+  (interactive)
+  (revy-send-command 'all "resync"
+                     (or seed (random most-positive-fixnum)))
   ;; todo fix:
   (revy-kill-mplayer))
 

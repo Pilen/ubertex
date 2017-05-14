@@ -35,6 +35,7 @@
   (revy-ubermenu-add 'revy-build)
   (revy-ubermenu-add 'revy-end-sketch)
   (revy-ubermenu-add 'revy-abort)
+  (revy-ubermenu-add 'revy-resync)
   (revy-ubermenu-add 'revy-stop-sounds)
   (revy-ubermenu-add 'revy-fade-sounds)
   (revy-ubermenu-add 'revy-text)

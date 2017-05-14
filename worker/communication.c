@@ -23,6 +23,8 @@ Mutex *communication_queue_lock;
 Int communication_loop(void *data);
 void communication_receive(TCPsocket socket);
 void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame);
+void communication_reset(void);
+
 
 /* Int communication_log = -1; */
 
@@ -163,11 +165,24 @@ void communication_receive(TCPsocket socket) {
         w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
     } else if (strcmp(command, "abort") == 0) {
         w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
-        mutex_lock(communication_queue_lock);
-        communication_queue = NULL;
-        mutex_unlock(communication_queue_lock);
         log_info("Abort");
+        /* communication_queue should be reset before signaling */
+        communication_reset();
         loop_abort = true;
+    } else if (strcmp(command, "resync") == 0) {
+        w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
+        log_info("Resync");
+        /* communication_queue should be reset before signaling */
+        communication_reset();
+        Unt seed;
+        Int scanned = sscanf(options, "%u", &seed);
+        if (scanned != 1) {
+            log_warning("Missing seed for reseed, using 0");
+            seed = 0;
+        }
+        loop_new_seed = seed; /* Theese 3 assignments must happen in this order to avoid raceconditions!!! */
+        loop_resync = true;   /* Theese 3 assignments must happen in this order to avoid raceconditions!!! */
+        loop_abort = true;    /* Theese 3 assignments must happen in this order to avoid raceconditions!!! */
     } else if (strcmp(command, "blank") == 0) {
         w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
         log_info("Blank");
@@ -221,6 +236,11 @@ void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
 
 }
 
+void communication_reset(void) {
+    mutex_lock(communication_queue_lock);
+    communication_queue = NULL;
+    mutex_unlock(communication_queue_lock);
+}
 void communication_add(Unt frame, Value value) {
     Communication_node *new = memory_malloc(sizeof(Communication_node));
     new -> frame = frame;
