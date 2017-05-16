@@ -38,4 +38,7 @@ FILE *log_output;
         exit(EXIT_FAILURE);                              \
     } while (0);
 
+
+FILE *log_initialize_file(void);
+
 #endif

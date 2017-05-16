@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
         close(STDIN_FILENO);
         close(STDOUT_FILENO);
         close(STDERR_FILENO);
-        log_output = fopen("log.txt", "w");
+        log_output = log_initialize_file();
         output = log_output;
         fflush(log_output);
     }
