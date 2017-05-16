@@ -67,7 +67,7 @@ void print_on(FILE *stream, Value value) {
                     break;
                 } else {
                     fprintf(stream, " . ");
-                    print_on(stream, CDR(list));
+                    print_on(stream, list); // List is CDR value
                     break;
                 }
             }
