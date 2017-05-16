@@ -49,10 +49,11 @@ FILE *log_initialize_file(void) {
     if (!log) {
         log_fatal("Could not open logfile: %s\n", path);
     }
-    fprintf(log, "hej\n");
 
     /* Create symlink */
+    unlink("log.txt"); /* symlink fails if log.txt already exists */
     if (symlink(path, "log.txt") == -1) {
+        perror("symlink");
         log_fatal("Could not create symlink for log.txt");
     }
     return log;

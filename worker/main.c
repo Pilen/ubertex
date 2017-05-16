@@ -107,12 +107,12 @@ int main(int argc, char **argv) {
         if (sid < 0) {
             /* log_fatal("Could not set sid!"); */
         }
-        close(STDIN_FILENO);
-        close(STDOUT_FILENO);
-        close(STDERR_FILENO);
         log_output = log_initialize_file();
         output = log_output;
         fflush(log_output);
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
     }
 
     if (!host) {
