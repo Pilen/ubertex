@@ -136,7 +136,11 @@ LISP_BUILTIN(deflocal, "") {
     if (!environment -> current_component) {
         return VALUE_ERROR;
     }
-    environment -> current_component -> local_variables = CONS(CONS(symbol, value), environment -> current_component -> local_variables);
+    /* Done this way as to enable pushes to front */
+    Value new = CONS(CONS(symbol, value),
+                     CDR(environment -> current_component -> local_variables));
+    CDR(environment -> current_component -> local_variables) = new;
+
     return VALUE_NIL;
 }
 

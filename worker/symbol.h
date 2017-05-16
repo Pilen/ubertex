@@ -40,4 +40,7 @@ Value symbols_rotated;
 String *symbols_error;
 String *symbols_nil;
 
+
+Value symbols_unreachable;
+
 #endif

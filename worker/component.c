@@ -6,6 +6,7 @@
 #include "eval.h"
 #include "assert.h"
 #include "debug.h"
+#include "symbol.h"
 
 void component_execute(Value symbol, Value args, Environment *environment);
 
@@ -32,8 +33,10 @@ Component *component_create(Value name, Value args, Environment *environment) {
     /* eval_apply cant be used as we have to bind the parameters locally,
        not dynamically, and keep them. */
     Value bindings = eval_get_bindings(args, constructor -> parameters);
-    component -> local_variables = bindings;
-    environment_bind_variables(bindings, environment);
+    /* Done this way as to enable pushes to front (via an explicit mutable head of unreachable symbol) */
+    component -> local_variables = CONS(CONS(symbols_unreachable, VALUE_ERROR),
+                                        bindings);
+    environment_bind_variables(component -> local_variables, environment);
     eval(constructor -> body, environment); /* Discard return value */
     environment_unbind_variables(environment);
     environment -> current_component = previous_component;

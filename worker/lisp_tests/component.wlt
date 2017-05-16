@@ -88,7 +88,6 @@ g ;=> 30
 
 
 ;;;;TEST;;;;
-;;ignore;;
 (defcomp foo ()
   (deflocal x 10)
   (assert x 10)
@@ -110,3 +109,15 @@ g ;=> 30
   (receive (bar baz) (assert baz 12) (assert qux 11))) ;=> foo
 (create foo) ;=> #<component foo>
 (broadcast 'bar 12) ;=> nil
+
+
+;;;;TEST;;;;
+(defcomp foo (x x)
+  (assert x 100)) ;=> foo
+(create foo 10 100) ;=> #<component foo>
+
+;;;;TEST;;;;
+(defcomp foo (x x)
+  (deflocal x 1000)
+  (assert x 1000)) ;=> foo
+(create foo 10 100) ;=> #<component foo>

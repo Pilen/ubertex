@@ -44,6 +44,9 @@ void symbol_initialize() {
 
     symbols_error = string_create_from_str("error");
     symbols_nil = string_create_from_str("nil");
+
+    symbols_unreachable = VALUE_SYMBOL(symbol_next_id++);
+    hash_set(symbol_names, symbols_unreachable, VALUE_STRING(string_create_from_str("#<unreachable symbol>")));
 }
 
 Value symbol_get(Value name) {
