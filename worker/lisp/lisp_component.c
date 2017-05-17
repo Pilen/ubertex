@@ -121,27 +121,26 @@ LISP_BUILTIN(current_layer, "") {
 }
 
 LISP_BUILTIN(deflocal, "") {
-    ENSURE_NOT_EMPTY(args);
-    Value symbol = NEXT(args);
-    if (symbol.type != SYMBOL) {
+    Value length = list_length(args);
+    w_assert(length.type == INTEGER);
+    if (length.val.integer_val % 2 != 0) {
         return VALUE_ERROR;
     }
     Value value = VALUE_NIL;
-
-    if (args.type == CONS) {
-        value = NEXT(args);
-        value = eval(value, environment);
+    while (args.type == CONS) {
+        Value symbol = NEXT(args);
+        Value expr = NEXT(args);
+        value = eval(expr, environment);
+        if (symbol.type != SYMBOL ||
+            symbol.val.symbol_val == symbols_t.val.symbol_val) {
+            return VALUE_ERROR;
+        }
+        /* Done this way as to enable pushes to front */
+        Value new = CONS(CONS(symbol, value),
+                         CDR(environment -> current_component -> local_variables));
+        CDR(environment -> current_component -> local_variables) = new;
     }
-
-    if (!environment -> current_component) {
-        return VALUE_ERROR;
-    }
-    /* Done this way as to enable pushes to front */
-    Value new = CONS(CONS(symbol, value),
-                     CDR(environment -> current_component -> local_variables));
-    CDR(environment -> current_component -> local_variables) = new;
-
-    return VALUE_NIL;
+    return value;
 }
 
 
