@@ -51,7 +51,7 @@ Ignores all arguments" nil nil)
 
 (defun revy-end-sketch ()
   "Finish the current sketch and return to the one opening it
-This function will also call revy-abort-all "
+This function will also call revy-resync (which also aborts all)"
   (interactive)
   (revy-resync)
   (revy-return))
