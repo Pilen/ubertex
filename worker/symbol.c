@@ -42,6 +42,11 @@ void symbol_initialize() {
     symbols_rotated = symbol_get(VALUE_STRING(string_create_from_str("rotated")));
 
 
+    symbols_pi = symbol_get(VALUE_STRING(string_create_from_str("pi")));
+    symbols_tau = symbol_get(VALUE_STRING(string_create_from_str("tau")));
+    symbols_e = symbol_get(VALUE_STRING(string_create_from_str("e")));
+
+
     symbols_error = string_create_from_str("error");
     symbols_nil = string_create_from_str("nil");
 

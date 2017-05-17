@@ -18,6 +18,7 @@
 #include "graphics.h"
 #include "loop.h"
 #include "profiler.h"
+#include "math.h"
 
 Environment *initialize(void) {
     /* static Bool initialized = false; */
@@ -44,6 +45,10 @@ Environment *initialize(void) {
     loop_new_seed = 0;
 
     srand(0);
+
+    environment_set_variable(symbols_pi, VALUE_FLOAT(M_PI), environment);
+    environment_set_variable(symbols_tau, VALUE_FLOAT(M_PI * 2.0), environment);
+    environment_set_variable(symbols_e, VALUE_FLOAT(M_E), environment);
 
     log_section("====INITIALIZE-END====")
     return environment;

@@ -35,6 +35,10 @@ Value symbols_sized;
 Value symbols_rotated;
 
 
+Value symbols_pi;
+Value symbols_tau;
+Value symbols_e;
+
 
 /* Not used for anything other than printing */
 String *symbols_error;
