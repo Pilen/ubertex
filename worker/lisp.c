@@ -19,6 +19,9 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(tl, cdr, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(tail, cdr, true, environment);
 
+    LISP_REGISTER_BUILTIN_FROM_RAW(length, length, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(nth, nth, true, environment);
+
     LISP_REGISTER_BUILTIN_FROM_RAW(if, if, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(when, when, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(unless, unless, false, environment);
@@ -45,9 +48,26 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(+, plus, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(-, minus, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(*, times, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(/, division, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(>, greater_than, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(abs, abs, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(log, log, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(log2, log2, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(log10, log10, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(sin, sin, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(cos, cos, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(radians-to-degrees, rad_to_deg, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(rad2deg, rad_to_deg, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(rad-to-deg, rad_to_deg, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(deg, rad_to_deg, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(degrees-to-radians, deg_to_rad, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(deg2rad, deg_to_rad, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(deg-to-rad, deg_to_rad, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(rad, deg_to_rad, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(pow, pow, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(expt, pow, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(sqr, sqr, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(sqrt, sqrt, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(randint, randint, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(floor, floor, true, environment);
 
