@@ -17,5 +17,6 @@ String *string_concatenate(String *a, String *b);
 
 Int string_compare(String *a, String *b);
 Int string_compare_str(String *a, char *b);
+#define string_length(s) ((s) -> size - 1)
 
 #endif
