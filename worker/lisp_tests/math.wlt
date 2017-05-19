@@ -115,12 +115,6 @@ e ;=> 2.718282
 (sqrt -1) ;=> error
 (sqrt -1.0) ;=> error
 
-
-;;;;TEST;;;;
-(randint 0 0) ;=> error
-(randint 3 3) ;=> error
-
-
 ;;;;TEST;;;;
 (floor 0.5) ;=> 0
 (floor 3.9) ;=> 3

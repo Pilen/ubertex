@@ -40,42 +40,36 @@ LISP_BUILTIN(cdr, "") {
     return CDR(list);
 }
 
-LISP_BUILTIN(nth, "") {
+LISP_BUILTIN(setcar, "") {
     ENSURE_NOT_EMPTY(args);
-    Value value1 = NEXT(args);
+    Value cell = NEXT(args);
     ENSURE_NOT_EMPTY(args);
-    Value value2 = NEXT(args);
+    Value new_car = NEXT(args);
     ENSURE_EMPTY(args);
 
-    Int n;
-    Value list;
-
-    if (value1.type == INTEGER && value2.type == CONS) {
-        n = value1.val.integer_val;
-        list = value2;
-    } else if (value1.type == CONS && value2.type == INTEGER) {
-        n = value2.val.integer_val;
-        list = value1;
-    } else {
+    if (cell.type != CONS) {
         return VALUE_ERROR;
     }
 
-    if (n < 0) {
-        return VALUE_ERROR;
-    }
-    while (n > 0) {
-        if (list.type == CONS) {
-            NEXT(list);
-            n--;
-        } else {
-            return VALUE_ERROR;
-        }
-    }
-    if (list.type != CONS) {
-        return VALUE_ERROR;
-    }
-    return CAR(list);
+    cell.val.cons_val -> car = new_car;
+    return new_car;
 }
+
+LISP_BUILTIN(setcdr, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value cell = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
+    Value new_cdr = NEXT(args);
+    ENSURE_EMPTY(args);
+
+    if (cell.type != CONS) {
+        return VALUE_ERROR;
+    }
+
+    cell.val.cons_val -> cdr = new_cdr;
+    return new_cdr;
+}
+
 
 /* LISP_BUILTIN(nth, "") { */
 /*     if (args -> length != 3) { */

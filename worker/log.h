@@ -41,4 +41,7 @@ FILE *log_output;
 
 FILE *log_initialize_file(void);
 
+#define LOG_DISABLE() int log_stored_value ## __FUNC__ = log_level; log_level = 0;
+#define LOG_REENABLE() log_level = log_stored_value ## __FUNC__;
+
 #endif

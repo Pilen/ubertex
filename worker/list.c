@@ -26,7 +26,23 @@ Value list_length(Value list) {
     }
 };
 
+Value list_nth(Value list, Unt n) {
+    while (n > 0) {
+        if (list.type == CONS) {
+            NEXT(list);
+            n--;
+        } else {
+            return VALUE_ERROR;
+        }
+    }
+    if (list.type != CONS) {
+        return VALUE_ERROR;
+    }
+    return CAR(list);
+
+}
 Value list_reverse(Value list) {
+    /* Inplace. Remember always to assign the returned value (do not rely only on modification) */
     /* a -> b -> c -> nil */
     Value rest = list;
     Value result = VALUE_NIL;

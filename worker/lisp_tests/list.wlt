@@ -24,18 +24,24 @@
 ;; Not the same as Emacs lisp:
 (cdr nil) ;=> error
 
-;;;;TEST;;;;
-(nth 0 '(1 2 3)) ;=> 1
-(nth 1 '(1 2 3)) ;=> 2
-(nth 2 '(1 2 3)) ;=> 3
-(nth 3 '(1 2 3)) ;=> error
-(nth -1 '(1 2 3)) ;=> error
-(nth 1.0 '(1 2 3)) ;=> error
+
 
 ;;;;TEST;;;;
-(nth '(1 2 3) 0) ;=> 1
-(nth '(1 2 3) 1) ;=> 2
-(nth '(1 2 3) 2) ;=> 3
-(nth '(1 2 3) 3) ;=> error
-(nth '(1 2 3) -1) ;=> error
-(nth '(1 2 3) 1.0) ;=> error
+(setq x (list 1 2 3)) ;=> (1 2 3)
+(setcar x 10) ;=> 10
+x ;=> (10 2 3)
+
+;;;;TEST;;;;
+(setq x (cons 1 2)) ;=> (1 . 2)
+(setcar x 10) ;=> 10
+x ;=> (10 . 2)
+
+;;;;TEST;;;;
+(setq x (list 1 2 3)) ;=> (1 2 3)
+(setcdr x 10) ;=> 10
+x ;=> (1 . 10)
+
+;;;;TEST;;;;
+(setq x (cons 1 2)) ;=> (1 . 2)
+(setcdr x 10) ;=> 10
+x ;=> (1 . 10)
