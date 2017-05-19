@@ -38,13 +38,14 @@ release: clean
 
 coverage: CFLAGS += -fprofile-arcs -ftest-coverage
 coverage: LFLAGS += -fprofile-arcs -ftest-coverage
-coverage: clean worker test
+coverage: clean worker test Makefile linecount
 	rm -rf coverage;
 	mkdir coverage;
 	gcov -fp *.gcno lisp/*.gcno tests_src/*.gcno > coverage/report;
 	find . -iname "*.gcov" -exec mv -t coverage "{}" +;
 	find . \( -iname "*.gcda" -or -iname "*.gcno" \) -delete;
 	$(MAKE) --no-print-directory clean
+	tail -n 1 coverage/report
 
 profile: CFLAGS += -g -pg
 profile: LFLAGS += -g -pg
