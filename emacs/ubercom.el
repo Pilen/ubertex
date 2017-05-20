@@ -230,6 +230,20 @@ Wont return untill all workers has been synced."
   (message "Starting done")
   t)
 
+(defun revy-update-ubertex-on-workers ()
+  "Update the program on all the workers"
+  (interactive)
+  (dolist (worker (revy-get-workers 'all))
+    (with-current-buffer "*revy-update*" (erase-buffer))
+    (start-process "revy-update" "*revy-update*"
+                   "ssh" (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
+                   (concat
+                    "cd " (aref worker revy-worker-installation-index) ";"
+                    "cd worker;"
+                    "git pull;"
+                    "LANG=en_US.UTF-8 make"
+                    ))))
+
 ;; (defun revy-update-software ()
 ;;   "Update the software on all workers and the current machine"
 ;;   (interactive)
