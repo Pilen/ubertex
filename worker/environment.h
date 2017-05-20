@@ -30,7 +30,8 @@ typedef struct {
     Value last_message;
 
     Value update; /* expression */
-    Value render; /* expression */
+    Value background; /* expression */
+    Value foreground; /* expression */
 
     Double clear_red;
     Double clear_green;

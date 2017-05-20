@@ -29,7 +29,8 @@ void loop_loop(Environment *environment) {
         if (loop_abort) {
             loop_abort = false;
             environment -> update = VALUE_NIL;
-            environment -> render = VALUE_NIL;
+            environment -> background = VALUE_NIL;
+            environment -> foreground = VALUE_NIL;
             component_destroy_all(environment);
             sound_stop_all();
         }
@@ -64,8 +65,9 @@ void loop_loop(Environment *environment) {
         lock_read_lock(resource_cache_lock);
         environment -> current_layer = OPTION_DEFAULT_LAYER;
         environment -> current_component = NULL;
+        eval(environment -> background, environment);
         eval(environment -> update, environment);
-        eval(environment -> render, environment);
+        eval(environment -> foreground, environment);
         w_assert(environment -> call_stack.type == NIL);
         w_assert(environment -> dynamic_variables.type == NIL);
         component_update_all(environment);

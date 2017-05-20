@@ -23,7 +23,8 @@ Component *component_create(Value name, Value args, Environment *environment) {
     component -> layer = NULL;
     component -> local_variables = VALUE_NIL;
     component -> update = VALUE_NIL;
-    component -> render = VALUE_NIL;
+    component -> background = VALUE_NIL;
+    component -> foreground = VALUE_NIL;
     component -> message_handlers = hash_create();
 
     component_layer_insert_component(environment -> current_layer, component, environment);
@@ -54,8 +55,9 @@ void component_update_all(Environment *environment) {
             Component *component = component_value.val.component_val;
             environment -> current_component = component;
             environment_bind_variables(component -> local_variables, environment);
+            eval(component -> background, environment);
             eval(component -> update, environment);
-            eval(component -> render, environment);
+            eval(component -> foreground, environment);
             /* component_execute(component -> update, component -> update_arguments, environment); */
             /* component_execute(component -> render, component -> render_arguments, environment); */
             environment_unbind_variables(environment);

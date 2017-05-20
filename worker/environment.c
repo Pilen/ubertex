@@ -30,7 +30,8 @@ Environment *environment_create(void) {
     component_destroy_all(environment); /* initializes all */
 
     environment -> update = VALUE_NIL;
-    environment -> render = VALUE_NIL;
+    environment -> background = VALUE_NIL;
+    environment -> foreground = VALUE_NIL;
 
     environment -> clear_red = 0.0;
     environment -> clear_green = 0.0;

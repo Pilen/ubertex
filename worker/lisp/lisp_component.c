@@ -160,8 +160,7 @@ LISP_BUILTIN(update, "") {
     }
     return VALUE_NIL;
 }
-
-LISP_BUILTIN(render, "") {
+LISP_BUILTIN(background, "") {
     Value body = VALUE_NIL;
     if (args.type == CONS) {
         if (CDR(args).type == NIL) {
@@ -171,9 +170,26 @@ LISP_BUILTIN(render, "") {
         }
     }
     if (environment -> current_component) {
-        environment -> current_component -> render = body;
+        environment -> current_component -> background = body;
     } else {
-        environment -> render = body;
+        environment -> background = body;
+    }
+    return VALUE_NIL;
+}
+
+LISP_BUILTIN(foreground, "") {
+    Value body = VALUE_NIL;
+    if (args.type == CONS) {
+        if (CDR(args).type == NIL) {
+            body = CAR(args);
+        } else {
+            body = CONS(symbols_progn, args);
+        }
+    }
+    if (environment -> current_component) {
+        environment -> current_component -> foreground = body;
+    } else {
+        environment -> foreground = body;
     }
     return VALUE_NIL;
 }

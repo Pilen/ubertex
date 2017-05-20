@@ -19,8 +19,8 @@ struct Component_s {
     Value local_variables; /* list */
 
     Value update; /* expression */
-
-    Value render; /* expression */
+    Value background; /* expression */
+    Value foreground; /* expression */
 
     Hash *message_handlers;
 };
