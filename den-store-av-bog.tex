@@ -324,6 +324,9 @@ småting der er værd at huske.
   Her står det udstyr vi passer ekstra godt på.
   Kun de særligt betroede får adgang hertil og man skal spise en skovsnegl og
   kysse en datalog for at få lov!
+\item[HCØ-tryk:] Lagerlokale bag Harlem. Bruges som erstatning for
+  rekvisitkælderen. Derudover opbevares en del af texnikken der efter der ikke
+  rigtigt er mere plads i Harlem.
 \item[Adgang:] Husk at snakke med din boss om at få aktiveret dit studiekort så du kan komme
   ind på DIKU og i Harlem. I TeXnikken kommer og går man ofte på skæve
   tidspunkter så det er praktisk med adgang.
@@ -1008,6 +1011,15 @@ Hvis dette ikke virker kan man evt. kigge på
   uddyb her}
 
 \note{internet0 = wlp3s0\\net0 =enp0s25}
+
+Bare gør det her:
+\begin{verbatim}
+sudo sysctl net.ipv4.ip_forward=1 &&
+  sudo iptables -t nat -A POSTROUTING -o wlp3s0 -j MASQUERADE &&
+  sudo iptables -A FORWARD -i enp0s25 -o wlp3s0 -j ACCEPT &&
+  sudo iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+\end{verbatim}
+
 \subsection{Arbejdere}
 Arbejdere er de maskiner/servere der er sluttet til projektorne. Det er deres
 rolle at vise AV-indholdet det kunne være overtekster, film, lydeffekter,
@@ -2378,6 +2390,16 @@ m filnavn
 \newpage
 \section{- FAQ}
 Ubertex tager ikke højde for pauser i comments, latex gør.
+
+\subsection{Markup}
+\subsubsection{Der vises ikke noget}
+Det er fordi der er en fejl i markup koden, så vises intet desværre
+
+\subsubsection{Alpha på 0 virker ikke}
+Nej, desværre kan systemet, helt præcist biblioteket pango som bruges til at
+rendere tekst ikke håndtere alphaværdien 0, så istedet kan du sætte den til 1\%
+ellers kan man angive et heltal melllem 1 og 65536, hvor 1 så er mest
+gennemsigtig.
 
 \subsection{\LaTeX{}}
 \subsubsection{Hvordan indsætter jeg \"{} (quotes)}
