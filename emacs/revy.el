@@ -120,7 +120,7 @@ Then it will load it"
         (when (yes-or-no-p "Create .sketch file for each video?")
           (replace-regexp "\\(video/.*?\\.\\)tex" "\\1sketch")
           (goto-char (point-min))
-          (let ((dir (file-name-as-directory (concat destination "sketches"))))
+          (let ((dir (file-name-as-directory (concat destination "video"))))
             (make-directory dir t)
             (while (search-forward-regexp "video/\\(.*?\\.sketch\\)" nil t)
               (print dir)
