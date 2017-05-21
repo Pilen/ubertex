@@ -41,6 +41,11 @@ void symbol_initialize() {
     symbols_sized = symbol_get(VALUE_STRING(string_create_from_str("sized")));
     symbols_rotated = symbol_get(VALUE_STRING(string_create_from_str("rotated")));
 
+    symbols_center = symbol_get(VALUE_STRING(string_create_from_str("center")));
+    symbols_centered = symbol_get(VALUE_STRING(string_create_from_str("centered")));
+    symbols_left = symbol_get(VALUE_STRING(string_create_from_str("left")));
+    symbols_right = symbol_get(VALUE_STRING(string_create_from_str("right")));
+
 
     symbols_pi = symbol_get(VALUE_STRING(string_create_from_str("pi")));
     symbols_tau = symbol_get(VALUE_STRING(string_create_from_str("tau")));

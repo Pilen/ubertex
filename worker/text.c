@@ -17,7 +17,7 @@ void text_show(void *data, Environment *environment) {
     g_object_unref(layout);
 }
 
-Bool text(String *text, Int fontsize, Bool align_center, Renderable *target, Environment *environment) {
+Bool text(String *text, Int fontsize, Text_alignment alignment, Renderable *target, Environment *environment) {
     if (fontsize <= 0) {
         fontsize = 26;
     }
@@ -35,9 +35,19 @@ Bool text(String *text, Int fontsize, Bool align_center, Renderable *target, Env
 
 
     pango_layout_set_markup(layout, text -> text, -1);
-    if (align_center) {
-        pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
+    PangoAlignment alignment_p;
+    switch (alignment) {
+    case text_alignment_center:
+        alignment_p = PANGO_ALIGN_CENTER;
+        break;
+    case text_alignment_left:
+        alignment_p = PANGO_ALIGN_LEFT;
+        break;
+    case text_alignment_right:
+        alignment_p = PANGO_ALIGN_RIGHT;
+        break;
     }
+    pango_layout_set_alignment(layout, alignment_p); // Assume Text_alignment and PangoAlignment are the same
 
     /* assume position already set */
     Int width, height;

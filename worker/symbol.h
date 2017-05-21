@@ -34,6 +34,10 @@ Value symbols_scaled;
 Value symbols_sized;
 Value symbols_rotated;
 
+Value symbols_center;
+Value symbols_centered;
+Value symbols_left;
+Value symbols_right;
 
 Value symbols_pi;
 Value symbols_tau;

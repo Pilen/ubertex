@@ -4,6 +4,12 @@
 #include "types.h"
 #include "environment.h"
 
+typedef enum {
+    text_alignment_center,
+    text_alignment_left,
+    text_alignment_right,
+} Text_alignment;
+
 struct Text_s {
     Unt refcount;
     Unt created;
@@ -14,6 +20,6 @@ struct Text_s {
     SDL_Texture *texture;
 };
 
-Bool text(String *text, Int fontsize, Bool align_center, Renderable *target, Environment *environment);
+Bool text(String *text, Int fontsize, Text_alignment alignment, Renderable *target, Environment *environment);
 
 #endif

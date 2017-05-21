@@ -165,7 +165,8 @@ LISP_BUILTIN(text, "") {
 
     /* TODO: The arguments should be interpreted better */
     Int fontsize = -1;
-    Bool align_center = true;
+
+    Text_alignment alignment = text_alignment_center;
     Value position = VALUE_NIL;
 
     ENSURE_NOT_EMPTY(args);
@@ -178,13 +179,30 @@ LISP_BUILTIN(text, "") {
         Value fontsize_v = NEXT(args);
         if (fontsize_v.type == INTEGER) {
             fontsize = fontsize_v.val.integer_val;
+        } else if (fontsize_v.type == NIL) {
+            // Do nothing
         } else {
             return VALUE_ERROR;
         }
     }
     if (args.type == CONS) {
-        Value center_v = NEXT(args);
-        align_center = center_v.type != NIL;
+        Value alignment_v = NEXT(args);
+        if (alignment_v.type == SYMBOL) {
+            if (alignment_v.val.symbol_val == symbols_center.val.symbol_val ||
+                alignment_v.val.symbol_val == symbols_centered.val.symbol_val) {
+                alignment = text_alignment_center;
+            } else if (alignment_v.val.symbol_val == symbols_left.val.symbol_val) {
+                alignment = text_alignment_left;
+            } else if (alignment_v.val.symbol_val == symbols_right.val.symbol_val) {
+                alignment = text_alignment_right;
+            } else {
+                return VALUE_ERROR;
+            }
+        } else if (alignment_v.type == NIL) {
+            // Do nothing
+        } else {
+            return VALUE_ERROR;
+        }
     }
     if (args.type == CONS) {
         position = NEXT(args);
@@ -193,7 +211,7 @@ LISP_BUILTIN(text, "") {
 
     cairo_set_source_rgb(environment -> cairo, 1.0, 1.0, 1.0);
     Renderable renderable;
-    if (!text(string.val.string_val, fontsize, align_center, &renderable, environment)) {
+    if (!text(string.val.string_val, fontsize, alignment, &renderable, environment)) {
         return VALUE_ERROR;
     }
 
