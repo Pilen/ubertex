@@ -245,11 +245,11 @@ Uses either the given seed or a random number between 0 and most-positive-fixnum
 ;π Text
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar revy--show-text-history nil
+(defvar revy--text-history nil
   "History variable for `revy-show-text'")
 
 (defun revy-text (&optional text)
   (interactive)
   (unless text
-    (setq text (read-from-minibuffer "Text: " nil nil nil 'revy--show-text-history)))
+    (setq text (read-from-minibuffer "Text: " nil nil nil 'revy--text-history)))
   (revy-send-lisp nil `(update (text ,text))))
