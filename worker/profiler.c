@@ -24,7 +24,7 @@ void profiler_total_report(void) {
     if (total == 0) {
         fprintf(log_output, "total: %f\n", total);
     } else {
-        fprintf(log_output, "total: %f, render: %.0f%%, present: %.0f%%, cairo: %.0f%% %i\n", total, render/total * 100.0, present/total * 100.0, cairo/total * 100.0, profile_cairo -> count);
+        fprintf(log_output, "total: %f (%f%%), render: %.0f%%, present: %.0f%%, cairo: %.0f%% %i\n", total, (total / (1000.0 / 30)) * 100 , render/total * 100.0, present/total * 100.0, cairo/total * 100.0, profile_cairo -> count);
     }
     profiler_reset(profile_total);
     profiler_reset(profile_render);
