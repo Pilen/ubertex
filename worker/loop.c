@@ -23,9 +23,10 @@ void loop_loop(Environment *environment) {
     Unt fast_runs = 0;
 
     while (true) {
-        environment -> frame++;
         profiler_start(profile_total);
         log_section("====LOOP====");
+        environment -> frame++;
+
         if (loop_abort) {
             loop_abort = false;
             environment -> update = VALUE_NIL;
