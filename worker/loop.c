@@ -16,8 +16,6 @@
 #include "message.h"
 #include "profiler.h"
 
-void loop_update(Value update_symbol, Value args, Environment *environment);
-
 void loop_loop(Environment *environment) {
     Unt next_tick = SDL_GetTicks();
     Unt fast_runs = 0;
@@ -126,26 +124,5 @@ void loop_loop(Environment *environment) {
             environment -> fast_run = fast_runs != 0;
         }
         log_section("====LOOP-END====");
-    }
-}
-
-void loop_update(Value update_symbol, Value args, Environment *environment) {
-    /* Lookup must be done every frame as the body can be redefined. */
-    /* TODO: or a lambda! */
-    if (update_symbol.type == SYMBOL) {
-        Value function_value;
-        Bool found = hash_get(environment -> functions, update_symbol, &function_value);
-        if (found) {
-            Function *update_function = function_value.val.function_val;
-            /* Is evaled when the update function is set, not now */
-            eval_apply(update_symbol, update_function, args, environment);
-        } else {
-            /* TODO: log error better*/
-            log_error("Error when updating, no such function");
-        }
-    } else if (update_symbol.type == NIL) {
-        /* Do nothing */
-    } else {
-        log_error("Error when updating, not a function");
     }
 }

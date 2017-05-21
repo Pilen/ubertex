@@ -8,8 +8,6 @@
 #include "debug.h"
 #include "symbol.h"
 
-void component_execute(Value symbol, Value args, Environment *environment);
-
 Component *component_create(Value name, Value args, Environment *environment) {
     Value definition;
     Bool found = hash_get(environment -> component_definitions, name, &definition);
@@ -58,8 +56,6 @@ void component_update_all(Environment *environment) {
             eval(component -> background, environment);
             eval(component -> update, environment);
             eval(component -> foreground, environment);
-            /* component_execute(component -> update, component -> update_arguments, environment); */
-            /* component_execute(component -> render, component -> render_arguments, environment); */
             environment_unbind_variables(environment);
         }
         layer = layer -> next;
@@ -67,28 +63,6 @@ void component_update_all(Environment *environment) {
     environment -> current_layer = OPTION_DEFAULT_LAYER;
     environment -> current_component = NULL;
 }
-
-void component_execute(Value symbol, Value args, Environment *environment) {
-    /* Lookup must be done every frame as the body can be redefined. */
-    /* TODO: or a lambda! */
-    if (symbol.type == SYMBOL) {
-        Value function_value;
-        Bool found = hash_get(environment -> functions, symbol, &function_value);
-        if (found) {
-            Function *update_function = function_value.val.function_val;
-            /* Is evaled when the update function is set, not now */
-            eval_apply(symbol, update_function, args, environment);
-        } else {
-            /* TODO: log error better*/
-            log_error("Error when updating component, no such function");
-        }
-    } else if (symbol.type == NIL) {
-        /* Do nothing */
-    } else {
-        log_error("Error when updating component, not a function");
-    }
-}
-
 
 Layer *component_layer_create(Int index) {
     Layer *layer = memory_malloc(sizeof(Layer));
