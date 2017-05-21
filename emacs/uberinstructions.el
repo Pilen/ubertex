@@ -39,10 +39,15 @@ The file must either be an absolute path or relative to the revy-dir."
   (find-file-other-window (revy-absolute-data-path filename))
   (when worker
     (setq revy-current-worker worker))
-  (if (string= (downcase (file-name-extension filename)) "tex")
-      (progn (revy-manus-mode t) ;; Should this be activated?
-             (revy-ubertex-mode))
-    (revy-ubersicht-mode)))
+  (let ((extension (downcase (file-name-extension filename))))
+    (cond
+     ((string= extension "tex")
+      (revy-manus-mode t) ;; Should this be activated?
+      (revy-ubertex-mode))
+     ((string= extension "song")
+      (revy-ubersong-mode))
+     (t
+      (revy-ubersicht-mode)))))
 
 ;; TODO: make this a macro
 (defmacro revy-nop (&rest _)

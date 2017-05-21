@@ -33,8 +33,8 @@ Based off `latex-mode' so it will work with both the standard latex mode and AUC
   (goto-char (point-min))
 
   ;; Setup metafunctions
+  (setq revy-mode-forward-function 'revy-ubertex-point-forward)
   (setq revy-mode-enter-function 'revy-ubertex-enter)
-  (setq revy-mode-forward-function 'revy-forward-enter)
 
   ;; Clear old cursors
   (revy-clear-overlays)
@@ -78,7 +78,7 @@ Is primarily used while working on the overtex file."
 ;π Navigation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun revy-ubertex-forward ()
+(defun revy-ubertex-point-forward ()
   "Moves point to next slide.
 Does not affect the cursor."
   (interactive)
@@ -174,21 +174,21 @@ Also does all the preparations for the buffer "
 ;;       (when (not (null (search-forward-regexp "\\\\elisp{(\\([^)}]+\\)}" end t)))
 ;;       (revy-elisp (match-beginning 1) (match-end 1))))))
 
-(defun revy-ubertex--scan (end)
-  (interactive)
-  ;; (print end)
-  (save-excursion ;should end before evaluating code (so we can jump around)
-    ;; point might be at the end of the current \pause and should look for the previous instead.
-    (goto-char (- end 1))
-    (search-backward-regexp "\\\\begin{overtex}\\|\\\\pause[{}]?" nil t) ;; skriv regexes sådan
-    (save-excursion
-      (when (not (null (search-forward-regexp "\\\\shell{(\\([^}]*\\)}" end t)))
-        ;(message (match-string 1))
-        (revy-shell (match-string 1))))
-    (save-excursion
-      (when (not (null (search-forward-regexp "\\\\elisp{\\([^}]*\\)}" end t)))
-        ;(message (match-string 1))
-        (revy-elisp (match-beginning 1) (match-end 1))))))
+;; (defun revy-ubertex--scan (end)
+;;   (interactive)
+;;   ;; (print end)
+;;   (save-excursion ;should end before evaluating code (so we can jump around)
+;;     ;; point might be at the end of the current \pause and should look for the previous instead.
+;;     (goto-char (- end 1))
+;;     (search-backward-regexp "\\\\begin{overtex}\\|\\\\pause[{}]?" nil t) ;; skriv regexes sådan
+;;     (save-excursion
+;;       (when (not (null (search-forward-regexp "\\\\shell{(\\([^}]*\\)}" end t)))
+;;         ;(message (match-string 1))
+;;         (revy-shell (match-string 1))))
+;;     (save-excursion
+;;       (when (not (null (search-forward-regexp "\\\\elisp{\\([^}]*\\)}" end t)))
+;;         ;(message (match-string 1))
+;;         (revy-elisp (match-beginning 1) (match-end 1))))))
 
   ;; (search-backward-regexp "\\\\pause\\({}\\)?" nil t)
   ;; (goto-char (match-beginning 0)))

@@ -30,13 +30,13 @@ uniform interface."
 
 (setq revy-uberclear? t)
 ;; (define-key revy-mode-map (kbd "<next>") 'revy-mode-next)
-(global-set-key (kbd "<print>") (lambda () (interactive) (if revy-uberclear? (revy-clear-overlays) (revy-ubertex-mode)) (setq revy-uberclear? (not revy-uberclear?))))
-(global-set-key (kbd "<Scroll_Lock>") (lambda () (interactive) (revy-upload-files)))
-(global-set-key (kbd "<XF86AudioMicMute>") (lambda () (interactive) (revy-upload-files revy-current-worker) (sleep-for 1) (revy-ubertex-mode)))
+;; (global-set-key (kbd "<print>") (lambda () (interactive) (if revy-uberclear? (revy-clear-overlays) (revy-ubertex-mode)) (setq revy-uberclear? (not revy-uberclear?))))
+;; (global-set-key (kbd "<Scroll_Lock>") (lambda () (interactive) (revy-upload-files)))
+;; (global-set-key (kbd "<XF86AudioMicMute>") (lambda () (interactive) (revy-upload-files revy-current-worker) (sleep-for 1) (revy-ubertex-mode)))
 
 (define-global-minor-mode global-revy-mode revy-mode
   (lambda ()
-    (when (member major-mode '(revy-ubersicht-mode revy-ubertex-mode))
+    (when (member major-mode '(revy-ubersicht-mode revy-ubertex-mode revy-ubersong-mode))
       (revy-mode))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
