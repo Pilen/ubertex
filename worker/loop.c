@@ -16,7 +16,7 @@
 #include "message.h"
 #include "profiler.h"
 
-void loop_loop(Environment *environment) {
+void loop(Environment *environment) {
     Unt next_tick = SDL_GetTicks();
     Unt fast_runs = 0;
 

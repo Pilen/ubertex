@@ -4,7 +4,7 @@
 #include "types.h"
 #include "environment.h"
 
-void loop_loop(Environment *environment);
+void loop(Environment *environment);
 /* FLAGS */
 /* TODO: decide if this should be placed somewhere else */
 volatile Bool loop_abort;

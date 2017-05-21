@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
     }
 
     if (!test_only) {
-        loop_loop(environment);
+        loop(environment);
     }
     fflush(log_output);
     return EXIT_SUCCESS;
