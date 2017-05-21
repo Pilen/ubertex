@@ -153,6 +153,8 @@ the functions can be called on their own."
   (goto-char (point-min))
   (replace-regexp "…" "...")
   (goto-char (point-min))
+  (replace-regexp "“" "``")
+  (goto-char (point-min))
   (let ((outside t))
     (while (search-forward-regexp "”" nil t)
       (if outside
