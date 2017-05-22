@@ -132,6 +132,7 @@ void print_on(FILE *stream, Value value) {
         fprintf(stream, "Illegal type: %d", value.type);
         break;
     }
+    fprintf(stream, "\n");
     fflush(stream);
 }
 
