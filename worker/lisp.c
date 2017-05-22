@@ -21,6 +21,9 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(setcar, setcar, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(setcdr, setcdr, true, environment);
 
+    LISP_REGISTER_BUILTIN_FROM_RAW(type-of, type_of, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(float, float, true, environment);
+
     LISP_REGISTER_BUILTIN_FROM_RAW(length, length, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(nth, nth, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(elt, nth, true, environment);
@@ -47,6 +50,8 @@ void lisp_initialize(Environment *environment) {
 
     LISP_REGISTER_BUILTIN_FROM_RAW(defun, defun, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(lambda, lambda, false, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(lexical-let, lexical_let, false, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(funcall, funcall, true, environment);
 
     LISP_REGISTER_BUILTIN_FROM_RAW(+, plus, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(-, minus, true, environment);
@@ -73,8 +78,12 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(sqrt, sqrt, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(randint, randint, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(floor, floor, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(ceil, floor, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(round, floor, true, environment);
 
 
+    LISP_REGISTER_BUILTIN_FROM_RAW(ease, ease, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(frame, frame, true, environment);
 
     LISP_REGISTER_BUILTIN_FROM_RAW(color, color, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(clear-color, clear_color, true, environment);
@@ -117,6 +126,7 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(resource_usage, resource_usage, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(exit_program, exit_program, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(set_window_position, set_window_position, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(force_frame, force_frame, true, environment);
 
 
 

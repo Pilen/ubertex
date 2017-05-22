@@ -9,6 +9,7 @@
 #include "pdf.h"
 #include "sound.h"
 #include "text.h"
+#include "lisp.h"
 
 Bool equal(Value a, Value b) {
     /* TODO: find out how to handle comparison of 2.0 and 2 */
@@ -77,7 +78,14 @@ Bool equal(Value a, Value b) {
         /* TODO: implement */
         debug("HASH VALUES CANT BE COMPARED YET!!!!");
         w_assert(false);
-
+    case LAMBDA:
+        {
+            Lambda *a_l = a.val.lambda_val;
+            Lambda *b_l = b.val.lambda_val;
+            return (equal(a_l -> parameters, b_l -> parameters) &&
+                    equal(a_l -> body, b_l -> body) &&
+                    equal(a_l -> lexical, b_l -> lexical));
+        }
     case IMAGE:
         return equal(a.val.image_val -> path, b.val.image_val -> path);
     case PDF:
@@ -114,6 +122,8 @@ Bool eq(Value a, Value b) {
         return a.val.string_val == b.val.string_val;
     case HASH:
         return a.val.hash_val == b.val.hash_val;
+    case LAMBDA:
+        return a.val.lambda_val == b.val.lambda_val;
     default:
         w_assert(false);
     }
@@ -144,6 +154,8 @@ Value copy_deep(Value value) {
     case STRING:
         return value;
     case HASH:
+    case LAMBDA: // Should copy lexicals into a new lambda
+        log_error("Not yet implemented");
     default:
         w_assert(false);
         return value;

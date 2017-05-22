@@ -5,6 +5,7 @@
 #include "memory.h"
 #include "list.h"
 #include "component.h"
+#include "assert.h"
 
 /* Note: decide if this function should just be located in initialize.c */
 Environment *environment_create(void) {
@@ -17,7 +18,6 @@ Environment *environment_create(void) {
 
     environment -> frame = 0;
 
-    environment -> skip_ticks = 1000 / OPTION_DEFAULT_FPS;
     environment -> fast_run = false;
 
     environment -> width = 0;
@@ -38,8 +38,9 @@ Environment *environment_create(void) {
     environment -> clear_blue = 0.0;
     environment -> clear_alpha = 1.0;
 
-    environment -> global_variables = hash_create();
     environment -> dynamic_variables = VALUE_NIL;
+    environment -> lexical_variables = VALUE_NIL;
+    environment -> global_variables = hash_create();
     environment -> functions = hash_create();
 
     environment -> call_stack = VALUE_NIL; /* list */
@@ -52,6 +53,31 @@ void environment_bind_variables(Value bindings, Environment *environment) {
 
 void environment_unbind_variables(Environment *environment) {
     environment -> dynamic_variables = CDR(environment -> dynamic_variables);
+}
+
+void environment_bind_lexical(Value bindings, Environment *environment) {
+    environment -> lexical_variables = CONS(bindings, environment -> lexical_variables);
+}
+
+void environment_unbind_lexical(Environment *environment) {
+    environment -> lexical_variables = CDR(environment -> lexical_variables);
+}
+Unt environment_bind_multiple_variables(Value bindings, Environment *environment) {
+    Value ordered = list_reverse(list_copy(bindings));
+    Unt count = 0;
+    while (ordered.type == CONS) {
+        count++;
+        Value actual_bindings = NEXT(ordered);
+        environment -> dynamic_variables = CONS(actual_bindings, environment -> dynamic_variables);
+    }
+    w_assert(ordered.type == NIL);
+    return count;
+}
+void environment_unbind_multiple_variables(Unt count, Environment *environment) {
+    while (count) {
+        count--;
+        environment -> dynamic_variables = CDR(environment -> dynamic_variables);
+    }
 }
 
 Bool environment_lookup_variable(Value key, Value *result, Environment *environment) {

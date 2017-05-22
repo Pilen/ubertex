@@ -1,20 +1,10 @@
-#ifndef W_LISP_H
-#define W_LISP_H
+#ifndef W_FUNCTION_H
+#define W_FUNCTION_H
 
 #include "types.h"
 #include "list.h"
 #include "environment.h"
-
-typedef Value (*c_lisp_function) (Value args, Environment *environment);
-
-struct Function_s {
-    Bool eval;
-    Bool c_code;
-    c_lisp_function c_function;
-    Value parameters;
-    Value body;
-    String *docstring;
-};
+#include "function.h"
 
 void lisp_initialize(Environment *environment);
 

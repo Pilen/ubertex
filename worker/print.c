@@ -10,6 +10,7 @@
 #include "symbol.h"
 #include "component.h"
 #include "assert.h"
+#include "function.h"
 
 void print(Value value) {
     print_on(output, value);
@@ -109,6 +110,13 @@ void print_on(FILE *stream, Value value) {
         }
     case FUNCTION:
         fprintf(stream, "?");
+        break;
+    case LAMBDA:
+        fprintf(stream, "#<lambda ");
+        print_on(stream, value.val.lambda_val -> parameters);
+        fprintf(stream, " ");
+        print_on(stream, value.val.lambda_val -> body);
+        fprintf(stream, ">");
         break;
     case COMPONENT:
         fprintf(stream, "#<component ");

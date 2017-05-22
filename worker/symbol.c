@@ -33,6 +33,9 @@ void symbol_initialize() {
     symbols_vector = symbol_get(VALUE_STRING(string_create_from_str("vector")));
     symbols_hash = symbol_get(VALUE_STRING(string_create_from_str("hash")));
 
+    symbols_pi = symbol_get(VALUE_STRING(string_create_from_str("pi")));
+    symbols_tau = symbol_get(VALUE_STRING(string_create_from_str("tau")));
+    symbols_e = symbol_get(VALUE_STRING(string_create_from_str("e")));
 
     symbols_plain = symbol_get(VALUE_STRING(string_create_from_str("plain")));
     symbols_full = symbol_get(VALUE_STRING(string_create_from_str("full")));
@@ -46,17 +49,14 @@ void symbol_initialize() {
     symbols_left = symbol_get(VALUE_STRING(string_create_from_str("left")));
     symbols_right = symbol_get(VALUE_STRING(string_create_from_str("right")));
 
-
-    symbols_pi = symbol_get(VALUE_STRING(string_create_from_str("pi")));
-    symbols_tau = symbol_get(VALUE_STRING(string_create_from_str("tau")));
-    symbols_e = symbol_get(VALUE_STRING(string_create_from_str("e")));
+    symbols_linear = symbol_get(VALUE_STRING(string_create_from_str("linear")));
 
 
     symbols_error = string_create_from_str("error");
     symbols_nil = string_create_from_str("nil");
 
     symbols_unreachable = VALUE_SYMBOL(symbol_next_id++);
-    hash_set(symbol_names, symbols_unreachable, VALUE_STRING(string_create_from_str("#<unreachable symbol>")));
+    hash_set(symbol_names, symbols_unreachable, VALUE_STRING(string_create_from_str("#<symbol unreachable>")));
 }
 
 Value symbol_get(Value name) {
@@ -76,4 +76,11 @@ Value symbol_name(Value symbol){
     Bool found = hash_get(symbol_names, symbol, &name);
     w_assert(found);
     return name;
+}
+
+Value symbol_unique(void) {
+    Value symbol = VALUE_SYMBOL(symbol_next_id);
+    hash_set(symbol_names, symbol, VALUE_STRING(string_create_from_str("#<symbol unique>")));
+    symbol_next_id++;
+    return symbol;
 }

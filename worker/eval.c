@@ -9,9 +9,10 @@
 #include "log.h"
 #include "assert.h"
 #include "loop.h"
+#include "function.h"
 
 Value eval_list(Value expression, Environment *environment);
-Value eval_lambda(Value lambda, Value args, Environment *environment);
+Value eval_lambda(Value lambda_value, Value args, Environment *environment);
 
 Value eval(Value expression, Environment *environment) {
     switch (expression.type) {
@@ -23,6 +24,7 @@ Value eval(Value expression, Environment *environment) {
     case STRING:
     case VECTOR:
     case HASH:
+    case LAMBDA: // Evaluation is not the same as calling
     default:
         return expression;
     case SYMBOL: {
@@ -46,28 +48,40 @@ Value eval(Value expression, Environment *environment) {
 Value eval_list(Value expression, Environment *environment) {
     w_assert(expression.type == CONS);
 
+    Bool lambda_call = false;
     Value function_symbol = NEXT(expression);
-    if (function_symbol.type == CONS) {
-        return eval_lambda(function_symbol, expression, environment);
-    }
+    Value lambda;
+    Function *function;
 
-    if (function_symbol.type != SYMBOL) {
+    if (function_symbol.type == CONS) {
+        if (CAR(function_symbol).type == SYMBOL &&
+            CAR(function_symbol).val.symbol_val == symbols_lambda.val.symbol_val) {
+            lambda = eval(function_symbol, environment);
+            lambda_call = true;
+        } else {
+            return VALUE_ERROR;
+        }
+    } else if (function_symbol.type == LAMBDA) {
+        lambda = function_symbol;
+        lambda_call = true;
+    } else if (function_symbol.type == SYMBOL) {
+        Value function_value;
+        Bool found = hash_get(environment -> functions, function_symbol, &function_value);
+        if (!found) {
+            /* TODO: log error */
+            /* TODO: "Did you mean?" */
+            debug_value(function_symbol);
+            log_error("Function XXX not found");
+            return VALUE_ERROR;
+        }
+        w_assert(function_value.type == FUNCTION);
+        function = function_value.val.function_val;
+    } else {
         return VALUE_ERROR;
     }
-    Value function_value;
-    Bool found = hash_get(environment -> functions, function_symbol, &function_value);
-    if (!found) {
-        /* TODO: log error */
-        /* TODO: "Did you mean?" */
-        debug_value(function_symbol);
-        log_error("Function XXX not found");
-        return VALUE_ERROR;
-    }
-    w_assert(function_value.type == FUNCTION);
-    Function *function = function_value.val.function_val;
 
     Value args;
-    if (function -> eval) {
+    if (lambda_call || function -> eval) {
         args = VALUE_NIL;
         while (expression.type == CONS) {
             Value arg = NEXT(expression);
@@ -104,7 +118,12 @@ Value eval_list(Value expression, Environment *environment) {
         args = list_copy(expression);
     }
 
-    Value result = eval_apply(function_symbol, function, args, environment);
+    Value result;
+    if (lambda_call) {
+        result = eval_lambda(lambda, args, environment);
+    } else {
+        result = eval_apply(function_symbol, function, args, environment);
+    }
     list_destroy(args);
     return result;
 }
@@ -133,37 +152,25 @@ Value eval_apply(Value function_symbol, Function *function, Value args, Environm
     return result;
 }
 
-Value eval_lambda(Value lambda, Value args, Environment *environment) {
-    w_assert(false);
-    return VALUE_ERROR;
-    Value head = CAR(lambda);
-    Bool clojure;
-    if (head.type == SYMBOL && head.val.symbol_val == symbols_lambda.val.symbol_val) {
-        clojure = false;
-    } else if (head.type == SYMBOL && head.val.symbol_val == symbols_clojure.val.symbol_val) {
-        clojure = true;
-    } else {
+Value eval_lambda(Value lambda_value, Value args, Environment *environment) {
+    if (loop_abort) {
         return VALUE_ERROR;
     }
-    /* Eval args */
-    Value rest = args;
-    args = VALUE_NIL;
-    while (rest.type == CONS) {
-        Value arg = NEXT(rest);
-        args = CONS(eval(arg, environment), args);
+    Lambda *lambda = lambda_value.val.lambda_val;
+    Value bindings = eval_get_bindings(args, lambda -> parameters);
+    if (bindings.type == ERROR) {
+        return VALUE_ERROR;
     }
-    w_assert(rest.type == NIL);
-    args = list_reverse(args);
-    args = CONS(symbols_lambda, args);
-    Value result;
-    if (clojure) {
-        /* result = eval_clojure(function_symbol, args, environment); */
-    } else {
-        /* result = eval_lambda(function_symbol, args, environment); */
-    }
-    list_destroy(args);
-    return result;
 
+    environment_bind_variables(bindings, environment);
+    Unt count = environment_bind_multiple_variables(lambda -> lexical, environment);
+    environment -> call_stack = CONS(lambda_value, environment -> call_stack);
+    Value result = eval(lambda -> body, environment);
+    environment -> call_stack = CDR(environment -> call_stack);
+    environment_unbind_multiple_variables(count, environment);
+    environment_unbind_variables(environment);
+
+    return result;
 }
 
 Value eval_get_bindings(Value arguments, Value parameters) {

@@ -25,8 +25,27 @@ LISP_BUILTIN(type_of, "") {
         return symbols_vector;
     case HASH:
         return symbols_hash;
+    case LAMBDA:
+        return symbols_lambda;
     default:
         w_assert(false);
+        return VALUE_ERROR;
+    }
+}
+
+LISP_BUILTIN(float, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value value = NEXT(args);
+    ENSURE_EMPTY(args);
+    switch (value.type) {
+    case INTEGER:
+        return VALUE_FLOAT((Double) value.val.integer_val);
+    case FLOAT:
+        return value;
+    case STRING:
+        /* TODO: implement number parsing */
+        w_assert(false);
+    default:
         return VALUE_ERROR;
     }
 }

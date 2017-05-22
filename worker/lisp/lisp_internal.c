@@ -245,6 +245,7 @@ LISP_BUILTIN(resource_usage, "") {
         case VECTOR:
         case HASH:
         case FUNCTION:
+        case LAMBDA:
         case COMPONENT:
         case COLOR:
         case SOUND:
@@ -282,5 +283,17 @@ LISP_BUILTIN(set_window_position, "") {
         return VALUE_ERROR;
     }
     SDL_SetWindowPosition(environment -> window, x_value.val.integer_val, y_value.val.integer_val);
+    return VALUE_NIL;
+}
+
+LISP_BUILTIN(force_frame, "") {
+    if (args.type == CONS) {
+        Value new = NEXT(args);
+        ENSURE_EMPTY(args);
+        ENSURE(new.type == INTEGER);
+        environment -> frame = new.val.integer_val;
+    } else {
+        environment -> frame++;
+    }
     return VALUE_NIL;
 }

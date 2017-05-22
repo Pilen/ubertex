@@ -7,6 +7,7 @@ void symbol_initialize(void);
 
 Value symbol_get(Value name);
 Value symbol_name(Value symbol);
+Value symbol_unique(void);
 
 Value symbols_t;
 Value symbols_quote;
@@ -26,6 +27,9 @@ Value symbols_cons;
 Value symbols_vector;
 Value symbols_hash;
 
+Value symbols_pi;
+Value symbols_tau;
+Value symbols_e;
 
 Value symbols_plain;
 Value symbols_full;
@@ -39,9 +43,7 @@ Value symbols_centered;
 Value symbols_left;
 Value symbols_right;
 
-Value symbols_pi;
-Value symbols_tau;
-Value symbols_e;
+Value symbols_linear;
 
 
 /* Not used for anything other than printing */

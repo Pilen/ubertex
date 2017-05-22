@@ -15,7 +15,6 @@ typedef struct {
 
     Unt frame;
 
-    Unt skip_ticks; /* 1000 / FPS */
     Bool fast_run;
 
     Int width;
@@ -39,6 +38,7 @@ typedef struct {
     Double clear_alpha;
 
     Value dynamic_variables;
+    Value lexical_variables;
     Hash *global_variables;
     Hash *functions;
 
@@ -48,6 +48,10 @@ typedef struct {
 Environment *environment_create(void);
 void environment_bind_variables(Value bindings, Environment *environment);
 void environment_unbind_variables(Environment *environment);
+void environment_bind_lexical(Value bindings, Environment *environment);
+void environment_unbind_lexical(Environment *environment);
+Unt environment_bind_multiple_variables(Value bindings, Environment *environment);
+void environment_unbind_multiple_variables(Unt count, Environment *environment);
 Bool environment_lookup_variable(Value key, Value *result, Environment *environment);
 void environment_set_variable(Value key, Value value, Environment *environment);
 

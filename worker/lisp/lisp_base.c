@@ -209,6 +209,7 @@ LISP_BUILTIN(let, "") {
             {
                 Value symbol = NEXT(pair);
                 Value value;
+                // pair is now the second element
                 if (pair.type == NIL) {
                     value = VALUE_NIL;
                 } else if (pair.type == CONS) {

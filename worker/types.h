@@ -30,6 +30,7 @@ typedef enum {
     VECTOR,
     HASH,
     FUNCTION,
+    LAMBDA,
     COMPONENT,
     COLOR,
     SOUND,
@@ -55,6 +56,7 @@ typedef enum {
 #define VALUE_VECTOR(val) ((Value) {VECTOR, {.vector_val = val}})
 #define VALUE_HASH(val) ((Value) {HASH, {.hash_val = val}})
 #define VALUE_FUNCTION(val) ((Value) {FUNCTION, {.function_val = val}})
+#define VALUE_LAMBDA(val) ((Value) {LAMBDA, {.lambda_val = val}})
 #define VALUE_COMPONENT(val) ((Value) {COMPONENT, {.component_val = val}})
 #define VALUE_COLOR(val) ((Value) {COLOR, {.color_val = val}})
 #define VALUE_SOUND(val) ((Value) {SOUND, {.sound_val = val}})
@@ -64,7 +66,7 @@ typedef enum {
 /* #define VALUE_TEXT(val) ((Value) {TEXT, {.text_val = val}}) */
 
 #define IS_NUMERIC(val) ((val).type == INTEGER || (val).type == FLOAT)
-#define NUM_VAL(v) ((Double) (((v).type == INTEGER) ? (v).val.integer_val : ((v).type == FLOAT) ? (v).val.float_val : NAN))
+#define NUM_VAL(v) ((Double) (((v).type == INTEGER) ? (v).val.integer_val : (((v).type == FLOAT) ? (v).val.float_val : NAN)))
 #define IS_LIST(val) ((val).type == CONS || (val).type == NIL)
 
 /* Actual datatype declarations */
@@ -73,6 +75,7 @@ typedef struct Cons_s Cons;
 typedef struct Vector_s Vector;
 typedef struct Hash_s Hash;
 typedef struct Function_s Function;
+typedef struct Lambda_s Lambda;
 typedef struct Component_s Component;
 typedef struct Color_s Color;
 typedef struct Sound_s Sound;
@@ -94,6 +97,7 @@ typedef struct {
         Vector *vector_val;
         Hash *hash_val;
         Function *function_val;
+        Lambda *lambda_val;
         Component *component_val;
         Color *color_val;
         Sound *sound_val;

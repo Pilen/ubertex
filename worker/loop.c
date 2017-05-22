@@ -105,7 +105,7 @@ void loop(Environment *environment) {
         fflush(log_output);
         fflush(output);
 
-        next_tick += environment -> skip_ticks;
+        next_tick += SKIP_TICKS;
         Int sleep_time = next_tick - SDL_GetTicks();
         if (sleep_time >= 0) {
             if (sleep_time < 20) {

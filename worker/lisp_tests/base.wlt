@@ -48,34 +48,3 @@ x ;=> (1)
     nil
     (setq x (cons 3 x))) ;=> (2 1)
 x ;=> (2 1)
-
-
-;;;;TEST;;;;
-(let ()) ;=> nil
-
-(let ((x)) x) ;=> nil
-
-(let ((x 1 2)) x) ;=> error
-(let ((x 100)) x) ;=> 100
-x ;=> error
-
-;;;;TEST;;;;
-(let* ()) ;=> nil
-
-(let* ((x)) x) ;=> nil
-
-(let* ((x 1 2)) x) ;=> error
-(let* ((x 100)) x) ;=> 100
-x ;=> error
-
-;;;;TEST;;;;
-(let ((x 1)
-      (y 2)
-      (x 3))
-  (list x y x)) ;=> (3 2 3)
-
-;;;;TEST;;;;
-(let* ((x 1)
-       (y 2)
-       (x 3))
-  (list x y x)) ;=> (3 2 3)
