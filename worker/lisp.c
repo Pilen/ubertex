@@ -78,8 +78,8 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(sqrt, sqrt, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(randint, randint, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(floor, floor, true, environment);
-    LISP_REGISTER_BUILTIN_FROM_RAW(ceil, floor, true, environment);
-    LISP_REGISTER_BUILTIN_FROM_RAW(round, floor, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(ceil, ceil, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(round, round, true, environment);
 
 
     LISP_REGISTER_BUILTIN_FROM_RAW(ease, ease, true, environment);
