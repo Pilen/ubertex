@@ -17,6 +17,36 @@ LISP_BUILTIN(ease, "") {
     /* (ease from/var target duration [method]) */
     /* http://upshots.org/actionscript/jsas-understanding-easing */
 
+    /*
+     * ;; from target duration
+     * ;; start = (frame)
+     * ;; end = start + duration
+     * ;; change = target - from
+     *
+     * `(lambda () (if (> (frame) ,end)
+     *                 ,target
+     *               (let ((ratio (/ (- (frame)
+     *                                   start)
+     *                               ,duration)))
+     *                 (round? (+ (* ratio
+     *                                ,change)
+     *                             from)))))
+     *
+     *
+     *
+     * def ease(start, fro, target, duration):
+     *     end = start + duration
+     *     change = target - fro
+     *     def helper(f):
+     *         if f > end:
+     *             return target
+     *         else:
+     *             ratio = ((f - start) / (duration + 0.0))
+     *             return ((ratio * change) + fro)
+     *     return helper
+     *
+     */
+
     /* TODO: make it work with `from` being a symbol, then it should update the value in the symbol */
     ENSURE_NOT_EMPTY(args);
     Value from_raw = NEXT(args);
@@ -64,19 +94,11 @@ LISP_BUILTIN(ease, "") {
     SD(let);
     SDD(minus, -);
     SDD(plus, +);
+    SD(quote);
     SD(ratio);
     SD(round);
+    SD(set);
     SDD(times, *);
-
-    /* Value condition = CONS(S(greater_than), CONS(CONS1(S(frame)), CONS1(VALUE_INTEGER(end)))); */
-    /* Value consequent = target; */
-    /* Value position = CONS(S(minus), CONS(CONS1(S(frame)), CONS1(VALUE_INTEGER(start)))); */
-    /* Value ratio = CONS(S(division), CONS(position, CONS1(VALUE_FLOAT(duration)))); */
-    /* Value multiplication = CONS(S(times), CONS(ratio, CONS1(VALUE_FLOAT(change)))); */
-    /* Value rounded = integer_math ? CONS(S(round), CONS1(multiplication)) : multiplication; */
-    /* Value alternative = CONS(S(plus), CONS(rounded, CONS1(from))); */
-    /* Value body = CONS(S(if), CONS(condition, CONS(consequent, CONS1(alternative)))); */
-
 
     Value condition = CONS(S(greater_than), CONS(CONS1(S(frame)), CONS1(VALUE_INTEGER(end))));
     Value consequent = integer_math ? target : CONS(S(float), CONS1(target));
@@ -84,19 +106,17 @@ LISP_BUILTIN(ease, "") {
     Value ratio = CONS(S(division), CONS(position, CONS1(VALUE_FLOAT(duration))));
     Value calculation;
     if (method.val.symbol_val == symbols_linear.val.symbol_val) {
-        calculation = CONS(S(plus), CONS(CONS(S(times), CONS(S(ratio), CONS1(VALUE_FLOAT(change)))), CONS1(VALUE_FLOAT(change))));
+        calculation = CONS(S(plus), CONS(CONS(S(times), CONS(S(ratio), CONS1(VALUE_FLOAT(change)))), CONS1(from)));
     } else {
         return VALUE_ERROR;
     }
     Value inner = integer_math ? CONS(S(round), CONS1(calculation)) : calculation;
-    Value alternative = CONS(S(let), CONS(CONS1(CONS(S(ratio), CONS1(ratio))), CONS1(inner)));
+    Value let = CONS(S(let), CONS(CONS1(CONS(S(ratio), CONS1(ratio))), CONS1(inner)));
+    Value alternative = from_raw.type == SYMBOL ? CONS(S(set), CONS(CONS(S(quote), CONS1(from_raw)), CONS1(let))) : let;
     Value body = CONS(S(if), CONS(condition, CONS(consequent, CONS1(alternative))));
 
     debug_value(body);
-    /*
-     * `(lambda () (if (> (frame) ,end)
-     *                 ,target
-    */
+
     Lambda *lambda = memory_malloc(sizeof(Lambda));
     lambda -> parameters = VALUE_NIL;
     lambda -> body = body;
