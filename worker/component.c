@@ -141,6 +141,7 @@ void component_remove(Component *component, Environment *environment) {
     component -> layer = NULL;
     Value entries = layer -> entries;
     w_assert(entries.type == CONS); /* The component must exist in this layer */
+    debug_value(entries);
     if (CAR(entries).val.component_val == component) {
         layer -> entries = CDR(entries);
         return;
