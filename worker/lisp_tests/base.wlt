@@ -12,6 +12,19 @@ foo ;=> 2
   (setq foo (+ foo 100))) ;=> 111
 foo ;=> 111
 
+;;;;TEST;;;;
+(set 'x 10) ;=> 10
+x ;=> 10
+;;;;TEST;;;;
+(set x 10) ;=> error
+x ;=> error
+;;;;TEST;;;;
+(set 't 10) ;=> error
+t ;=> t
+;;;;TEST;;;;
+(set nil 10) ;=> error
+nil ;=> nil
+
 
 ;;;;TEST;;;;
 (setq x nil)
