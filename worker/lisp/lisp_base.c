@@ -168,6 +168,8 @@ LISP_BUILTIN(set, "") {
     ENSURE_NOT_EMPTY(args);
     Value symbol = NEXT(args);
     ENSURE_NOT_EMPTY(args);
+    ENSURE(symbol.type == SYMBOL);
+    ENSURE(symbol.val.symbol_val != symbols_t.val.symbol_val);
     Value value = NEXT(args);
     ENSURE_EMPTY(args);
     environment_set_variable(symbol, value, environment);
