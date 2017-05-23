@@ -119,3 +119,15 @@ e ;=> 2.718282
 (floor 0.5) ;=> 0
 (floor 3.9) ;=> 3
 (floor -4.5) ;=> -5
+
+;;;;TEST;;;;
+(round 226.1) ;=> 226
+(round 226.666666666666666666) ;=> 227
+(round 226.8) ;=> 227
+
+;;;;TEST;;;;
+;; In Emacs this is platform dependent
+(round 0.5) ;=> 1
+(round 10.5) ;=> 11
+(round -0.5) ;=> -1
+(round -10.5) ;=> -11
