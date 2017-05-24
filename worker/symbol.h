@@ -44,7 +44,18 @@ Value symbols_left;
 Value symbols_right;
 
 Value symbols_linear;
-
+Value symbols_in_quad;
+Value symbols_out_quad;
+Value symbols_in_out_quad;
+Value symbols_in_cubic;
+Value symbols_out_cubic;
+Value symbols_in_out_cubic;
+Value symbols_in_quart;
+Value symbols_out_quart;
+Value symbols_in_out_quart;
+Value symbols_in_quint;
+Value symbols_out_quint;
+Value symbols_in_out_quint;
 
 /* Not used for anything other than printing */
 String *symbols_error;

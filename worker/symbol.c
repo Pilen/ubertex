@@ -50,7 +50,18 @@ void symbol_initialize() {
     symbols_right = symbol_get(VALUE_STRING(string_create_from_str("right")));
 
     symbols_linear = symbol_get(VALUE_STRING(string_create_from_str("linear")));
-
+    symbols_in_quad = symbol_get(VALUE_STRING(string_create_from_str("in-quad")));
+    symbols_out_quad = symbol_get(VALUE_STRING(string_create_from_str("out-quad")));
+    symbols_in_out_quad = symbol_get(VALUE_STRING(string_create_from_str("in-out-quad")));
+    symbols_in_cubic = symbol_get(VALUE_STRING(string_create_from_str("in-cubic")));
+    symbols_out_cubic = symbol_get(VALUE_STRING(string_create_from_str("out-cubic")));
+    symbols_in_out_cubic = symbol_get(VALUE_STRING(string_create_from_str("in-out-cubic")));
+    symbols_in_quart = symbol_get(VALUE_STRING(string_create_from_str("in-quart")));
+    symbols_out_quart = symbol_get(VALUE_STRING(string_create_from_str("out-quart")));
+    symbols_in_out_quart = symbol_get(VALUE_STRING(string_create_from_str("in-out-quart")));
+    symbols_in_quint = symbol_get(VALUE_STRING(string_create_from_str("in-quint")));
+    symbols_out_quint = symbol_get(VALUE_STRING(string_create_from_str("out-quint")));
+    symbols_in_out_quint = symbol_get(VALUE_STRING(string_create_from_str("in-out-quint")));
 
     symbols_error = string_create_from_str("error");
     symbols_nil = string_create_from_str("nil");

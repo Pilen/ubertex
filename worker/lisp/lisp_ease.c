@@ -12,10 +12,16 @@
 #define SD(symbol_name) Value local_symbol_##symbol_name = symbol_get(VALUE_STRING(string_create_from_str(#symbol_name)));
 #define SDD(local_name, symbol_name) Value local_symbol_##local_name = symbol_get(VALUE_STRING(string_create_from_str(#symbol_name)));
 #define S(symbol_name) local_symbol_##symbol_name
-
+#define T(m) (method.val.symbol_val == symbols_##m.val.symbol_val)
 LISP_BUILTIN(ease, "") {
     /* (ease from/var target duration [method]) */
-    /* http://upshots.org/actionscript/jsas-understanding-easing */
+    /*
+     * Visualisation: http://upshots.org/actionscript/jsas-understanding-easing
+     * Original: https://github.com/danro/jquery-easing/blob/master/jquery.easing.js
+     * Blog about improving: https://joshondesign.com/2013/03/01/improvedEasingEquations
+     * Code with improved: https://gist.github.com/gre/1650294
+     */
+
 
     /*
      * ;; from target duration
@@ -94,22 +100,75 @@ LISP_BUILTIN(ease, "") {
     SD(let);
     SDD(minus, -);
     SDD(plus, +);
+    SD(pow);
     SD(quote);
     SD(ratio);
     SD(round);
     SD(set);
     SDD(times, *);
 
+    Value ease;
+    if (T(linear)) {
+        ease = S(ratio);
+    } else if (T(in_quad)) {
+        ease = CONS(S(pow), CONS(S(ratio), CONS1(VALUE_FLOAT(2.0))));
+    } else if (T(out_quad)) {
+        ease = CONS(S(times), CONS(S(ratio), CONS1(CONS(S(minus), CONS(VALUE_FLOAT(2.0), CONS1(S(ratio)))))));
+    } else if (T(in_out_quad)) {
+        Value cond = CONS(S(greater_than), CONS(VALUE_FLOAT(0.5), CONS1(S(ratio))));
+        Value smaller = CONS(S(times), CONS(VALUE_FLOAT(2.0), CONS(S(ratio), CONS1(S(ratio)))));
+        Value minus2 = CONS(S(minus), CONS(S(ratio), CONS1(VALUE_FLOAT(2.0))));
+        Value minus1 = CONS(S(minus), CONS(S(ratio), CONS1(VALUE_FLOAT(1.0))));
+        Value larger = CONS(S(times), CONS(VALUE_FLOAT(-2.0), CONS(minus2, CONS1(minus1))));
+        ease = CONS(S(if), CONS(cond, CONS(smaller, CONS1(larger))));
+
+    } else if (T(in_cubic)) {
+        ease = CONS(S(pow), CONS(S(ratio), CONS1(VALUE_FLOAT(3.0))));
+    } else if (T(out_cubic)) {
+        Value minus1 = CONS(S(minus), CONS(S(ratio), CONS1(VALUE_FLOAT(1.0))));
+        ease = CONS(S(plus), CONS(VALUE_FLOAT(1.0), CONS1(CONS(S(pow), CONS(minus1, CONS1(VALUE_FLOAT(3)))))));
+    } else if (T(in_out_cubic)) {
+        Value cond = CONS(S(greater_than), CONS(VALUE_FLOAT(0.5), CONS1(S(ratio))));
+        Value smaller = CONS(S(times), CONS(VALUE_FLOAT(4.0), CONS(S(ratio), CONS(S(ratio), CONS1(S(ratio))))));
+        Value minus1 = CONS(S(minus), CONS(S(ratio), CONS1(VALUE_FLOAT(1.0))));
+        Value minus2twice = CONS(S(times), CONS(VALUE_FLOAT(2.0), CONS1(CONS(S(minus), CONS(S(ratio), CONS1(VALUE_FLOAT(2.0)))))));
+        Value larger = CONS(S(plus), CONS(VALUE_FLOAT(1.0), CONS1(CONS(S(times), CONS(minus1, CONS(minus2twice, CONS1(minus2twice)))))));
+        ease = CONS(S(if), CONS(cond, CONS(smaller, CONS1(larger))));
+
+    } else if (T(in_quart)) {
+        ease = CONS(S(pow), CONS(S(ratio), CONS1(VALUE_FLOAT(4.0))));
+    } else if (T(out_quart)) {
+        Value minus1 = CONS(S(minus), CONS(S(ratio), CONS1(VALUE_FLOAT(1.0))));
+        ease = CONS(S(minus), CONS(VALUE_FLOAT(1.0), CONS1(CONS(S(pow), CONS(minus1, CONS1(VALUE_FLOAT(4.0)))))));
+    } else if (T(in_out_quart)) {
+        Value cond = CONS(S(greater_than), CONS(VALUE_FLOAT(0.5), CONS1(S(ratio))));
+        Value smaller = CONS(S(times), CONS(VALUE_FLOAT(8.0), CONS(S(ratio), CONS(S(ratio), CONS(S(ratio), CONS1(S(ratio)))))));
+        Value minus1 = CONS(S(minus), CONS(S(ratio), CONS1(VALUE_FLOAT(1.0))));
+        Value pow = CONS(S(pow), CONS(minus1, CONS1(VALUE_FLOAT(4.0))));
+        Value larger = CONS(S(minus), CONS(VALUE_FLOAT(1.0), CONS1(CONS(S(times), CONS(VALUE_FLOAT(8.0), CONS1(pow))))));
+        ease = CONS(S(if), CONS(cond, CONS(smaller, CONS1(larger))));
+
+    } else if (T(in_quint)) {
+        ease = CONS(S(pow), CONS(S(ratio), CONS1(VALUE_FLOAT(5.0))));
+    } else if (T(out_quint)) {
+        Value minus1 = CONS(S(minus), CONS(S(ratio), CONS1(VALUE_FLOAT(1.0))));
+        ease = CONS(S(plus), CONS(VALUE_FLOAT(1.0), CONS1(CONS(S(pow), CONS(minus1, CONS1(VALUE_FLOAT(5.0)))))));
+    } else if (T(in_out_quint)) {
+        Value cond = CONS(S(greater_than), CONS(VALUE_FLOAT(0.5), CONS1(S(ratio))));
+        Value smaller = CONS(S(times), CONS(VALUE_FLOAT(16.0), CONS(S(ratio), CONS(S(ratio), CONS(S(ratio), CONS(S(ratio), CONS1(S(ratio))))))));
+        Value minus1 = CONS(S(minus), CONS(S(ratio), CONS1(VALUE_FLOAT(1.0))));
+        Value pow = CONS(S(pow), CONS(minus1, CONS1(VALUE_FLOAT(5.0))));
+        Value larger = CONS(S(plus), CONS(VALUE_FLOAT(1.0), CONS1(CONS(S(times), CONS(VALUE_FLOAT(16.0), CONS1(pow))))));
+        ease = CONS(S(if), CONS(cond, CONS(smaller, CONS1(larger))));
+
+    } else {
+        return VALUE_ERROR;
+    }
     Value condition = CONS(S(greater_than), CONS(CONS1(S(frame)), CONS1(VALUE_INTEGER(end))));
     Value consequent = integer_math ? target : CONS(S(float), CONS1(target));
     Value position = CONS(S(minus), CONS(CONS1(S(frame)), CONS1(VALUE_INTEGER(start))));
     Value ratio = CONS(S(division), CONS(position, CONS1(VALUE_FLOAT(duration))));
-    Value calculation;
-    if (method.val.symbol_val == symbols_linear.val.symbol_val) {
-        calculation = CONS(S(plus), CONS(CONS(S(times), CONS(S(ratio), CONS1(VALUE_FLOAT(change)))), CONS1(from)));
-    } else {
-        return VALUE_ERROR;
-    }
+    Value calculation = CONS(S(plus), CONS(CONS(S(times), CONS(ease, CONS1(VALUE_FLOAT(change)))), CONS1(from)));
     Value inner = integer_math ? CONS(S(round), CONS1(calculation)) : calculation;
     Value let = CONS(S(let), CONS(CONS1(CONS(S(ratio), CONS1(ratio))), CONS1(inner)));
     Value alternative = from_raw.type == SYMBOL ? CONS(S(set), CONS(CONS(S(quote), CONS1(from_raw)), CONS1(let))) : let;
