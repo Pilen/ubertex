@@ -73,8 +73,6 @@ void graphics_render_centered_at(Renderable *renderable, Double x, Double y, Env
  */
 Bool graphics_render_at_position(Renderable *renderable, Value position, Environment *environment) {
     profiler_start(profile_render);
-    Double x;
-    Double y;
 
     Double width = renderable -> width;
     Double height = renderable -> height;
@@ -149,65 +147,91 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
             }
         } else if (equal(first, symbols_scaled)) {
             /**** scaled ****/
+            /* ('scaled x y scale) */
+            /* ('scaled x y scalex scaley) */
             /* TODO: make it work with relative float positions */
-            if (length < 3) {
+            if (length < 4 || length > 5) {
                 log_error_in;
                 goto ERROR;
             }
-            Value a = NEXT(position);
-            Value b = NEXT(position);
-            if (!IS_NUMERIC(a) || !IS_NUMERIC(b)) {
-                log_error_in;
-                goto ERROR;
-            }
-            Double x = NUM_VAL(a);
-            Double y = NUM_VAL(b);
 
-            Value x_scale;
-            Value y_scale;
-            if (length == 4) {
-                x_scale = NEXT(position);
-                y_scale = x_scale;
-            } else if (length == 5) {
-                x_scale = NEXT(position);
-                y_scale = NEXT(position);
+            Value x_val = NEXT(position);
+            Value y_val = NEXT(position);
+            Value scale_x = NEXT(position);;
+            Value scale_y;
+            if (length == 5) {
+                scale_y = NEXT(position);
+            }
+
+            Double new_width;
+            Double new_height;
+            if (scale_x.type == INTEGER) {
+                new_width = NUM_VAL(scale_x)/width;
+            } else if (scale_x.type == FLOAT) {
+                new_width = NUM_VAL(scale_x);
+            } else {
+                log_error_in;
+                goto ERROR;
+            }
+            if (scale_y.type == INTEGER) {
+                new_height = NUM_VAL(scale_y)/height;
+            } else if (scale_y.type == FLOAT) {
+                log_error_in;
+                goto ERROR;
+            }
+
+            Double x = 0;
+            Double y = 0;
+            if (x_val.type == INTEGER) {
+                x = NUM_VAL(x_val);
+            } else if (x_val.type == FLOAT) {
+                x = (screen_width - new_width) / 2 + ((screen_width - new_width)/2 * NUM_VAL(x_val));
+            } else {
+                log_error_in;
+                goto ERROR;
+            }
+            if (y_val.type == INTEGER) {
+                y = NUM_VAL(y_val);
+            } else if (y_val.type == FLOAT) {
+                y = (screen_height - new_height) / 2 + ((screen_height - new_height)/2 * NUM_VAL(y_val));
             } else {
                 log_error_in;
                 goto ERROR;
             }
             cairo_translate(environment -> cairo, x, y);
-            if (x_scale.type == INTEGER && y_scale.type == INTEGER) {
-                /* scale to absolute size (set size) */
-                cairo_scale(environment -> cairo, NUM_VAL(x_scale)/width, NUM_VAL(y_scale)/height);
-            } else if (x_scale.type == FLOAT && y_scale.type == FLOAT) {
-                /* scale relative */
-                cairo_scale(environment -> cairo, NUM_VAL(x_scale), NUM_VAL(y_scale));
+            cairo_scale(environment -> cairo, new_width/width, new_height/height);
+            goto RENDER;
+
+        } else if (equal(first, symbols_sized)) {
+            /**** sized ****/
+            /* ('sized x y sizex/boundx sizey/boundy) */
+            /* Render scaled but keep aspect ratio */
+            if (length < 4 || length > 5) {
+                log_error_in;
+                goto ERROR;
+            }
+            Value x_val = NEXT(position);
+            Value y_val = NEXT(position);
+            Value size_x = NEXT(position);
+            Value size_y = size_x;
+            if (length == 5) {
+                size_y = NEXT(position);
+            }
+
+            Double desired_width;
+            Double desired_height;
+            if (size_x.type == INTEGER) {
+                desired_width = NUM_VAL(size_x);
+            } else if (size_x.type == FLOAT) {
+                desired_width = screen_width * NUM_VAL(size_x);
             } else {
                 log_error_in;
                 goto ERROR;
             }
-            goto RENDER;
-
-        } else if (equal(first, symbols_sized)) {
-            /* sized */
-            /* Render scaled but keep aspect ratio */
-            if (length != 5) {
-                log_error_in;
-                goto ERROR;
-            }
-            Value offset_xv = NEXT(position);
-            Value offset_yv = NEXT(position);
-            Value size_xv = NEXT(position);
-            Value size_yv = NEXT(position);
-
-            Double desired_width;
-            Double desired_height;
-            if (size_xv.type == INTEGER && size_yv.type == INTEGER) {
-                desired_width = NUM_VAL(size_xv);
-                desired_height = NUM_VAL(size_yv);
-            } else if (size_xv.type == FLOAT && size_yv.type == FLOAT) {
-                desired_width = screen_width * NUM_VAL(size_xv);
-                desired_height = screen_height * NUM_VAL(size_yv);
+            if (size_y.type == INTEGER) {
+                desired_height = NUM_VAL(size_y);
+            } else if (size_y.type == FLOAT) {
+                desired_height = screen_height * NUM_VAL(size_y);
             } else {
                 log_error_in;
                 goto ERROR;
@@ -225,19 +249,25 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
                 new_height = desired_height;
             }
 
-            Double dx = 0;
-            Double dy = 0;
-            if (offset_xv.type == INTEGER && offset_yv.type == INTEGER) {
-                dx = NUM_VAL(offset_xv);
-                dy = NUM_VAL(offset_yv);
-            } else if (offset_xv.type == FLOAT && offset_yv.type == FLOAT) {
-                dx = (screen_width - new_width) / 2 + ((screen_width - new_width)/2 * NUM_VAL(offset_xv));
-                dy = (screen_height - new_height) / 2 + ((screen_height - new_height)/2 * NUM_VAL(offset_yv));
+            Double x = 0;
+            Double y = 0;
+            if (x_val.type == INTEGER) {
+                x = NUM_VAL(x_val);
+            } else if (x_val.type == FLOAT) {
+                x = (screen_width - new_width) / 2 + ((screen_width - new_width)/2 * NUM_VAL(x_val));
             } else {
                 log_error_in;
                 goto ERROR;
             }
-            cairo_translate(environment -> cairo, dx, dy);
+            if (y_val.type == INTEGER) {
+                y = NUM_VAL(y_val);
+            } else if (y_val.type == FLOAT) {
+                y = (screen_height - new_height) / 2 + ((screen_height - new_height)/2 * NUM_VAL(y_val));
+            } else {
+                log_error_in;
+                goto ERROR;
+            }
+            cairo_translate(environment -> cairo, x, y);
             cairo_scale(environment -> cairo, new_width/width, new_height/height);
             goto RENDER;
         } else if (equal(first, symbols_rotated)) {
@@ -263,14 +293,14 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
             Double dx = NUM_VAL(x);
             Double dy = NUM_VAL(y);
 
-            Value x_scale;
-            Value y_scale;
+            Value scale_x;
+            Value scale_y;
             if (length == 5) {
-                x_scale = NEXT(position);
-                y_scale = x_scale;
+                scale_x = NEXT(position);
+                scale_y = scale_x;
             } else if (length == 6) {
-                x_scale = NEXT(position);
-                y_scale = NEXT(position);
+                scale_x = NEXT(position);
+                scale_y = NEXT(position);
             } else {
                 log_error_in;
                 goto ERROR;
@@ -278,12 +308,12 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
 
             Double sx;
             Double sy;
-            if (x_scale.type == INTEGER && y_scale.type == INTEGER) {
-                sx = NUM_VAL(x_scale)/width;
-                sy = NUM_VAL(y_scale)/height;
-            } else if (x_scale.type == FLOAT && y_scale.type == FLOAT) {
-                sx = NUM_VAL(x_scale);
-                sy = NUM_VAL(y_scale);
+            if (scale_x.type == INTEGER && scale_y.type == INTEGER) {
+                sx = NUM_VAL(scale_x)/width;
+                sy = NUM_VAL(scale_y)/height;
+            } else if (scale_x.type == FLOAT && scale_y.type == FLOAT) {
+                sx = NUM_VAL(scale_x);
+                sy = NUM_VAL(scale_y);
             } else {
                 log_error_in;
                 goto ERROR;
@@ -299,8 +329,8 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
     } else if (IS_NUMERIC(first) && length == 2) {/* (x y) */
         Value second = NEXT(position);
         if (IS_NUMERIC(second)) {
-            x = NUM_VAL(first);
-            y = NUM_VAL(second);
+            Double x = NUM_VAL(first);
+            Double y = NUM_VAL(second);
             cairo_translate(environment -> cairo, x, y);
             goto RENDER;
         }
