@@ -4,7 +4,7 @@
 #include "../eval.h"
 #include "../list.h"
 #include "../symbol.h"
-
+#include "../assert.h"
 
 LISP_BUILTIN(randint, "") {
     Int lower;
@@ -31,4 +31,14 @@ LISP_BUILTIN(randint, "") {
         return VALUE_ERROR;
     }
     return VALUE_INTEGER(random_int(lower, upper));
+}
+
+LISP_BUILTIN(choice, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value length_val = list_length(args);
+    w_assert(length_val.type == INTEGER);
+    Unt length = length_val.val.integer_val;
+    Unt choice = (Unt) random_int(0, length);
+    w_assert(choice < length);
+    return list_nth(args, choice);
 }

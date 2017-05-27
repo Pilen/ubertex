@@ -18,6 +18,7 @@ Unt round_up_to_power_of_2(Unt n) {
 }
 
 Double random_int(Int lower, Int upper) {
+    /* lower inclusive, upper exclusive */
     w_assert(lower < upper);
     Int limit = upper - lower;
     long long int divisor = RAND_MAX / limit;

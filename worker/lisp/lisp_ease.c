@@ -16,7 +16,8 @@
 LISP_BUILTIN(ease, "") {
     /* (ease from/var target duration [method]) */
     /*
-     * Visualisation: http://upshots.org/actionscript/jsas-understanding-easing
+     * Visualisation: http://easings.net/
+     * Article: http://upshots.org/actionscript/jsas-understanding-easing
      * Original: https://github.com/danro/jquery-easing/blob/master/jquery.easing.js
      * Blog about improving: https://joshondesign.com/2013/03/01/improvedEasingEquations
      * Code with improved: https://gist.github.com/gre/1650294
