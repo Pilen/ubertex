@@ -171,18 +171,18 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
             debug_value(scale_x);
             debug_value(scale_y)
             if (scale_x.type == INTEGER) {
-                new_width = NUM_VAL(scale_x)/width;
-            } else if (scale_x.type == FLOAT) {
                 new_width = NUM_VAL(scale_x);
+            } else if (scale_x.type == FLOAT) {
+                new_width = width * NUM_VAL(scale_x);
             } else {
                 debug("this is very strange scale_x is not numeric");
                 log_error_in;
                 goto ERROR;
             }
             if (scale_y.type == INTEGER) {
-                new_height = NUM_VAL(scale_y)/height;
-            } else if (scale_y.type == FLOAT) {
                 new_height = NUM_VAL(scale_y);
+            } else if (scale_y.type == FLOAT) {
+                new_height = height * NUM_VAL(scale_y);
             } else {
                 debug("this is also very strange scale_y is not numeric");
                 log_error_in;
