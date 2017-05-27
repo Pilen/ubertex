@@ -150,7 +150,6 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
             /* ('scaled x y scale) */
             /* ('scaled x y scalex scaley) */
             /* TODO: make it work with relative float positions */
-            debug("scaled");
             if (length < 4 || length > 5) {
                 log_error_in;
                 goto ERROR;
@@ -161,11 +160,9 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
             Value scale_x = NEXT(position);
             Value scale_y = scale_x;
             if (length == 5) {
-                debug("read next");
                 scale_y = NEXT(position);
             }
 
-            debug("set width");
             Double new_width;
             Double new_height;
             debug_value(scale_x);
@@ -175,7 +172,6 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
             } else if (scale_x.type == FLOAT) {
                 new_width = width * NUM_VAL(scale_x);
             } else {
-                debug("this is very strange scale_x is not numeric");
                 log_error_in;
                 goto ERROR;
             }
@@ -184,12 +180,10 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
             } else if (scale_y.type == FLOAT) {
                 new_height = height * NUM_VAL(scale_y);
             } else {
-                debug("this is also very strange scale_y is not numeric");
                 log_error_in;
                 goto ERROR;
             }
 
-            debug("set position");
             Double x = 0;
             Double y = 0;
             if (x_val.type == INTEGER) {
@@ -208,10 +202,8 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
                 log_error_in;
                 goto ERROR;
             }
-            debug("trans");
+            debug("%f, %f : %f, %f, xy= %f, %f", new_width, new_height, new_width/width, new_height/height, x, y);
             cairo_translate(environment -> cairo, x, y);
-            debug("scale/render");
-            debug("%f, %f - %f, %f, xy= %f, %f", new_width, new_height, new_width/width, new_height/height, x, y);
             cairo_scale(environment -> cairo, new_width/width, new_height/height);
             goto RENDER;
 
@@ -280,6 +272,7 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
                 log_error_in;
                 goto ERROR;
             }
+            debug("%f, %f : %f, %f, xy= %f, %f", new_width, new_height, new_width/width, new_height/height, x, y);
             cairo_translate(environment -> cairo, x, y);
             cairo_scale(environment -> cairo, new_width/width, new_height/height);
             goto RENDER;
