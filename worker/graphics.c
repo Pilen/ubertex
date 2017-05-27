@@ -165,8 +165,6 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
 
             Double new_width;
             Double new_height;
-            debug_value(scale_x);
-            debug_value(scale_y)
             if (scale_x.type == INTEGER) {
                 new_width = NUM_VAL(scale_x);
             } else if (scale_x.type == FLOAT) {
@@ -202,7 +200,6 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
                 log_error_in;
                 goto ERROR;
             }
-            debug("%f, %f : %f, %f, xy= %f, %f", new_width, new_height, new_width/width, new_height/height, x, y);
             cairo_translate(environment -> cairo, x, y);
             cairo_scale(environment -> cairo, new_width/width, new_height/height);
             goto RENDER;
@@ -272,7 +269,6 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
                 log_error_in;
                 goto ERROR;
             }
-            debug("%f, %f : %f, %f, xy= %f, %f", new_width, new_height, new_width/width, new_height/height, x, y);
             cairo_translate(environment -> cairo, x, y);
             cairo_scale(environment -> cairo, new_width/width, new_height/height);
             goto RENDER;
