@@ -158,10 +158,10 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
 
             Value x_val = NEXT(position);
             Value y_val = NEXT(position);
-            Value scale_x = NEXT(position);;
-            Value scale_y;
+            Value scale_x = NEXT(position);
+            Value scale_y = scale_x;
             if (length == 5) {
-                debug("copy scale_y := scale_x");
+                debug("read next");
                 scale_y = NEXT(position);
             }
 
@@ -182,7 +182,7 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
             if (scale_y.type == INTEGER) {
                 new_height = NUM_VAL(scale_y)/height;
             } else if (scale_y.type == FLOAT) {
-                new_width = NUM_VAL(scale_y);
+                new_height = NUM_VAL(scale_y);
             } else {
                 debug("this is also very strange scale_y is not numeric");
                 log_error_in;
