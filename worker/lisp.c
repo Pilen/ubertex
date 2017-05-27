@@ -104,6 +104,7 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(defcomponent, define_component, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(create, create_component, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(destroy, destroy_component, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(set-layer, set_layer, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(current-layer, current_layer, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(deflocal, deflocal, false, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(update, update, false, environment);
