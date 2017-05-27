@@ -211,7 +211,7 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
             debug("trans");
             cairo_translate(environment -> cairo, x, y);
             debug("scale/render");
-            debug("%f, %f - %f, %f", new_width, new_height, new_width/width, new_height/height);
+            debug("%f, %f - %f, %f, xy= %f, %f", new_width, new_height, new_width/width, new_height/height, x, y);
             cairo_scale(environment -> cairo, new_width/width, new_height/height);
             goto RENDER;
 
