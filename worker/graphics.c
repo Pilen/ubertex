@@ -168,6 +168,8 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
             debug("set width");
             Double new_width;
             Double new_height;
+            debug_value(scale_x);
+            debug_value(scale_y)
             if (scale_x.type == INTEGER) {
                 new_width = NUM_VAL(scale_x)/width;
             } else if (scale_x.type == FLOAT) {
