@@ -9,4 +9,5 @@ DEFINE_TEST_PROGRAM {
     TEST_USE_SUITE(memory);
     TEST_USE_SUITE(read);
     TEST_USE_SUITE(vector);
+    TEST_USE_SUITE(math);
 } END_TEST_PROGRAM
