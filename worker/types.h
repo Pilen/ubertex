@@ -63,10 +63,6 @@ typedef enum {
 #define VALUE_SOUNDSAMPLE(val) ((Value) {SOUNDSAMPLE, {.soundsample_val = val}})
 /* #define VALUE_TEXT(val) ((Value) {TEXT, {.text_val = val}}) */
 
-#define IS_NUMERIC(val) ((val).type == INTEGER || (val).type == FLOAT)
-#define NUM_VAL(v) ((Double) (((v).type == INTEGER) ? (v).val.integer_val : (((v).type == FLOAT) ? (v).val.float_val : NAN)))
-#define IS_LIST(val) ((val).type == CONS || (val).type == NIL)
-
 /* Actual datatype declarations */
 typedef struct String_s String;
 typedef struct Cons_s Cons;
