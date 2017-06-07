@@ -121,3 +121,171 @@ g ;=> 30
   (deflocal x 1000)
   (assert x 1000)) ;=> foo
 (create foo 10 100) ;=> #<component foo>
+
+
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (update (print 3)))
+(create foo) ;=> #<component foo>
+(component_update_all) ;=> 3nil
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (update (print x)))
+(create foo) ;=> #<component foo>
+(component_update_all) ;=> errornil
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (update (print x)))
+(create foo) ;=> #<component foo>
+(component_update_all) ;=> errornil
+(setq x 3) ;=> 3
+(component_update_all) ;=> 3nil
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (deflocal y 10)
+  (update (print x)))
+(create foo) ;=> #<component foo>
+(component_update_all) ;=> errornil
+(setq x 3) ;=> 3
+(component_update_all) ;=> 3nil
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (deflocal x 10)
+  (update (print x)))
+(create foo) ;=> #<component foo>
+(component_update_all) ;=> 10nil
+(setq x 3) ;=> 3
+(component_update_all) ;=> 10nil
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (update error (print x)))
+(create foo) ;=> #<component foo>
+(component_update_all) ;=> errornil
+(setq x 3) ;=> 3
+(component_update_all) ;=> 3nil
+
+
+
+
+
+
+
+
+
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (deflocal x 10)
+  (update
+   (funcall xe)
+   (print x)))
+(create foo) ;=> #<component foo>
+(component_update_all) ;=> 10nil
+(setq frames (* (/ 1.0 30.0) 3))
+(setq xe (ease 'x 200 frames)) ;=> error
+(component_update_all) ;=> 10nil
+
+;;;;TEST;;;;
+;; Wow, this is hackish
+(defcomp foo ()
+  (deflocal x 10)
+  (update
+   (funcall xe)
+   (print x)))
+(create foo) ;=> #<component foo>
+(component_update_all) ;=> 10nil
+(setq frames (* (/ 1.0 30.0) 3))
+(setq xe (let ((x 100)) (ease 'x 200 frames)))
+(component_update_all) ;=> 100nil
+(force_frame)
+(component_update_all) ;=> 133nil
+(force_frame)
+(component_update_all) ;=> 167nil
+(force_frame)
+(component_update_all) ;=> 200nil
+(force_frame)
+(component_update_all) ;=> 200nil
+
+
+
+
+
+;;;;TEST;;;;
+(defcomp foo (x)
+  (update (print x)))
+(setq x 10) ;=> 10
+(create foo 20)
+(component_update_all) ;=> 20nil
+(component_update_all) ;=> 20nil
+(component_update_all) ;=> 20nil
+
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (update (print 1)))
+(defcomp bar ()
+  (update (print 2)))
+(defcomp baz ()
+  (update (print 3)))
+(create foo)
+(create bar)
+(create baz)
+(component_update_all) ;=> 123nil
+(component_update_all) ;=> 123nil
+(component_update_all) ;=> 123nil
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (update (print 1)))
+(defcomp bar ()
+  (update (print 2)))
+(defcomp baz ()
+  (update (print 3)))
+(create baz)
+(create bar)
+(create foo)
+(component_update_all) ;=> 321nil
+(component_update_all) ;=> 321nil
+(component_update_all) ;=> 321nil
+
+;;;;TEST;;;;
+;;ignore;;
+(defcomp foo ()
+  (set-layer 1)
+  (update (print 1)))
+(defcomp bar ()
+  (set-layer 2)
+  (update (print 2)))
+(defcomp baz ()
+  (set-layer 3)
+  (update (print 3)))
+(create foo)
+(create bar)
+(create baz)
+(component_update_all) ;=> 123nil
+(component_update_all) ;=> 123nil
+(component_update_all) ;=> 123nil
+
+;;;;TEST;;;;
+;;ignore;;
+(defcomp foo ()
+  (set-layer 1)
+  (update (print 1)))
+(defcomp bar ()
+  (set-layer 2)
+  (update (print 2)))
+(defcomp baz ()
+  (set-layer 3)
+  (update (print 3)))
+(create baz)
+(create bar)
+(create foo)
+(component_update_all) ;=> 123nil
+(component_update_all) ;=> 123nil
+(component_update_all) ;=> 123nil

@@ -65,6 +65,24 @@ x ;=> 200
 (funcall e) ;=> 200
 x ;=> 200
 
+;;;;TEST;;;;
+(setq frames (* (/ 1.0 30.0) 3))
+(setq e (let ((x 100)) (ease 'x 200 frames)))
+(funcall e) ;=> 100
+x ;=> 100
+(force_frame)
+(funcall e) ;=> 133
+x ;=> 133
+(force_frame)
+(funcall e) ;=> 167
+x ;=> 167
+(force_frame)
+(funcall e) ;=> 200
+x ;=> 200
+(force_frame)
+(funcall e) ;=> 200
+x ;=> 200
+
 
 ;;;;TEST;;;;
 ;;(if (> (frame) 3) 12 (+ (* (/ (- (frame) 0) 3.0) 2.0) 10))
@@ -152,3 +170,27 @@ x ;=> 200
 (funcall e) ;=> 600
 (force_frame)
 (funcall e) ;=> 600
+
+
+
+
+
+
+
+
+
+
+
+;;;;TEST;;;;
+(force_frame 1000)
+(setq frames (* (/ 1.0 30.0) 3))
+(setq e (ease 100 200 frames 'in-quad))
+(funcall e) ;=> 100
+(force_frame)
+(funcall e) ;=> 111
+(force_frame)
+(funcall e) ;=> 144
+(force_frame)
+(funcall e) ;=> 200
+(force_frame)
+(funcall e) ;=> 200
