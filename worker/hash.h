@@ -1,8 +1,6 @@
 #ifndef W_HASH_H
 #define W_HASH_H
 
-#include "types.h"
-
 #define HASH_DEFAULT_SIZE 64
 #define HASH_EXPANSION_FACTOR 2
 #define HASH_EXPAND_LIMIT 0.8

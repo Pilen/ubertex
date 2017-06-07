@@ -1,9 +1,4 @@
-#include "message.h"
-#include "list.h"
-#include "assert.h"
-#include "eval.h"
-#include "loop.h"
-#include "debug.h"
+#include "headers.h"
 
 void message_set_handler(Component *component, Value symbol, Value params, Value body, Environment *environment) {
     Value handler = CONS(params, body);

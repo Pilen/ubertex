@@ -1,8 +1,6 @@
 #ifndef W_COLOR_H
 #define W_COLOR_H
 
-#include "types.h"
-
 struct Color_s {
     Double r;
     Double g;

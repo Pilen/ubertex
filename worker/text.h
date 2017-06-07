@@ -1,9 +1,6 @@
 #ifndef W_TEXT_H
 #define W_TEXT_H
 
-#include "types.h"
-#include "environment.h"
-
 typedef enum {
     text_alignment_center,
     text_alignment_left,

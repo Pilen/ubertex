@@ -1,15 +1,5 @@
 
-#include "debug.h"
-#include "types.h"
-#include "list.h"
-#include "eval.h"
-#include "symbol.h"
-#include "math.h"
-#include "hash.h"
-#include "log.h"
-#include "assert.h"
-#include "loop.h"
-#include "function.h"
+#include "headers.h"
 
 Value eval_list(Value expression, Environment *environment);
 Value eval_lambda(Value lambda_value, Value args, Environment *environment);

@@ -3,16 +3,10 @@
 
 #include <stdlib.h>
 
-#include "options.h"
-
 #define GC_THREADS
 #include <signal.h>
 /* #include <linux/signal.h> */
 #include <gc.h>
-
-#include "options.h"
-#include "types.h"
-#include "log.h"
 
 #if OPTION_DEBUG_MEMORY
 #define memory_malloc(size) (log_malloc(size), memory_malloc_actual(size))

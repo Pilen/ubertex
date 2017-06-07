@@ -1,8 +1,5 @@
 #include "test_utils.h"
-#include "../debug.h"
-#include "../types.h"
-#include "../list.h"
-#include "../basic.h"
+#include "../headers.h"
 
 
 void test_list_cons(void) {

@@ -1,9 +1,7 @@
 #ifndef W_COMPONENT_H
 #define W_COMPONENT_H
 
-#include "layer.h" /* First part of this header, to avoid cyclic dependencies */
-#include "types.h"
-#include "environment.h"
+/* layer.h is the 'first' part of this header, to avoid cyclic dependencies *\/ */
 
 Component *component_create(Value name, Value args, Environment *environment);
 void component_update_all(Environment *environment);

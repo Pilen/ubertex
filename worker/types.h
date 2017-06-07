@@ -5,8 +5,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "log.h"
-
 /* Type aliases for C types */
 typedef int32_t Int;
 typedef uint32_t Unt;

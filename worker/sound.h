@@ -2,8 +2,6 @@
 #define W_SOUND_H
 
 #include <SDL2/SDL_mixer.h>
-#include "types.h"
-#include "environment.h"
 
 struct Soundsample_s {
     Unt refcount;

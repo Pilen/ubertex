@@ -2,7 +2,6 @@
 #define W_PRINTER_H
 
 #include <stdio.h>
-#include "types.h"
 
 FILE *output;
 

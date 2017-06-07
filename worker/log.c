@@ -6,8 +6,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "types.h"
-#include "log.h"
+#include "headers.h"
 
 FILE *log_initialize_file(void) {
     /* Initializes a log file in the installation log dir, and creates a symlink to it in the working dir */

@@ -1,9 +1,4 @@
-#include "../math.h"
-#include "../debug.h"
-#include "../types.h"
-#include "../eval.h"
-#include "../list.h"
-#include "../symbol.h"
+#include "../headers.h"
 
 
 LISP_BUILTIN(plus, "") {

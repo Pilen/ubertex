@@ -3,12 +3,8 @@
 #include <string.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
-#include "communication.h"
-#include "assert.h"
-#include "read.h"
-#include "debug.h"
-#include "memory.h"
-#include "loop.h"
+
+#include "headers.h"
 
 typedef struct Communication_node_s {
     Unt frame;

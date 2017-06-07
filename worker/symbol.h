@@ -1,8 +1,6 @@
 #ifndef W_SYMBOL_H
 #define W_SYMBOL_H
 
-#include "types.h"
-
 void symbol_initialize(void);
 
 Value symbol_get(Value name);

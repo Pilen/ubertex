@@ -1,10 +1,5 @@
-#include "debug.h"
-#include "types.h"
-#include "memory.h"
-#include "hash.h"
-#include "symbol.h"
-#include "string.h"
-#include "assert.h"
+
+#include "headers.h"
 
 static Hash *symbol_table;
 static Hash *symbol_names;

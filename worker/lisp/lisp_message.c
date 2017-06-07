@@ -1,18 +1,4 @@
-#include "../types.h"
-#include "../eval.h"
-#include "../list.h"
-#include "../basic.h"
-#include "../symbol.h"
-#include "../math.h"
-#include "../eval.h"
-#include "../debug.h"
-#include "../memory.h"
-#include "../resource.h"
-#include "../graphics.h"
-#include "../string.h"
-#include "../component.h"
-#include "../assert.h"
-#include "../message.h"
+#include "../headers.h"
 
 LISP_BUILTIN(send, "") {
     ENSURE_NOT_EMPTY(args);

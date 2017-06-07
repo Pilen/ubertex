@@ -1,9 +1,10 @@
 
 #include <stdio.h>
-#include "options.h"
+#include "headers.h"
 
 #if OPTION_USE_READLINE
 #include "readline.h"
+#define _FUNCTION_DEF
 #include <readline/rlstdc.h>
 #include <readline/readline.h>
 #include <readline/history.h>

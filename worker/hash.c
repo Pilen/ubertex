@@ -1,10 +1,5 @@
-#include "debug.h"
-#include "print.h"
-#include "string.h"
-#include "hash.h"
-#include "memory.h"
-#include "basic.h"
-#include "assert.h"
+
+#include "headers.h"
 
 void hash_insert(Hash *hash, Unt h1, Unt h2, Value key, Value data);
 Unt hash_calculate1(const Value *key);

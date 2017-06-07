@@ -1,6 +1,5 @@
 
-#include "color.h"
-#include "memory.h"
+#include "headers.h"
 
 Color *color_create_rgb(Value red, Value green, Value blue) {
     return color_create_rgba(red, green, blue, VALUE_FLOAT(1.0));

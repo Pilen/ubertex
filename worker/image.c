@@ -1,15 +1,8 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
-#include "types.h"
-#include "graphics.h"
-#include "debug.h"
-#include "image.h"
-#include "assert.h"
-#include "string.h"
-#include "memory.h"
-#include "resource.h"
-#include "file.h"
+
+#include "headers.h"
 
 Bool image_get_renderable_from_file(Value filename, Renderable *target, Environment *environment) {
     Image *skeleton = memory_malloc(sizeof(Image));

@@ -1,16 +1,5 @@
-#include "debug.h"
 
-#include "stdio.h"
-
-#include "print.h"
-#include "string.h"
-#include "list.h"
-#include "vector.h"
-#include "hash.h"
-#include "symbol.h"
-#include "component.h"
-#include "assert.h"
-#include "function.h"
+#include "headers.h"
 
 void print(Value value) {
     print_on(output, value);

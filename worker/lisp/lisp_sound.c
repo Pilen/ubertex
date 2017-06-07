@@ -1,13 +1,4 @@
-#include "../types.h"
-#include "../eval.h"
-#include "../list.h"
-#include "../basic.h"
-#include "../symbol.h"
-#include "../math.h"
-#include "../eval.h"
-#include "../debug.h"
-#include "../memory.h"
-#include "../sound.h"
+#include "../headers.h"
 
 LISP_BUILTIN(sound, "") {
     ENSURE_NOT_EMPTY(args);

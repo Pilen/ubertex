@@ -4,21 +4,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <cairo.h>
 
-#include "options.h"
-#include "debug.h"
-#include "initialize.h"
-#include "symbol.h"
-#include "lisp.h"
-#include "environment.h"
-#include "log.h"
-#include "resource.h"
-#include "memory.h"
-#include "assert.h"
-#include "sound.h"
-#include "graphics.h"
-#include "loop.h"
-#include "profiler.h"
-#include "math.h"
+#include "headers.h"
 
 Environment *initialize(void) {
     /* static Bool initialized = false; */

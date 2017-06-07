@@ -1,12 +1,5 @@
-#include "component.h"
-#include "memory.h"
-#include "environment.h"
-#include "lisp.h"
-#include "hash.h"
-#include "eval.h"
-#include "assert.h"
-#include "debug.h"
-#include "symbol.h"
+
+#include "headers.h"
 
 Component *component_create(Value name, Value args, Environment *environment) {
     Value definition;

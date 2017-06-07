@@ -1,13 +1,4 @@
-#include "../types.h"
-#include "../eval.h"
-#include "../list.h"
-#include "../basic.h"
-#include "../symbol.h"
-#include "../eval.h"
-#include "../string.h"
-#include "../math.h"
-#include "../memory.h"
-#include "../debug.h"
+#include "../headers.h"
 
 #define SD(symbol_name) Value local_symbol_##symbol_name = symbol_get(VALUE_STRING(string_create_from_str(#symbol_name)));
 #define SDD(local_name, symbol_name) Value local_symbol_##local_name = symbol_get(VALUE_STRING(string_create_from_str(#symbol_name)));

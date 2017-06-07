@@ -1,11 +1,5 @@
-#include "types.h"
-#include "environment.h"
-#include "basic.h"
-#include "hash.h"
-#include "memory.h"
-#include "list.h"
-#include "component.h"
-#include "assert.h"
+
+#include "headers.h"
 
 /* Note: decide if this function should just be located in initialize.c */
 Environment *environment_create(void) {

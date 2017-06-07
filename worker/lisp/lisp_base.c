@@ -1,15 +1,4 @@
-
-#include "../types.h"
-#include "../eval.h"
-#include "../list.h"
-#include "../basic.h"
-#include "../symbol.h"
-#include "../math.h"
-#include "../eval.h"
-#include "../debug.h"
-#include "../memory.h"
-#include "../loop.h"
-#include "../assert.h"
+#include "../headers.h"
 
 LISP_BUILTIN(progn, "") {
     Value result = VALUE_NIL;

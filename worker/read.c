@@ -3,12 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "types.h"
-#include "memory.h"
-#include "read.h"
-#include "symbol.h"
-#include "list.h"
-#include "string.h"
+#include "headers.h"
 
 /* TODO: this file does not work with unicode yet!!! */
 

@@ -1,9 +1,6 @@
 #ifndef W_LOOP_H
 #define W_LOOP_H
 
-#include "types.h"
-#include "environment.h"
-
 void loop(Environment *environment);
 /* FLAGS */
 /* TODO: decide if this should be placed somewhere else */

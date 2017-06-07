@@ -1,8 +1,7 @@
 
 #include <SDL2/SDL.h>
-#include "lock.h"
-#include "memory.h"
-#include "assert.h"
+
+#include "headers.h"
 
 Lock_RW *lock_rw_create() {
     Lock_RW *lock = memory_malloc(sizeof(Lock_RW));

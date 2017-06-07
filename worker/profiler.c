@@ -1,8 +1,5 @@
 
-#include "profiler.h"
-#include "log.h"
-#include "memory.h"
-#include "debug.h"
+#include "headers.h"
 
 #if OPTION_PROFILE
 Profile *profiler_create(char *name);

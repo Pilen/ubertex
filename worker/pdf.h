@@ -1,9 +1,6 @@
 #ifndef W_PDF_H
 #define W_PDF_H
 
-#include "types.h"
-#include "environment.h"
-
 #define PDF_DPI 150.0
 #define PDF_RENDER_DPI 72.0
 

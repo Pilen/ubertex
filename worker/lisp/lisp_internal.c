@@ -1,27 +1,9 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-
-#include "../types.h"
-#include "../assert.h"
-#include "../eval.h"
-#include "../list.h"
-#include "../vector.h"
-#include "../basic.h"
-#include "../symbol.h"
-#include "../math.h"
-#include "../eval.h"
-#include "../debug.h"
-#include "../memory.h"
-#include "../graphics.h"
-#include "../string.h"
-#include "../pdf.h"
-#include "../resource.h"
-#include "../sound.h"
-#include "../image.h"
-#include "../component.h"
-#include "../message.h"
 /* #include "../libs/cairosdl/cairosdl.h" */
+
+#include "../headers.h"
 
 LISP_BUILTIN(assert, "") {
     ENSURE_NOT_EMPTY(args);

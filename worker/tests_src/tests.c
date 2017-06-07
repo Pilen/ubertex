@@ -1,6 +1,5 @@
 #include "test_utils.h"
-#include "../log.h"
-#include "../initialize.h"
+#include "../headers.h"
 
 DEFINE_TEST_PROGRAM {
     initialize();

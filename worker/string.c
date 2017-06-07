@@ -1,8 +1,6 @@
 #include <string.h>
 
-#include "debug.h"
-#include "string.h"
-#include "memory.h"
+#include "headers.h"
 
 /* TODO: this file does not work with unicode yet!!! */
 

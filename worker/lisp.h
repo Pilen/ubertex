@@ -1,11 +1,6 @@
 #ifndef W_FUNCTION_H
 #define W_FUNCTION_H
 
-#include "types.h"
-#include "list.h"
-#include "environment.h"
-#include "function.h"
-
 void lisp_initialize(Environment *environment);
 
 void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, String *docstring, Environment *environment);

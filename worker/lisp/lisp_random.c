@@ -1,10 +1,4 @@
-#include "../math.h"
-#include "../debug.h"
-#include "../types.h"
-#include "../eval.h"
-#include "../list.h"
-#include "../symbol.h"
-#include "../assert.h"
+#include "../headers.h"
 
 LISP_BUILTIN(randint, "") {
     Int lower;

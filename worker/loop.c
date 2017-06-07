@@ -1,20 +1,7 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 
-#include "environment.h"
-#include "loop.h"
-#include "debug.h"
-#include "list.h"
-#include "assert.h"
-#include "eval.h"
-#include "communication.h"
-#include "memory.h"
-#include "resource.h"
-#include "sound.h"
-#include "graphics.h"
-#include "component.h"
-#include "message.h"
-#include "profiler.h"
+#include "headers.h"
 
 void loop(Environment *environment) {
     Unt next_tick = SDL_GetTicks();

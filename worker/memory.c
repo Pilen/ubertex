@@ -2,10 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "memory.h"
-#include "log.h"
-#include "debug.h"
-#include "lock.h"
+#include "headers.h"
 
 void memory_register_collection_hook(void);
 void memory_on_garbage_collection(void *obj, void *cd);

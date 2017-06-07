@@ -1,9 +1,6 @@
 
 #include "test_utils.h"
-#include "../debug.h"
-#include "../types.h"
-#include "../vector.h"
-#include "../basic.h"
+#include "../headers.h"
 
 void test_vector_1(void) {
     Vector *vector = vector_create(1);

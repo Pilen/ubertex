@@ -1,8 +1,6 @@
 #ifndef W_STRING_H
 #define W_STRING_H
 
-#include "types.h"
-
 struct String_s {
     Unt refcount;
     Unt size; /* size in bytes including nullbyte */

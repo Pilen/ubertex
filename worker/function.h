@@ -1,8 +1,6 @@
 #ifndef W_LISP_H
 #define W_LISP_H
 
-#include "types.h"
-
 typedef Value (*c_lisp_function) (Value args, Environment *environment);
 
 struct Function_s {

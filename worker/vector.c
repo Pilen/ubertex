@@ -1,7 +1,5 @@
-#include "debug.h"
-#include "vector.h"
-#include "memory.h"
-#include "assert.h"
+
+#include "headers.h"
 
 void vector_expand(Vector *vector);
 void vector_contract(Vector *vector);

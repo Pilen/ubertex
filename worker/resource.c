@@ -1,19 +1,8 @@
+
 #include <sys/stat.h>
 #include <SDL2/SDL.h>
 
-#include "types.h"
-#include "resource.h"
-#include "hash.h"
-#include "vector.h"
-#include "string.h"
-#include "environment.h"
-#include "assert.h"
-#include "lock.h"
-#include "memory.h"
-#include "debug.h"
-#include "image.h"
-#include "pdf.h"
-#include "sound.h"
+#include "headers.h"
 
 Bool resource_create(Value skeleton, Environment *environment);
 Int resource_comparison(const void *a, const void *b);

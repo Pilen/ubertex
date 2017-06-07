@@ -1,8 +1,6 @@
 #ifndef W_LAYER_H
 #define W_LAYER_H
 
-#include "types.h"
-
 typedef struct Layer_s Layer;
 struct Layer_s {
     Int index;

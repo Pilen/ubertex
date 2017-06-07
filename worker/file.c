@@ -1,8 +1,6 @@
 #include <string.h>
-#include "file.h"
-#include "memory.h"
-#include "assert.h"
-#include "debug.h"
+
+#include "headers.h"
 
 char *file_get_extension_str(char *filename) {
     char *extension = strrchr(filename, '.');

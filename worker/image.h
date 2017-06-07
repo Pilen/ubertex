@@ -3,8 +3,6 @@
 
 #include <SDL2/SDL.h>
 #include <cairo.h>
-#include "types.h"
-#include "environment.h"
 
 struct Image_s {
     Unt refcount;

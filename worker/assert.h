@@ -1,9 +1,7 @@
 #ifndef W_ASSERT_H
 #define W_ASSERT_H
 
-#include "types.h"
 #include <stdlib.h>
-#include "options.h"
 
 #if OPTION_DEBUG
 #define w_assert(v)                             \

@@ -1,10 +1,5 @@
-#include "debug.h"
 
-#include "lisp.h"
-#include "symbol.h"
-#include "memory.h"
-#include "string.h"
-
+#include "headers.h"
 
 void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN(symbols_progn, progn, false, environment);

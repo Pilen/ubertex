@@ -1,11 +1,8 @@
 #ifndef W_DEBUG_H
 #define W_DEBUG_H
 
-#include "options.h"
 #if OPTION_DEBUG
 #include <stdio.h>
-#include "print.h"
-#include "log.h"
 
 #define debug_value(v) do{fprintf(log_output, "DEBUG: %s:%d: %s: ", __FILE__, __LINE__, __func__); print_on(log_output, (v)); fprintf(log_output, "\n");} while (0);
 #define debugr(M) do{fprintf(log_output, "DEBUG: %s:%d: %s: " #M "\n", __FILE__, __LINE__, __func__);} while (0);

@@ -1,9 +1,5 @@
 #include "test_utils.h"
-#include "../debug.h"
-#include "../types.h"
-#include "../hash.h"
-#include "../basic.h"
-#include "../math.h"
+#include "../headers.h"
 
 void test_hash_1(void) {
     Hash *hash = hash_create();

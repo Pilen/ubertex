@@ -2,6 +2,7 @@
 #define W_TEST_UTILS_H
 
 #include <stdio.h>
+
 #include "../types.h"
 
 Unt W_TEST_UTILS_count_total;

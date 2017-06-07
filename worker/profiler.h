@@ -1,10 +1,7 @@
-
 #ifndef W_PROFILER_H
 #define W_PROFILER_H
 
 #include <time.h>
-#include "types.h"
-#include "options.h"
 
 #define PROFILER_TO_SEC(profile) ((profile) -> time.tv_sec + ((profile) -> time.tv_nsec / 1000000000.0))
 

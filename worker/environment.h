@@ -3,8 +3,6 @@
 
 #include <SDL2/SDL.h>
 #include <cairo.h>
-#include "hash.h"
-#include "layer.h"
 
 typedef struct {
     SDL_Window *window;

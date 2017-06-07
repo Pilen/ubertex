@@ -1,13 +1,4 @@
-#include "../types.h"
-#include "../eval.h"
-#include "../list.h"
-#include "../basic.h"
-#include "../symbol.h"
-#include "../eval.h"
-#include "../string.h"
-#include "../math.h"
-#include "../memory.h"
-#include "../debug.h"
+#include "../headers.h"
 
 LISP_BUILTIN(defun, "") {
     ENSURE_NOT_EMPTY(args);

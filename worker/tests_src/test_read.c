@@ -1,11 +1,6 @@
 
 #include "test_utils.h"
-#include "../debug.h"
-#include "../types.h"
-#include "../vector.h"
-#include "../basic.h"
-#include "../read.h"
-#include "../initialize.h"
+#include "../headers.h"
 
 void test_read_1(void) {
     Value value = read_from_str("x");

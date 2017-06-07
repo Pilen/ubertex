@@ -1,8 +1,7 @@
 
 #include <stdlib.h>
-#include "math.h"
-#include "debug.h"
-#include "assert.h"
+
+#include "headers.h"
 
 Unt round_up_to_power_of_2(Unt n) {
     /* If n is a power of two, return it */

@@ -4,15 +4,7 @@
 #include <cairo.h>
 #include <SDL2/SDL.h>
 
-#include "types.h"
-#include "pdf.h"
-#include "assert.h"
-#include "string.h"
-#include "debug.h"
-#include "graphics.h"
-#include "memory.h"
-#include "resource.h"
-#include "file.h"
+#include "headers.h"
 
 Bool pdf_get_slide(Value filename, Int slide, Renderable *target, Environment *environment) {
     Pdf *skeleton = memory_malloc(sizeof(Pdf));

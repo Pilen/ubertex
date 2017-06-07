@@ -6,22 +6,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#include "debug.h"
-
-#include "options.h"
-#include "initialize.h"
-#include "read.h"
-#include "vector.h"
-#include "eval.h"
-#include "print.h"
-#include "environment.h"
-#include "readline.h"
-#include "log.h"
-#include "string.h"
-#include "loop.h"
-#include "communication.h"
-#include "memory.h"
-#include "resource.h"
+#include "headers.h"
 
 int main(int argc, char **argv) {
     Environment *environment = initialize();

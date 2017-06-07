@@ -1,15 +1,5 @@
-#include "debug.h"
 
-#include "basic.h"
-#include "list.h"
-#include "vector.h"
-#include "string.h"
-#include "assert.h"
-#include "image.h"
-#include "pdf.h"
-#include "sound.h"
-#include "text.h"
-#include "lisp.h"
+#include "headers.h"
 
 Bool equal(Value a, Value b) {
     /* TODO: find out how to handle comparison of 2.0 and 2 */

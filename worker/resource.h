@@ -1,9 +1,6 @@
 #ifndef W_RESOURCE_H
 #define W_RESOURCE_H
 
-#include "environment.h"
-#include "lock.h"
-
 size_t resource_size_threshold;
 
 Hash *resource_cache;

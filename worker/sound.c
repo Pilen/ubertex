@@ -1,16 +1,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "sound.h"
-#include "memory.h"
-#include "resource.h"
-#include "assert.h"
-#include "string.h"
-#include "file.h"
-#include "lock.h"
-#include "math.h"
-#include "basic.h"
-#include "debug.h"
+#include "headers.h"
 
 Mutex *sound_lock;
 Sound **sound_table;

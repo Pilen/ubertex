@@ -3,13 +3,7 @@
 #include <pango/pangocairo.h>
 #include "libs/cairosdl/cairosdl.h"
 
-#include "text.h"
-#include "memory.h"
-#include "assert.h"
-#include "resource.h"
-#include "string.h"
-#include "debug.h"
-#include "graphics.h"
+#include "headers.h"
 
 void text_show(void *data, Environment *environment) {
     PangoLayout *layout = (PangoLayout *) data;

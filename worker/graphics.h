@@ -1,10 +1,6 @@
 #ifndef W_GRAPHICS_H
 #define W_GRAPHICS_H
 
-#include "types.h"
-#include "color.h"
-#include "environment.h"
-
 struct Renderable_s {
     void *data;
     void (*render)(void *data, Environment *environment);

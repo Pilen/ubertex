@@ -1,7 +1,4 @@
-#include "../types.h"
-#include "../symbol.h"
-#include "../assert.h"
-#include "../lisp.h"
+#include "../headers.h"
 
 LISP_BUILTIN(type_of, "") {
     ENSURE_NOT_EMPTY(args);

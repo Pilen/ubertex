@@ -1,17 +1,4 @@
-
-#include "../types.h"
-#include "../eval.h"
-#include "../list.h"
-#include "../basic.h"
-#include "../symbol.h"
-#include "../math.h"
-#include "../eval.h"
-#include "../debug.h"
-#include "../memory.h"
-#include "../image.h"
-#include "../graphics.h"
-#include "../pdf.h"
-#include "../text.h"
+#include "../headers.h"
 
 LISP_BUILTIN(color, "") {
     return VALUE_ERROR;

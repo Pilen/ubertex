@@ -1,13 +1,8 @@
 #include <SDL2/SDL.h>
 #include <cairo.h>
 #include <pango/pangocairo.h>
-#include "types.h"
-#include "graphics.h"
-#include "list.h"
-#include "symbol.h"
-#include "debug.h"
-#include "basic.h"
-#include "profiler.h"
+
+#include "headers.h"
 
 Color graphics_parse_color(Value raw) {
     /* Should work on a cons cell */

@@ -3,8 +3,6 @@
 
 #include <stdlib.h>
 
-#include "types.h"
-
 #define VECTOR_EXPANSION_FACTOR 2
 #define VECTOR_CONTRACT_LIMIT 0.33
 

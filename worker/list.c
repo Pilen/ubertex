@@ -1,9 +1,5 @@
 
-#include "debug.h"
-#include "types.h"
-#include "list.h"
-#include "memory.h"
-#include "assert.h"
+#include "headers.h"
 
 Cons *list_cons(Value a, Value b) {
     Cons *cons = memory_malloc(sizeof(Cons));

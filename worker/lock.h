@@ -2,7 +2,6 @@
 #define W_LOCK_H
 
 #include <SDL2/SDL.h>
-#include "types.h"
 
 typedef SDL_mutex Mutex;
 

@@ -1,7 +1,6 @@
 #ifndef W_MATH_H
 #define W_MATH_H
 
-#include "types.h"
 #include <math.h>
 
 #define RAD_TO_DEG(radians) ((radians) * 180.0 / M_PI)
@@ -14,7 +13,9 @@
 #endif
 
 Unt round_up_to_power_of_2(Unt n);
+#ifndef MIN
 #define MIN(x, y) (((x) <= (y)) ? (x) : (y))
+#endif
 
 Double random_int(Int lower, Int upper);
 #endif
