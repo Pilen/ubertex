@@ -128,7 +128,7 @@ LISP_BUILTIN(times, "") {
 }
 
 LISP_BUILTIN(division, "") {
-    Bool real;
+    Bool real = false;
     ENSURE_NOT_EMPTY(args);
     Value args_copy = args;
     while (args_copy.type == CONS) {
