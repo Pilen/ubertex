@@ -18,12 +18,9 @@ LISP_BUILTIN(randint, "") {
     } else {
         lower = 0;
         upper = first.val.integer_val;
-
     }
     ENSURE_EMPTY(args);
-    if (lower >= upper) {
-        return VALUE_ERROR;
-    }
+    ENSURE(lower < upper);
     return VALUE_INTEGER(random_int(lower, upper));
 }
 

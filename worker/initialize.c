@@ -4,6 +4,8 @@
 #include <SDL2/SDL_mixer.h>
 #include <cairo.h>
 
+#include "libs/pcg-c-basic-0.9/pcg_basic.h"
+
 #include "headers.h"
 
 Environment *initialize(void) {
@@ -30,7 +32,7 @@ Environment *initialize(void) {
     loop_resync = false;
     loop_new_seed = 0;
 
-    srand(0);
+    pcg32_srandom(0, 1);
 
     environment_set_variable(symbols_pi, VALUE_FLOAT(M_PI), environment);
     environment_set_variable(symbols_tau, VALUE_FLOAT(M_PI * 2.0), environment);

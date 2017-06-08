@@ -11,7 +11,9 @@ LFLAGS += `pkg-config --libs cairo poppler-glib pangocairo`
 
 SRC = $(wildcard *.c)
 SRC += $(wildcard lisp/*.c)
-SRC += $(wildcard libs/*/*.c)
+SRC += libs/cairosdl/cairosdl.c
+SRC += libs/pcg-c-basic-0.9/pcg_basic.c
+# SRC += $(wildcard libs/*/*.c)
 TESTS_SRC = $(filter-out main.c, $(SRC) $(wildcard tests_src/*.c))
 
 

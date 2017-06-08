@@ -1,6 +1,8 @@
 
 #include <stdlib.h>
 
+#include "libs/pcg-c-basic-0.9/pcg_basic.h"
+
 #include "headers.h"
 
 Unt round_up_to_power_of_2(Unt n) {
@@ -16,14 +18,10 @@ Unt round_up_to_power_of_2(Unt n) {
     }
 }
 
-Double random_int(Int lower, Int upper) {
+Int random_int(Int lower, Int upper) {
     /* lower inclusive, upper exclusive */
-    w_assert(lower < upper);
+    /* upper--; */
+    w_assert(lower <= upper);
     Int limit = upper - lower;
-    long long int divisor = RAND_MAX / limit;
-    int retval;
-    do {
-        retval = rand() / divisor;
-    } while (retval > limit);
-    return retval + lower;
+    return pcg32_boundedrand(limit) + lower;
 }
