@@ -31,9 +31,10 @@ FILE *log_output;
 #define log_assert(v, ve) LOG(ASSERTION-FAILURE, 2, "%s:%d: %s: \t%s gave %d", __FILE__, __LINE__, __func__, #v, ve)
 #define log_fatal(...)                                   \
     do {                                                 \
-        LOG(FATAL-ERROR, 1, __VA_ARGS__);                \
         if (1 <= log_level) {                            \
-            fprintf(log_output, "exiting...\n");         \
+            fprintf(log_output, "FATAL-ERROR: %s:%d:%s: ", __FILE__, __LINE__, __func__); \
+            fprintf(log_output, __VA_ARGS__);            \
+            fprintf(log_output, "\nexiting...\n");       \
         }                                                \
         exit(EXIT_FAILURE);                              \
     } while (0);
