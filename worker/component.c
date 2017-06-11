@@ -129,6 +129,7 @@ void component_destroy_all(Environment *environment) {
 /* Remove component from layers.
    Does not mark it destroyed, so can be used for moving between layers */
 void component_remove(Component *component, Environment *environment) {
+    (void) environment; /* Environment not actually used */
     w_assert(component -> layer);
     Layer *layer = component -> layer;
     component -> layer = NULL;

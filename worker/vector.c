@@ -21,6 +21,8 @@ Vector *vector_create(Unt size) {
 }
 
 void vector_destroy(Vector *vector) {
+    (void) vector;
+    log_fatal("Not yet implemented");
 }
 
 /* void vector_clear(Vector *vector); */
@@ -93,9 +95,6 @@ Value vector_pop_back(Vector *vector) {
 /* void vector_insert(Vector *vector, Value value, Unt position) */
 
 Value vector_pop(Vector* vector, Unt position) {
-    if (position < 0) {
-        position = vector -> length + position;
-    }
     if (position >= vector -> length) {
         /* TODO: log error */
         return VALUE_ERROR;
@@ -119,9 +118,6 @@ Value vector_pop(Vector* vector, Unt position) {
 
 
 Bool vector_set(Vector *vector, Unt position, Value value) {
-    if (position < 0) {
-        position = vector -> length + position;
-    }
     if (position >= vector -> length) {
         /* TODO: log error */
         return false;
@@ -137,9 +133,6 @@ Bool vector_set(Vector *vector, Unt position, Value value) {
 }
 
 Value vector_get(Vector *vector, Unt position) {
-    if (position < 0) {
-        position = vector -> length + position;
-    }
     if (position >= vector -> length) {
         /* TODO: log error */
         return VALUE_ERROR;
@@ -221,6 +214,9 @@ void vector_contract(Vector *vector) {
 }
 
 void vector_sort(Vector *vector, Int (*compare)(Value a, Value b)) {
+    (void) vector;
+    (void) compare;
+    log_fatal("Not yet implemented");
     /* NOTE: Look into how this can be integrated with the resource sorting */
 
     /* if (vector -> start + vector -> length >= vector -> size) { */
@@ -233,5 +229,9 @@ void vector_sort(Vector *vector, Int (*compare)(Value a, Value b)) {
 }
 
 void vector_sort_comparison(const void *a, const void*b, void *comparison) {
+    (void) a;
+    (void) b;
+    (void) comparison;
+    log_fatal("Not yet implemented");
     /* return comparison(* (Value *)a, * (Value *) b); */
 }

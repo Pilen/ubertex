@@ -24,7 +24,7 @@ Bool file_read_raw(char *filename, char **buffer, size_t *size) {
 
     char *allocated = memory_malloc(sizeof(char) * (file_size + 1));
     size_t bytes_read = fread(allocated, sizeof(char), file_size, file);
-    if (bytes_read != file_size) {
+    if (bytes_read != (size_t) file_size) {
         log_error("Could not read entire file %s", filename);
         fclose(file);
         memory_free(allocated);

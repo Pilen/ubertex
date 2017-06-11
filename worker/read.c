@@ -150,6 +150,7 @@ Bool read_munch_comment(char **code, char *end, Unt *linenumber) {
 }
 
 Bool read_integer(char **code, char *end, Unt *linenumber, Value *result) {
+    (void) linenumber; /* linenumber not actually used */
     char *p = *code;
     Bool found = false;
 
@@ -185,6 +186,7 @@ Bool read_integer(char **code, char *end, Unt *linenumber, Value *result) {
 
 /* TODO: ensure that this works if end comes unexpected */
 Bool read_float(char **code, char *end, Unt *linenumber, Value *result) {
+    (void) linenumber; /* linenumber not actually used */
     char *p = *code;
     Bool found = false;
     Bool decimals = false;
@@ -258,6 +260,7 @@ Bool read_float(char **code, char *end, Unt *linenumber, Value *result) {
 }
 
 Bool read_string(char **code, char *end, Unt *linenumber, Value *result) {
+    (void) linenumber; /* linenumber not actually used */
     char *p = *code;
 
     if (p >= end || *p != '\"') {
@@ -287,6 +290,7 @@ Bool read_string(char **code, char *end, Unt *linenumber, Value *result) {
 }
 
 Bool read_symbol(char **code, char *end, Unt *linenumber, Value *result) {
+    (void) linenumber; /* linenumber not actually used */
     char *p = *code;
     Bool found = false;
 

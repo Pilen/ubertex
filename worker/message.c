@@ -1,6 +1,7 @@
 #include "headers.h"
 
 void message_set_handler(Component *component, Value symbol, Value params, Value body, Environment *environment) {
+    (void) environment; /* Environment not actually used */
     Value handler = CONS(params, body);
     hash_set(component -> message_handlers, symbol, handler);
 }

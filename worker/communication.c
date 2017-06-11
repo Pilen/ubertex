@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
 
@@ -18,7 +19,7 @@ Mutex *communication_queue_lock;
 
 Int communication_loop(void *data);
 void communication_receive(TCPsocket socket);
-void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame);
+void communication_receive_lisp(TCPsocket socket, Int size, Unt frame);
 void communication_reset(void);
 
 
@@ -149,8 +150,12 @@ void communication_receive(TCPsocket socket) {
         Int scanned = sscanf(options, "%u", &size);
         if (scanned != 1) {
             log_error("Size option for lisp command in header invalid");
+            return;
         }
-
+        if (size >= INT_MAX) {
+            log_error("Only positive int sized messages are supported");
+            return;
+        }
         communication_receive_lisp(socket, size, frame);
     } else if (strcmp(command, "ping") == 0) {
         w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
@@ -197,7 +202,8 @@ void communication_receive(TCPsocket socket) {
     return;
 }
 
-void communication_receive_lisp(TCPsocket socket, Unt size, Unt frame) {
+void communication_receive_lisp(TCPsocket socket, Int size, Unt frame) {
+    w_assert(size >= 0);
     Int error;
     SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
     w_assert(set);

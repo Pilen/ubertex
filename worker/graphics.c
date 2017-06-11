@@ -6,6 +6,7 @@
 
 Color graphics_parse_color(Value raw) {
     /* Should work on a cons cell */
+    (void) raw;
     log_fatal("Not yet implemented")
 }
 

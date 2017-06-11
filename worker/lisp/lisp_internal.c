@@ -189,7 +189,7 @@ LISP_BUILTIN(resource_usage, "") {
           resource_comparison);
 
     Unt total_size = 0;
-    for (Int i = 0; i < resource_vector -> length; i++) {
+    for (Unt i = 0; i < resource_vector -> length; i++) {
         Value resource = VECTOR_GET_UNSAFE(resource_vector, i);
         switch (resource.type) {
         case IMAGE:

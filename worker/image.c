@@ -21,6 +21,7 @@ Bool image_get_renderable_from_file(Value filename, Renderable *target, Environm
 }
 
 Unt resource_create_image(Value skeleton, Environment *environment) {
+    (void) environment; /* Environment not actually used */
     w_assert(skeleton.type == IMAGE);
     Image *image = skeleton.val.image_val;
     w_assert(image -> path.type == STRING);

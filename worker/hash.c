@@ -130,10 +130,12 @@ void hash_insert(Hash *hash, Unt h1, Unt h2, Value key, Value data) {
     w_assert(false);
 }
 Unt hash_calculate1(const Value *key) {
+    (void) key;
     /* TODO: implement properly!! */
     return 1;
 }
 Unt hash_calculate2(const Value *key) {
+    (void) key;
     /* TODO: implement properly!! */
     return 1;
 }

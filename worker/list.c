@@ -96,4 +96,7 @@ Value list_copy(Value list) {
 /* } */
 
 void list_destroy(Value list) {
+    /* This function currently does nothing, the GC will clean it up later */
+    (void) list; /* list not actually used */
+    /* log_fatal("Not yet implemented"); */
 };

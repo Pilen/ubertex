@@ -1,7 +1,7 @@
 CFLAGS=-std=c99 -ggdb -DDEBUG
 # CFLAGS += -D_GNU_SOURCE
 CFLAGS += -D_POSIX_C_SOURCE=200809L
-CFLAGS += -Wall -Werror # -pedantic -Wno-unused-result -Wuninitialized -Wmaybe-uninitialized -Winit-self -Wunused-result -Wunused
+CFLAGS += -Wall -Wextra -Werror # -pedantic -Wno-unused-result -Wuninitialized -Wmaybe-uninitialized -Winit-self -Wunused-result -Wunused
 CFLAGS += -MD -MP
 CFLAGS += `sdl2-config --cflags`
 CFLAGS += `pkg-config --cflags cairo poppler-glib pangocairo`

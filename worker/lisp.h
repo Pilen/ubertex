@@ -7,7 +7,7 @@ void lisp_register_builtin(Value symbol, c_lisp_function c_function, Bool eval, 
 
 #define LISP_BUILTIN(name, docstring)                                   \
     char *lisp_docstr_for_##name = (docstring);                         \
-    Value lisp_builtin_##name(Value args, Environment *environment)
+    Value lisp_builtin_##name(Value args __attribute__((unused)), Environment *environment __attribute__((unused)))
 
 #define LISP_REGISTER_BUILTIN(symbol, c_function_name, eval, environment) \
     {                                                                   \

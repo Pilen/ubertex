@@ -26,6 +26,7 @@ Bool pdf_get_slide(Value filename, Int slide, Renderable *target, Environment *e
 }
 
 Unt resource_create_pdf(Value skeleton, Environment *environment) {
+    (void) environment; /* Environment not actually used */
     debug("Loading pdf: %s", skeleton.val.pdf_val -> path.val.string_val -> text);
     cairo_status_t status;
     w_assert(skeleton.type == PDF);

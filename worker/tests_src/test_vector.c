@@ -64,13 +64,13 @@ void test_vector_6(void) {
         vector_push_back(vector, VALUE_INTEGER((i + 1) * 10));
         TEST_M(vector_length(vector) == i+1, "i = %d, length = %d", i, vector_length(vector));
     }
-    for (Unt i = 0; i < 130; i++) {
+    for (Int i = 0; i < 130; i++) {
         TEST_M(vector_get(vector, i).val.integer_val == (i + 1) * 10, "i = %d, length = %d", i, vector_length(vector));
     }
     TEST(vector -> size == 256);
-    for (Unt i = 0; i < 130; i++) {
+    for (Int i = 0; i < 130; i++) {
         Value val = vector_pop_back(vector);
-        TEST_M(vector_length(vector) == 130-i-1, "i = %d, length = %d", i, vector_length(vector));
+        TEST_M(vector_length(vector) == (Unt) 130-i-1, "i = %d, length = %d", i, vector_length(vector));
         TEST(val.val.integer_val == (130 - i)*10);
     }
     TEST(vector -> size == 1);

@@ -5,9 +5,9 @@
 
 Mutex *sound_lock;
 Sound **sound_table;
-Int sound_channels;
-Int sound_playing;
-Int sound_first_free; /* Might not actually be free, but we know nothing is free before */
+Unt sound_channels;
+Unt sound_playing;
+Unt sound_first_free; /* Might not actually be free, but we know nothing is free before */
 
 void sound_finished(Int channel);
 char *sound_convert_to_ogg(String *mp3);
@@ -40,6 +40,7 @@ void sound_table_expand(void) {
 }
 
 void sound_finished(Int channel) {
+    w_assert(channel >= 0);
     mutex_lock(sound_lock);
     Soundsample *soundsample = sound_table[channel] -> sample;
     soundsample -> current--;
@@ -48,7 +49,7 @@ void sound_finished(Int channel) {
     }
     sound_table[channel] = NULL;
     sound_playing--;
-    sound_first_free = MIN(sound_first_free, channel);
+    sound_first_free = MIN(sound_first_free, (Unt) channel);
     mutex_unlock(sound_lock);
 }
 
@@ -68,7 +69,7 @@ Value sound_play(Value filename, Int volume, Int loops, Environment *environment
         sound_table_expand();
     }
 
-    Int channel = sound_first_free;
+    Unt channel = sound_first_free;
     while (sound_table[channel] != NULL) {
         channel++;
     }
@@ -81,7 +82,7 @@ Value sound_play(Value filename, Int volume, Int loops, Environment *environment
     Mix_Volume(channel, volume);
 
     Int actual_channel = Mix_PlayChannel(channel, soundsample -> chunk, loops);
-    w_assert(actual_channel == channel);
+    w_assert(actual_channel == (Int) channel);
 
     Sound *sound = memory_malloc(sizeof(Sound));
     sound -> playing = true;
@@ -97,6 +98,7 @@ Value sound_play(Value filename, Int volume, Int loops, Environment *environment
 }
 
 Bool sound_stop(Sound *sound, Environment *environment) {
+    (void) environment; /* Environment not actually used */
     /* w_assert(soundv.type == SOUND); */
     /* Sound *sound = soundv.val.sound_val; */
 
@@ -138,7 +140,7 @@ void sound_fade_out_all(Int duration) {
 
 void sound_mark_dirty(Value filename) {
     mutex_lock(sound_lock);
-    for (Int i = 0; i < sound_channels; i++) {
+    for (Unt i = 0; i < sound_channels; i++) {
         Sound *sound = sound_table[i];
         if (!sound) {
             continue;
@@ -151,6 +153,7 @@ void sound_mark_dirty(Value filename) {
     mutex_unlock(sound_lock);
 }
 Unt resource_create_soundsample(Value skeleton, Environment *environment) {
+    (void) environment; /* Environment not actually used */
     w_assert(skeleton.type == SOUNDSAMPLE);
     Soundsample *soundsample = skeleton.val.soundsample_val;
     w_assert(soundsample -> path.type == STRING);
@@ -217,7 +220,7 @@ char *sound_convert_to_ogg(String *mp3) {
     }
 
     char *raw_command = "ffmpeg -loglevel quiet -i \"%s\" -c:a libvorbis -q:a 7 -vn -y \"%s\"";
-    Unt size = strlen(raw_command) + mp3 -> size - 1 + ogg -> size - 2 * 2 * sizeof(char);
+    Int size = strlen(raw_command) + mp3 -> size - 1 + ogg -> size - 2 * 2 * sizeof(char);
     char *command = memory_cmalloc(sizeof(char) * size);
     Int actual_size = sprintf(command, raw_command, mp3 -> text, ogg -> text);
     w_assert(size == actual_size + 1);

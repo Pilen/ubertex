@@ -18,19 +18,19 @@ void test_hash_1(void) {
 
 void test_hash_2(void) {
     Hash *hash = hash_create();
-    Int length = HASH_DEFAULT_SIZE - 1;
-    for (Int i = 0; i < length; i++) {
+    Unt length = HASH_DEFAULT_SIZE - 1;
+    for (Unt i = 0; i < length; i++) {
         Value key = VALUE_FLOAT(10.0 * i);
         Value data = VALUE_INTEGER(1000 * i);
         hash_set(hash, key, data);
     }
     TEST(hash_length(hash) == length);
-    for (Int i = 0; i < length; i++) {
+    for (Unt i = 0; i < length; i++) {
         Value key = VALUE_FLOAT(10.0 * i);
         Value data;
         Bool found = hash_get(hash, key, &data);
         TEST(found);
-        TEST(data.val.integer_val == 1000 * i);
+        TEST(data.val.integer_val == (Int) (1000 * i));
     }
 }
 

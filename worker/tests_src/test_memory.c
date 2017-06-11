@@ -8,7 +8,7 @@ void test_memory_1(void) {
     void *allocs[times];
     size_t size = 1000;
     Unt s = 0;
-    for (Int i = 0; i < times; i++) {
+    for (Unt i = 0; i < times; i++) {
         void *mem = memory_malloc(size);
         memset(mem, i, size);
         allocs[i] = mem;

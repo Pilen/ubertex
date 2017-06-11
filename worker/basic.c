@@ -55,7 +55,7 @@ Bool equal(Value a, Value b) {
                 return false;
             }
             /* Compare each element recursively */
-            for (int i = 0; i < a_vector -> length; i++) {
+            for (Unt i = 0; i < a_vector -> length; i++) {
                 if (!equal(VECTOR_GET_UNSAFE(a_vector, i),
                            VECTOR_GET_UNSAFE(b_vector, i))) {
                     return false;

@@ -40,6 +40,8 @@ Bool text(String *text, Int fontsize, Text_alignment alignment, Renderable *targ
     case text_alignment_right:
         alignment_p = PANGO_ALIGN_RIGHT;
         break;
+    default:
+        w_assert(false);
     }
     pango_layout_set_alignment(layout, alignment_p); // Assume Text_alignment and PangoAlignment are the same
 

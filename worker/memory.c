@@ -36,13 +36,19 @@ void *memory_cmalloc_actual(size_t size) {
 }
 
 void memory_free(void *ptr) {
+    /* This function currently does nothing, the GC will clean it up later */
+    (void) ptr;
     /* free(ptr); */
     /* GC_FREE(ptr); */
 }
 
 void memory_ref_inc(Value value) {
+    (void) value;
+    /* log_warning("Reference counting not implemented") */
 }
 void memory_ref_dec(Value value) {
+    (void) value;
+    /* log_warning("Reference counting not implemented") */
 }
 
 void memory_register_collection_hook(void) {
@@ -58,6 +64,8 @@ void memory_register_collection_hook(void) {
 }
 
 void memory_on_garbage_collection(void *obj, void *cd) {
+    (void) obj;
+    (void) cd;
     memory_register_collection_hook();
 
     mutex_lock(memory_lock);

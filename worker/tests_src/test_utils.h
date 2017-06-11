@@ -26,7 +26,7 @@ Bool W_TEST_UTILS_successful;
     Unt W_TEST_UTILS_count_total = 0;                      \
     Unt W_TEST_UTILS_count_successful = 0;                 \
     Bool W_TEST_UTILS_successful = true;                   \
-    int main(int argc, char** argv) {                      \
+    int main(int argc __attribute__((unused)), char** argv __attribute__((unused))) { \
     printf("========\n");                                  \
     do {
 
