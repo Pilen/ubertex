@@ -89,6 +89,7 @@ Value sound_play(Value filename, Int volume, Int loops, Environment *environment
     sound -> channel = channel;
     sound -> sample = soundsample;
     soundsample -> current++;
+    sound_playing++;
     sound_table[channel] = sound;
     mutex_unlock(sound_lock);
     Unt done = SDL_GetTicks();
