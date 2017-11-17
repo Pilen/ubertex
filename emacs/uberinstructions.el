@@ -187,7 +187,8 @@ Uses either the given seed or a random number between 0 and most-positive-fixnum
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun revy-sound (file &optional volume)
-  "Play a sound overlay"
+  "Play a sound overlay
+Volume is integer between 0 and 128"
   ;; (revy-send-message "playsound" file))
   (revy-send-lisp nil `(sound ,file ,volume)))
 
@@ -214,8 +215,8 @@ Uses either the given seed or a random number between 0 and most-positive-fixnum
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Todo outsource this to work through zeigen
 
-(defconst revy-mplayer-default-geometry "-xy 550 -geometry 55%:45%")
-(defconst revy-mplayer-flags "-vo x11")
+(defvar revy-mplayer-geometry "-xy 550 -geometry 55%:45%")
+(defvar revy-mplayer-flags "-vo x11")
 (defconst revy-mplayer-default-flags "-nolirc -msglevel all=-1 -msglevel statusline=5 -zoom")
 
 (defun revy-mplayer (file &optional geometry flags default-flags x y w h)
@@ -232,7 +233,7 @@ Uses either the given seed or a random number between 0 and most-positive-fixnum
   ;; -xy 400 -geometry 55%:45%
   ;; -xy 550 -geometry 55%:45%
   ;; (revy-shell (concat "mplayer -vo x11 -nolirc -msglevel all=-1 -msglevel statusline=5 -zoom -xy 550 -geometry 55%:45% \"" file "\""))
-  (let ((geometry (or geometry revy-mplayer-default-geometry))
+  (let ((geometry (or geometry revy-mplayer-geometry))
         (flags (or flags revy-mplayer-flags))
         (default-flags (or default-flags revy-mplayer-default-flags))
         command)

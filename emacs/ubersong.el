@@ -97,7 +97,7 @@ Does not affect the cursor."
                      (buffer-substring-no-properties start end)
                      (buffer-substring-no-properties end final)))))
     (message "%d %d %d %d" start end final (point))
-    (revy-send-lisp nil `(update (text ,text)))
+    (revy-send-lisp nil `(progn (set 'current-text ,text) (update (text ,text))))
 
     (revy-ubersong--scan start end)))
 
