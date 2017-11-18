@@ -58,7 +58,8 @@ void initialize_graphics(Bool fullscreen, Environment *environment) {
     }
     atexit(IMG_Quit);
 
-    flags = MIX_INIT_MP3 | MIX_INIT_OGG;
+    flags = 0;
+    /* flags = MIX_INIT_MP3 | MIX_INIT_OGG; */
     if (Mix_Init(flags) != flags) {
         log_fatal("Unable to initialize SDL_mixer: %s", Mix_GetError());
     }
