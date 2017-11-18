@@ -203,6 +203,7 @@ Unt resource_flush_dirty_cache(void) {
             } else {
                 vector_push_back(resource_vector, resource);
             }
+            break;
         default:
             /* Catch missing */
             w_assert(false);

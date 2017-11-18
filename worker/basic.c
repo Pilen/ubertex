@@ -67,7 +67,7 @@ Bool equal(Value a, Value b) {
     case HASH:
         /* TODO: implement */
         debug("HASH VALUES CANT BE COMPARED YET!!!!");
-        w_assert(false);
+        w_assert(false); break;
     case LAMBDA:
         {
             Lambda *a_l = a.val.lambda_val;
@@ -146,6 +146,7 @@ Value copy_deep(Value value) {
     case HASH:
     case LAMBDA: // Should copy lexicals into a new lambda
         log_error("Not yet implemented");
+        return VALUE_ERROR;
     default:
         w_assert(false);
         return value;

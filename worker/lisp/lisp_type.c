@@ -41,7 +41,7 @@ LISP_BUILTIN(float, "") {
         return value;
     case STRING:
         /* TODO: implement number parsing */
-        w_assert(false);
+        w_assert(false); return VALUE_ERROR;
     default:
         return VALUE_ERROR;
     }
