@@ -105,18 +105,6 @@ the command will be executed on revy-current-worker."
       (goto-char (point-max))
       (call-process-shell-command command nil "*revy-shell*" t))))
 
-;; Might be unnecessary if using sshmount
-(defun revy-scp-file (filename subdir)
-  "Copy a file to a worker using scp"
-  (when revy-scp-mode
-    (dolist (worker (revy-get-workers revy-current-worker))
-      (revy-shell
-       (concat "scp "
-               filename
-               " " (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
-               ":" (aref worker revy-worker-dir-index)
-               (file-name-as-directory subdir) (file-name-nondirectory filename))))))
-
 (defun revy-elisp (start &optional end)
   "Evaluates elisp code.
 Default is to give it a region from start to end.
