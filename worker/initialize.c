@@ -58,8 +58,10 @@ void initialize_graphics(Bool fullscreen, Environment *environment) {
     }
     atexit(IMG_Quit);
 
-    flags = 0;
+    /* SDL_Mixer will load libraries dynamically, Mix_Init can preload libraries */
+    /* But in 2.0.2 preloading doesn't work */
     /* flags = MIX_INIT_MP3 | MIX_INIT_OGG; */
+    flags = 0;
     if (Mix_Init(flags) != flags) {
         log_fatal("Unable to initialize SDL_mixer: %s", Mix_GetError());
     }
