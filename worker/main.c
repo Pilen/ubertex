@@ -79,6 +79,27 @@ int main(int argc, char **argv) {
         }
     }
 
+    if (background) {
+        pid_t process_id = fork();
+        if (process_id < 0) {
+            log_fatal("Could not fork process!");
+        }
+        if (process_id > 0) {
+            /* Parrent process */
+            exit(0);
+        }
+        pid_t sid = setsid();
+        if (sid < 0) {
+            /* log_fatal("Could not set sid!"); */
+        }
+        log_output = log_initialize_file();
+        output = log_output;
+        fflush(log_output);
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
+    }
+
     if (!host) {
         host = memory_malloc(sizeof(char) * 256);
         memset(host, '\0', 256);
@@ -105,27 +126,6 @@ int main(int argc, char **argv) {
         print(result);
         fprintf(output, "\n");
 
-    }
-
-    if (background) {
-        pid_t process_id = fork();
-        if (process_id < 0) {
-            log_fatal("Could not fork process!");
-        }
-        if (process_id > 0) {
-            /* Parrent process */
-            exit(0);
-        }
-        pid_t sid = setsid();
-        if (sid < 0) {
-            /* log_fatal("Could not set sid!"); */
-        }
-        log_output = log_initialize_file();
-        output = log_output;
-        fflush(log_output);
-        close(STDIN_FILENO);
-        close(STDOUT_FILENO);
-        close(STDERR_FILENO);
     }
 
     if (interactive) {
