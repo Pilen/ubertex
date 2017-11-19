@@ -80,6 +80,9 @@ int main(int argc, char **argv) {
     }
 
     if (background) {
+        /* Moving this section to the last before interactive / looping causes the program to crash. */
+        /* XIO:  fatal IO error 11 (Resource temporarily unavailable) on X server ":0" */
+        /*        after 286 requests (286 known processed) with 15 events remaining. */
         pid_t process_id = fork();
         if (process_id < 0) {
             log_fatal("Could not fork process!");
