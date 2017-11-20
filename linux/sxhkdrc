@@ -1,0 +1,12 @@
+
+# terminal emulator
+super + {_,shift} Return
+    urxvt
+
+# program launcher
+super + {p,r}
+    dmenu_run
+
+# Close window
+super + shift + c
+    bspc node -c
