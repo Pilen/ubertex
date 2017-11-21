@@ -10,3 +10,7 @@ super + {p,r}
 # Close window
 super + shift + c
     bspc node -c
+
+# Next/Previous
+super + {_,shift + } Tab
+    bspc node -f {next,prev}.local
