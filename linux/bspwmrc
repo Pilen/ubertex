@@ -13,4 +13,5 @@ bspc config merge_overlapping_monitors true
 bspc config remove_disabled_monitors true
 bspc config remove_unplugged_monitors true
 
-~/.config/bspwm/bspwm-floating &
+bspc rule -a MPlayer state=floating
+bspc rule -a worker state=floating
