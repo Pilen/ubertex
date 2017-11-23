@@ -147,6 +147,7 @@ LISP_BUILTIN(division, "") {
         Double result = NUM_VAL(arg);
         while (args.type == CONS) {
             arg = NEXT(args);
+            if (arg.val.float_val == 0) {return VALUE_ERROR;}
             result /= NUM_VAL(arg);
         }
         return VALUE_FLOAT(result);
@@ -154,6 +155,7 @@ LISP_BUILTIN(division, "") {
         Int result = arg.val.integer_val;
         while (args.type == CONS) {
             arg = NEXT(args);
+            if (arg.val.integer_val == 0) {return VALUE_ERROR;}
             result /= arg.val.integer_val;
         }
         return VALUE_INTEGER(result);

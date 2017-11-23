@@ -61,6 +61,10 @@ LISP_BUILTIN(ease, "") {
     Unt start = environment -> frame;
     Unt end = start + duration;
 
+    if (duration == 0) {
+        return VALUE_ERROR;
+    }
+
     Value from;
     if (from_raw.type == SYMBOL) {
         ENSURE(environment_lookup_variable(from_raw, &from, environment));
@@ -159,7 +163,7 @@ LISP_BUILTIN(ease, "") {
     Value condition = CONS(S(greater_than), CONS(CONS1(S(frame)), CONS1(VALUE_INTEGER(end))));
     Value consequent = integer_math ? target : CONS(S(float), CONS1(target));
     Value position = CONS(S(minus), CONS(CONS1(S(frame)), CONS1(VALUE_INTEGER(start))));
-    Value ratio = CONS(S(division), CONS(position, CONS1(VALUE_FLOAT(duration))));
+    Value ratio = CONS(S(division), CONS(position, CONS1(VALUE_FLOAT(duration)))); /* duration is checked for 0 */
     Value calculation = CONS(S(plus), CONS(CONS(S(times), CONS(ease, CONS1(VALUE_FLOAT(change)))), CONS1(from)));
     Value inner = integer_math ? CONS(S(round), CONS1(calculation)) : calculation;
     Value let = CONS(S(let), CONS(CONS1(CONS(S(ratio), CONS1(ratio))), CONS1(inner)));
