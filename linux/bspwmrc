@@ -13,4 +13,4 @@ bspc config merge_overlapping_monitors true
 bspc config remove_disabled_monitors true
 bspc config remove_unplugged_monitors true
 
-./bspwm-floating &
+~/.config/bspwm/bspwm-floating &
