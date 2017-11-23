@@ -5,4 +5,4 @@ xset -dpms                                            # Slå energi besparelse f
 xset s off                                            # Slå pauseskærm fra
 wmname LG3D                                           # Omdøb for at gøre java glad
 sxhkd &                                               # start keyboard daemon
-exec bspwm                                            # Start xmonad/windowmanager
+exec bspwm                                            # Start windowmanager
