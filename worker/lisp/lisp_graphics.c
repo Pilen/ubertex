@@ -104,6 +104,8 @@ LISP_BUILTIN(image, "") {
     ENSURE_NOT_EMPTY(args);
 
     Value file = NEXT(args);
+    ENSURE(file.type == String);
+
     Value position;
     if (args.type == CONS) {
         position = NEXT(args);
