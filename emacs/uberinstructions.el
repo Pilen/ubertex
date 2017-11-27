@@ -168,8 +168,8 @@ Uses either the given seed or a random number between 0 and most-positive-fixnum
   (let ((position (or position revy-pdf-default-position)))
     (revy-send-lisp nil
                     `(setq pdf-file ,file)
-                    '(setq pdf-slide 0)
-                    '(defun pdf-slideshow ()
+                    `(setq pdf-slide 0)
+                    `(defun pdf-slideshow ()
                        ;; (pdf pdf-file pdf-slide '(centered 0.1 0.2)))
                        (pdf pdf-file pdf-slide ,position))
                     `(update (pdf-slideshow)))))
