@@ -207,13 +207,14 @@ Wont return untill all workers has been synced."
               (progn ;; (revy-shell-sync (message (concat "cd " (aref worker revy-worker-installation-index) "zeigen2/src/" "; "
                 ;;                                   "./repl -b -w -d " (aref worker revy-worker-dir-index))))
                 ;; We want to run this command on the worker, and for revy-shell-sync we need the worker name which is not stored in the worker structure
-                (call-process "ssh" nil "*revy-shell*" t
-                              (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
-                              (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
-                                      "cd " (aref worker revy-worker-installation-index) "worker/" "; "
-                                      "./worker -b -w -d " (aref worker revy-worker-dir-index)))
-                (message "Starting %s" (aref worker revy-worker-location-index))
-                t)
+                (if (not (eq 0 (call-process "ssh" nil "*revy-shell*" t
+                                             (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
+                                             (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
+                                                     "cd " (aref worker revy-worker-installation-index) "worker/" "; "
+                                                     "./worker -b -w -d " (aref worker revy-worker-dir-index)))))
+                    (error "Could not start worker %s, but host should be up." (aref worker revy-worker-location-index))
+                  (message "Starting %s" (aref worker revy-worker-location-index))
+                  t))
             (error "No connection to host %s" (aref worker revy-worker-location-index)))))))
   (message "Starting done")
   t)
