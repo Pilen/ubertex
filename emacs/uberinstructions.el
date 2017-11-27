@@ -159,17 +159,20 @@ Uses either the given seed or a random number between 0 and most-positive-fixnum
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π PDF
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defconst revy-pdf-default-position ''(sized 0.0 0.0 0.8 0.8)
+       "The default postion to render pdfs")
 
-(defun revy-pdf-open (file)
+(defun revy-pdf-open (file &optional position)
   "Open a PDF file"
   ;; (revy-send-message "start" "PDF" "sized/0,70,90p,90p" file))
-  (revy-send-lisp nil
-                  `(setq pdf-file ,file)
-                  '(setq pdf-slide 0)
-                  '(defun pdf-slideshow ()
-                     ;; (pdf pdf-file pdf-slide '(centered 0.1 0.2)))
-                     (pdf pdf-file pdf-slide '(sized 0.0 0.0 0.8 0.8)))
-                  `(update (pdf-slideshow))))
+  (let ((position (or position revy-pdf-default-position)))
+    (revy-send-lisp nil
+                    `(setq pdf-file ,file)
+                    '(setq pdf-slide 0)
+                    '(defun pdf-slideshow ()
+                       ;; (pdf pdf-file pdf-slide '(centered 0.1 0.2)))
+                       (pdf pdf-file pdf-slide ,position))
+                    `(update (pdf-slideshow)))))
 
 (defun revy-pdf-goto-slide (slide)
   "Goto pdf slide."
