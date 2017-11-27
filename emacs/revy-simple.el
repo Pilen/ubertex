@@ -75,7 +75,7 @@
 
             (define-key revy-simple-mode-map (kbd "C-f") 'isearch-forward)
             (define-key revy-simple-mode-map (kbd "C-S-f") 'isearch-backward)
-            (define-key revy-simple-mode-map (kbd "C-r") 'query-replace)
+            (define-key revy-simple-mode-map (kbd "C-r") 'query-replace-with-region)
 
             (define-key revy-simple-mode-map (kbd "C-z") 'undo)
 
@@ -123,6 +123,15 @@
 (define-key isearch-mode-map (kbd "C-f") 'isearch-repeat-forward)
 (define-key isearch-mode-map (kbd "C-S-F") 'isearch-repeat-backward)
 
+(defun query-replace-with-region ()
+  (interactive)
+  (if (not (use-region-p))
+    (call-interactively 'query-replace)
+
+    (let ((text (buffer-substring-no-properties (region-beginning) (region-end))))
+      (deactivate-mark)
+      (goto-char (region-beginning))
+      (query-replace text (query-replace-read-to text "Query replace" nil)))))
 
 (defun revy-simple-setup-windows ()
   "Setup windows in a sane order"
@@ -149,6 +158,13 @@
                    "help.el"))
        (setq truncate-lines t))
 
+
+(defun stop-using-minibuffer ()
+  "kill the minibuffer"
+  (interactive)
+  (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
+    (abort-recursive-edit)))
+(add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
 
 (server-force-delete)
 (server-start)
