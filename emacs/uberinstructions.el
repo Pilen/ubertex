@@ -160,7 +160,7 @@ Uses either the given seed or a random number between 0 and most-positive-fixnum
 ;π PDF
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defconst revy-pdf-default-position ''(sized 0.0 0.0 0.8 0.8)
-       "The default postion to render pdfs")
+  "The default postion to render pdfs")
 
 (defun revy-pdf-open (file &optional position)
   "Open a PDF file"

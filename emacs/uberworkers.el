@@ -65,8 +65,7 @@ Does not ensure the worker is actually live."
       (message "No such worker %s" name))
     value))
 
-(defun revy-on-worker (worker function &rest args)
+(defmacro revy-on-worker (worker &rest body)
   "Run instruction on another worker than the current
-Used like (revy-on-worker revy-worker-brok 'revy-play-sound \"sound.mp3\")"
-  (let ((revy-current-worker worker))
-    (apply function args)))
+Used like (revy-on-worker 'left (revy-image \"image.png\"))"
+  `(let ((revy-current-worker ,worker)) ,@body))
