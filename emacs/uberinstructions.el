@@ -247,7 +247,7 @@ Volume is integer between 0 and 128"
 (defun revy-kill-mplayer ()
   "Killall instances of mplayer on worker"
   (interactive)
-  (revy-shell-sync "killall mplayer"))
+  (revy-shell-sync "killall mplayer" 'all))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
