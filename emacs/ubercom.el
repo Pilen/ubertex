@@ -66,8 +66,7 @@ If no worker is given/worker is nil,
 the command will be executed on revy-current-worker."
   ;; Save excursion to avoid the output buffer coming up
   (save-window-excursion
-    (when (null worker)
-      (setq worker revy-current-worker))
+    (setq worker (or worker revy-current-worker))
     (dolist (worker (revy-get-workers worker))
       (start-process "revy-shell" "*revy-shell*"
                      "ssh" (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
@@ -81,8 +80,7 @@ the command will be executed on revy-current-worker."
 If no worker is given/worker is nil,
 the command will be executed on revy-current-worker."
   (save-window-excursion
-    (when (null worker)
-      (setq worker revy-current-worker))
+    (setq worker (or worker revy-current-worker))
     ;; Unlike `start-process', `call-process' inserts at point in buffer, not at end
     (with-current-buffer (get-buffer-create "*revy-shell*")
       (goto-char (point-max))
