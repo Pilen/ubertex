@@ -76,7 +76,7 @@ Bool message_receive(Component *component, Value message, Environment *environme
     }
     if (args.type != NIL) {
         /* TODO: log error better */
-        log_warning("Too many arguments for handler, ignored")
+        log_warning("Too many arguments for handler, ignored");
     }
 
     environment -> current_layer = component -> layer -> index;

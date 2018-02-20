@@ -38,7 +38,7 @@ Environment *initialize(void) {
     environment_set_variable(symbols_tau, VALUE_FLOAT(M_PI * 2.0), environment);
     environment_set_variable(symbols_e, VALUE_FLOAT(M_E), environment);
 
-    log_section("====INITIALIZE-END====")
+    log_section("====INITIALIZE-END====");
     return environment;
 }
 
