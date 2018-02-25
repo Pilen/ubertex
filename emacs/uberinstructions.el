@@ -191,7 +191,7 @@ Uses either the given seed or a random number between 0 and most-positive-fixnum
 
 (defun revy-sound (file &optional volume)
   "Play a sound overlay
-Volume is integer between 0 and 128"
+Volume is integer between 0 and 128 (defaults to max)"
   ;; (revy-send-message "playsound" file))
   (revy-send-lisp nil `(sound ,file ,volume)))
 
