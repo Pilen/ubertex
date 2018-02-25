@@ -195,7 +195,7 @@ Then it will load it"
                 (add-to-list 'names name t)
                 (push name workers)))
             (setq location-pair (split-string
-                                 (read-string "Location: " (concat "revy@" first-name))
+                                 (read-string "Location: " (concat "worker@" first-name))
                                  "@"))
             (if (= (length location-pair) 2)
                 (progn (setq user (car location-pair))
