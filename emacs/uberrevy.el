@@ -23,7 +23,7 @@
 (require 'revy-ubermanus "ubermanus.el") ;revy-overtex-preamble revy-overtex-postscript
 (require 'revy-ubermenu "ubermenu.el") ;revy-ubermenu-commands
 (require 'revy-uberprepare "uberprepare.el")
-
+(require 'revy-ubersong "ubersong.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Settings
