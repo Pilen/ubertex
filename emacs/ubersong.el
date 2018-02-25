@@ -5,6 +5,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'revy-ubersong)
 
+(defvar-local revy-ubersong-text-prefix "")
+(defvar-local revy-ubersong-text-postfix "")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Major mode
@@ -90,12 +92,13 @@ Does not affect the cursor."
     ;; Do the actual parsing
     (setq text
           (replace-regexp-in-string
-           "<<>>\\|\\(<(.*)>[\n]?\\)" ""
+           "<<>>\\|\\(<([^>]*)>[\n]?\\)" ""
            (if (>= end final)
                (buffer-substring-no-properties start final)
              (format "%s<span alpha='1'>%s</span>"
                      (buffer-substring-no-properties start end)
                      (buffer-substring-no-properties end final)))))
+    (setq text (concat revy-ubersong-text-prefix text revy-ubersong-text-postfix))
     (message "%d %d %d %d" start end final (point))
     (revy-send-lisp nil `(progn (set 'current-text ,text) (update (text ,text))))
 
