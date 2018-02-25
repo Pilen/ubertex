@@ -89,3 +89,136 @@ Int string_compare(String *a, String *b) {
 Int string_compare_str(String *a, char* b) {
     return strcmp(a -> text, b);
 }
+
+
+Value *string_list_from_value(Value value, Value *result, Value original, Bool quote_strings) {
+    (void) quote_strings;
+    Value string_error = VALUE_STRING(string_create_from_str("error"));
+    Value string_nil = VALUE_STRING(string_create_from_str("nil"));
+    Value string_doublequote = VALUE_STRING(string_create_from_str("\""));
+    Value string_open_paren = VALUE_STRING(string_create_from_str("("));
+    Value string_close_paren = VALUE_STRING(string_create_from_str(")"));
+    Value string_space = VALUE_STRING(string_create_from_str(" "));
+    Value string_dot = VALUE_STRING(string_create_from_str("."));
+
+
+    Value string_X = VALUE_STRING(string_create_from_str("X"));
+
+    (void) string_error;
+    (void) string_nil;
+    (void) string_doublequote;
+    (void) string_open_paren;
+    (void) string_close_paren;
+    (void) string_space;
+    (void) string_dot;
+
+    (void) string_X;
+
+    switch (value.type) {
+    case ERROR:
+        CDR(*result) = CONS1(string_error); result = &CDR(*result);
+        break;
+    case NIL:
+        CDR(*result) = CONS1(string_nil); result = &CDR(*result);
+        break;
+    case SYMBOL:
+        CDR(*result) = CONS1(symbol_name(value)); result = &CDR(*result);
+        break;
+    case INTEGER: {
+        char *buffer = memory_cmalloc(64+1);
+        snprintf(buffer, 64, "%d", value.val.integer_val);
+        Value str = VALUE_STRING(string_create_from_str(buffer));
+        CDR(*result) = CONS1(str); result = &CDR(*result);
+        break;
+    }
+    case FLOAT: {
+        char *buffer = memory_cmalloc(64+1);
+        Int i = snprintf(buffer, 64, "%lf", value.val.float_val);
+        i--;
+        while (i >= 0 && buffer[i] == '0') {
+            i--;
+        }
+        if (buffer[i] == '.') {
+            i++;
+        }
+        i++;
+        buffer[i] = '\0';
+        Value str = VALUE_STRING(string_create_from_str(buffer));
+        CDR(*result) = CONS1(str); result = &CDR(*result);
+        break;
+    }
+    case STRING: {
+        if (quote_strings) {
+            CDR(*result) = CONS1(string_doublequote); result = &CDR(*result);
+        }
+        CDR(*result) = CONS1(value); result = &CDR(*result);
+        if (quote_strings) {
+            CDR(*result) = CONS1(string_doublequote); result = &CDR(*result);
+        }
+        break;
+    }
+    case CONS: {
+        CDR(*result) = CONS1(string_open_paren); result = &CDR(*result);
+        Bool print_space = false;
+        while (true) {
+            if (print_space) {
+                CDR(*result) = CONS1(string_space); result = &CDR(*result);
+            }
+            print_space = true;
+            result = string_list_from_value(CAR(value), result, original, quote_strings);
+            if (CDR(value).type != CONS) {
+                break;
+            }
+            value = CDR(value);
+        }
+        if (CDR(value).type != NIL) {
+            CDR(*result) = CONS1(string_space); result = &CDR(*result);
+            CDR(*result) = CONS1(string_dot); result = &CDR(*result);
+            CDR(*result) = CONS1(string_space); result = &CDR(*result);
+            result = string_list_from_value(CDR(value), result, original, quote_strings);
+        }
+        CDR(*result) = CONS1(string_close_paren); result = &CDR(*result);
+        break;
+    }
+    default:
+        break;
+    }
+    return result;
+}
+
+String *string_from_value(Value value) {
+    Value items = CONS1(VALUE_NIL); // sentinel value to ensure CAR works
+    string_list_from_value(value, &items, items, true);
+    (void) NEXT(items); // Ignore first value (sentinel)
+
+    return string_flatten(items);
+}
+
+String *string_flatten(Value list) {
+    Unt total_length = 0;
+    Value strings = list;
+
+    while (strings.type == CONS) {
+        Value val = NEXT(strings);
+        w_assert(val.type == STRING);
+        String *str = val.val.string_val;
+        total_length += string_length(str);
+    }
+
+    strings = list;
+    String *string = memory_cmalloc(sizeof(String) + sizeof(char) * (total_length + 1));
+    string -> size = total_length + 1;
+    char *buffer = string -> text;
+    while (strings.type == CONS) {
+        Value val = NEXT(strings);
+        String *str = val.val.string_val;
+        char *letter = str -> text;
+        while (*letter != STRING_END) {
+            *buffer = *letter;
+            buffer++;
+            letter++;
+        }
+    }
+    *buffer = STRING_END;
+    return string;
+}

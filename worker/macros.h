@@ -11,6 +11,8 @@
 #define CONS(a, b) (VALUE_CONS(list_cons((a), (b))))
 #define CONS1(a) (VALUE_CONS(list_cons((a), VALUE_NIL)))
 
+#define PUSH_END(cons_ptr, value) do {CDR(*cons_ptr) = CONS1(value); cons_ptr = &CDR(*cons_ptr);} while (0)
+
 /* Dont[1] rely on the returned value if list is not a CONS cell.
    [1] At least you cant distinguish where the error came from.
    This macro is NOT a statement, nor an expression, use it carefully. */
