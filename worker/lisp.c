@@ -126,6 +126,9 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(force_frame, force_frame, true, environment);
 
 
+    LISP_REGISTER_BUILTIN_FROM_RAW(f, f, true, environment);
+
+
 
 
 

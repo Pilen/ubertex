@@ -48,7 +48,11 @@ y ;=> 10
     (deflocal y y)
     (deflocal z 10)
     (update (setq l (list x y z l))))
+(setq x 500)
+(setq y 500)
 (create foo 1 2)
+(setq x 1000)
+(setq y 1000)
 (component_update_all)
 l ;=> (1 2 10 100)
 
@@ -253,6 +257,14 @@ g ;=> 30
 (component_update_all) ;=> 321nil
 (component_update_all) ;=> 321nil
 (component_update_all) ;=> 321nil
+
+;;;;TEST;;;;
+(defcomp foo (x)
+  (update (print x)))
+(setq x 1)
+(create foo 2)
+(setq x 3)
+(component_update_all) ;=> 2nil
 
 ;;;;TEST;;;;
 ;;ignore;;
