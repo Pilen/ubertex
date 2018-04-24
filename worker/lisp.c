@@ -124,6 +124,7 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(exit_program, exit_program, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(set_window_position, set_window_position, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(force_frame, force_frame, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(inspect, inspect, true, environment);
 
 
     LISP_REGISTER_BUILTIN_FROM_RAW(f, f, true, environment);

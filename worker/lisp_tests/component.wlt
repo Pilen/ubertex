@@ -267,37 +267,6 @@ g ;=> 30
 (component_update_all) ;=> 2nil
 
 ;;;;TEST;;;;
-;;ignore;;
-(defcomp foo ()
-  (set-layer 1)
-  (update (print 1)))
-(defcomp bar ()
-  (set-layer 2)
-  (update (print 2)))
-(defcomp baz ()
-  (set-layer 3)
-  (update (print 3)))
-(create foo)
-(create bar)
-(create baz)
-(component_update_all) ;=> 123nil
-(component_update_all) ;=> 123nil
-(component_update_all) ;=> 123nil
-
-;;;;TEST;;;;
-;;ignore;;
-(defcomp foo ()
-  (set-layer 1)
-  (update (print 1)))
-(defcomp bar ()
-  (set-layer 2)
-  (update (print 2)))
-(defcomp baz ()
-  (set-layer 3)
-  (update (print 3)))
-(create baz)
-(create bar)
-(create foo)
-(component_update_all) ;=> 123nil
-(component_update_all) ;=> 123nil
-(component_update_all) ;=> 123nil
+(defcomp foo (i))
+(create bar) ;=> error
+(component_update_all) ;=> nil

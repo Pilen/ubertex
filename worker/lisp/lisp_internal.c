@@ -249,6 +249,29 @@ LISP_BUILTIN(message_dispatch, "") {
     return VALUE_NIL;
 }
 
+LISP_BUILTIN(inspect, "") {
+    Layer *layer;
+    layer = environment -> layers_background;
+    while (layer) {
+        fprintf(output, "%d ", layer -> index);
+        print(list_length(layer -> entries));
+        fprintf(output, " ");
+        print(layer -> entries);
+        fprintf(output, "\n");
+        layer = layer -> next;
+    }
+    layer = environment -> layers_foreground;
+    while (layer) {
+        fprintf(output, "%d ", layer -> index);
+        print(list_length(layer -> entries));
+        fprintf(output, " ");
+        print(layer -> entries);
+        fprintf(output, "\n");
+        layer = layer -> next;
+    }
+    return VALUE_NIL;
+}
+
 LISP_BUILTIN(exit_program, "") {
     log_info("exit_program called");
     exit(EXIT_SUCCESS);

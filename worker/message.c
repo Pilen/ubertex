@@ -17,6 +17,17 @@ void message_send(Value recipient, Value message, Environment *environment) {
     }
 }
 
+void message_dispatch_to_layer(Environment *environment, Layer *layer, Value message) {
+    while (layer) {
+        Value components = layer -> entries;
+        while (components.type == CONS) {
+            Value component_value = NEXT(components);
+            Component *component = component_value.val.component_val;
+            message_receive(component, message, environment);
+        }
+        layer = layer -> next;
+    }
+}
 void message_dispatch(Environment *environment) {
     while (environment -> messages.type == CONS) {
         if (loop_abort) {
@@ -31,16 +42,9 @@ void message_dispatch(Environment *environment) {
             message_receive(component, message, environment);
         } else if (recipient.type == NIL) {
             /* Send to all */
-            Layer *layer = environment -> layers;
-            while (layer) {
-                Value components = layer -> entries;
-                while (components.type == CONS) {
-                    Value component_value = NEXT(components);
-                    Component *component = component_value.val.component_val;
-                    message_receive(component, message, environment);
-                }
-                layer = layer -> next;
-            }
+            message_dispatch_to_layer(environment, environment -> layers_foreground, message);
+            message_dispatch_to_layer(environment, environment -> layers_background, message);
+
         } else if (recipient.type == SYMBOL) {
             /* Send to all of kind */
             w_assert(false) /* TODO: implement */

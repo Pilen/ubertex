@@ -21,7 +21,8 @@ typedef struct {
     Hash *component_definitions;
     Component *current_component;
     Int current_layer;
-    Layer *layers;
+    Layer *layers_foreground;
+    Layer *layers_background;
 
     Value messages;
     Value last_message;

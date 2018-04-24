@@ -36,8 +36,8 @@ Component *component_create(Value name, Value args, Environment *environment) {
     return component;
 }
 
-void component_update_all(Environment *environment) {
-    Layer *layer = environment -> layers;
+
+void component_update_layers(Layer *layer, Environment *environment) {
     while (layer) {
         environment -> current_layer = layer -> index;
         Value components = layer -> entries;
@@ -53,47 +53,44 @@ void component_update_all(Environment *environment) {
         }
         layer = layer -> next;
     }
+}
+void component_update_all(Environment *environment) {
+    component_update_layers(environment -> layers_background, environment);
+    component_update_layers(environment -> layers_foreground, environment);
     environment -> current_layer = OPTION_DEFAULT_LAYER;
     environment -> current_component = NULL;
 }
+
 
 Layer *component_layer_create(Int index) {
     Layer *layer = memory_malloc(sizeof(Layer));
     layer -> index = index;
     layer -> entries = VALUE_NIL;
     layer -> next = NULL;
+    layer -> last_entry = VALUE_NIL;
     return layer;
 }
 
-void component_layer_insert_component(Int index, Component *component, Environment *environment) {
-    /* Assume environment -> layers is a sorted sequence */
-    Layer *layer = environment -> layers;
+Layer *component_layer_insert_component_helper(Int index, Component *component, Layer *layers) {
+    /* Assume environment -> layers_* are sorted sequences [-inf: -1] and [0 : inf] */
+    Layer *layer = layers;
     if (index < layer -> index) {
         Layer *next = layer;
         layer = component_layer_create(index);
-        environment -> layers = layer;
         layer -> next = next;
-        layer -> entries = CONS1(VALUE_COMPONENT(component));
-        layer -> last_entry = layer -> entries;
-        component -> layer = layer;
-        return;
-    }
-
-    while (true) {
-        if (index == layer -> index) {
-            break;
-        }
-        Layer *next = layer -> next;
-        if (!next) {
-            layer -> next = component_layer_create(index);
+    } else {
+        while (true) {
+            if (index == layer -> index) {
+                break;
+            }
+            Layer *next = layer -> next;
+            if (!next || index < next -> index) {
+                layer -> next = component_layer_create(index);
+                layer = layer -> next;
+                layer -> next = next;
+                break;
+            }
             layer = next;
-            break;
-        }
-        if (index > next -> index) {
-            layer -> next = component_layer_create(index);
-            layer = layer -> next;
-            layer -> next = next;
-            break;
         }
     }
 
@@ -102,18 +99,25 @@ void component_layer_insert_component(Int index, Component *component, Environme
         layer -> entries = CONS1(VALUE_COMPONENT(component));
         layer -> last_entry = layer -> entries;
     } else {
-        /* TODO: need a test for this part */
         Value new = CONS1(VALUE_COMPONENT(component));
         CDR(layer -> last_entry) = new;
         layer -> last_entry = new;
-
-
     }
     component -> layer = layer;
+    return layers;
 }
 
-void component_destroy_all(Environment *environment) {
-    Layer *layer = environment -> layers;
+void component_layer_insert_component(Int index, Component *component, Environment *environment) {
+    if (index >= OPTION_DEFAULT_LAYER) {
+        environment -> layers_foreground = component_layer_insert_component_helper(index, component, environment -> layers_foreground);
+    } else {
+        environment -> layers_background = component_layer_insert_component_helper(index, component, environment -> layers_background);
+    }
+}
+
+
+void component_destroy_all_helper(Layer *layers) {
+    Layer *layer = layers;
     while (layer) {
         Value components = layer -> entries;
         while (components.type == CONS) {
@@ -122,8 +126,13 @@ void component_destroy_all(Environment *environment) {
         }
         layer = layer -> next;
     }
+}
+void component_destroy_all(Environment *environment) {
+    component_destroy_all_helper(environment -> layers_foreground);
+    component_destroy_all_helper(environment -> layers_background);
     environment -> current_layer = OPTION_DEFAULT_LAYER;
-    environment -> layers = component_layer_create(OPTION_DEFAULT_LAYER);
+    environment -> layers_foreground = component_layer_create(OPTION_DEFAULT_LAYER);
+    environment -> layers_background = component_layer_create(OPTION_DEFAULT_LAYER - 1);
 }
 
 /* Remove component from layers.
@@ -135,14 +144,19 @@ void component_remove(Component *component, Environment *environment) {
     component -> layer = NULL;
     Value entries = layer -> entries;
     w_assert(entries.type == CONS); /* The component must exist in this layer */
-    debug_value(entries);
     if (CAR(entries).val.component_val == component) {
+        if (CDR(entries).type == NIL) {
+            layer -> last_entry = VALUE_NIL;
+        }
         layer -> entries = CDR(entries);
         return;
     }
     while (true) {
         w_assert(CDR(entries).type == CONS); /* The component must exist in this layer */
         if (CAR(CDR(entries)).val.component_val == component) {
+            if (CDR(CDR(entries)).type == NIL) {
+                layer -> last_entry = entries;
+            }
             CDR(entries) = CDR(CDR(entries));
             return;
         }
