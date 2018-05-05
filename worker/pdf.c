@@ -7,7 +7,7 @@
 #include "headers.h"
 
 Bool pdf_get_slide(Value filename, Int slide, Renderable *target, Environment *environment) {
-    Pdf *skeleton = memory_malloc(sizeof(Pdf));
+    Pdf *skeleton = NEW(Pdf);
     skeleton -> path = filename;
     Value result = resource_get(VALUE_PDF(skeleton), environment);
 
@@ -53,7 +53,7 @@ Unt resource_create_pdf(Value skeleton, Environment *environment) {
 
     Unt size = 0;
     Int pagecount = poppler_document_get_n_pages(document);
-    cairo_surface_t **pages = memory_malloc(sizeof(cairo_surface_t *) * pagecount);
+    cairo_surface_t **pages = NEW_BUFFER(cairo_surface_t *, pagecount);
 
     /* Load all the pages */
     for (Int pagenumber = 0; pagenumber < pagecount; pagenumber++) {

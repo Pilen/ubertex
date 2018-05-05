@@ -24,7 +24,7 @@ LISP_BUILTIN(define_component, "") {
         }
     }
 
-    Function *function = memory_malloc(sizeof(Function));
+    Function *function = NEW(Function);
     function -> eval = true;
     function -> c_code = false;
     function -> c_function = NULL;

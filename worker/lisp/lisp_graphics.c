@@ -2,7 +2,7 @@
 
 LISP_BUILTIN(color, "") {
     return VALUE_ERROR;
-    /* Int *colors = memory_malloc(sizeof(Int) * 4); */
+    /* Int *colors = NEW_BUFFER(Int, 4); */
     /* if (args -> length == 2) { */
     /*     Value color = LIST_GET_UNSAFE(args, 1); */
     /*     if (color.type == INTEGER) { */
@@ -53,7 +53,7 @@ LISP_BUILTIN(color, "") {
 LISP_BUILTIN(clear_color, "") {
     return VALUE_ERROR;
     /* if (args -> length == 1) { */
-    /*     Int *colors = memory_malloc(sizeof(Int) * 4); */
+    /*     Int *colors = NEW_BUFFER(Int, 4); */
     /*     colors[0] = environment -> clear_red; */
     /*     colors[1] = environment -> clear_green; */
     /*     colors[2] = environment -> clear_blue; */

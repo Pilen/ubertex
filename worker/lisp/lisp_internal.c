@@ -45,7 +45,7 @@ LISP_BUILTIN(sounds_playing, "") {
 
 LISP_BUILTIN(allocate_useless, "") {
     size_t size = 10000;
-    Unt *mem = memory_malloc(sizeof(Unt) * size);
+    Unt *mem = NEW_BUFFER(Unt, size);
     Unt i;
     for (i = 0; i < size; i++) {
         mem[i] = i;

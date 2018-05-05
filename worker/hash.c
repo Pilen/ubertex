@@ -12,8 +12,8 @@ Hash *hash_create(void) {
     assert_build((1.0 / HASH_EXPANSION_FACTOR) > HASH_CONTRACT_LIMIT);
     assert_build(HASH_EXPAND_LIMIT > HASH_CONTRACT_LIMIT);
     assert_build(HASH_EXPAND_LIMIT <= 1.0);
-    Hash *hash = memory_malloc(sizeof(Hash));
-    Hash_entry *entries = memory_cmalloc(sizeof(Hash_entry) * HASH_DEFAULT_SIZE);
+    Hash *hash = NEW(Hash);
+    Hash_entry *entries = NEW_BUFFER(Hash_entry, HASH_DEFAULT_SIZE);
 
     hash -> refcount = 0;
     hash -> size = HASH_DEFAULT_SIZE;
@@ -92,8 +92,8 @@ Bool hash_delete(Hash *hash, Value key) {
             if (entry -> key_hash1 == h1 &&
                 entry -> key_hash2 == h2 &&
                 equal(entry -> key, key)) {
-                memory_ref_dec(entry -> key);
-                memory_ref_dec(entry -> data);
+                /* memory_ref_dec(entry -> key); */
+                /* memory_ref_dec(entry -> data); */
                 entry -> status = HASH_DELETED;
                 hash -> length--;
 
@@ -120,8 +120,8 @@ void hash_insert(Hash *hash, Unt h1, Unt h2, Value key, Value data) {
             /* NOTE: Should a copy of key be stored instead? */
             entry -> key = key;
             entry -> data = data;
-            memory_ref_inc(key);
-            memory_ref_inc(data);
+            /* memory_ref_inc(key); */
+            /* memory_ref_inc(data); */
 
             hash -> length++;
             return;
@@ -161,7 +161,7 @@ void hash_resize(Hash *hash) {
     if (new_size <= HASH_DEFAULT_SIZE) {
         return;
     }
-    Hash_entry *new_entries = memory_cmalloc(sizeof(Hash_entry) * new_size);
+    Hash_entry *new_entries = NEW_BUFFER(Hash_entry, new_size);
 
     hash -> size = new_size;
     hash -> entries = new_entries;

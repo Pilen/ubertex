@@ -2,7 +2,7 @@
 #include "headers.h"
 
 Cons *list_cons(Value a, Value b) {
-    Cons *cons = memory_malloc(sizeof(Cons));
+    Cons *cons = NEW(Cons);
     cons -> car = a;
     cons -> cdr = b;
     return cons;

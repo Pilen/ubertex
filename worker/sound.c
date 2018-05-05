@@ -18,7 +18,7 @@ void sound_initialize(void) {
     sound_lock = mutex_create();
     sound_channels = OPTION_SOUND_MIXING_CHANNELS;
     Mix_AllocateChannels(sound_channels);
-    sound_table = memory_cmalloc(sizeof(Sound *) * sound_channels);
+    sound_table = NEW_BUFFER(Sound *, sound_channels);
     sound_playing = 0;
     sound_first_free = 0;
     Mix_ChannelFinished(sound_finished);
@@ -30,7 +30,7 @@ void sound_table_expand(void) {
     Unt new_channels = sound_channels * 2;
     Mix_AllocateChannels(sound_channels);
     /* TODO: Use realloc instead? */
-    Sound **new_table = memory_cmalloc(sizeof(Sound *) * new_channels);
+    Sound **new_table = NEW_BUFFER(Sound *, new_channels);
     for (Unt i = 0; i < sound_channels; i++) {
         new_table[i] = sound_table[i];
     }
@@ -56,7 +56,7 @@ void sound_finished(Int channel) {
 Value sound_play(Value filename, Int volume, Int loops, Environment *environment) {
     debug("start");
     Unt start = SDL_GetTicks();
-    Soundsample *skeleton = memory_malloc(sizeof(Soundsample));
+    Soundsample *skeleton = NEW(Soundsample);
     skeleton -> path = filename;
     Value result = resource_get(VALUE_SOUNDSAMPLE(skeleton), environment);
     if (result.type != SOUNDSAMPLE) {
@@ -84,7 +84,7 @@ Value sound_play(Value filename, Int volume, Int loops, Environment *environment
     Int actual_channel = Mix_PlayChannel(channel, soundsample -> chunk, loops);
     w_assert(actual_channel == (Int) channel);
 
-    Sound *sound = memory_malloc(sizeof(Sound));
+    Sound *sound = NEW(Sound);
     sound -> playing = true;
     sound -> channel = channel;
     sound -> sample = soundsample;
@@ -222,7 +222,7 @@ char *sound_convert_to_ogg(String *mp3) {
 
     char *raw_command = "ffmpeg -loglevel quiet -i \"%s\" -c:a libvorbis -q:a 7 -vn -y \"%s\"";
     Int size = strlen(raw_command) + mp3 -> size - 1 + ogg -> size - 2 * 2 * sizeof(char);
-    char *command = memory_cmalloc(sizeof(char) * size);
+    char *command = NEW_BUFFER(char, size);
     Int actual_size = sprintf(command, raw_command, mp3 -> text, ogg -> text);
     w_assert(size == actual_size + 1);
     log_info("Converting %s to .ogg", mp3 -> text);

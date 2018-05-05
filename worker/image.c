@@ -5,7 +5,7 @@
 #include "headers.h"
 
 Bool image_get_renderable_from_file(Value filename, Renderable *target, Environment *environment) {
-    Image *skeleton = memory_malloc(sizeof(Image));
+    Image *skeleton = NEW(Image);
     skeleton -> path = filename;
     Value result = resource_get(VALUE_IMAGE(skeleton), environment);
     if (result.type == IMAGE) {

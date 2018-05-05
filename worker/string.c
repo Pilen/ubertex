@@ -16,10 +16,10 @@ String *string_create_from_substr(char* str, Unt bytes) {
      */
     /* TODO: As this only works with ASCII now, it holds that length == size.
        This is not true for unicode?!. */
-    String *string = memory_cmalloc(sizeof(String) + sizeof(char) * (bytes + 1));
+    String *string = memory_malloc(sizeof(String) + sizeof(char) * (bytes + 1));
     /* Add 1 for null char when allocating
        Cleared by calloc */
-    /* char *text = memory_cmalloc(sizeof(char) * (length + 1)); */
+    /* char *text = memory_malloc(sizeof(char) * (length + 1)); */
 
     string -> refcount = 0;
     /* string -> length = length; */
@@ -28,7 +28,6 @@ String *string_create_from_substr(char* str, Unt bytes) {
 
     for (Unt i = 0, j = 0; i < bytes && str[i] != '\0'; i++, j++) {
         if (str[i] == '\\') {
-            debug("\\ incomming");
             i++;
             if (i >= bytes ) {
                 /* TODO: log error */
@@ -57,7 +56,7 @@ String *string_create_from_str(char *str) {
 }
 
 String *string_duplicate(String *string) {
-    String *new_string = memory_cmalloc(sizeof(String) + sizeof(char) * string -> size);
+    String *new_string = memory_malloc(sizeof(String) + sizeof(char) * string -> size);
     new_string -> refcount = 0;
     new_string -> size = string -> size;
     for (Unt i = 0; i < string -> size; i++) {
@@ -69,7 +68,7 @@ String *string_duplicate(String *string) {
 String *string_concatenate(String *a, String *b) {
     /* Only one nullbyte */
     Unt size = a -> size - 1 + b -> size;
-    String *string = memory_cmalloc(sizeof(String) + sizeof(char) * size);
+    String *string = memory_malloc(sizeof(String) + sizeof(char) * size);
     string -> refcount = 0;
     string -> size = size;
     Unt i = 0;
@@ -125,14 +124,14 @@ Value *string_list_from_value(Value value, Value *result, Value original, Bool q
         CDR(*result) = CONS1(symbol_name(value)); result = &CDR(*result);
         break;
     case INTEGER: {
-        char *buffer = memory_cmalloc(64+1);
+        char *buffer = memory_malloc(64+1);
         snprintf(buffer, 64, "%d", value.val.integer_val);
         Value str = VALUE_STRING(string_create_from_str(buffer));
         CDR(*result) = CONS1(str); result = &CDR(*result);
         break;
     }
     case FLOAT: {
-        char *buffer = memory_cmalloc(64+1);
+        char *buffer = memory_malloc(64+1);
         Int i = snprintf(buffer, 64, "%lf", value.val.float_val);
         i--;
         while (i >= 0 && buffer[i] == '0') {
@@ -206,7 +205,7 @@ String *string_flatten(Value list) {
     }
 
     strings = list;
-    String *string = memory_cmalloc(sizeof(String) + sizeof(char) * (total_length + 1));
+    String *string = memory_malloc(sizeof(String) + sizeof(char) * (total_length + 1));
     string -> size = total_length + 1;
     char *buffer = string -> text;
     while (strings.type == CONS) {

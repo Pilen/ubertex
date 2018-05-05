@@ -56,7 +56,7 @@ Bool text(String *text, Int fontsize, Text_alignment alignment, Renderable *targ
 }
 
 /* SDL_Texture *text(String *text, Int fontsize, Bool center, Environment *environment) { */
-/*     Text *skeleton = memory_malloc(sizeof(Text)); */
+/*     Text *skeleton = NEW(Text); */
 /*     skeleton -> text = text; */
 /*     skeleton -> fontsize = fontsize; */
 /*     skeleton -> center = center; */

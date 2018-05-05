@@ -172,7 +172,7 @@ LISP_BUILTIN(ease, "") {
 
     debug_value(body);
 
-    Lambda *lambda = memory_malloc(sizeof(Lambda));
+    Lambda *lambda = NEW(Lambda);
     lambda -> parameters = VALUE_NIL;
     lambda -> body = body;
     lambda -> docstring = string_create_from_str("Undocumented function");

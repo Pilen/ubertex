@@ -38,7 +38,7 @@ Color *color_create_rgba(Value red, Value green, Value blue, Value alpha) {
     } else {
         return NULL;
     }
-    Color *color = memory_malloc(sizeof(Color));
+    Color *color = NEW(Color);
     color -> r = r;
     color -> g = g;
     color -> b = b;

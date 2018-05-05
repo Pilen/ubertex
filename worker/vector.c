@@ -8,8 +8,8 @@ void vector_contract(Vector *vector);
 
 Vector *vector_create(Unt size) {
     assert_build((1.0 / VECTOR_EXPANSION_FACTOR) > VECTOR_CONTRACT_LIMIT);
-    Vector *vector = memory_malloc(sizeof(Vector));
-    Value *data = memory_cmalloc(sizeof(Value) * size);
+    Vector *vector = NEW(Vector);
+    Value *data = NEW_BUFFER(Value, size);
 
     vector -> refcount = 0;
     vector -> size = size;
@@ -37,7 +37,7 @@ void vector_push_front(Vector *vector, Value value) {
     vector -> start = index;
     vector -> length++;
 
-    memory_ref_inc(value);
+    /* memory_ref_inc(value); */
 }
 
 void vector_push_back(Vector *vector, Value value) {
@@ -49,7 +49,7 @@ void vector_push_back(Vector *vector, Value value) {
     vector -> data[index] = value;
     vector -> length++;
 
-    memory_ref_inc(value);
+    /* memory_ref_inc(value); */
 }
 
 Value vector_pop_front(Vector *vector) {
@@ -59,7 +59,7 @@ Value vector_pop_front(Vector *vector) {
     }
 
     Value value = VECTOR_GET_UNSAFE(vector, 0);
-    memory_ref_dec(value);
+    /* memory_ref_dec(value); */
 
     /* Move start 1 forward and decrease length so end stays the same */
     vector -> start = (vector -> start + 1) % vector -> size;
@@ -80,7 +80,7 @@ Value vector_pop_back(Vector *vector) {
     }
 
     Value value = VECTOR_GET_UNSAFE(vector, vector -> length - 1);
-    memory_ref_dec(value);
+    /* memory_ref_dec(value); */
 
     vector -> length--;
 
@@ -125,8 +125,8 @@ Bool vector_set(Vector *vector, Unt position, Value value) {
 
     Unt index = (vector -> start + position) % vector -> size;
 
-    memory_ref_dec(vector -> data[index]);
-    memory_ref_inc(value);
+    /* memory_ref_dec(vector -> data[index]); */
+    /* memory_ref_inc(value); */
 
     vector -> data[index] = value;
     return true;
@@ -145,7 +145,7 @@ void vector_normalize(Vector *vector) {
     if (vector -> start + vector -> length <= vector -> size) {
         return;
     }
-    Value *new_data = memory_cmalloc(sizeof(Value) * vector -> size);
+    Value *new_data = NEW_BUFFER(Value, vector -> size);
     Unt new_start = (vector -> size - vector -> length) / 2;
     for (Unt i = 0; i < vector -> length; i++) {
         Unt index = (new_start + i ) % vector -> size;
@@ -162,7 +162,7 @@ void vector_expand(Vector *vector) {
     if (new_size == vector -> size) {
         new_size++;
     }
-    Value *new_data = memory_cmalloc(sizeof(Value) * new_size);
+    Value *new_data = NEW_BUFFER(Value, new_size);
 
     /* TODO: ensure correctenes of castings + roundings
            is start at the correct place when start = 0 and start at end? */
@@ -196,7 +196,7 @@ void vector_contract(Vector *vector) {
 
     /* contract to previous size when under limit */
     Unt new_size = vector -> size / VECTOR_EXPANSION_FACTOR;
-    Value *new_data = memory_cmalloc(sizeof(Value) * new_size);
+    Value *new_data = NEW_BUFFER(Value, new_size);
     /* TODO: ensure correctenes of castings + roundings
        is start at the correct place when start = 0 and start at end? */
     Unt new_start = (Unt) ((float) vector -> start / vector -> size) * new_size;

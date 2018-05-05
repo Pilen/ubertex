@@ -4,7 +4,7 @@
 #include "headers.h"
 
 Lock_RW *lock_rw_create() {
-    Lock_RW *lock = memory_malloc(sizeof(Lock_RW));
+    Lock_RW *lock = NEW(Lock_RW);
     lock -> readcount = 0;
     lock -> write = SDL_CreateMutex();
     lock -> critical = SDL_CreateMutex();

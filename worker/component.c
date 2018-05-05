@@ -9,7 +9,7 @@ Component *component_create(Value name, Value args, Environment *environment) {
     }
     Function *constructor = definition.val.function_val;
 
-    Component *component = memory_malloc(sizeof(Component));
+    Component *component = NEW(Component);
     component -> name = name;
     component -> layer = NULL;
     component -> local_variables = VALUE_NIL;
@@ -63,7 +63,7 @@ void component_update_all(Environment *environment) {
 
 
 Layer *component_layer_create(Int index) {
-    Layer *layer = memory_malloc(sizeof(Layer));
+    Layer *layer = NEW(Layer);
     layer -> index = index;
     layer -> entries = VALUE_NIL;
     layer -> next = NULL;

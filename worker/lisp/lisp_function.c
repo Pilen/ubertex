@@ -25,7 +25,7 @@ LISP_BUILTIN(defun, "") {
         }
     }
 
-    Function *function = memory_malloc(sizeof(Function));
+    Function *function = NEW(Function);
     function -> eval = true;
     function -> c_code = false;
     function -> c_function = NULL;
@@ -57,7 +57,7 @@ LISP_BUILTIN(lambda, "") {
         }
     }
 
-    Lambda *lambda = memory_malloc(sizeof(Lambda));
+    Lambda *lambda = NEW(Lambda);
     lambda -> parameters = parameters;
     lambda -> body = body;
     lambda -> docstring = docstring;

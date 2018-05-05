@@ -69,7 +69,7 @@ void profiler_report(Profile *profile) {
 }
 
 Profile *profiler_create(char *name) {
-    Profile *profile = memory_cmalloc(sizeof(Profile));
+    Profile *profile = NEW(Profile);
     profile -> name = name;
     return profile;
 }

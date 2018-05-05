@@ -3,7 +3,7 @@
 
 /* Note: decide if this function should just be located in initialize.c */
 Environment *environment_create(void) {
-    Environment *environment = memory_malloc(sizeof(Environment));
+    Environment *environment = NEW(Environment);
     environment -> window = NULL;
     environment -> renderer = NULL;
     environment -> base_texture = NULL;

@@ -22,7 +22,7 @@ Bool file_read_raw(char *filename, char **buffer, size_t *size) {
     w_assert(file_size > 0);
     rewind(file);
 
-    char *allocated = memory_malloc(sizeof(char) * (file_size + 1));
+    char *allocated = NEW_BUFFER(char, file_size + 1);
     size_t bytes_read = fread(allocated, sizeof(char), file_size, file);
     if (bytes_read != (size_t) file_size) {
         log_error("Could not read entire file %s", filename);

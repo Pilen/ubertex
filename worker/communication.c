@@ -244,7 +244,7 @@ void communication_reset(void) {
     mutex_unlock(communication_queue_lock);
 }
 void communication_add(Unt frame, Value value) {
-    Communication_node *new = memory_malloc(sizeof(Communication_node));
+    Communication_node *new = NEW(Communication_node);
     new -> frame = frame;
     new -> value = value;
 
