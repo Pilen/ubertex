@@ -18,7 +18,7 @@ Mutex *communication_queue_lock;
 
 
 Int communication_loop(void *data);
-void communication_receive(TCPsocket socket);
+Bool communication_receive(TCPsocket socket);
 void communication_receive_lisp(TCPsocket socket, Int size, Unt frame);
 void communication_reset(void);
 
@@ -51,7 +51,6 @@ void communication_initialize(Unt port) {
     w_assert(thread);
 }
 
-
 Int communication_loop(void *data) {
     Int error;
 
@@ -60,59 +59,80 @@ Int communication_loop(void *data) {
     w_assert(data);
     TCPsocket server = (TCPsocket) data;
 
-    SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
+    SDLNet_SocketSet set = SDLNet_AllocSocketSet(OPTION_MAX_CONNECTIONS + 1);
     w_assert(set);
     error = SDLNet_TCP_AddSocket(set, server);
     w_assert(error != -1);
 
+    Int next_index_to_steal = 0;
+
+    TCPsocket sockets[OPTION_MAX_CONNECTIONS];
+    for (Int i = 0; i < OPTION_MAX_CONNECTIONS; i++) {
+        sockets[i] = NULL;
+    }
+
     while (true) {
         Int ready = SDLNet_CheckSockets(set, -1);
-        if (ready == -1) {
+        if (ready < 0) {
             /* perror("CheckSockets"); /\* Only prints on stderr *\/ */
-            log_fatal("CheckSockets returned -1: %s", SDLNet_GetError());
-        } else if (ready > 0) {
+            log_fatal("CheckSockets returned %d: %s", ready, SDLNet_GetError());
+        } else {
             if (SDLNet_SocketReady(server)) {
                 TCPsocket client = SDLNet_TCP_Accept(server);
                 if (client) {
-                    communication_receive(client);
-                    char *response = "Got it. Bye\n";
-                    int length = strlen(response) + 1;
-                    SDLNet_TCP_Send(client, response, length);
+                    Int index = -1;
+                    for (int i = 0; i < OPTION_MAX_CONNECTIONS; i++) {
+                        if (!sockets[i]) {
+                            index = i;
+                            break;
+                        }
+                    }
+                    if (index == -1) {
+                        index = next_index_to_steal;
+                        next_index_to_steal++;
+                        next_index_to_steal %= OPTION_MAX_CONNECTIONS;
+                    }
+                    if (sockets[index]) {
+                        SDLNet_TCP_DelSocket(set, sockets[index]);
+                        SDLNet_TCP_Close(sockets[index]);
+                    }
+                    sockets[index] = client;
+                    SDLNet_TCP_AddSocket(set, client);
                 }
-                SDLNet_TCP_Close(client);
+            }
+
+            for (int i = 0; i < OPTION_MAX_CONNECTIONS; i++) {
+                TCPsocket client = sockets[i];
+                if (client && SDLNet_SocketReady(client)) {
+                    if (communication_receive(client)) {
+                        char *response = "Got it. Bye\n";
+                        int length = strlen(response);
+                        SDLNet_TCP_Send(client, response, length);
+                    } else {
+                        SDLNet_TCP_DelSocket(set, client);
+                        SDLNet_TCP_Close(sockets[i]);
+                        sockets[i] = NULL;
+                    }
+                }
             }
         }
     }
     return 0;
 }
-void communication_receive(TCPsocket socket) {
+
+
+Bool communication_receive(TCPsocket socket) {
     /* TODO: This can still delay other messages while waiting for timeout,
        maybe use threads or a common socketset */
-    Int error;
-    SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
-    w_assert(set);
-    error = SDLNet_TCP_AddSocket(set, socket);
-    w_assert(error != -1);
-
-    int ready = SDLNet_CheckSockets(set, OPTION_HEADER_TIMEOUT);
-    SDLNet_FreeSocketSet(set);
-    if (ready < 0) {
-        /* TODO: Use actual logging */
-        perror("CheckSockets");
-        return;
-    } else if (ready == 0) {
-        log_error("Connection timed out before recieving header");
-        return;
-    }
-
     char header[OPTION_HEADER_SIZE + 1];
     header[OPTION_HEADER_SIZE] = '\0';
     Int result = SDLNet_TCP_Recv(socket, header, OPTION_HEADER_SIZE);
     if (result <= 0) {
         log_error("Connection failed before receiving header");
+        return false;
     } else if (result != OPTION_HEADER_SIZE) {
         log_error("Received header with wrong length, %d bytes received, %d bytes expected", result, OPTION_HEADER_SIZE);
-        return;
+        return false;
     }
 
     /* strtok_r is threadsafe but is not standard, only in posix */
@@ -131,35 +151,35 @@ void communication_receive(TCPsocket socket) {
 
     if (!names || !time || !command) {
         log_error("Header malformed");
-        return;
+        return false;
     }
 
     Unt frame;
     Int scanned = sscanf(time, "%u", &frame);
     if (scanned != 1) {
         log_error("Header time invalid");
-        return;
+        return false;
     }
 
     if (strcmp(command, "lisp") == 0) {
         if (!options) {
             log_error("Header malformed, missing options");
-            return;
+            return false;
         }
         Unt size;
         Int scanned = sscanf(options, "%u", &size);
         if (scanned != 1) {
             log_error("Size option for lisp command in header invalid");
-            return;
+            return false;
         }
         if (size >= INT_MAX) {
             log_error("Only positive int sized messages are supported");
-            return;
+            return false;
         }
         communication_receive_lisp(socket, size, frame);
     } else if (strcmp(command, "ping") == 0) {
         w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
-        return;
+        return true;
     } else if (strcmp(command, "ready?") == 0) {
         log_error("ready? command not yet implemented");
         w_assert(false);
@@ -199,28 +219,11 @@ void communication_receive(TCPsocket socket) {
     } else {
         log_error("Header command not defined: %s", command);
     }
-    return;
+    return true;
 }
 
 void communication_receive_lisp(TCPsocket socket, Int size, Unt frame) {
     w_assert(size >= 0);
-    Int error;
-    SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
-    w_assert(set);
-    error = SDLNet_TCP_AddSocket(set, socket);
-    w_assert(error != -1);
-
-    int ready = SDLNet_CheckSockets(set, OPTION_BODY_TIMEOUT);
-    SDLNet_FreeSocketSet(set);
-    if (ready < 0) {
-        /* TODO: Use actual logging */
-        perror("CheckSockets");
-        return;
-    } else if (ready == 0) {
-        log_error("Connection timed out before recieving body");
-        return;
-    }
-
     char body[size + 1];
     body[size] = '\0';
     Int result = SDLNet_TCP_Recv(socket, body, size);
