@@ -30,7 +30,9 @@
   (interactive)
   (when (yes-or-no-p "Quit the revy closing all workers?")
     (when (yes-or-no-p "Are you sure you want to close all workers?")
-      (revy-shell "killall -9 worker" 'all))))
+      (revy-on-worker
+       'all
+       (revy-shell "killall -9 worker")))))
 
 (defun revy-open (filename &optional worker)
   "Open a new uberscript or ubertex file and start it
@@ -96,25 +98,28 @@ but without closing it, essentially not calling revy-abort-all"
 (defun revy-blank ()
   "Show blank screen temporarily"
   (interactive)
-  (revy-send-command nil "blank"))
+  (revy-send-command "blank"))
 
 (defun revy-blank-all ()
   "Show blank screen temporarily on all workers"
   (interactive)
-  (revy-send-command 'all "blank"))
+  (revy-on-worker 'all
+   (revy-send-command "blank")))
 
 (defun revy-unblank-all ()
   "Continue showing what was previously shown"
   (interactive)
-  (revy-send-message "unblank"))
+  (revy-on-worker 'all
+   (revy-send-message "unblank")))
 
 (defun revy-abort ()
   (interactive)
-  (revy-send-command nil "abort"))
+  (revy-send-command "abort"))
 
 (defun revy-abort-all ()
   (interactive)
-  (revy-send-command 'all "abort")
+  (revy-on-worker 'all
+   (revy-send-command "abort"))
   ;; todo fix:
   (revy-kill-mplayer))
 
@@ -122,14 +127,16 @@ but without closing it, essentially not calling revy-abort-all"
   "Aborts all and resyncs
 Uses either the given seed or a random number between 0 and most-positive-fixnum"
   (interactive)
-  (revy-send-command 'all "resync"
-                     (or seed (random most-positive-fixnum)))
+  (revy-on-worker 'all
+   (revy-send-command "resync"
+                      (or seed (random most-positive-fixnum))))
   ;; todo fix:
   (revy-kill-mplayer))
 
 (defun revy-calibrate ()
   (interactive)
-  (revy-send-lisp 'all '(update (calibrate))))
+  (revy-on-worker 'all
+   (revy-send-lisp '(update (calibrate)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Image
@@ -144,12 +151,12 @@ Uses either the given seed or a random number between 0 and most-positive-fixnum
   ;; (revy-send-message "start" "Image" dimensions file))
   ;; (setq position (or position ''(sized 0.0 0.0 1.0 1.0)))
   (setq position (or position revy-image-default-position))
-  (revy-send-lisp nil
-                  `(setq image-file ,file)
-                  `(setq image-position ,position)
-                  '(defun image-viewer ()
-                     (image image-file image-position))
-                  '(update (image-viewer))))
+  (revy-send-lisp
+   `(setq image-file ,file)
+   `(setq image-position ,position)
+   '(defun image-viewer ()
+      (image image-file image-position))
+   '(update (image-viewer))))
 
 (defun revy-image-preload (&rest files)
   "Open one or more images, and show the first."
@@ -166,23 +173,23 @@ Uses either the given seed or a random number between 0 and most-positive-fixnum
   "Open a PDF file"
   ;; (revy-send-message "start" "PDF" "sized/0,70,90p,90p" file))
   (let ((position (or position revy-pdf-default-position)))
-    (revy-send-lisp nil
-                    `(setq pdf-file ,file)
-                    `(setq pdf-slide 0)
-                    `(defun pdf-slideshow ()
-                       ;; (pdf pdf-file pdf-slide '(centered 0.1 0.2)))
-                       (pdf pdf-file pdf-slide ,position))
-                    `(update (pdf-slideshow)))))
+    (revy-send-lisp
+     `(setq pdf-file ,file)
+     `(setq pdf-slide 0)
+     `(defun pdf-slideshow ()
+        ;; (pdf pdf-file pdf-slide '(centered 0.1 0.2)))
+        (pdf pdf-file pdf-slide ,position))
+     `(update (pdf-slideshow)))))
 
 (defun revy-pdf-goto-slide (slide)
   "Goto pdf slide."
   ;; (revy-send-message "module" "PDF" "goto" slide))
-  (revy-send-lisp nil `(setq pdf-slide ,slide)))
+  (revy-send-lisp `(setq pdf-slide ,slide)))
 
 (defun revy-pdf-next ()
   "Goto next slide"
   ;; (revy-send-message "module" "next"))
-  (revy-send-lisp nil '(setq pdf-slide (+ pdf-slide 1))))
+  (revy-send-lisp '(setq pdf-slide (+ pdf-slide 1))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -193,12 +200,12 @@ Uses either the given seed or a random number between 0 and most-positive-fixnum
   "Play a sound overlay
 Volume is integer between 0 and 128 (defaults to max)"
   ;; (revy-send-message "playsound" file))
-  (revy-send-lisp nil `(sound ,file ,volume)))
+  (revy-send-lisp `(sound ,file ,volume)))
 
 (defun revy-stop-sounds ()
   "Stop all overlay sounds"
   (interactive)
-  (revy-send-lisp nil '(sound-stop-all))
+  (revy-send-lisp '(sound-stop-all))
   ;;TODO: why do i have to do this
   (sleep-for 0 20))
 
@@ -209,8 +216,8 @@ Volume is integer between 0 and 128 (defaults to max)"
     (setq duration (read-string "Duration: "))
     (when (string= duration "") (setq duration nil)))
   (if (null duration)
-      (revy-send-lisp nil '(sound-fade-all))
-    (revy-send-lisp nil `(sound-fade-all ,duration))))
+      (revy-send-lisp '(sound-fade-all))
+    (revy-send-lisp `(sound-fade-all ,duration))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -247,7 +254,7 @@ Volume is integer between 0 and 128 (defaults to max)"
 (defun revy-kill-mplayer ()
   "Killall instances of mplayer on worker"
   (interactive)
-  (revy-shell-sync "killall mplayer" 'all))
+  (revy-on-worker 'all (revy-shell-sync "killall mplayer")))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -261,4 +268,4 @@ Volume is integer between 0 and 128 (defaults to max)"
   (interactive)
   (unless text
     (setq text (read-from-minibuffer "Text: " nil nil nil 'revy--text-history)))
-  (revy-send-lisp nil `(update (text ,text))))
+  (revy-send-lisp `(update (text ,text))))

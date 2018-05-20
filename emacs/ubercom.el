@@ -9,29 +9,27 @@
 (defconst revy-header-size 512
   "The fixed size of headers for zeigen")
 
-(defun revy-send-lisp (worker &rest expressions)
+(defun revy-send-lisp (&rest expressions)
   "Execute the expressions on the current worker."
-  (setq worker (or worker revy-current-worker))
   (let* ((lisp (mapconcat 'prin1-to-string expressions " "))
          (size (int-to-string (string-bytes lisp)))
          (time "0")
-         (header (format "%s;%s;lisp;%s" worker time size))
+         (header (format "%s;%s;lisp;%s" revy-current-worker time size))
          (padding-size (- revy-header-size (string-bytes header)))
          (padding (if (< padding-size 0)
                       (error "Header too big")
                     (make-string padding-size 0)))
          (message (concat header padding lisp)))
     (message "%s" lisp)
-    (revy--send-message worker message)))
+    (revy--send-message message)))
 
-(defun revy-send-command (worker command &optional options)
+(defun revy-send-command (command &optional options)
   "Send the commands to the current worker.
 To send lisp code use `revy-send-lisp' instead."
   (setq options (or options ""))
-  (setq worker (or worker revy-current-worker))
   (let* ((time "0")
          (options (or options ""))
-         (header (format "%s;%s;%s;%s" worker time command options))
+         (header (format "%s;%s;%s;%s" revy-current-worker time command options))
          (padding-size (- revy-header-size (string-bytes header)))
          (padding (if (< padding-size 0)
                       (error "Header too big")
@@ -39,9 +37,9 @@ To send lisp code use `revy-send-lisp' instead."
          (message (concat header padding)))
     (revy--send-message worker message)))
 
-(defun revy--send-message (worker message)
+(defun revy--send-message (message)
   "Send a message to the current worker"
-  (let ((workers (revy-get-workers worker)))
+  (let ((workers (revy-get-workers revy-current-worker)))
     (dolist (worker workers)
       (let ((channel (aref worker revy-worker-channel-index)))
         (unless (and (process-live-p channel) nil)
@@ -60,31 +58,25 @@ To send lisp code use `revy-send-lisp' instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Should concat by itself
-(defun revy-shell (command &optional worker)
-  "Evaluate shell command on a given worker asynchronously.
-If no worker is given/worker is nil,
-the command will be executed on revy-current-worker."
+(defun revy-shell (command)
+  "Evaluate shell command on the current worker asynchronously."
   ;; Save excursion to avoid the output buffer coming up
   (save-window-excursion
-    (setq worker (or worker revy-current-worker))
-    (dolist (worker (revy-get-workers worker))
+    (dolist (worker (revy-get-workers revy-current-worker))
       (start-process "revy-shell" "*revy-shell*"
                      "ssh" (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
                      (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
                              "cd " (aref worker revy-worker-dir-index) ";\n"
                              command)))))
 
-(defun revy-shell-sync (command &optional worker)
+(defun revy-shell-sync (command)
   ;; Todo, does not seem to work with current worker?!
-  "Evaluate shell command on a given worker synchronously.
-If no worker is given/worker is nil,
-the command will be executed on revy-current-worker."
+  "Evaluate shell command on the current worker synchronously."
   (save-window-excursion
-    (setq worker (or worker revy-current-worker))
     ;; Unlike `start-process', `call-process' inserts at point in buffer, not at end
     (with-current-buffer (get-buffer-create "*revy-shell*")
       (goto-char (point-max))
-      (dolist (worker (revy-get-workers worker))
+      (dolist (worker (revy-get-workers revy-current-worker))
         (call-process "ssh" nil "*revy-shell*" t
                       (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
                       (concat "export DISPLAY=" (aref worker revy-worker-display-index) ";\n"
