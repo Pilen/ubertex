@@ -25,3 +25,7 @@ Int random_int(Int lower, Int upper) {
     Int limit = upper - lower;
     return pcg32_boundedrand(limit) + lower;
 }
+
+void random_seed(Unt seed) {
+    pcg32_srandom(seed, 1);
+}

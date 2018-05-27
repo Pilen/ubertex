@@ -112,26 +112,29 @@ but without closing it, essentially not calling revy-abort-all"
   (revy-on-worker 'all
    (revy-send-message "unblank")))
 
+(defun revy-resync (&optional seed)
+  "Aborts all and resyncs
+Uses either the given seed or a random number between 1 and 2^32-1"
+  (interactive)
+  (revy-on-worker 'all
+   (let* ((max-seed (- (expt 2 32) 1 1))
+          (seed (or seed (+ (random max-seed) 1))))
+     (revy-send-command "resync" (number-to-string seed))))
+  ;; todo fix:
+  (revy-kill-mplayer))
+
 (defun revy-abort ()
   (interactive)
   (revy-send-command "abort"))
 
-(defun revy-abort-all ()
-  (interactive)
-  (revy-on-worker 'all
-   (revy-send-command "abort"))
-  ;; todo fix:
-  (revy-kill-mplayer))
+;; (defun revy-abort-all ()
+;;   (interactive)
+;;   (revy-on-worker 'all
+;;    (revy-send-command "abort"))
+;;   ;; todo fix:
+;;   (revy-kill-mplayer))
+(defalias 'revy-abort-all 'revy-resync)
 
-(defun revy-resync (&optional seed)
-  "Aborts all and resyncs
-Uses either the given seed or a random number between 0 and most-positive-fixnum"
-  (interactive)
-  (revy-on-worker 'all
-   (revy-send-command "resync"
-                      (or seed (random most-positive-fixnum))))
-  ;; todo fix:
-  (revy-kill-mplayer))
 
 (defun revy-calibrate ()
   (interactive)

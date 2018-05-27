@@ -30,7 +30,7 @@ void message_dispatch_to_layer(Environment *environment, Layer *layer, Value mes
 }
 void message_dispatch(Environment *environment) {
     while (environment -> messages.type == CONS) {
-        if (loop_abort) {
+        if (flag_is_up(loop_abort)) {
             return;
         }
         Value pair = NEXT(environment -> messages);

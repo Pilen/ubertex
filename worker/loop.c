@@ -12,13 +12,19 @@ void loop(Environment *environment) {
         log_section("====LOOP====");
         environment -> frame++;
 
-        if (loop_abort) {
-            loop_abort = false;
+        Int resync = flag_lower(loop_resync);
+        if (flag_lower(loop_abort) || resync) {
             environment -> update = VALUE_NIL;
             environment -> background = VALUE_NIL;
             environment -> foreground = VALUE_NIL;
             component_destroy_all(environment);
             sound_stop_all();
+        }
+        if (resync) {
+            debugi(environment -> frame);
+            environment -> frame = 1;
+            log_info("Seed: %u", resync);
+            random_seed(resync);
         }
 
         graphics_clear(environment);
@@ -41,7 +47,7 @@ void loop(Environment *environment) {
             if (designated_frame < environment -> frame && designated_frame != 0) {
                 log_late(environment -> frame - designated_frame);
             }
-            loop_blank = false;
+            flag_lower(loop_blank);
             print_on(log_output, expression); fprintf(log_output, "\n");
             Value result = eval(expression, environment);
             print_on(log_output, result); fprintf(log_output, "\n");
@@ -54,18 +60,18 @@ void loop(Environment *environment) {
         eval(environment -> background, environment);
         eval(environment -> update, environment);
         eval(environment -> foreground, environment);
-        w_assert(environment -> call_stack.type == NIL);
-        w_assert(environment -> dynamic_variables.type == NIL);
+        {    w_assert(environment -> call_stack.type == NIL);}
+        {    w_assert(environment -> dynamic_variables.type == NIL);}
         component_update_all(environment);
-        w_assert(environment -> call_stack.type == NIL);
-        w_assert(environment -> dynamic_variables.type == NIL);
+        {    w_assert(environment -> call_stack.type == NIL);}
+        {    w_assert(environment -> dynamic_variables.type == NIL);}
         message_dispatch(environment);
-        w_assert(environment -> call_stack.type == NIL);
-        w_assert(environment -> dynamic_variables.type == NIL);
+        {    w_assert(environment -> call_stack.type == NIL);}
+        {    w_assert(environment -> dynamic_variables.type == NIL);}
         lock_read_unlock(resource_cache_lock);
         profiler_end(profile_loop);
 
-        if (loop_blank) {
+        if (!flag_is_up(loop_blank)) {
             graphics_clear(environment);
         }
 
@@ -74,12 +80,10 @@ void loop(Environment *environment) {
 
         Unt cleared = 0;
         cleared += resource_shrink_cache();
-        if (flush_dirty_cache) {
-            flush_dirty_cache = false;
+        if (flag_lower(flush_dirty_cache)) {
             cleared += resource_flush_dirty_cache();
         }
-        if (flush_entire_cache) {
-            flush_entire_cache = false;
+        if (flag_lower(flush_entire_cache)) {
             cleared += resource_flush_entire_cache();
         }
         if (cleared > 0) {

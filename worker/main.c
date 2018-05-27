@@ -5,10 +5,23 @@
 #include <signal.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <execinfo.h>
 
 #include "headers.h"
 
+void segfault_handler(int sig) {
+    (void) sig;
+    const int n = 30;
+    void *array[n];
+    size_t size;
+    size = backtrace(array, n);
+    fprintf(stderr, "SEGFAULT: \n");
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    exit(1);
+}
+
 int main(int argc, char **argv) {
+    signal(SIGSEGV, segfault_handler);
     Environment *environment = initialize();
 
     Vector *statements = vector_create_empty();

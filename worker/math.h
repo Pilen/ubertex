@@ -18,5 +18,6 @@ Unt round_up_to_power_of_2(Unt n);
 #endif
 
 Int random_int(Int lower, Int upper);
+void random_seed(Unt seed);
 
 #endif

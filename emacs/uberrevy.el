@@ -52,6 +52,7 @@ Default is nil, as is the default behaviour of Emacs.
 Revy-simple sets this to t."
   :group 'uberrevy)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Internal variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -71,6 +72,11 @@ Revy-simple sets this to t."
 (defvar revy-workers nil
   "All workers in the revy")
 
+(defvar revy-previous-resync nil
+  "The timestamp of the most recent resync")
+
+(defvar revy-headway 1
+  "How many milliseconds of headway should be given to messages send to multiple workers")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Workers

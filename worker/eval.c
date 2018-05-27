@@ -121,7 +121,7 @@ Value eval_list(Value expression, Environment *environment) {
 Value eval_apply(Value function_symbol, Function *function, Value args, Environment *environment) {
     /* All functions called from apply can be safe to assume ``args'' is a proper list
        Ensure this! */
-    if (loop_abort) {
+    if (flag_is_up(loop_abort)) {
         return VALUE_ERROR;
     }
     if (function -> c_code) {
@@ -143,7 +143,7 @@ Value eval_apply(Value function_symbol, Function *function, Value args, Environm
 }
 
 Value eval_lambda(Value lambda_value, Value args, Environment *environment) {
-    if (loop_abort) {
+    if (flag_is_up(loop_abort)) {
         return VALUE_ERROR;
     }
     Lambda *lambda = lambda_value.val.lambda_val;

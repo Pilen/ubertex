@@ -13,7 +13,7 @@
   "Execute the expressions on the current worker."
   (let* ((lisp (mapconcat 'prin1-to-string expressions " "))
          (size (int-to-string (string-bytes lisp)))
-         (time "0")
+         (time (number-to-string (revy--target-tick)))
          (header (format "%s;%s;lisp;%s" revy-current-worker time size))
          (padding-size (- revy-header-size (string-bytes header)))
          (padding (if (< padding-size 0)
@@ -28,6 +28,7 @@
 To send lisp code use `revy-send-lisp' instead."
   (setq options (or options ""))
   (let* ((time "0")
+         ;; (time (number-to-string (revy--target-tick))) ;; Not yet implemented
          (options (or options ""))
          (header (format "%s;%s;%s;%s" revy-current-worker time command options))
          (padding-size (- revy-header-size (string-bytes header)))
@@ -35,7 +36,7 @@ To send lisp code use `revy-send-lisp' instead."
                       (error "Header too big")
                     (make-string padding-size 0)))
          (message (concat header padding)))
-    (revy--send-message worker message)))
+    (revy--send-message message)))
 
 (defun revy--send-message (message)
   "Send a message to the current worker"
@@ -52,6 +53,18 @@ To send lisp code use `revy-send-lisp' instead."
         (with-demoted-errors "Error could not send message to worker: %S"
           (process-send-string channel message))))))
 
+(defun revy--target-tick ()
+  "Calculate the next target frame"
+  (if (cdr (revy-get-workers revy-current-worker))
+      (let* ((diff (time-subtract (current-time) revy-previous-resync))
+             (high (pop diff))
+             (seconds (pop diff))
+             (micro (pop diff)))
+        (+ (* high (expt 2 16) 1000)
+           (* seconds 1000)
+           (/ micro 1000)
+           revy-headway))
+    0))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;π Simple work
@@ -153,7 +166,9 @@ Uses rsync to upload the files, based on the timestamp"
                                     (progn
                                       (message "Syncing done")
                                       ;; Ensure workers reload files
-                                      (revy-send-command 'all "flush_entire_cache")
+                                      (revy-on-worker
+                                       'all
+                                       (revy-send-command "flush_entire_cache"))
                                       ))
                                 (message "Sync with %s failed with exit code %i [%d left]"
                                          name (process-exit-status process) revy--uploading-files))))))
@@ -213,7 +228,7 @@ Wont return untill all workers has been synced."
   "Update the program on all the workers"
   (interactive)
   (dolist (worker (revy-get-workers 'all))
-    (with-current-buffer "*revy-update*" (erase-buffer))
+    (with-current-buffer (get-buffer-create "*revy-update*") (erase-buffer))
     (start-process "revy-update" "*revy-update*"
                    "ssh" (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
                    (concat

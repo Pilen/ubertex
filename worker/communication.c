@@ -154,12 +154,13 @@ Bool communication_receive(TCPsocket socket) {
         return false;
     }
 
-    Unt frame;
-    Int scanned = sscanf(time, "%u", &frame);
+    Unt tick;
+    Int scanned = sscanf(time, "%u", &tick);
     if (scanned != 1) {
         log_error("Header time invalid");
         return false;
     }
+    Unt frame = tick / (1000.0 / OPTION_FPS);
 
     if (strcmp(command, "lisp") == 0) {
         if (!options) {
@@ -189,33 +190,39 @@ Bool communication_receive(TCPsocket socket) {
         log_info("Abort");
         /* communication_queue should be reset before signaling */
         communication_reset();
-        loop_abort = true;
+        flag_hoist(loop_abort);
     } else if (strcmp(command, "resync") == 0) {
         w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
         log_info("Resync");
+        if (!options) {
+            log_error("Header malformed, missing options");
+            return false;
+        }
         /* communication_queue should be reset before signaling */
         communication_reset();
-        Unt seed;
+        unsigned int seed;
         Int scanned = sscanf(options, "%u", &seed);
         if (scanned != 1) {
-            log_warning("Missing seed for reseed, using 0");
-            seed = 0;
+            log_warning("Missing seed for reseed, using 1");
+            seed = 1;
         }
-        loop_new_seed = seed; /* Theese 3 assignments must happen in this order to avoid raceconditions!!! */
-        loop_resync = true;   /* Theese 3 assignments must happen in this order to avoid raceconditions!!! */
-        loop_abort = true;    /* Theese 3 assignments must happen in this order to avoid raceconditions!!! */
+        if (seed == 0) {
+            log_warning("Seed cant be 0, using 1");
+            seed = 1;
+        }
+        flag_hoist_to(loop_resync, seed);
     } else if (strcmp(command, "blank") == 0) {
         w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
         log_info("Blank");
-        loop_blank = true;
+        flag_hoist(loop_blank);
     } else if (strcmp(command, "flush_dirty_cache") == 0) {
         w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
         log_info("Flush dirty cache");
-        flush_dirty_cache = true;
+        flag_hoist(flush_dirty_cache);
     } else if (strcmp(command, "flush_entire_cache") == 0) {
         w_assert(frame == 0); // TODO: Frames other than 0 not yet handled
         log_info("Flush entire cache");
-        flush_entire_cache = true;
+        flag_hoist(flush_entire_cache);
     } else {
         log_error("Header command not defined: %s", command);
     }

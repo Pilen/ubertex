@@ -97,7 +97,7 @@ LISP_BUILTIN(while, "") {
 
     Value condition = NEXT(args);
     while (true) {
-        if (loop_abort) {
+        if (flag_is_up(loop_abort)) {
             return VALUE_ERROR;
         }
         Value result = eval(condition, environment);
