@@ -232,6 +232,7 @@ Wont return untill all workers has been synced."
     (start-process "revy-update" "*revy-update*"
                    "ssh" (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
                    (concat
+                    "killall -9 worker"
                     "cd " (aref worker revy-worker-installation-index) ";"
                     "cd worker;"
                     "git pull;"
