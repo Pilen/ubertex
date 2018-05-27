@@ -14,6 +14,7 @@ void loop(Environment *environment) {
 
         Int resync = flag_lower(loop_resync);
         if (flag_lower(loop_abort) || resync) {
+            log_info("Loop aborting");
             environment -> update = VALUE_NIL;
             environment -> background = VALUE_NIL;
             environment -> foreground = VALUE_NIL;
@@ -21,9 +22,8 @@ void loop(Environment *environment) {
             sound_stop_all();
         }
         if (resync) {
-            debugi(environment -> frame);
+            log_info("Loop resyncing, seed = %u, frame= %u", resync, environment -> frame);
             environment -> frame = 1;
-            log_info("Seed: %u", resync);
             random_seed(resync);
         }
 
@@ -71,7 +71,8 @@ void loop(Environment *environment) {
         lock_read_unlock(resource_cache_lock);
         profiler_end(profile_loop);
 
-        if (!flag_is_up(loop_blank)) {
+        if (flag_is_up(loop_blank)) {
+
             graphics_clear(environment);
         }
 
