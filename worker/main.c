@@ -92,6 +92,8 @@ int main(int argc, char **argv) {
         }
     }
 
+    log_level = log_level_execution;
+
     if (background) {
         /* Moving this section to the last before interactive / looping causes the program to crash. */
         /* XIO:  fatal IO error 11 (Resource temporarily unavailable) on X server ":0" */
@@ -116,6 +118,7 @@ int main(int argc, char **argv) {
         close(STDERR_FILENO);
     }
 
+
     if (!host) {
         host = NEW_BUFFER(char, 256);
         memset(host, '\0', 256);
@@ -131,8 +134,6 @@ int main(int argc, char **argv) {
     signal(SIGINT, SIG_DFL);
 
     log_section("====STATEMENT-EXECUTION====");
-    log_level = log_level_execution;
-
     for (Unt i = 0; i < statements -> length; i++) {
         Value raw = VECTOR_GET_UNSAFE(statements, i);
         Value statement = read_value(raw);

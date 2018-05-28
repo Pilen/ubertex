@@ -91,7 +91,6 @@ void initialize_graphics(Bool fullscreen, Environment *environment) {
         y = 0;
         w = display.w;
         h = display.h;
-        log_info("Window size: %ix%i", w, h);
         flags = 0;
     }
     SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME, x, y, w, h, flags);
@@ -105,6 +104,7 @@ void initialize_graphics(Bool fullscreen, Environment *environment) {
     SDL_GetWindowSize(window, &width, &height);
     environment -> width = width;
     environment -> height = height;
+    log_info("Window size: %ix%i", width, height);
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     if (!renderer) {
