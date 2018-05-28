@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define LOG_LEVEL_MAX 127
 int log_level;
 FILE *log_output;
 
@@ -13,8 +12,7 @@ FILE *log_output;
      (fprintf(log_output, #STATUS ": " format "\n", ##__VA_ARGS__), fflush(log_output)) : \
      0)
 
-
-/* Max log_level = 0b111111111111 = 4095 */
+#define LOG_LEVEL_MAX                          0b111111111111 /* == 4095 */
 #define log_section(...)         LOG(SECTION,  0b100000000000, __VA_ARGS__)
 #define log_calloc(amount, size) LOG(CALLOC,   0b10000000000, "%s:%d: \t%s \t%d * %s = %d * %zd", __FILE__, __LINE__, __func__, amount, #size, amount, (size_t) (size))
 #define log_malloc(size)         LOG(MALLOC,   0b1000000000, "%s:%d: \t%s \t%s = %zd", __FILE__, __LINE__, __func__, #size, (size_t) (size))

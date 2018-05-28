@@ -108,7 +108,7 @@ void loop(Environment *environment) {
             fast_runs = 0;
             environment -> fast_run = false;
         } else {
-            /* debug("LATE!"); */
+            log_late(sleep_time);
             /* We are running behind! */
             fast_runs++;
             if (fast_runs > OPTION_MAX_FAST_RUNS) {
