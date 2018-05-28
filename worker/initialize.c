@@ -91,8 +91,7 @@ void initialize_graphics(Bool fullscreen, Environment *environment) {
         y = 0;
         w = display.w;
         h = display.h;
-        debugi(w);
-        debugi(h);
+        log_info("Window size: %ix%i", w, h);
         flags = 0;
     }
     SDL_Window *window = SDL_CreateWindow(OPTION_PROGRAM_NAME, x, y, w, h, flags);
