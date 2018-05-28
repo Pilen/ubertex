@@ -96,6 +96,7 @@ void loop(Environment *environment) {
         profiler_total_report();
         fflush(log_output);
         fflush(output);
+        log_section("====LOOP-END====");
 
         next_tick += SKIP_TICKS;
         Int sleep_time = next_tick - SDL_GetTicks();
@@ -115,6 +116,5 @@ void loop(Environment *environment) {
             }
             environment -> fast_run = fast_runs != 0;
         }
-        log_section("====LOOP-END====");
     }
 }
