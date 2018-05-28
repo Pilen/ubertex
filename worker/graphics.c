@@ -316,6 +316,10 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
                 log_error_in;
                 goto ERROR;
             }
+            if (sx == 0.0 || sy == 0.0) {
+                /* Scaled to 0, thus is not shown. Cairo freezes if given scales of 0 */
+                return true;
+            }
             cairo_translate(environment -> cairo, dx, dy);
             cairo_translate(environment -> cairo, sx*width/2, sx*height/2);
             cairo_rotate(environment -> cairo, angle);
