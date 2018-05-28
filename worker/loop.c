@@ -25,6 +25,7 @@ void loop(Environment *environment) {
             log_info("Loop resyncing, seed = %u, frame= %u", resync, environment -> frame);
             environment -> frame = 1;
             random_seed(resync);
+            next_tick = SDL_GetTicks();
         }
 
         graphics_clear(environment);
