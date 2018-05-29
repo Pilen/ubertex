@@ -66,7 +66,7 @@ LISP_BUILTIN(f, "") {
                     Value raw = read_from_str(str -> text);
                     Value evaled = eval(raw, environment);
                     ENSURE(evaled.type != ERROR);
-                    Value string = VALUE_STRING(string_from_value(evaled));
+                    Value string = VALUE_STRING(string_from_value(evaled, false));
                     PUSH_END(list, string);
                     run = current+1;
                     break;

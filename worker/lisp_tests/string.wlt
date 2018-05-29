@@ -40,6 +40,10 @@
 (let ((x 1))
   (f "{(+ x 2)}")) ;=> "3"
 
+;;;;TEST;;;;
+(let ((x "foo")) (f "{x}")) ;=> "foo"
+
+
 
 ;;;;TEST;;;;
 (split-lines "abc\ndef") ;=> ("abc" "def")

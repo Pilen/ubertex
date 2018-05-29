@@ -4,28 +4,28 @@
 void test_string_value_to_string1(void) {
     Value lisp = VALUE_NIL;
     Value expected = VALUE_STRING(string_create_from_str("nil"));
-    Value string = VALUE_STRING(string_from_value(lisp));
+    Value string = VALUE_STRING(string_from_value(lisp, false));
     TEST(equal(string, expected));
 }
 
 void test_string_value_to_string2(void) {
     Value lisp = CONS(VALUE_NIL, VALUE_NIL);
     Value expected = VALUE_STRING(string_create_from_str("(nil)"));
-    Value string = VALUE_STRING(string_from_value(lisp));
+    Value string = VALUE_STRING(string_from_value(lisp, false));
     TEST(equal(string, expected));
 }
 
 void test_string_value_to_string3(void) {
     Value lisp = CONS(VALUE_INTEGER(1), VALUE_INTEGER(2));
     Value expected = VALUE_STRING(string_create_from_str("(1 . 2)"));
-    Value string = VALUE_STRING(string_from_value(lisp));
+    Value string = VALUE_STRING(string_from_value(lisp, false));
     TEST(equal(string, expected));
 }
 
 void test_string_value_to_string4(void) {
     Value lisp = CONS(VALUE_INTEGER(1), CONS(VALUE_INTEGER(2), VALUE_INTEGER(3)));
     Value expected = VALUE_STRING(string_create_from_str("(1 2 . 3)"));
-    Value string = VALUE_STRING(string_from_value(lisp));
+    Value string = VALUE_STRING(string_from_value(lisp, false));
     TEST(equal(string, expected));
 }
 
@@ -40,7 +40,7 @@ void test_string_value_to_string5(void) {
                                       CONS(CONS(VALUE_INTEGER(1), VALUE_INTEGER(2)),
                                            CONS1(VALUE_INTEGER(0)))))))));
     Value expected = VALUE_STRING(string_create_from_str("(error nil progn 10 3.14 \"abc\" (1 . 2) 0)"));
-    Value string = VALUE_STRING(string_from_value(lisp));
+    Value string = VALUE_STRING(string_from_value(lisp, true));
     TEST(equal(string, expected));
 }
 

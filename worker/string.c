@@ -90,8 +90,8 @@ Int string_compare_str(String *a, char* b) {
 }
 
 
-Value *string_list_from_value(Value value, Value *result, Value original, Bool quote_strings) {
-    (void) quote_strings;
+Value *string_list_from_value(Value value, Value *result, Value original, Bool repr) {
+    (void) repr;
     Value string_error = VALUE_STRING(string_create_from_str("error"));
     Value string_nil = VALUE_STRING(string_create_from_str("nil"));
     Value string_doublequote = VALUE_STRING(string_create_from_str("\""));
@@ -147,11 +147,11 @@ Value *string_list_from_value(Value value, Value *result, Value original, Bool q
         break;
     }
     case STRING: {
-        if (quote_strings) {
+        if (repr) {
             CDR(*result) = CONS1(string_doublequote); result = &CDR(*result);
         }
         CDR(*result) = CONS1(value); result = &CDR(*result);
-        if (quote_strings) {
+        if (repr) {
             CDR(*result) = CONS1(string_doublequote); result = &CDR(*result);
         }
         break;
@@ -164,7 +164,7 @@ Value *string_list_from_value(Value value, Value *result, Value original, Bool q
                 CDR(*result) = CONS1(string_space); result = &CDR(*result);
             }
             print_space = true;
-            result = string_list_from_value(CAR(value), result, original, quote_strings);
+            result = string_list_from_value(CAR(value), result, original, repr);
             if (CDR(value).type != CONS) {
                 break;
             }
@@ -174,7 +174,7 @@ Value *string_list_from_value(Value value, Value *result, Value original, Bool q
             CDR(*result) = CONS1(string_space); result = &CDR(*result);
             CDR(*result) = CONS1(string_dot); result = &CDR(*result);
             CDR(*result) = CONS1(string_space); result = &CDR(*result);
-            result = string_list_from_value(CDR(value), result, original, quote_strings);
+            result = string_list_from_value(CDR(value), result, original, repr);
         }
         CDR(*result) = CONS1(string_close_paren); result = &CDR(*result);
         break;
@@ -185,9 +185,9 @@ Value *string_list_from_value(Value value, Value *result, Value original, Bool q
     return result;
 }
 
-String *string_from_value(Value value) {
+String *string_from_value(Value value, Bool repr) {
     Value items = CONS1(VALUE_NIL); // sentinel value to ensure CAR works
-    string_list_from_value(value, &items, items, true);
+    string_list_from_value(value, &items, items, repr);
     (void) NEXT(items); // Ignore first value (sentinel)
 
     return string_flatten(items);
