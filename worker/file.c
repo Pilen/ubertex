@@ -24,9 +24,9 @@ Bool file_read_raw(char *filename, char **buffer, size_t *size) {
 
     char *allocated = NEW_BUFFER(char, file_size + 1);
     size_t bytes_read = fread(allocated, sizeof(char), file_size, file);
+    fclose(file);
     if (bytes_read != file_size) {
         log_error("Could not read entire file %s", filename);
-        fclose(file);
         memory_free(allocated);
         return false;
     }
