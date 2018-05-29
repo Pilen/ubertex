@@ -23,9 +23,6 @@ LISP_BUILTIN(read_file, "") {
             Unt new_size = size * 2;
             debug("Resize: %u", new_size)
             char *new_buffer = NEW_BUFFER(char, new_size);
-            debugi(size);
-            debugi(i);
-            debugi(new_size);
             memcpy(new_buffer, buffer, size);
             size = new_size;
             buffer = new_buffer;

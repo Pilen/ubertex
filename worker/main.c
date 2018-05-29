@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
     /* Must be done after initialize_graphics as SDL registers its own function */
     /* It is not very pretty that cleanup is not performed, as the atexit functions are not called */
     signal(SIGINT, SIG_DFL);
-    log_info("sizeof(int) = %lu bytes", sizeof(int));
+    /* log_info("sizeof(int) = %lu bytes", sizeof(int)); */
 
     log_section("====STATEMENT-EXECUTION====");
     for (Unt i = 0; i < statements -> length; i++) {
