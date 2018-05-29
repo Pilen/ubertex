@@ -80,3 +80,40 @@ LISP_BUILTIN(f, "") {
     String *result = string_flatten(CDR(list_beginning));
     return VALUE_STRING(result);
 }
+
+
+LISP_BUILTIN(split_lines, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value string = NEXT(args);
+    Value keep_ends_v = NEXT_DEFAULT(args, VALUE_NIL);
+    ENSURE_EMPTY(args);
+
+    Bool keep_ends = keep_ends_v.type != NIL;
+
+    ENSURE(string.type == STRING);
+    String *full = string.val.string_val;
+
+    char *start = full -> text;
+    char *current = start;
+    Value result = CONS1(VALUE_NIL);
+    Value *insert = &result;
+
+    while (*current) {
+        if (*current == '\n') {
+            Unt bytes = current - start;
+            if (keep_ends) {
+                bytes++;
+            }
+            Value next = VALUE_STRING(string_create_from_substr(start, bytes));
+            CAR(*insert) = next;
+            CDR(*insert) = CONS1(VALUE_NIL);
+            insert = &CDR(*insert);
+            start = current+1;
+        }
+        current++;
+    }
+    Unt bytes = current - start;
+    Value next = VALUE_STRING(string_create_from_substr(start, bytes));
+    CAR(*insert) = next;
+    return result;
+}

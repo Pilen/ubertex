@@ -39,3 +39,13 @@
 ;;;;TEST;;;;
 (let ((x 1))
   (f "{(+ x 2)}")) ;=> "3"
+
+
+;;;;TEST;;;;
+(split-lines "abc\ndef") ;=> ("abc" "def")
+(split-lines "abc\ndef\n") ;=> ("abc" "def" "")
+
+;;;;TEST;;;;
+;;ignore;;
+(split-lines "abc\ndef" t) ;=> ("abc\\n" "def")
+(split-lines "abc\ndef\n" t) ;=> ("abc\\n" "def\n")
