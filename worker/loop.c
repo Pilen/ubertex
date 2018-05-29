@@ -28,7 +28,9 @@ void loop(Environment *environment) {
             next_tick = SDL_GetTicks();
         }
 
-        graphics_clear(environment);
+        if (!environment -> fast_run) {
+            graphics_clear(environment);
+        }
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -73,7 +75,6 @@ void loop(Environment *environment) {
         profiler_end(profile_loop);
 
         if (flag_is_up(loop_blank)) {
-
             graphics_clear(environment);
         }
 

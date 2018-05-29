@@ -11,6 +11,7 @@ Color graphics_parse_color(Value raw) {
 }
 
 void graphics_clear(Environment *environment) {
+    if (environment -> fast_run) {return;}
     cairo_set_source_rgba(environment -> cairo,
                           environment -> clear_red,
                           environment -> clear_green,
@@ -20,6 +21,7 @@ void graphics_clear(Environment *environment) {
 }
 
 void graphics_present(Environment *environment) {
+    if (environment -> fast_run) {return;}
     profiler_start(profile_present);
     void *pixels;
     int pitch;
@@ -32,12 +34,14 @@ void graphics_present(Environment *environment) {
     cairo_surface_flush(environment -> cairo_surface);
     SDL_UnlockTexture(environment -> base_texture);
     SDL_RenderCopy(environment -> renderer, environment -> base_texture, &rect, &rect);
+    SDL_RenderDrawLine(environment -> renderer, 0, 0, environment -> frame % 1000, 300);
     SDL_RenderPresent(environment -> renderer);
     SDL_LockTexture(environment -> base_texture, NULL, &pixels, &pitch);
     profiler_end(profile_present);
 }
 
 void graphics_render_at(Renderable *renderable, Double x, Double y, Environment *environment) {
+    if (environment -> fast_run) {return;}
     cairo_save(environment -> cairo);
     cairo_translate(environment -> cairo, x, y);
     renderable -> render(renderable -> data, environment);
@@ -45,6 +49,7 @@ void graphics_render_at(Renderable *renderable, Double x, Double y, Environment 
 }
 
 void graphics_render_centered_at(Renderable *renderable, Double x, Double y, Environment *environment) {
+    if (environment -> fast_run) {return;}
     cairo_save(environment -> cairo);
     Double w = renderable -> width;
     Double h = renderable -> height;
@@ -68,6 +73,7 @@ void graphics_render_centered_at(Renderable *renderable, Double x, Double y, Env
  * (windowed)
  */
 Bool graphics_render_at_position(Renderable *renderable, Value position, Environment *environment) {
+    if (environment -> fast_run) {return false;}
     profiler_start(profile_render);
 
     Double width = renderable -> width;
@@ -352,6 +358,7 @@ Bool graphics_render_at_position(Renderable *renderable, Value position, Environ
 
 
 void graphics_show_cairo_surface(void *data, Environment *environment) {
+    if (environment -> fast_run) {return;}
     cairo_surface_t *surface = (cairo_surface_t *) data;
     cairo_set_source_surface(environment -> cairo, surface, 0, 0);
     profiler_start(profile_cairo);
@@ -360,11 +367,13 @@ void graphics_show_cairo_surface(void *data, Environment *environment) {
 }
 
 void graphics_fill(Color *color, Environment *environment) {
+    if (environment -> fast_run) {return;}
     cairo_set_source_rgba(environment -> cairo, color -> r, color -> g, color -> b, color -> a);
     cairo_paint(environment -> cairo);
 }
 
 void graphics_calibrate(Environment *environment) {
+    if (environment -> fast_run) {return;}
     cairo_set_source_rgb(environment -> cairo, 255, 0, 255);
     cairo_paint(environment -> cairo);
 
