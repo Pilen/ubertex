@@ -12,6 +12,7 @@ void text_show(void *data, Environment *environment) {
 }
 
 Bool text(String *text, Int fontsize, Text_alignment alignment, Renderable *target, Environment *environment) {
+    if (environment -> fast_run) {return false; }
     if (fontsize <= 0) {
         fontsize = 26;
     }
