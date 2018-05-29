@@ -34,7 +34,6 @@ void graphics_present(Environment *environment) {
     cairo_surface_flush(environment -> cairo_surface);
     SDL_UnlockTexture(environment -> base_texture);
     SDL_RenderCopy(environment -> renderer, environment -> base_texture, &rect, &rect);
-    SDL_RenderDrawLine(environment -> renderer, 0, 0, environment -> frame % 1000, 300);
     SDL_RenderPresent(environment -> renderer);
     SDL_LockTexture(environment -> base_texture, NULL, &pixels, &pitch);
     profiler_end(profile_present);
