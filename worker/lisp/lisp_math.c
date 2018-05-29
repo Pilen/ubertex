@@ -161,6 +161,17 @@ LISP_BUILTIN(division, "") {
         return VALUE_INTEGER(result);
     }
 }
+LISP_BUILTIN(mod, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value x = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
+    Value y = NEXT(args);
+    ENSURE_EMPTY(args);
+    ENSURE(x.type == INTEGER);
+    ENSURE(y.type == INTEGER);
+
+    return VALUE_INTEGER(x.val.integer_val % y.val.integer_val);
+}
 
 LISP_BUILTIN(abs, "") {
     ENSURE_NOT_EMPTY(args);

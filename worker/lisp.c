@@ -52,6 +52,7 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(-, minus, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(*, times, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(/, division, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(mod, mod, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(>, greater_than, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(abs, abs, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(log, log, true, environment);
