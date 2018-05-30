@@ -44,6 +44,19 @@
 (let ((x "foo")) (f "{x}")) ;=> "foo"
 
 
+;;;;TEST;;;;
+(defcomp foo (x)
+  (setq g1 (f "-{x}-")))
+(create foo "a")
+g1 ;=> "-a-"
+
+;;;;TEST;;;;
+(defcomp foo ()
+  (deflocal x "a")
+  (setq g1 (f "-{x}-")))
+(create foo "a")
+g1 ;=> "-a-"
+
 
 ;;;;TEST;;;;
 (split-lines "abc\ndef") ;=> ("abc" "def")
