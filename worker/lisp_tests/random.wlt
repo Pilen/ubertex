@@ -19,6 +19,8 @@
 
 ;;;;TEST;;;;
 (choice) ;=> error
-(choice 1) ;=> 1
+(choice 1) ;=> error
+(choice '(1)) ;=> 1
+(choice '(1 1)) ;=> 1
 (choice 1 1) ;=> 1
 (choice 1 1 1) ;=> 1

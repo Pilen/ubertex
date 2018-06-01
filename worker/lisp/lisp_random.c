@@ -26,10 +26,17 @@ LISP_BUILTIN(randint, "") {
 
 LISP_BUILTIN(choice, "") {
     ENSURE_NOT_EMPTY(args);
-    Value length_val = list_length(args);
+    Value choices;
+    if (CDR(args).type == NIL) {
+        choices = CAR(args);
+    } else {
+        choices = args;
+    }
+    ENSURE_NOT_EMPTY(choices);
+    Value length_val = list_length(choices);
     w_assert(length_val.type == INTEGER);
     Unt length = length_val.val.integer_val;
     Unt choice = (Unt) random_int(0, length);
     w_assert(choice < length);
-    return list_nth(args, choice);
+    return list_nth(choices, choice);
 }
