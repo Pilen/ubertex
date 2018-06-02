@@ -117,3 +117,35 @@ LISP_BUILTIN(split_lines, "") {
     CAR(*insert) = next;
     return result;
 }
+
+
+LISP_BUILTIN(remove_chars, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value text_v = NEXT(args);
+    ENSURE_NOT_EMPTY(args);
+    Value bad_v = NEXT(args);
+    ENSURE_EMPTY(args);
+
+    ENSURE(bad_v.type == STRING);
+    ENSURE(text_v.type == STRING);
+
+    char *bad = bad_v.val.string_val -> text;
+    char *text = text_v.val.string_val -> text;
+    char *buffer = NEW_BUFFER(char, text_v.val.string_val -> size);
+    Unt insert = 0;
+    for (Unt i = 0; text[i]; i++) {
+        Bool is_bad = false;
+        for (Unt j = 0; bad[j]; j++) {
+            if (text[i] == bad[j]) {
+                is_bad = true;
+                break;
+            }
+        }
+
+        if (!is_bad) {
+            buffer[insert] = text[i];
+            insert++;
+        }
+    }
+    return VALUE_STRING(string_create_from_substr(buffer, insert));
+}

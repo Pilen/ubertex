@@ -66,3 +66,8 @@ g1 ;=> "-a-"
 ;;ignore;;
 (split-lines "abc\ndef" t) ;=> ("abc\\n" "def")
 (split-lines "abc\ndef\n" t) ;=> ("abc\\n" "def\n")
+
+
+ss;;;;TEST;;;;
+(remove-chars "aBcDeaBcDe" "BD") ;=> "aceace"
+(remove-chars "aBcDeaBcDe" "acea") ;=> "BDBD"
