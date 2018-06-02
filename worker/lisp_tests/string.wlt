@@ -68,6 +68,12 @@ g1 ;=> "-a-"
 (split-lines "abc\ndef\n" t) ;=> ("abc\\n" "def\n")
 
 
-ss;;;;TEST;;;;
+;;;;TEST;;;;
 (remove-chars "aBcDeaBcDe" "BD") ;=> "aceace"
 (remove-chars "aBcDeaBcDe" "acea") ;=> "BDBD"
+
+;;;;TEST;;;;
+(count-lines "abc") ;=> 1
+(count-lines "abc\n") ;=> 2
+(count-lines "abc\ndef") ;=> 2
+(count-lines "abc\ndef\n") ;=> 3

@@ -149,3 +149,23 @@ LISP_BUILTIN(remove_chars, "") {
     }
     return VALUE_STRING(string_create_from_substr(buffer, insert));
 }
+
+
+LISP_BUILTIN(count_lines, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value text_v = NEXT(args);
+    ENSURE_EMPTY(args);
+    ENSURE(text_v.type == STRING);
+
+    Unt newlines = 1;
+    char *text = text_v.val.string_val -> text;
+
+    for (Unt i = 0; text[i]; i++) {
+        if (text[i] == '\n') {
+            newlines++;
+        }
+    }
+    return VALUE_INTEGER(newlines);
+
+
+}
