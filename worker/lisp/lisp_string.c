@@ -206,10 +206,6 @@ LISP_BUILTIN(substring, "") {
     }
 
     Unt new_size = to - from + 1;
-    debugi(from);
-    debugi(to);
-    debugi(length);
-    debugi(new_size);
     String *new_string = memory_malloc(sizeof(String) + sizeof(char) * new_size);
     new_string -> refcount = 0;
     new_string -> size = new_size;
@@ -217,13 +213,9 @@ LISP_BUILTIN(substring, "") {
     Int j;
     for (i = from, j = 0; i < to; i++, j++) {
         char c = string -> text[i];
-        debug("%i %c", i, c);
         if (!c) {debug("String ended prematurely");}
         new_string -> text[j] = c;
     }
     new_string -> text[j] = '\0';
-    debug("%c", new_string -> text[0]);
-    debug("%c", new_string -> text[1]);
-    debug("%c", new_string -> text[2]);
     return VALUE_STRING(new_string);
 }
