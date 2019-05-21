@@ -77,3 +77,28 @@ g1 ;=> "-a-"
 (count-lines "abc\n") ;=> 2
 (count-lines "abc\ndef") ;=> 2
 (count-lines "abc\ndef\n") ;=> 3
+
+
+
+;;;;TEST;;;;
+(substring "abc" nil nil) ;=> "abc"
+(substring "abc") ;=> "abc"
+(substring "abc" 0 3) ;=> "abc"
+(substring "abc" 1 3) ;=> "bc"
+(substring "abc" 0 2) ;=> "ab"
+(substring "abc" 1 2) ;=> "b"
+(substring "abc" 1 1) ;=> ""
+(substring "abc" 0 -1) ;=> "ab"
+(substring "abc" 0 -2) ;=> "a"
+(substring "abc" 0 -3) ;=> ""
+(substring "abc" 0 -4) ;=> error
+(substring "abc" -1 3) ;=> "c"
+(substring "abc" -2 3) ;=> "bc"
+(substring "abc" -3 3) ;=> "abc"
+(substring "abc" -4 3) ;=> error
+(substring "abc" -1 -3) ;=> error
+(substring "abc" -3 -1) ;=> "ab"
+(substring "abc" -3 -2) ;=> "a"
+(substring "abc" -3 -3) ;=> ""
+(substring "abc" -2 -1) ;=> "b"
+(substring "abc" -2 -2) ;=> ""

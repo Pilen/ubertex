@@ -133,6 +133,7 @@ void lisp_initialize(Environment *environment) {
     LISP_REGISTER_BUILTIN_FROM_RAW(split-lines, split_lines, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(remove-chars, remove_chars, true, environment);
     LISP_REGISTER_BUILTIN_FROM_RAW(count-lines, count_lines, true, environment);
+    LISP_REGISTER_BUILTIN_FROM_RAW(substring, substring, true, environment);
 
     LISP_REGISTER_BUILTIN_FROM_RAW(read-file, read_file, true, environment);
 

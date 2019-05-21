@@ -169,3 +169,61 @@ LISP_BUILTIN(count_lines, "") {
 
 
 }
+
+LISP_BUILTIN(substring, "") {
+    ENSURE_NOT_EMPTY(args);
+    Value string_v = NEXT(args);
+    Value from_v = NEXT_DEFAULT(args, VALUE_NIL);
+    Value to_v = NEXT_DEFAULT(args, VALUE_NIL);
+    ENSURE(string_v.type == STRING);
+    ENSURE(from_v.type == INTEGER || from_v.type == NIL);
+    ENSURE(to_v.type == INTEGER || to_v.type == NIL);
+    String *string = string_v.val.string_val;
+    Int length = string -> size - 1;
+    Int from = from_v.type == INTEGER ? from = from_v.val.integer_val : 0;
+    Int to = to_v.type == INTEGER ? to = to_v.val.integer_val : length;
+    if (from < 0) {
+        from = length + from;
+    }
+    if (to < 0) {
+        to = length + to;
+    }
+    if (from > length) {
+        from = length;
+    }
+    if (to > length) {
+        to = length;
+    }
+
+    if (from < 0) {
+        return VALUE_ERROR;
+    }
+    if (to < 0) {
+        return VALUE_ERROR;
+    }
+    if (to < from) {
+        return VALUE_ERROR;
+    }
+
+    Unt new_size = to - from + 1;
+    debugi(from);
+    debugi(to);
+    debugi(length);
+    debugi(new_size);
+    String *new_string = memory_malloc(sizeof(String) + sizeof(char) * new_size);
+    new_string -> refcount = 0;
+    new_string -> size = new_size;
+    Int i;
+    Int j;
+    for (i = from, j = 0; i < to; i++, j++) {
+        char c = string -> text[i];
+        debug("%i %c", i, c);
+        if (!c) {debug("String ended prematurely");}
+        new_string -> text[j] = c;
+    }
+    new_string -> text[j] = '\0';
+    debug("%c", new_string -> text[0]);
+    debug("%c", new_string -> text[1]);
+    debug("%c", new_string -> text[2]);
+    return VALUE_STRING(new_string);
+}
