@@ -107,15 +107,19 @@
 \thispagestyle{git-status}
 
 
-
 \newpage
 {\linespread{0.0}
   \shorttoc{Indhold (kort)}{1}}
 \newpage
-
 %% Vis indholdsfortegnelse
 \tableofcontents
 \newpage
+
+
+LEGO reglen
+\newpage
+
+
 
 \note{TODO:
   Skal det kaldes en kommando eller en instruktion?
@@ -375,6 +379,7 @@ småting der er værd at huske.
   og som afvikler og viser ting.
 \item[Master] Et AV term for den datamat hvorfra hele AV-systemet styres.
 \item[AV-and] Dit trofaste side-kick, følger dig i medgang og modgang.
+\item[AV-mand] Dig, personen [m/k] der står for at ud- og afvikle AV under revyen
 \end{description}
 
 \newpage
@@ -422,7 +427,7 @@ Masteren kører ligeledes linux, her er det dog en noget mere grafisk udgave. De
 primære værktøj er Emacs, derudover er der også en browser, adgang til filer
 samt en terminal.
 
-I kapitel \ref{sec:linux} er der en gennemgang af linux, dog mest i forhold til
+I kapitel \ref{sec:linux_guide} er der en gennemgang af linux, dog mest i forhold til
 at bruge en terminal.
 
 \textbf{\LaTeX}\\
@@ -865,6 +870,7 @@ Hvis dit netværks interface hedder enp0s25
 sudo ip link set enp0s25 up
 sudo ip addr add 192.168.0.XXX/24 dev enp0s25
 \end{verbatim}
+Husk \code{/24} ellers vil du nok møde problemmer.
 
 alternativt
 \begin{verbatim}
@@ -894,6 +900,8 @@ ssh brok
 \end{verbatim}
 
 Det virker også med scp ol.
+
+\note{Det kan være at man skal fjerne en tidligere known host}
 
 \subsubsection{Forbindelse uden login}
 For at logge ind på systemerne over netværket bruges ssh.
@@ -1444,6 +1452,15 @@ genvejstaster til rådighed.
 \label{sec:worker}
 \note{Generelt om hvordan en worker virker}
 Se også \ref{subsec:worker-commands}
+
+\begin{verbatim}
+sudo pacman -S sdl2
+sudo pacman -S sdl2_mixer
+sudo pacman -S sdl2_image
+sudo pacman -S sdl2_net
+make
+\end{verbatim}
+
 
 \newpage
 \section{- Lisp}
@@ -2989,7 +3006,7 @@ være nogle allerede fungerende installationer du kan låne.
 Guiden er baseret på
 \url{https://wiki.archlinux.org/index.php/Installation_guide} og\\
 \url{https://wiki.archlinux.org/index.php/Beginners'_guide}, og antager at du
-har styr på linux, se evt. Appendix \ref{linux_guide}.
+har styr på linux, se evt. Appendix \ref{sec:linux_guide}.
 \note{\url{http://www.muktware.io/arch-linux-guide-the-always-up-to-date-arch-linux-tutorial/} \url{http://www.dedoimedo.com/computers/grub-2.html}}
 Husk at der er ``auto completion'' på tab-knappen.
 
@@ -3406,7 +3423,7 @@ passwd admin
 \end{verbatim}
 Giv admin et løsn.
 
-Sudo er allerede installeret via base-devel, du kan læse mere om sudo i Appendix \ref{linux_guide}.
+Sudo er allerede installeret via base-devel, du kan læse mere om sudo i Appendix \ref{sec:linux_guide}.
 \begin{verbatim}
 EDITOR=nano visudo
 \end{verbatim}
@@ -3538,7 +3555,7 @@ sudo pacman -S libva-mesa-driver libva-intel-driver libva-vdpau-driver
 % Så sæt ham til at arbejde mens vi i en anden terminal begynder at konfigurere.
 Som windowmanager bruger vi bspwm, en simpel ``tiling'' windowmanager med
 minimale vinduesdekorationer, kan styres med tastaturet og fordi jeg kender den.
-Se Appendix \ref{linux_guide} for mere om brugen. Til at styre (de få)
+Se Appendix \ref{sec:linux_guide} for mere om brugen. Til at styre (de få)
 genvejstaster bruges sxhkd.
 
 \begin{verbatim}
@@ -3599,13 +3616,13 @@ curl -s https://raw.githubusercontent.com/Pilen/ubertex/master/linux/.bashrc | t
 \begin{verbatim}
 mkdir -p .config/bspwm
 mkdir -p .config/sxhkd
-curl -s https://raw.githubusercontent.com/Pilen/ubertex/master/linux/bspwmrc | tee.config/bspwmrc
+curl -s https://raw.githubusercontent.com/Pilen/ubertex/master/linux/bspwmrc | tee .config/bspwm/bspwmrc
 \end{verbatim}
 \begin{mdframed}[style=code]
   \verbatiminput{linux/bspwmrc}
 \end{mdframed}
 \begin{verbatim}
-curl -s https://raw.githubusercontent.com/Pilen/ubertex/master/linux/sxhkdrc | tee .config/sxhkdrc
+curl -s https://raw.githubusercontent.com/Pilen/ubertex/master/linux/sxhkdrc | tee .config/sxhkd/sxhkdrc
 \end{verbatim}
 \begin{mdframed}[style=code]
   \verbatiminput{linux/sxhkdrc}
