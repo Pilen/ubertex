@@ -103,6 +103,9 @@ void loop(Environment *environment) {
         next_tick += SKIP_TICKS;
         Int sleep_time = next_tick - SDL_GetTicks();
         if (sleep_time >= 0) {
+            if (environment -> fast_run) {
+                log_info("Fast runs: %i", fast_runs);
+            }
             if (sleep_time < 20) {
                 /* debug("sleep: %i", sleep_time); */
             }

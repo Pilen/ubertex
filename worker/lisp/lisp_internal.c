@@ -175,6 +175,9 @@ LISP_BUILTIN(sdl_internals, "") {
     Int height;
     SDL_GetWindowSize(environment -> window, &width, &height);
     log_info("Window: %dx%d", width, height);
+    SDL_RendererInfo info;
+    SDL_GetRendererInfo(environment -> renderer, &info);
+    log_info("Renderer: %s (max texture size: %ix%i)", info.name, info.max_texture_width, info.max_texture_height);
     return VALUE_NIL;
 }
 

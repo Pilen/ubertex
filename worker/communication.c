@@ -144,6 +144,7 @@ Bool communication_receive(TCPsocket socket) {
 
     /* NOTE: THIS IS NOT THREADSAFE */
     /* But strtok is only used in this thread currently */
+    /* Also note, strtok gobbles up multiple consecutive delimiters */
     char *names = strtok(header, ";");
     char *time = strtok(NULL, ";");
     char *command = strtok(NULL, ";");

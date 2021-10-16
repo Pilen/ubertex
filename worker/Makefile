@@ -1,4 +1,4 @@
-CFLAGS=-std=c99 -ggdb -DDEBUG
+CFLAGS=-std=c99 -ggdb -DDEBUG # -g -rdynamic
 # CFLAGS += -D_GNU_SOURCE
 CFLAGS += -D_POSIX_C_SOURCE=200809L
 CFLAGS += -Wall -Wextra -Werror # -pedantic -Wno-unused-result -Wuninitialized -Wmaybe-uninitialized -Winit-self -Wunused-result -Wunused
