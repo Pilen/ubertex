@@ -136,9 +136,9 @@ Uses either the given seed or a random number between 1 and 2^32-1"
 (defalias 'revy-abort-all 'revy-resync)
 
 
-(defun revy-calibrate ()
+(defun revy-calibrate (&optional worker)
   (interactive)
-  (revy-on-worker 'all
+  (revy-on-worker (or worker 'all)
    (revy-send-lisp '(update (calibrate)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -235,6 +235,7 @@ Volume is integer between 0 and 128 (defaults to max)"
 (defun revy-mplayer (file &optional geometry flags default-flags x y w h)
   "Play a video through mplayer on current worker"
   (revy-kill-mplayer)
+  (sit-for 0.6)
   ;; -nolirc                : disable Linux Infrared Remote Control
   ;; -msglevel -all=-1      : all siclence
   ;; -msglevel statusline=5 : except statusline
@@ -267,8 +268,11 @@ Volume is integer between 0 and 128 (defaults to max)"
 (defvar revy--text-history nil
   "History variable for `revy-show-text'")
 
+(defvar revy-text-prefix "")
+(defvar revy-text-postfix "")
 (defun revy-text (&optional text)
   (interactive)
   (unless text
     (setq text (read-from-minibuffer "Text: " nil nil nil 'revy--text-history)))
+  (setq text (concat revy-text-prefix text revy-text-postfix))
   (revy-send-lisp `(update (text ,text))))

@@ -190,7 +190,7 @@ Wont return untill all workers has been synced."
 (defun revy-start-workers ()
   "Start all the workers not already online"
   (dolist (worker (revy-get-workers 'all))
-    (with-temp-buffer
+    (with-current-buffer (get-buffer-create "*revy-worker-start*")
       (erase-buffer)
       (let ((channel (condition-case nil
                          (open-network-stream
@@ -201,7 +201,7 @@ Wont return untill all workers has been synced."
                        (error nil))))
         (if channel
             (progn
-              (process-send-string channel "ping") ;; TODO: make command correct / fix padding
+              (process-send-string channel (concat  "nil;0;ping;;" (make-string 500 0))) ;; TODO: make command correct / fix padding
               (accept-process-output channel 1)
               (goto-char (point-min))
               (if (search-forward "Got it. Bye" nil t)
@@ -229,15 +229,17 @@ Wont return untill all workers has been synced."
   (interactive)
   (dolist (worker (revy-get-workers 'all))
     (with-current-buffer (get-buffer-create "*revy-update*") (erase-buffer))
-    (start-process "revy-update" "*revy-update*"
-                   "ssh" (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index))
-                   (concat
-                    "killall -9 worker"
+    (let ((target (concat (aref worker revy-worker-user-index) "@" (aref worker revy-worker-location-index)))
+          (command (concat
+                    "killall -q -9 worker;"
                     "cd " (aref worker revy-worker-installation-index) ";"
                     "cd worker;"
                     "git pull;"
                     "LANG=en_US.UTF-8 make"
-                    ))))
+                    )))
+      (message command)
+      (start-process "revy-update" "*revy-update*"
+                     "ssh" target command))))
 
 ;; (defun revy-update-software ()
 ;;   "Update the software on all workers and the current machine"

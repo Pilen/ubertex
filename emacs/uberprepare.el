@@ -87,17 +87,35 @@ Returns the process used to compile the tex file"
                                         (error-line nil))
                                     (with-current-buffer buffer
                                       (goto-char (point-max))
-                                      (when (search-backward-regexp "^.*==> Fatal error" nil t)
+                                      (cond
+                                       ((search-backward-regexp "^.*==> Fatal[[:space:]\n]+error" nil t)
                                         (if  (search-backward-regexp
-                                              (concat tex (rx ":" (group (+ digit)) ":" (* whitespace) (group (+ (not (any "."))) ".")))
+                                              (concat (regexp-quote tex) (rx ":" (group (+ digit)) ":" (* whitespace) (group (+ (not (any "."))) ".")))
                                               nil t)
-                                            (setq error-line (string-to-int (match-string 1))
-                                                  error-message (replace-regexp-in-string "\n" "" (match-string 2))))
-                                        (setq error-line 0
-                                              error-message "Some error occured"))
-                                      (when (search-backward-regexp "! LaTeX Error: \\(.*\\)\\.\n" nil t)
+                                            (setq error-line (string-to-number (match-string 1))
+                                                  error-message (replace-regexp-in-string "\n" "" (match-string 2)))
+                                          (setq error-line 0
+                                                error-message "Some error occured")))
+                                       ((search-backward-regexp "! LaTeX Error: \\(.*\\)\\.\n" nil t)
                                         (setq error-line 0)
-                                        (setq error-message (match-string 1))))
+                                        (setq error-message (match-string 1)))
+                                       (t
+                                        (setq error-line 0)
+                                        (setq  error-message "Some error occured"))
+                                       )
+
+                                      ;; (when (search-backward-regexp "^.*==> Fatal error" nil t)
+                                      ;;   (if  (search-backward-regexp
+                                      ;;         (concat tex (rx ":" (group (+ digit)) ":" (* whitespace) (group (+ (not (any "."))) ".")))
+                                      ;;         nil t)
+                                      ;;       (setq error-line (string-to-int (match-string 1))
+                                      ;;             error-message (replace-regexp-in-string "\n" "" (match-string 2)))
+                                      ;;     (setq error-line 0
+                                      ;;           error-message "Some error occured")))
+                                      ;; (when (search-backward-regexp "! LaTeX Error: \\(.*\\)\\.\n" nil t)
+                                      ;;   (setq error-line 0)
+                                      ;;   (setq error-message (match-string 1)))
+                                      )
 
                                     (find-file tex)
                                     ;; (goto-line error-line)
@@ -113,6 +131,5 @@ Returns the process used to compile the tex file"
                                 (dolist (ext '("aux" "log" "nav" "out" "snm" "toc"))
                                   (let ((file (revy-replace-extension tex ext)))
                                     (when (file-exists-p file)
-                                      (delete-file file)))))
-                              (message "done")))
+                                      (delete-file file)))))))
       process)))

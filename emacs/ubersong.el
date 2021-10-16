@@ -5,8 +5,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'revy-ubersong)
 
+;; use make-local-variable to make it buffer local when needed, dont do it globally. That is just confusing when rarely used
 (defvar-local revy-ubersong-text-prefix "")
 (defvar-local revy-ubersong-text-postfix "")
+(defvar-local revy-ubersong-text-alignment nil)
+(defvar-local revy-ubersong-text-position nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;π Major mode
@@ -100,7 +103,8 @@ Does not affect the cursor."
                      (buffer-substring-no-properties end final)))))
     (setq text (concat revy-ubersong-text-prefix text revy-ubersong-text-postfix))
     (message "%d %d %d %d" start end final (point))
-    (revy-send-lisp nil `(progn (set 'current-text ,text) (update (text ,text))))
+    ;; (revy-send-lisp nil `(progn (set 'current-text ,text) (update (text 'current-text nil ,revy-ubersong-text-alignment ,revy-ubersong-text-position))))
+    (revy-send-lisp nil `(update (text ,text nil ,revy-ubersong-text-alignment ,revy-ubersong-text-position)))
 
     (revy-ubersong--scan start end)))
 
