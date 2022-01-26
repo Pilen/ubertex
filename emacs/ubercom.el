@@ -221,6 +221,7 @@ Wont return untill all workers has been synced."
                   (message "Starting %s" (aref worker revy-worker-location-index))
                   t))
             (error "No connection to host %s" (aref worker revy-worker-location-index)))))))
+  ;; TODO: if starting fails, it will just print starting done!
   (message "Starting done")
   t)
 

@@ -213,6 +213,7 @@ Also does all the preparations for the buffer "
           (revy-shell (match-string 1))))
 
       ;; Collect all lisp code
+      ;; TODO: handle commented code?
       (while (search-forward-regexp "\\\\elisp{\\([^}]*\\)}" end t)
         ;; Dont evaluate in save-excursion, so we can jump around
         (push (match-string 1) code)))

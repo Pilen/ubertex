@@ -101,6 +101,10 @@ the functions can be called on their own."
 
 (defun revy-manus-slide ()
   (interactive)
+  (unless (region-active-p)
+    (beginning-of-line)
+    (set-mark (point))
+    (forward-line 2))
   (when (= (point) (line-beginning-position))
     (backward-char))
   (exchange-point-and-mark)
